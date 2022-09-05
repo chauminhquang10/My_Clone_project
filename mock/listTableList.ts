@@ -26,7 +26,6 @@ const genList = (current: number, pageSize: number) => {
       progress: Math.ceil(Math.random() * 100),
     });
   }
-  tableListDataSource.reverse();
   return tableListDataSource;
 };
 

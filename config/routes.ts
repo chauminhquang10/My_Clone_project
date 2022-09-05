@@ -43,6 +43,12 @@
     component: './TableList',
   },
   {
+    name: 'UserTable',
+    icon: 'table',
+    path: '/list-user',
+    component: './UserTable',
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },
