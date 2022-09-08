@@ -55,6 +55,10 @@ export default defineConfig({
   },
   // Fast Refresh 热更新
   fastRefresh: {},
+  define: {
+    API_ENDPOINT: 'https://api-stmc-ca-dev.hcm.unicloud.ai',
+    API_PREFIX: '',
+  },
   openAPI: [
     {
       requestLibPath: "import { request } from 'umi'",
@@ -64,9 +68,10 @@ export default defineConfig({
       mock: false,
     },
     {
-      requestLibPath: "import { request } from 'umi'",
-      schemaPath: 'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
-      projectName: 'swagger',
+      requestLibPath: "import { request } from '@/utils'",
+      schemaPath: 'https://api-stmc-ca-dev.hcm.unicloud.ai/v3/api-docs',
+      mock: false,
+      projectName: 'Stm-controller',
     },
   ],
   nodeModulesTransform: { type: 'none' },
