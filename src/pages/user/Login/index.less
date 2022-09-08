@@ -9,7 +9,7 @@
   justify-content: center;
   width: 100vw;
   height: 100vh;
-  background-image: url('../../../assets/images/bg-login-page.png');
+  background-image: url('/assets/images/bg-login-page.png');
   background-size: cover;
 
   .logo {
@@ -28,7 +28,6 @@
     gap: 32px;
     align-items: center;
     width: 489px;
-    height: 402px;
     padding: 32px 56px;
     background: #fff;
     border-radius: 12px;
@@ -79,9 +78,38 @@
           box-shadow: 0px 0px 0px 2px rgba(24, 144, 255, 0.2) !important;
         }
 
+        .ant-input-affix-wrapper-status-error:not(.ant-input-affix-wrapper-disabled):not(.ant-input-affix-wrapper-borderless).ant-input-affix-wrapper,
+        .ant-input-affix-wrapper-status-error:not(.ant-input-affix-wrapper-disabled):not(.ant-input-affix-wrapper-borderless).ant-input-affix-wrapper:hover {
+          border: 1px solid #ff4d4f;
+          box-shadow: 0px 0px 0px 2px rgba(255, 77, 79, 0.2);
+        }
+
+        .ant-input-affix-wrapper-status-error .ant-input-prefix {
+          color: #000;
+        }
+
         .ant-input-prefix {
           margin-right: 8px;
         }
+
+        .ant-form-item-label
+          > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+          display: none;
+        }
+
+        // .ant-form-item-label
+        //   > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::after {
+        //   display: inline-block;
+        //   margin-left: 2px;
+        //   color: #ff4d4f;
+        //   font-weight: 500;
+        //   font-size: 14px;
+        //   font-family: 'Roboto';
+        //   font-style: normal;
+        //   line-height: 22px;
+        //   text-align: right;
+        //   content: '*';
+        // }
       }
 
       .form-username {
@@ -104,6 +132,15 @@
         background: @stm-primary-color;
         border-color: @stm-primary-color;
         border-radius: 8px;
+      }
+
+      span {
+        color: #fff;
+        font-weight: 500;
+        font-size: 16px;
+        font-family: 'Roboto';
+        font-style: normal;
+        line-height: 24px;
       }
     }
   }

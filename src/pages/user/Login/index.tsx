@@ -5,14 +5,15 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import React, { useState } from 'react';
 import { history, useModel } from 'umi';
+import { InputPassword } from '../components';
+
 import styles from './index.less';
 
 const Login: React.FC = () => {
   const [form] = Form.useForm();
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
-
-  console.log('user login state: ', userLoginState);
+  const [, setUserLoginState] = useState<API.LoginResult>({});
   const [type] = useState<string>('account');
+
   const { initialState, setInitialState } = useModel('@@initialState');
 
   const fetchUserInfo = async () => {
@@ -57,6 +58,10 @@ const Login: React.FC = () => {
     await handleSubmit(values as API.LoginParams);
   };
 
+  const handlePasswordChange = (password: string) => {
+    form.setFieldValue('password', password);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
@@ -71,12 +76,26 @@ const Login: React.FC = () => {
             onFinish={onFinish}
             className={styles.form}
             layout="vertical"
+            validateTrigger="onFinish"
           >
-            <Form.Item name="username" label="Tên đăng nhập" className={styles['form-username']}>
+            <Form.Item
+              name="username"
+              label="Tên đăng nhập"
+              className={styles['form-username']}
+              rules={[{ required: true, message: 'Tên đăng nhập là bắt buộc nhập' }]}
+            >
               <Input placeholder="Admin" prefix={<UserOutlined />} />
             </Form.Item>
-            <Form.Item name="password" label="Mật khẩu">
-              <Input.Password placeholder="Nhập mật khẩu" prefix={<LockOutlined />} />
+            <Form.Item
+              name="password"
+              label="Mật khẩu"
+              rules={[{ required: true, message: 'Mật khẩu là bắt buộc nhập' }]}
+            >
+              <InputPassword
+                onChange={handlePasswordChange}
+                placeholder="Nhập mật khẩu"
+                prefix={<LockOutlined />}
+              />
             </Form.Item>
             <div className={styles['forgot-password']}>
               <a href="">Quên mật khẩu?</a>
