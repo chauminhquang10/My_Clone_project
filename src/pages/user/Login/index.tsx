@@ -1,5 +1,5 @@
 import logoKSBank from '@/assets/images/ksbank-logo.svg';
-import { login } from '@/services/ant-design-pro/api';
+import Api from '@/services/Stm-controller';
 import { openNotification } from '@/utils';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
@@ -26,10 +26,10 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (values: API.LoginParams) => {
+  const handleSubmit = async (values: any) => {
     try {
-      const msg = await login({ ...values, type });
-      if (msg.status === 'ok') {
+      const msg = await Api.AuthController.login({ ...values, type });
+      if (msg.data) {
         const message = 'Đăng nhập thành công!';
         const description =
           'Proactively incubate innovative processes for high-payoff architectures. Globally benchmark flexible.';
@@ -55,7 +55,7 @@ const Login: React.FC = () => {
   const onFinish = async (values: any) => {
     console.log('values: ', values);
 
-    await handleSubmit(values as API.LoginParams);
+    await handleSubmit(values as any);
   };
 
   const handlePasswordChange = (password: string) => {
