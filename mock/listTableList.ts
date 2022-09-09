@@ -4,7 +4,7 @@ import { parse } from "url";
 
 // mock tableListDataSource
 const genList = (current: number, pageSize: number) => {
-    const tableListDataSource: API.RuleListItem[] = [];
+    const tableListDataSource: APIS.RuleListItem[] = [];
 
     for (let i = 0; i < pageSize; i += 1) {
         const index = (current - 1) * 10 + i;
@@ -36,6 +36,36 @@ const genList = (current: number, pageSize: number) => {
     return tableListDataSource;
 };
 
+const genListUnit = (current: number, pageSize: number) => {
+    const tableListDataSource: API.ManagementUnitResponse[] = [];
+
+    for (let i = 0; i < pageSize; i += 1) {
+        const index = (current - 1) * 10 + i;
+        tableListDataSource.push({
+            id: index,
+            code: `code-${index}`,
+            name: `name-${index}`,
+            location: `location-${index}`,
+            province: {
+                id: 1,
+                name: `province-${index}`,
+            },
+            district: {
+                id: 1,
+                name: `districtrict-${index}`,
+            },
+            ward: {
+                id: 1,
+                name: `ward-${index}`,
+            },
+            address: `address-${index}`,
+            createdAt: `createdAt-${index}`,
+        });
+    }
+    return tableListDataSource;
+};
+
+let listUnit = genListUnit(1, 100);
 let tableListDataSource = genList(1, 100);
 
 function getRule(req: Request, res: Response, u: string) {
@@ -47,8 +77,8 @@ function getRule(req: Request, res: Response, u: string) {
         realUrl = req.url;
     }
     const { current = 1, pageSize = 10 } = req.query;
-    const params = parse(realUrl, true).query as unknown as API.PageParams &
-        API.RuleListItem & {
+    const params = parse(realUrl, true).query as unknown as APIS.PageParams &
+        APIS.RuleListItem & {
             sorter: any;
             filter: any;
         };
@@ -114,6 +144,82 @@ function getRule(req: Request, res: Response, u: string) {
     return res.json(result);
 }
 
+function getListUnit(req: Request, res: Response, u: string) {
+    let realUrl = u;
+    if (
+        !realUrl ||
+        Object.prototype.toString.call(realUrl) !== "[object String]"
+    ) {
+        realUrl = req.url;
+    }
+    const { current = 1, pageSize = 10 } = req.query;
+    const params = parse(realUrl, true).query as unknown as APIS.PageParams &
+        APIS.RuleListItem & {
+            sorter: any;
+            filter: any;
+        };
+
+    let dataSource = [...listUnit].slice(
+        ((current as number) - 1) * (pageSize as number),
+        (current as number) * (pageSize as number)
+    );
+    if (params.sorter) {
+        const sorter = JSON.parse(params.sorter);
+        dataSource = dataSource.sort((prev, next) => {
+            let sortNumber = 0;
+            Object.keys(sorter).forEach((key) => {
+                if (sorter[key] === "descend") {
+                    if (prev[key] - next[key] > 0) {
+                        sortNumber += -1;
+                    } else {
+                        sortNumber += 1;
+                    }
+                    return;
+                }
+                if (prev[key] - next[key] > 0) {
+                    sortNumber += 1;
+                } else {
+                    sortNumber += -1;
+                }
+            });
+            return sortNumber;
+        });
+    }
+    if (params.filter) {
+        const filter = JSON.parse(params.filter as any) as {
+            [key: string]: string[];
+        };
+        if (Object.keys(filter).length > 0) {
+            dataSource = dataSource.filter((item) => {
+                return Object.keys(filter).some((key) => {
+                    if (!filter[key]) {
+                        return true;
+                    }
+                    if (filter[key].includes(`${item[key]}`)) {
+                        return true;
+                    }
+                    return false;
+                });
+            });
+        }
+    }
+
+    if (params.name) {
+        dataSource = dataSource.filter((data) =>
+            data?.name?.includes(params.name || "")
+        );
+    }
+    const result = {
+        data: dataSource,
+        total: listUnit.length,
+        success: true,
+        pageSize,
+        current: parseInt(`${params.current}`, 10) || 1,
+    };
+
+    return res.json(result);
+}
+
 function postRule(req: Request, res: Response, u: string, b: Request) {
     let realUrl = u;
     if (
@@ -136,7 +242,7 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
         case "post":
             (() => {
                 const i = Math.ceil(Math.random() * 10000);
-                const newRule: API.RuleListItem = {
+                const newRule: APIS.RuleListItem = {
                     key: tableListDataSource.length,
                     href: "https://ant.design",
                     avatar: [
@@ -187,4 +293,5 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
 export default {
     "GET /api/rule": getRule,
     "POST /api/rule": postRule,
+    "GET /api/listUnit": getListUnit,
 };

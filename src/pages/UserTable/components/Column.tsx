@@ -3,12 +3,12 @@ import HeadCell from "./HeadCell";
 import { ManageCell, TextCell, UserStatusCell } from "./TableCell";
 
 type ColumnProps = {
-    setCurrentRow: (s: API.RuleListItem) => void;
+    setCurrentRow: (s: APIS.RuleListItem) => void;
     setShowDetail: (s: boolean) => void;
 };
 
 function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
-    const columns: ProColumns<API.RuleListItem>[] = [
+    const columns: ProColumns<APIS.RuleListItem>[] = [
         {
             title: <HeadCell>STT</HeadCell>,
             sorter: (a, b) => {
@@ -103,7 +103,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
             valueType: "textarea",
             render: (dom) => {
                 // console.log(typeof dom);
-                return <ManageCell listMachine={dom} />;
+                return <ManageCell listMachine={dom as APIS.MachineType[]} />;
             },
         },
         {

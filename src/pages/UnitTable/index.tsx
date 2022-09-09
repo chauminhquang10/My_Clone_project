@@ -1,11 +1,10 @@
-import { addRule, removeRule, rule } from "@/services/ant-design-pro/api";
+import { addRule, unit } from "@/services/ant-design-pro/api";
 import type {
     ActionType,
     ProColumns,
     ProDescriptionsItemProps,
 } from "@ant-design/pro-components";
 import {
-    FooterToolbar,
     ModalForm,
     PageContainer,
     ProDescriptions,
@@ -13,7 +12,7 @@ import {
     ProFormTextArea,
     ProTable,
 } from "@ant-design/pro-components";
-import { Button, Drawer, message } from "antd";
+import { Drawer, message } from "antd";
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "umi";
 import AddNew from "./components/AddNew";
@@ -27,7 +26,7 @@ import TitleTable from "./components/TitleTable";
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.RuleListItem) => {
+const handleAdd = async (fields: API.ManagementUnitResponse) => {
     const hide = message.loading("正在添加");
     try {
         await addRule({ ...fields });
@@ -37,29 +36,6 @@ const handleAdd = async (fields: API.RuleListItem) => {
     } catch (error) {
         hide();
         message.error("Adding failed, please try again!");
-        return false;
-    }
-};
-
-/**
- *  Delete node
- * @zh-CN 删除节点
- *
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: API.RuleListItem[]) => {
-    const hide = message.loading("正在删除");
-    if (!selectedRows) return true;
-    try {
-        await removeRule({
-            key: selectedRows.map((row) => row.key),
-        });
-        hide();
-        message.success("Deleted successfully and will refresh soon");
-        return true;
-    } catch (error) {
-        hide();
-        message.error("Delete failed, please try again");
         return false;
     }
 };
@@ -79,10 +55,7 @@ const TableCustom = () => {
     const [showDetail, setShowDetail] = useState<boolean>(false);
 
     const actionRef = useRef<ActionType>();
-    const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
-    const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
-        []
-    );
+    const [currentRow, setCurrentRow] = useState<API.ManagementUnitResponse>();
 
     /**
      * @en-US International configuration
@@ -93,7 +66,7 @@ const TableCustom = () => {
     // const [page, setPage] = useState<number>();
     // const [pageSize, setPageSize] = useState<number>();
     // const pageSizeRef = useRef<number>(20);
-    const columns: ProColumns<API.RuleListItem>[] = Column({
+    const columns: ProColumns<API.ManagementUnitResponse>[] = Column({
         setCurrentRow,
         setShowDetail,
     });
@@ -110,7 +83,7 @@ const TableCustom = () => {
             }}
             footer={undefined}
         >
-            <ProTable<API.RuleListItem, API.PageParams>
+            <ProTable<API.ManagementUnitResponse, APIS.PageParams>
                 headerTitle={<TitleTable />}
                 actionRef={actionRef}
                 rowKey="key"
@@ -123,7 +96,7 @@ const TableCustom = () => {
                         }}
                     />,
                 ]}
-                request={rule}
+                request={unit}
                 columns={columns}
                 options={false}
                 // rowSelection={{
@@ -149,59 +122,6 @@ const TableCustom = () => {
                 }}
             />
 
-            {selectedRowsState?.length > 0 && (
-                <FooterToolbar
-                    extra={
-                        <div>
-                            <FormattedMessage
-                                id="pages.searchTable.chosen"
-                                defaultMessage="Chosen"
-                            />{" "}
-                            <a style={{ fontWeight: 600 }}>
-                                {selectedRowsState.length}
-                            </a>{" "}
-                            <FormattedMessage
-                                id="pages.searchTable.item"
-                                defaultMessage="项"
-                            />
-                            &nbsp;&nbsp;
-                            <span>
-                                <FormattedMessage
-                                    id="pages.searchTable.totalServiceCalls"
-                                    defaultMessage="Total number of service calls"
-                                />{" "}
-                                {selectedRowsState.reduce(
-                                    (pre, item) => pre + item.callNo!,
-                                    0
-                                )}{" "}
-                                <FormattedMessage
-                                    id="pages.searchTable.tenThousand"
-                                    defaultMessage="万"
-                                />
-                            </span>
-                        </div>
-                    }
-                >
-                    <Button
-                        onClick={async () => {
-                            await handleRemove(selectedRowsState);
-                            setSelectedRows([]);
-                            actionRef.current?.reloadAndRest?.();
-                        }}
-                    >
-                        <FormattedMessage
-                            id="pages.searchTable.batchDeletion"
-                            defaultMessage="Batch deletion"
-                        />
-                    </Button>
-                    <Button type="primary">
-                        <FormattedMessage
-                            id="pages.searchTable.batchApproval"
-                            defaultMessage="Batch approval"
-                        />
-                    </Button>
-                </FooterToolbar>
-            )}
             <ModalForm
                 title={intl.formatMessage({
                     id: "pages.searchTable.createForm.newRule",
@@ -211,7 +131,9 @@ const TableCustom = () => {
                 visible={createModalVisible}
                 onVisibleChange={handleModalVisible}
                 onFinish={async (value) => {
-                    const success = await handleAdd(value as API.RuleListItem);
+                    const success = await handleAdd(
+                        value as API.ManagementUnitResponse
+                    );
                     if (success) {
                         handleModalVisible(false);
                         if (actionRef.current) {
@@ -248,7 +170,7 @@ const TableCustom = () => {
                 closable={false}
             >
                 {currentRow?.name && (
-                    <ProDescriptions<API.RuleListItem>
+                    <ProDescriptions<API.ManagementUnitResponse>
                         column={2}
                         title={currentRow?.name}
                         request={async () => ({
@@ -258,7 +180,7 @@ const TableCustom = () => {
                             id: currentRow?.name,
                         }}
                         columns={
-                            columns as ProDescriptionsItemProps<API.RuleListItem>[]
+                            columns as ProDescriptionsItemProps<API.ManagementUnitResponse>[]
                         }
                     />
                 )}
