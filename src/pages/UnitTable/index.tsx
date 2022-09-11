@@ -15,11 +15,11 @@ import {
 import { Drawer, message } from "antd";
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "umi";
-import AddNew from "./components/AddNew";
-import Column from "./components/Column";
-// import SelectPage from "./components/SelectPage";
-import style from "./components/style.less";
-import TitleTable from "./components/TitleTable";
+import AddNew from "./components/tables/AddNew";
+import Column from "./components/tables/Column";
+// import SelectPage from "./components/tables/SelectPage";
+import style from "./components/tables/style.less";
+import TitleTable from "./components/tables/TitleTable";
 
 /**
  * @en-US Add node

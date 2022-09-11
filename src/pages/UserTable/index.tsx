@@ -16,18 +16,18 @@ import {
 import { Button, Drawer, message } from "antd";
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "umi";
-import AddNew from "./components/AddNew";
-import Column from "./components/Column";
-// import SelectPage from "./components/SelectPage";
-import style from "./components/style.less";
-import TitleTable from "./components/TitleTable";
+import AddNew from "./components/tables/AddNew";
+import Column from "./components/tables/Column";
+// import SelectPage from "./components/tables/SelectPage";
+import style from "./components/tables/style.less";
+import TitleTable from "./components/tables/TitleTable";
 
 /**
  * @en-US Add node
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.RuleListItem) => {
+const handleAdd = async (fields: APIS.RuleListItem) => {
     const hide = message.loading("正在添加");
     try {
         await addRule({ ...fields });
@@ -47,7 +47,7 @@ const handleAdd = async (fields: API.RuleListItem) => {
  *
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: API.RuleListItem[]) => {
+const handleRemove = async (selectedRows: APIS.RuleListItem[]) => {
     const hide = message.loading("正在删除");
     if (!selectedRows) return true;
     try {
@@ -79,8 +79,9 @@ const TableCustom = () => {
     const [showDetail, setShowDetail] = useState<boolean>(false);
 
     const actionRef = useRef<ActionType>();
-    const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
-    const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>(
+    const [currentRow, setCurrentRow] = useState<APIS.RuleListItem>();
+    console.log(currentRow);
+    const [selectedRowsState, setSelectedRows] = useState<APIS.RuleListItem[]>(
         []
     );
 
@@ -93,7 +94,7 @@ const TableCustom = () => {
     // const [page, setPage] = useState<number>();
     // const [pageSize, setPageSize] = useState<number>();
     // const pageSizeRef = useRef<number>(20);
-    const columns: ProColumns<API.RuleListItem>[] = Column({
+    const columns: ProColumns<APIS.RuleListItem>[] = Column({
         setCurrentRow,
         setShowDetail,
     });
@@ -110,7 +111,7 @@ const TableCustom = () => {
             }}
             footer={undefined}
         >
-            <ProTable<API.RuleListItem, API.PageParams>
+            <ProTable<APIS.RuleListItem, APIS.PageParams>
                 headerTitle={<TitleTable />}
                 actionRef={actionRef}
                 rowKey="key"
@@ -211,7 +212,7 @@ const TableCustom = () => {
                 visible={createModalVisible}
                 onVisibleChange={handleModalVisible}
                 onFinish={async (value) => {
-                    const success = await handleAdd(value as API.RuleListItem);
+                    const success = await handleAdd(value as APIS.RuleListItem);
                     if (success) {
                         handleModalVisible(false);
                         if (actionRef.current) {
@@ -247,8 +248,8 @@ const TableCustom = () => {
                 }}
                 closable={false}
             >
-                {currentRow?.name && (
-                    <ProDescriptions<API.RuleListItem>
+                {currentRow?.employeeName && (
+                    <ProDescriptions<APIS.RuleListItem>
                         column={2}
                         title={currentRow?.name}
                         request={async () => ({
@@ -258,7 +259,7 @@ const TableCustom = () => {
                             id: currentRow?.name,
                         }}
                         columns={
-                            columns as ProDescriptionsItemProps<API.RuleListItem>[]
+                            columns as ProDescriptionsItemProps<APIS.RuleListItem>[]
                         }
                     />
                 )}

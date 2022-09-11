@@ -1,6 +1,6 @@
 import style from "./style.less";
 import { Input } from "antd";
-import searchIcon from "../images/svg/search-icon.svg";
+import searchIcon from "@/assets/images/svg/icon/search-icon.svg";
 function TitleTable() {
     return (
         <div className={style["title-table"]}>

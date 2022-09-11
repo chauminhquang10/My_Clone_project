@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import activeIcon from "../images/svg/active-icon.svg";
-import lockIcon from "../images/svg/lock-icon.svg";
-import connectBoardIcon from "../images/svg/connect-boards.svg";
+import activeIcon from "@/assets/images/svg/icon/active-icon.svg";
+import lockIcon from "@/assets/images/svg/icon/lock-icon.svg";
+import connectBoardIcon from "@/assets/images/svg/icon/connect-boards.svg";
 import style from "./style.less";
 
 //--------------- TextCell of Table ----------------
