@@ -1,18 +1,19 @@
 import type { ProColumns } from "@ant-design/pro-components";
 import HeadCell from "./HeadCell";
-import { ManageCell, TextCell, UserStatusCell } from "./TableCell";
+import { TextCell, UserStatusCell } from "./TableCell";
 
 type ColumnProps = {
-    setCurrentRow: (s: APIS.RuleListItem) => void;
+    setCurrentRow: (s: API.UserResponse) => void;
     setShowDetail: (s: boolean) => void;
 };
 
 function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
-    const columns: ProColumns<APIS.RuleListItem>[] = [
+    const columns: ProColumns<API.UserResponse>[] = [
         {
             title: <HeadCell>STT</HeadCell>,
             sorter: (a, b) => {
-                return (a.key as number) - (b.key as number);
+                if (a.id && b.id) return a.id.localeCompare(b.id);
+                else return 1;
             },
             dataIndex: "id",
             render: (dom) => {
@@ -22,8 +23,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
         },
         {
             title: <HeadCell>Mã nhân viên</HeadCell>,
-            dataIndex: "employeeNo",
-            valueType: "textarea",
+            dataIndex: "staffId",
             render: (dom, entity) => {
                 return (
                     <TextCell
@@ -39,8 +39,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
         },
         {
             title: <HeadCell>Tên nhân viên</HeadCell>,
-            dataIndex: "employeeName",
-            sorter: true,
+            dataIndex: "name",
+            sorter: (a, b) => {
+                if (a.name && b.name) return a.name.localeCompare(b.name);
+                else return 1;
+            },
             hideInForm: true,
             render: (dom, entity) => {
                 return (
@@ -56,27 +59,27 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
                 );
             },
         },
-        {
-            title: <HeadCell>Mã - Tên đơn vị</HeadCell>,
-            dataIndex: "unit",
-            sorter: (a, b) => {
-                return (a.status as number) - (b.status as number);
-            },
-            filters: true,
+        // {
+        //     title: <HeadCell>Mã - Tên đơn vị</HeadCell>,
+        //     dataIndex: "unit",
+        //     sorter: (a, b) => {
+        //         return (a.status as number) - (b.status as number);
+        //     },
+        //     filters: true,
 
-            onFilter: true,
-            valueEnum: {
-                0: {
-                    text: "unit 0",
-                },
-                1: {
-                    text: "unit 1",
-                },
-            },
-            render: (dom) => {
-                return <TextCell position="left">{dom}</TextCell>;
-            },
-        },
+        //     onFilter: true,
+        //     valueEnum: {
+        //         0: {
+        //             text: "unit 0",
+        //         },
+        //         1: {
+        //             text: "unit 1",
+        //         },
+        //     },
+        //     render: (dom) => {
+        //         return <TextCell position="left">{dom}</TextCell>;
+        //     },
+        // },
         {
             title: <HeadCell>Email</HeadCell>,
             dataIndex: "email",
@@ -98,25 +101,19 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
             },
         },
         {
-            title: <HeadCell>Quản lý máy</HeadCell>,
-            dataIndex: "listMachine",
-            valueType: "textarea",
-            render: (dom) => {
-                // console.log(typeof dom);
-                return <ManageCell listMachine={dom as APIS.MachineType[]} />;
-            },
-        },
-        {
             title: <HeadCell>Trạng thái hoạt động</HeadCell>,
             dataIndex: "status",
             hideInForm: true,
             filters: true,
             onFilter: true,
             valueEnum: {
-                0: {
+                ACTIVE: {
                     text: <UserStatusCell>ĐANG HOẠT ĐỘNG</UserStatusCell>,
                 },
-                1: {
+                UNKNOW: {
+                    text: <UserStatusCell>KHÔNG XÁC ĐỊNH</UserStatusCell>,
+                },
+                INACTIVE: {
                     text: <UserStatusCell>TẠM KHOÁ</UserStatusCell>,
                 },
             },

@@ -4,33 +4,17 @@ import { parse } from "url";
 
 // mock tableListDataSource
 const genList = (current: number, pageSize: number) => {
-    const tableListDataSource: APIS.RuleListItem[] = [];
+    const tableListDataSource: API.UserResponse[] = [];
 
     for (let i = 0; i < pageSize; i += 1) {
         const index = (current - 1) * 10 + i;
         tableListDataSource.push({
-            id: index,
-            employeeName: `TradeCode-${index}`,
-            employeeNo: `No-${index}`,
+            id: `${index}`,
+            name: `TradeCode-${index}`,
+            staffId: `No-${index}`,
             email: `Email${index}@gmail.com`,
-            desc: "这是一段描述",
             phoneNumber: `${Math.floor(Math.random() * 1000)}`,
-            status: Math.floor(Math.random() * 10) % 2,
-            listMachine: [
-                {
-                    text: "machine",
-                    id: `${index}-1`,
-                },
-                {
-                    text: "machine",
-                    id: `${index}-2`,
-                },
-                {
-                    text: "machine",
-                    id: `${index}-3`,
-                },
-            ],
-            unit: `${Math.floor(Math.random() * 10) % 2}`,
+            status: "ACTIVE",
         });
     }
     return tableListDataSource;
@@ -236,7 +220,7 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
         /* eslint no-case-declarations:0 */
         case "delete":
             tableListDataSource = tableListDataSource.filter(
-                (item) => key.indexOf(item.key) === -1
+                (item) => key.indexOf(item.id) === -1
             );
             break;
         case "post":
@@ -267,7 +251,7 @@ function postRule(req: Request, res: Response, u: string, b: Request) {
             (() => {
                 let newRule = {};
                 tableListDataSource = tableListDataSource.map((item) => {
-                    if (item.key === key) {
+                    if (item.id === key) {
                         newRule = { ...item, desc, name };
                         return { ...item, desc, name };
                     }

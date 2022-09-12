@@ -1,21 +1,17 @@
 import { addRule, removeRule, rule } from "@/services/ant-design-pro/api";
-import type {
-    ActionType,
-    ProColumns,
-    ProDescriptionsItemProps,
-} from "@ant-design/pro-components";
+import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import {
     FooterToolbar,
-    ModalForm,
     PageContainer,
-    ProDescriptions,
     ProFormText,
     ProFormTextArea,
     ProTable,
 } from "@ant-design/pro-components";
-import { Button, Drawer, message } from "antd";
+import { Button, message } from "antd";
 import { useRef, useState } from "react";
-import { FormattedMessage, useIntl } from "umi";
+import { FormattedMessage } from "umi";
+import NewUserForm from "./components/forms/NewUserForm";
+import UserDetailDrawer from "./components/forms/UserDetailDrawer";
 import AddNew from "./components/tables/AddNew";
 import Column from "./components/tables/Column";
 // import SelectPage from "./components/tables/SelectPage";
@@ -89,7 +85,6 @@ const TableCustom = () => {
      * @en-US International configuration
      * @zh-CN 国际化配置
      * */
-    const intl = useIntl();
 
     // const [page, setPage] = useState<number>();
     // const [pageSize, setPageSize] = useState<number>();
@@ -203,12 +198,9 @@ const TableCustom = () => {
                     </Button>
                 </FooterToolbar>
             )}
-            <ModalForm
-                title={intl.formatMessage({
-                    id: "pages.searchTable.createForm.newRule",
-                    defaultMessage: "New rule",
-                })}
-                width="400px"
+            <NewUserForm
+                title="Tạo người dùng mới"
+                width="934px"
                 visible={createModalVisible}
                 onVisibleChange={handleModalVisible}
                 onFinish={async (value) => {
@@ -218,7 +210,9 @@ const TableCustom = () => {
                         if (actionRef.current) {
                             actionRef.current.reload();
                         }
+                        return true;
                     }
+                    return false;
                 }}
             >
                 <ProFormText
@@ -237,33 +231,14 @@ const TableCustom = () => {
                     name="name"
                 />
                 <ProFormTextArea width="md" name="desc" />
-            </ModalForm>
-
-            <Drawer
-                width={600}
-                visible={showDetail}
-                onClose={() => {
-                    setCurrentRow(undefined);
-                    setShowDetail(false);
-                }}
-                closable={false}
-            >
-                {currentRow?.employeeName && (
-                    <ProDescriptions<APIS.RuleListItem>
-                        column={2}
-                        title={currentRow?.name}
-                        request={async () => ({
-                            data: currentRow || {},
-                        })}
-                        params={{
-                            id: currentRow?.name,
-                        }}
-                        columns={
-                            columns as ProDescriptionsItemProps<APIS.RuleListItem>[]
-                        }
-                    />
-                )}
-            </Drawer>
+            </NewUserForm>
+            <UserDetailDrawer
+                currentRow={currentRow}
+                setCurrentRow={setCurrentRow}
+                showDetail={showDetail}
+                setShowDetail={setShowDetail}
+                userAvatar=""
+            />
         </PageContainer>
     );
 };
