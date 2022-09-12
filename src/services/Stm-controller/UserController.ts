@@ -12,10 +12,6 @@ export async function getAllUsers(
     method: 'GET',
     params: {
       ...params,
-      filter: undefined,
-      ...params['filter'],
-      pageRequest: undefined,
-      ...params['pageRequest'],
     },
     ...(options || {}),
   });
@@ -121,7 +117,7 @@ export async function checkUserExisted(
   params: API.checkUserExistedParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBaseUserResponse>('/api/v1/users/checking', {
+  return request<API.ResponseBaseCheckUserExistResponse>('/api/v1/users/checking', {
     method: 'GET',
     params: {
       ...params,

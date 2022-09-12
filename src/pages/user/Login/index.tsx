@@ -1,66 +1,109 @@
 import logoKSBank from '@/assets/images/ksbank-logo.svg';
-import Api from '@/services/Stm-controller';
-import { openNotification } from '@/utils';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
-import React, { useState } from 'react';
-import { history, useModel } from 'umi';
-import { InputPassword } from '../components';
+import React from 'react';
+import { SetupPasswordForm } from '../components';
 
 import styles from './index.less';
 
+// function isMinimumCharacter(str: string, num: number): boolean {
+//   return str.length >= num;
+// }
+
+// function isContainLowerCase(str: string): boolean {
+//   const len = str.length;
+//   for (let i = 0; i < len; i++) {
+//     const c = str.charAt(i);
+//     if (!isNaN(+c)) continue;
+//     if (c.toLowerCase() === c) return true;
+//   }
+
+//   return false;
+// }
+
+// function isContainUpperCase(str: string): boolean {
+//   const len = str.length;
+//   for (let i = 0; i < len; i++) {
+//     const c = str.charAt(i);
+//     if (!isNaN(+c)) continue;
+//     if (c.toUpperCase() === c) return true;
+//   }
+
+//   return false;
+// }
+
+// function isContainNumber(str: string) {
+//   return /\d/.test(str);
+// }
+
+// function isContainSpecialLetter(str: string) {
+//   return /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(str);
+// }
+
 const Login: React.FC = () => {
-  const [form] = Form.useForm();
-  const [, setUserLoginState] = useState<API.LoginResult>({});
-  const [type] = useState<string>('account');
+  // const [form] = Form.useForm();
+  // const [, setUserLoginState] = useState<API.LoginResult>({});
 
-  const { initialState, setInitialState } = useModel('@@initialState');
+  // const { initialState, setInitialState } = useModel('@@initialState');
 
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    if (userInfo) {
-      await setInitialState((s) => ({
-        ...s,
-        currentUser: userInfo,
-      }));
-    }
-  };
+  // const fetchUserInfo = async () => {
+  //   const userInfo = await initialState?.fetchUserInfo?.();
+  //   if (userInfo) {
+  //     await setInitialState((s) => ({
+  //       ...s,
+  //       currentUser: userInfo,
+  //     }));
+  //   }
+  // };
 
-  const handleSubmit = async (values: any) => {
-    try {
-      const msg = await Api.AuthController.login({ ...values, type });
-      if (msg.data) {
-        const message = 'Đăng nhập thành công!';
-        const description =
-          'Proactively incubate innovative processes for high-payoff architectures. Globally benchmark flexible.';
-        openNotification('success', message, description);
-        await fetchUserInfo();
-        if (!history) return;
-        const { query } = history.location;
-        const { redirect } = query as { redirect: string };
-        history.push(redirect || '/');
-        return;
-      }
-      openNotification('error', 'Đăng nhập không thành công', '');
-      setUserLoginState(msg);
-    } catch (error) {
-      console.log('error login: ', error);
-      const message = 'Đăng nhập không thành công!';
-      const description =
-        'Proactively incubate innovative processes for high-payoff architectures. Globally benchmark flexible.';
-      openNotification('error', message, description);
-    }
-  };
+  // const handleSubmit = async (values: any) => {
+  //   try {
+  //     const msg = await Api.AuthController.login({
+  //       ...values,
+  //     });
 
-  const onFinish = async (values: any) => {
-    console.log('values: ', values);
+  //     if (!msg) {
+  //       openNotification('error', 'Đăng nhập không thành công!');
+  //       return;
+  //     }
 
-    await handleSubmit(values as any);
-  };
+  //     if (msg.code === 0) {
+  //       const message = 'Đăng nhập thành công!';
+  //       openNotification('success', message);
 
-  const handlePasswordChange = (password: string) => {
-    form.setFieldValue('password', password);
-  };
+  //       // const currentUser = await getMyProfile();
+
+  //       // console.log('currentUser: ', currentUser);
+
+  //       await fetchUserInfo();
+  //       if (!history) return;
+  //       const { query } = history.location;
+  //       const { redirect } = query as { redirect: string };
+
+  //       console.log('login successful');
+  //       // console.log('history: ', history);
+  //       return;
+  //     }
+
+  //     openNotification('error', msg.message);
+  //   } catch (error) {
+  //     console.log('error login: ', error);
+  //     const message = 'Đăng nhập không thành công!';
+  //     openNotification('error', message);
+  //   }
+  // };
+
+  // const onFinish = async (values: any) => {
+  //   await handleSubmit(values as any);
+  // };
+
+  // const handlePasswordChange = (password: string) => {
+  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
+  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
+  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
+  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
+  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
+
+  //   form.setFieldValue('password', password);
+  // };
 
   return (
     <div className={styles.container}>
@@ -68,7 +111,9 @@ const Login: React.FC = () => {
         <div className={styles.logo}>
           <img src={logoKSBank} alt="logo-ksbank" />
         </div>
-        <div className={styles['form-wrapper']}>
+        <SetupPasswordForm />
+
+        {/* <div className={styles['form-wrapper']}>
           <h1 className={styles.title}>Đăng nhập</h1>
           <Form
             form={form}
@@ -106,7 +151,7 @@ const Login: React.FC = () => {
               Đăng nhập
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

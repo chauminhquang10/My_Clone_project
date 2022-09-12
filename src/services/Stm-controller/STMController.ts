@@ -12,10 +12,6 @@ export async function getListMachines(
     method: 'GET',
     params: {
       ...params,
-      stmFilter: undefined,
-      ...params['stmFilter'],
-      pageRequest: undefined,
-      ...params['pageRequest'],
     },
     ...(options || {}),
   });
@@ -66,20 +62,6 @@ export async function updateMachine(
   });
 }
 
-/** Delete STM  - Delete STM DELETE /api/v1/machines/${param0} */
-export async function deleteMachine(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteMachineParams,
-  options?: { [key: string]: any },
-) {
-  const { id: param0, ...queryParams } = params;
-  return request<API.ResponseBaseStmInfoResponse>(`/api/v1/machines/${param0}`, {
-    method: 'DELETE',
-    params: { ...queryParams },
-    ...(options || {}),
-  });
-}
-
 /** Phần quyền quản trị máy cho user  - Tham số: User được phân quyền, mảng ID các máy được phân quyền. Lưu ý: Ở đây các máy này sẽ được cộng dồn vào các máy mà USER đã quản lý trước đó, không phải thay thế các máy trước đó POST /api/v1/machines/access */
 export async function assignMachine(
   body: API.AssignMachineRequest,
@@ -101,7 +83,7 @@ export async function checkMachineExisted(
   params: API.checkMachineExistedParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBaseStmInfoResponse>('/api/v1/machines/checking', {
+  return request<API.ResponseBaseCheckMachineExistResponse>('/api/v1/machines/checking', {
     method: 'GET',
     params: {
       ...params,
@@ -136,10 +118,6 @@ export async function getSystemOperation(
     method: 'GET',
     params: {
       ...params,
-      filter: undefined,
-      ...params['filter'],
-      req: undefined,
-      ...params['req'],
     },
     ...(options || {}),
   });

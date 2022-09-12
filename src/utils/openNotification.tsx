@@ -9,7 +9,7 @@ const iconNotification = {
   warning: <IconWarning />,
 };
 
-export const openNotification = (type: NotificationType, message: string, description: string) => {
+export const openNotification = (type: NotificationType, message: string, description?: string) => {
   notification[type]({
     message,
     description,

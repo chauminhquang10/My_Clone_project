@@ -41,6 +41,9 @@ const { cancel } = Reqs.CancelToken.source();
 
 const errorHandler = async (error: ResponseError) => {
   if (Reqs.isCancel(error)) return;
+
+  console.log('error: ', error);
+
   const { response, data } = error;
   const status: keyof typeof codeMessage = data?.status >= 400 ? data?.status : response?.status;
   if (status >= 400) {
@@ -78,6 +81,9 @@ const onRefresh = async () => {
     throw new Error('Refresh token was expired');
 
   const response = await Api.AuthController.refreshToken({ refreshToken });
+
+  console.log('refresh data: ', response);
+
   if (!response || !response.data) throw Error('Request invalid');
   if (!response.data.data?.token) throw Error('Access token is undefined');
   if (!response.data.data.refreshToken) throw Error('Refresh token is undefined');
@@ -97,10 +103,15 @@ const requestInterceptor: RequestInterceptor = (url, options) => {
   if (!url.includes('login') && !url.includes('refresh-token') && !url.includes('utility')) {
     headers.Authorization = `Bearer ${token}`;
   }
-  return { url, options: { headers, ...options } };
+
+  console.log('token: ', token);
+  console.log('request call: ', { url, options: { ...options, headers } });
+
+  return { url, options: { ...options, headers } };
 };
 
 const responseInterceptor: ResponseInterceptor = async (response, options) => {
+  console.log('response: ', response);
   const { status, url } = response;
 
   if (status === 401 && !url.includes('refresh-token')) {
@@ -140,6 +151,9 @@ const responseInterceptor: ResponseInterceptor = async (response, options) => {
   }
 
   const body = await response.clone().json();
+
+  console.log('body: ', body);
+
   if (response.status >= 400 || body.status >= 400) {
     const error: ResponseError = {
       response,
@@ -154,11 +168,11 @@ const responseInterceptor: ResponseInterceptor = async (response, options) => {
 
   if (url.includes('login')) {
     const { data } = body;
-    localStorage.setItem('accessToken', data.token);
-    localStorage.setItem('refreshToken', data.refreshToken);
+    localStorage.setItem('accessToken', data?.token);
+    localStorage.setItem('refreshToken', data?.refreshToken);
   }
 
-  return { ...body, ...body.data };
+  return { ...body };
 };
 
 request.interceptors.request.use(requestInterceptor);

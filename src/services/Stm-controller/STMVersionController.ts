@@ -12,10 +12,6 @@ export async function getAllVersion(
     method: 'GET',
     params: {
       ...params,
-      versionFilter: undefined,
-      ...params['versionFilter'],
-      pageReq: undefined,
-      ...params['pageReq'],
     },
     ...(options || {}),
   });
@@ -97,20 +93,6 @@ export async function updateVersion(
     params: { ...queryParams },
     data: formData,
     requestType: 'form',
-    ...(options || {}),
-  });
-}
-
-/** Delete version API - Delete version when it hasn't been update into machine  DELETE /api/v1/versions/${param0} */
-export async function deleteVersion(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteVersionParams,
-  options?: { [key: string]: any },
-) {
-  const { versionId: param0, ...queryParams } = params;
-  return request<API.ResponseBaseVersionResponse>(`/api/v1/versions/${param0}`, {
-    method: 'DELETE',
-    params: { ...queryParams },
     ...(options || {}),
   });
 }

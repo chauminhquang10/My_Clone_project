@@ -28,7 +28,7 @@ declare namespace API {
 
   type changeMachineStatusParams = {
     id: string;
-    status: string;
+    status: 'UNKNOWN' | 'IN_SERVICE' | 'OUT_OF_SERVICE' | 'OFFLINE';
   };
 
   type ChangePasswordRequest = {
@@ -45,9 +45,17 @@ declare namespace API {
     value: string;
   };
 
+  type CheckMachineExistResponse = {
+    existed?: boolean;
+  };
+
   type checkUserExistedParams = {
     key: string;
     value: string;
+  };
+
+  type CheckUserExistResponse = {
+    existed?: boolean;
   };
 
   type CreateManagementUnitRequest = {
@@ -60,9 +68,15 @@ declare namespace API {
     address: string;
   };
 
+  type CreateRoleGroupRequest = {
+    name: string;
+    actionIds: number[];
+  };
+
   type CreateStmModelRequest = {
     name: string;
-    machineType: string;
+    /** Values: STM | ATM | CDM */
+    machineType: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     storages: StorageItemRequest[];
   };
 
@@ -107,7 +121,7 @@ declare namespace API {
     email: string;
     phoneNumber: string;
     managementUnitId: number;
-    roleIds: number[];
+    roleGroupId: number;
   };
 
   type CreateVersionRequest = {
@@ -116,14 +130,6 @@ declare namespace API {
     file: string;
     content: string;
     condition?: string;
-  };
-
-  type deleteMachineParams = {
-    id: string;
-  };
-
-  type deleteVersionParams = {
-    versionId: string;
   };
 
   type Denomination = {
@@ -139,13 +145,21 @@ declare namespace API {
   };
 
   type getAllUsersParams = {
-    filter: UserFilter;
-    pageRequest: PageReq;
+    managementUnit?: string;
+    staffId?: string;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
   };
 
   type getAllVersionParams = {
-    versionFilter: VersionFilter;
-    pageReq: PageReq;
+    machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+    modelId?: number;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
   };
 
   type getDistrictsParams = {
@@ -157,8 +171,15 @@ declare namespace API {
   };
 
   type getListMachinesParams = {
-    stmFilter: StmFilter;
-    pageRequest: PageReq;
+    location?: string;
+    provinceId?: number;
+    machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+    status?: 'UNKNOWN' | 'IN_SERVICE' | 'OUT_OF_SERVICE' | 'OFFLINE';
+    query?: string;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
   };
 
   type getListModelsParams = {
@@ -195,12 +216,16 @@ declare namespace API {
   };
 
   type getRoleDetailParams = {
-    roleId: string;
+    groupId: string;
   };
 
   type getSystemOperationParams = {
-    filter: SystemOperationFilter;
-    req: PageReq;
+    module?: 'MACHINE' | 'USER' | 'MODEL' | 'MANAGEMENT_UNIT' | 'VERSION';
+    query?: string;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
   };
 
   type getTransactionsParams = {
@@ -227,6 +252,10 @@ declare namespace API {
 
   type ListManagementUnitResponse = {
     managementUnits?: ManagementUnitResponse[];
+  };
+
+  type ListRoleGroupResponse = {
+    roleGroups?: RoleGroupResponse[];
   };
 
   type ListRolesResponse = {
@@ -284,13 +313,6 @@ declare namespace API {
     ward?: Ward;
     address?: string;
     createdAt?: string;
-  };
-
-  type PageReq = {
-    pageNumber?: number;
-    pageSize?: number;
-    sortDirection?: string;
-    sortBy?: string;
   };
 
   type PageResponseObject = {
@@ -377,6 +399,18 @@ declare namespace API {
     data?: ChangePasswordResponse;
   };
 
+  type ResponseBaseCheckMachineExistResponse = {
+    code?: number;
+    message?: string;
+    data?: CheckMachineExistResponse;
+  };
+
+  type ResponseBaseCheckUserExistResponse = {
+    code?: number;
+    message?: string;
+    data?: CheckUserExistResponse;
+  };
+
   type ResponseBaseGetListDistrictResponse = {
     code?: number;
     message?: string;
@@ -405,6 +439,12 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: ListManagementUnitResponse;
+  };
+
+  type ResponseBaseListRoleGroupResponse = {
+    code?: number;
+    message?: string;
+    data?: ListRoleGroupResponse;
   };
 
   type ResponseBaseListRolesResponse = {
@@ -467,10 +507,10 @@ declare namespace API {
     data?: ResetPasswordResponse;
   };
 
-  type ResponseBaseRoleResponse = {
+  type ResponseBaseRoleGroupResponse = {
     code?: number;
     message?: string;
-    data?: RoleResponse;
+    data?: RoleGroupResponse;
   };
 
   type ResponseBaseStmDetailResponse = {
@@ -533,16 +573,19 @@ declare namespace API {
     action?: string;
   };
 
-  type RoleResponse = {
+  type RoleGroupResponse = {
     id?: number;
     name?: string;
+    createdAt?: string;
+    createdBy?: UserResponse;
+    lastModifiedBy?: UserResponse;
     actions?: RoleAction[];
     users?: UserResponse[];
   };
 
   type StmDetailResponse = {
     id?: string;
-    order?: number;
+    machineOrder?: number;
     /** Values: STM | ATM | CDM */
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     model?: StmModelResponse;
@@ -584,17 +627,9 @@ declare namespace API {
     devices?: PhysicalDeviceInfo[];
   };
 
-  type StmFilter = {
-    location?: string;
-    provinceId?: number;
-    machineType?: string;
-    status?: string;
-    query?: string;
-  };
-
   type StmInfoResponse = {
     id?: string;
-    order?: number;
+    machineOrder?: number;
     location?: string;
     province?: Province;
     /** Values: STM | ATM | CDM */
@@ -626,15 +661,6 @@ declare namespace API {
   type StorageItemRequest = {
     deviceTypeId: number;
     minCapacity?: number;
-  };
-
-  type SystemOperationFilter = {
-    machineType?: string;
-    query?: string;
-    /** dd-MM-YYYY */
-    from?: string;
-    /** dd-MM-YYYY */
-    to?: string;
   };
 
   type Transaction = {
@@ -781,7 +807,7 @@ declare namespace API {
     name: string;
     email: string;
     managementUnitId: number;
-    roleIds: number[];
+    roleGroupId: number;
   };
 
   type updateVersionParams = {
@@ -789,8 +815,8 @@ declare namespace API {
   };
 
   type UpdateVersionRequest = {
-    modelId?: number;
-    name?: string;
+    modelId: number;
+    name: string;
     file: string;
     content?: string;
     condition?: string;
@@ -803,15 +829,10 @@ declare namespace API {
     name?: string;
     email?: string;
     phoneNumber?: string;
-    status?: 'INITIAL' | 'ACTIVE' | 'INACTIVE';
+    status?: 'UNKNOWN' | 'ACTIVE' | 'INACTIVE';
     machines?: StmInfoResponse[];
-    roles?: Role[];
+    roleGroup?: RoleGroupResponse;
     managementUnit?: ManagementUnitResponse;
-  };
-
-  type UserFilter = {
-    managementUnit?: string;
-    staffId?: string;
   };
 
   type UserResponse = {
@@ -821,12 +842,8 @@ declare namespace API {
     name?: string;
     email?: string;
     phoneNumber?: string;
-    status?: 'INITIAL' | 'ACTIVE' | 'INACTIVE';
-  };
-
-  type VersionFilter = {
-    machineType?: string;
-    modelId?: number;
+    status?: 'UNKNOWN' | 'ACTIVE' | 'INACTIVE';
+    managementUnit?: ManagementUnitResponse;
   };
 
   type VersionResponse = {
