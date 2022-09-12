@@ -1,8 +1,6 @@
 // https://umijs.org/config/
-import { defineConfig } from 'umi';
 import { join } from 'path';
-
-import defaultSettings from './defaultSettings';
+import { defineConfig } from 'umi';
 import proxy from './proxy';
 import routes from './routes';
 
@@ -13,12 +11,6 @@ export default defineConfig({
   antd: {},
   dva: {
     hmr: true,
-  },
-  layout: {
-    // https://umijs.org/zh-CN/plugins/plugin-layout
-    locale: true,
-    siderWidth: 208,
-    ...defaultSettings,
   },
   // https://umijs.org/zh-CN/plugins/plugin-locale
   locale: {
@@ -42,7 +34,6 @@ export default defineConfig({
     // 如果不想要 configProvide 动态设置主题需要把这个设置为 default
     // 只有设置为 variable， 才能使用 configProvide 动态设置主色调
     // https://ant.design/docs/react/customize-theme-variable-cn
-    'root-entry-name': 'variable',
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild

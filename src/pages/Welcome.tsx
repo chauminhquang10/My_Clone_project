@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-components';
 import { Alert, Card, Typography } from 'antd';
 import React from 'react';
-import { FormattedMessage, useIntl } from 'umi';
+import { FormattedMessage, Link, useIntl } from 'umi';
 import styles from './Welcome.less';
 
 const CodePreview: React.FC = ({ children }) => (
@@ -39,6 +39,7 @@ const Welcome: React.FC = () => {
           >
             <FormattedMessage id="pages.welcome.link" defaultMessage="Welcome" />
           </a>
+          <Link to={'/welcome'}>To Welcome</Link>
         </Typography.Text>
         <CodePreview>yarn add @ant-design/pro-components</CodePreview>
       </Card>

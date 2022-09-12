@@ -1,4 +1,4 @@
-﻿export default [
+﻿const routes = [
   {
     path: '/user',
     layout: false,
@@ -14,39 +14,131 @@
     ],
   },
   {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: './Welcome',
-  },
-  {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
+    path: '/',
+    component: '@/layouts/BaseLayout',
+    menu: {
+      flatMenu: true,
+    },
     routes: [
       {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        icon: 'smile',
-        component: './Welcome',
+        path: '/',
+        redirect: '/machine/list',
       },
       {
-        component: './404',
+        path: '/machine',
+        name: 'machine-management',
+        icon: 'machine-management',
+        routes: [
+          {
+            path: '/machine/list',
+            name: 'list',
+            icon: 'machine-list',
+            component: 'TableList',
+          },
+          {
+            path: '/machine/analytics',
+            name: 'analytics',
+            icon: 'machine-stats',
+            component: 'TableList',
+          },
+          {
+            path: '/machine/config',
+            name: 'config',
+            icon: 'machine-config',
+            component: 'TableList',
+          },
+          {
+            path: '/machine/update-firmware',
+            name: 'update-firmware',
+            icon: 'machine-update',
+            component: 'TableList',
+          },
+          {
+            path: '/machine/system-warning',
+            name: 'system-warning',
+            icon: 'machine-warning',
+            component: 'TableList',
+          },
+          {
+            path: '/machine/history',
+            name: 'history',
+            icon: 'machine-history',
+            component: 'TableList',
+          },
+        ],
+      },
+      {
+        path: '/camera',
+        name: 'camera-management',
+        icon: 'camera-management',
+        routes: [
+          {
+            path: '/camera/log',
+            name: 'log',
+            icon: 'camera-log',
+            component: 'TableList',
+          },
+          {
+            path: '/camera/transaction-list',
+            name: 'transaction-list',
+            icon: 'transaction-list',
+            component: 'TableList',
+          },
+        ],
+      },
+      {
+        path: '/user',
+        name: 'user-management',
+        icon: 'user-management',
+        access: 'canAdmin',
+        routes: [
+          {
+            path: '/user/list',
+            component: 'TableList',
+            name: 'user-list',
+            icon: 'user-list',
+          },
+          {
+            path: '/user/group-authorize',
+            name: 'group-authorize',
+            icon: 'group-policy',
+            component: './Welcome',
+          },
+          {
+            path: '/user/management-unit',
+            name: 'management-unit',
+            icon: 'management-unit',
+            component: './Welcome',
+          },
+          {
+            component: './404',
+          },
+        ],
+      },
+      {
+        name: 'display-management',
+        icon: 'display-management',
+        path: '/display',
+        routes: [
+          {
+            path: '/display/screen-display',
+            name: 'screen-display',
+            icon: 'screen-display',
+            component: 'TableList',
+          },
+          {
+            path: '/display/storage',
+            name: 'store-display',
+            icon: 'display-storage',
+            component: 'TableList',
+          },
+        ],
       },
     ],
-  },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
-  },
-  {
-    path: '/',
-    redirect: '/welcome',
   },
   {
     component: './404',
   },
 ];
+
+export default routes;

@@ -1,0 +1,63 @@
+.stmHeader {
+  display: flex;
+  align-items: center;
+  padding: 6px 20px;
+  background: #1d2452;
+  cursor: pointer;
+}
+
+.stmMenuWrapper {
+  --width: 240px;
+
+  width: var(--width);
+  min-width: var(--width);
+  max-width: var(--width);
+  height: 100%;
+  transition: background-color 0.3s ease 0s, min-width 0.3s ease 0s,
+    max-width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) 0s;
+
+  &.collapsed {
+    --width: 60px;
+  }
+}
+
+.stmMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  height: 100vh;
+
+  :global {
+    .ant-layout-sider {
+      background: #1d2452;
+    }
+
+    .ant-menu,
+    .ant-menu-inline.ant-menu-sub {
+      background: transparent;
+    }
+
+    aside.ant-layout-sider > div.ant-layout-sider-children > :first-child {
+      padding-right: 20px;
+    }
+
+    aside.ant-layout-sider-collapsed > div.ant-layout-sider-children > :first-child {
+      padding-right: 10px;
+    }
+
+    ul.ant-menu {
+      > li.ant-menu-submenu {
+        border-bottom: 1px solid rgba(246, 248, 248, 0.15);
+      }
+
+      > li.ant-menu-item-selected {
+        color: white;
+        font-weight: bold;
+        background-color: #303b88 !important;
+        border-radius: 0 99px 99px 0;
+      }
+    }
+  }
+}
