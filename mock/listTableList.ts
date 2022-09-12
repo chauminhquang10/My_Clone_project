@@ -15,6 +15,10 @@ const genList = (current: number, pageSize: number) => {
             email: `Email${index}@gmail.com`,
             phoneNumber: `${Math.floor(Math.random() * 1000)}`,
             status: "ACTIVE",
+            managementUnit: {
+                code: "ABC",
+                name: `${index}`,
+            },
         });
     }
     return tableListDataSource;

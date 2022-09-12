@@ -12,10 +12,6 @@ export async function getListMachines(
         method: "GET",
         params: {
             ...params,
-            stmFilter: undefined,
-            ...params["stmFilter"],
-            pageRequest: undefined,
-            ...params["pageRequest"],
         },
         ...(options || {}),
     });
@@ -70,23 +66,6 @@ export async function updateMachine(
             },
             params: { ...queryParams },
             data: body,
-            ...(options || {}),
-        }
-    );
-}
-
-/** Delete STM  - Delete STM DELETE /api/v1/machines/${param0} */
-export async function deleteMachine(
-    // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-    params: API.deleteMachineParams,
-    options?: { [key: string]: any }
-) {
-    const { id: param0, ...queryParams } = params;
-    return request<API.ResponseBaseStmInfoResponse>(
-        `/api/v1/machines/${param0}`,
-        {
-            method: "DELETE",
-            params: { ...queryParams },
             ...(options || {}),
         }
     );
@@ -159,10 +138,6 @@ export async function getSystemOperation(
             method: "GET",
             params: {
                 ...params,
-                filter: undefined,
-                ...params["filter"],
-                req: undefined,
-                ...params["req"],
             },
             ...(options || {}),
         }

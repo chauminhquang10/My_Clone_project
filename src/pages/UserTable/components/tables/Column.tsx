@@ -62,27 +62,20 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
                 );
             },
         },
-        // {
-        //     title: <HeadCell>Mã - Tên đơn vị</HeadCell>,
-        //     dataIndex: "unit",
-        //     sorter: (a, b) => {
-        //         return (a.status as number) - (b.status as number);
-        //     },
-        //     filters: true,
-
-        //     onFilter: true,
-        //     valueEnum: {
-        //         0: {
-        //             text: "unit 0",
-        //         },
-        //         1: {
-        //             text: "unit 1",
-        //         },
-        //     },
-        //     render: (dom) => {
-        //         return <TextCell position="left">{dom}</TextCell>;
-        //     },
-        // },
+        {
+            title: <HeadCell>Mã - Tên đơn vị</HeadCell>,
+            dataIndex: "managementUnit",
+            sorter: (a, b) => {
+                const codeNameA = `${a.managementUnit?.code} - ${a.managementUnit?.name}`;
+                const codeNameB = `${b.managementUnit?.code} - ${b.managementUnit?.name}`;
+                return codeNameA.localeCompare(codeNameB);
+            },
+            render: (dom, entity) => {
+                return (
+                    <TextCell position="left">{`${entity.managementUnit?.code} - ${entity.managementUnit?.name}`}</TextCell>
+                );
+            },
+        },
         {
             title: <HeadCell>Email</HeadCell>,
             dataIndex: "email",

@@ -12,10 +12,6 @@ export async function getAllUsers(
         method: "GET",
         params: {
             ...params,
-            filter: undefined,
-            ...params["filter"],
-            pageRequest: undefined,
-            ...params["pageRequest"],
         },
         ...(options || {}),
     });
