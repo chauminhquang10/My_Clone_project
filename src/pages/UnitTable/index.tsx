@@ -15,11 +15,11 @@ import {
 import { Drawer, message } from "antd";
 import { useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "umi";
-import AddNew from "./components/tables/AddNew";
+import AddNew from "@/components/TableProperties/AddNew";
 import Column from "./components/tables/Column";
 // import SelectPage from "./components/tables/SelectPage";
 import style from "./components/tables/style.less";
-import TitleTable from "./components/tables/TitleTable";
+import TitleTable from "@/components/TableProperties/TitleTable";
 
 /**
  * @en-US Add node
@@ -84,7 +84,7 @@ const TableCustom = () => {
             footer={undefined}
         >
             <ProTable<API.ManagementUnitResponse, APIS.PageParams>
-                headerTitle={<TitleTable />}
+                headerTitle={<TitleTable>Đơn vị quản lý</TitleTable>}
                 actionRef={actionRef}
                 rowKey="key"
                 search={false}

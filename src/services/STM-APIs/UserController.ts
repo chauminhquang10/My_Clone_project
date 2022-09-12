@@ -131,13 +131,16 @@ export async function checkUserExisted(
     params: API.checkUserExistedParams,
     options?: { [key: string]: any }
 ) {
-    return request<API.ResponseBaseUserResponse>("/api/v1/users/checking", {
-        method: "GET",
-        params: {
-            ...params,
-        },
-        ...(options || {}),
-    });
+    return request<API.ResponseBaseCheckUserExistResponse>(
+        "/api/v1/users/checking",
+        {
+            method: "GET",
+            params: {
+                ...params,
+            },
+            ...(options || {}),
+        }
+    );
 }
 
 /** Get my profile  - Get current login user's profile GET /api/v1/users/profile */

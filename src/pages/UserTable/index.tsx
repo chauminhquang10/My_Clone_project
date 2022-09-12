@@ -1,29 +1,30 @@
-import { addRule, removeRule, rule } from "@/services/ant-design-pro/api";
+import { addRule, rule } from "@/services/ant-design-pro/api";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
+// import { getAllUsers } from "@/services/STM-APIs/UserController";
 import {
-    FooterToolbar,
     PageContainer,
     ProFormText,
     ProFormTextArea,
     ProTable,
 } from "@ant-design/pro-components";
-import { Button, message } from "antd";
+import { message } from "antd";
 import { useRef, useState } from "react";
 import { FormattedMessage } from "umi";
+// import {useRequest} from "umi";
 import NewUserForm from "./components/forms/NewUserForm";
 import UserDetailDrawer from "./components/forms/UserDetailDrawer";
-import AddNew from "./components/tables/AddNew";
+import AddNew from "@/components/TableProperties/AddNew";
 import Column from "./components/tables/Column";
 // import SelectPage from "./components/tables/SelectPage";
 import style from "./components/tables/style.less";
-import TitleTable from "./components/tables/TitleTable";
+import TitleTable from "@/components/TableProperties/TitleTable";
 
 /**
  * @en-US Add node
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: APIS.RuleListItem) => {
+const handleAdd = async (fields: API.UserResponse) => {
     const hide = message.loading("正在添加");
     try {
         await addRule({ ...fields });
@@ -37,30 +38,25 @@ const handleAdd = async (fields: APIS.RuleListItem) => {
     }
 };
 
-/**
- *  Delete node
- * @zh-CN 删除节点
- *
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: APIS.RuleListItem[]) => {
-    const hide = message.loading("正在删除");
-    if (!selectedRows) return true;
-    try {
-        await removeRule({
-            key: selectedRows.map((row) => row.key),
-        });
-        hide();
-        message.success("Deleted successfully and will refresh soon");
-        return true;
-    } catch (error) {
-        hide();
-        message.error("Delete failed, please try again");
-        return false;
-    }
-};
-
 const TableCustom = () => {
+    //--------------- listUSer -----------------------------------
+    // const [listUser, setListUser] = useState<API.UserResponse[] | undefined>();
+    //---------------  handle getAllUser -------------------------------
+
+    // const { run: runGetAllUser } = useRequest(
+    //     (params: API.getAllUsersParams) => getAllUsers(params),
+    //     {
+    //         manual: true,
+    //         onSuccess: (res) => {
+    //             const data = res as API.ResponseBasePageResponseObject;
+    //             const listUserRespone = data.data?.items;
+    //             setListUser(listUserRespone);
+    //         },
+    //         onError: (error) => {
+    //             console.log(error);
+    //         },
+    //     }
+    // );
     /**
      * @en-US Pop-up window of new window
      * @zh-CN 新建窗口的弹窗
@@ -75,11 +71,7 @@ const TableCustom = () => {
     const [showDetail, setShowDetail] = useState<boolean>(false);
 
     const actionRef = useRef<ActionType>();
-    const [currentRow, setCurrentRow] = useState<APIS.RuleListItem>();
-    console.log(currentRow);
-    const [selectedRowsState, setSelectedRows] = useState<APIS.RuleListItem[]>(
-        []
-    );
+    const [currentRow, setCurrentRow] = useState<API.UserResponse>();
 
     /**
      * @en-US International configuration
@@ -89,7 +81,7 @@ const TableCustom = () => {
     // const [page, setPage] = useState<number>();
     // const [pageSize, setPageSize] = useState<number>();
     // const pageSizeRef = useRef<number>(20);
-    const columns: ProColumns<APIS.RuleListItem>[] = Column({
+    const columns: ProColumns<API.UserResponse>[] = Column({
         setCurrentRow,
         setShowDetail,
     });
@@ -106,8 +98,8 @@ const TableCustom = () => {
             }}
             footer={undefined}
         >
-            <ProTable<APIS.RuleListItem, APIS.PageParams>
-                headerTitle={<TitleTable />}
+            <ProTable
+                headerTitle={<TitleTable>Danh sách người dùng</TitleTable>}
                 actionRef={actionRef}
                 rowKey="key"
                 search={false}
@@ -120,6 +112,26 @@ const TableCustom = () => {
                     />,
                 ]}
                 request={rule}
+                // request={async (params = {}) => {
+                //     const filterParams: API.UserFilter = {
+                //         managementUnit: "",
+                //         staffId: "",
+                //     };
+
+                //     const pageRequestParams: API.PageReq = {
+                //         pageNumber: params.current,
+                //         pageSize: params.pageSize,
+                //         sortDirection: "",
+                //         sortBy: "",
+                //     };
+                //     await runGetAllUser({
+                //         filter: filterParams,
+                //         pageRequest: pageRequestParams,
+                //     });
+                //     return {
+                //         data: listUser,
+                //     };
+                // }}
                 columns={columns}
                 options={false}
                 // rowSelection={{
@@ -145,66 +157,13 @@ const TableCustom = () => {
                 }}
             />
 
-            {selectedRowsState?.length > 0 && (
-                <FooterToolbar
-                    extra={
-                        <div>
-                            <FormattedMessage
-                                id="pages.searchTable.chosen"
-                                defaultMessage="Chosen"
-                            />{" "}
-                            <a style={{ fontWeight: 600 }}>
-                                {selectedRowsState.length}
-                            </a>{" "}
-                            <FormattedMessage
-                                id="pages.searchTable.item"
-                                defaultMessage="项"
-                            />
-                            &nbsp;&nbsp;
-                            <span>
-                                <FormattedMessage
-                                    id="pages.searchTable.totalServiceCalls"
-                                    defaultMessage="Total number of service calls"
-                                />{" "}
-                                {selectedRowsState.reduce(
-                                    (pre, item) => pre + item.callNo!,
-                                    0
-                                )}{" "}
-                                <FormattedMessage
-                                    id="pages.searchTable.tenThousand"
-                                    defaultMessage="万"
-                                />
-                            </span>
-                        </div>
-                    }
-                >
-                    <Button
-                        onClick={async () => {
-                            await handleRemove(selectedRowsState);
-                            setSelectedRows([]);
-                            actionRef.current?.reloadAndRest?.();
-                        }}
-                    >
-                        <FormattedMessage
-                            id="pages.searchTable.batchDeletion"
-                            defaultMessage="Batch deletion"
-                        />
-                    </Button>
-                    <Button type="primary">
-                        <FormattedMessage
-                            id="pages.searchTable.batchApproval"
-                            defaultMessage="Batch approval"
-                        />
-                    </Button>
-                </FooterToolbar>
-            )}
             <NewUserForm
                 title="Tạo người dùng mới"
                 width="934px"
                 visible={createModalVisible}
                 onVisibleChange={handleModalVisible}
                 onFinish={async (value) => {
-                    const success = await handleAdd(value as APIS.RuleListItem);
+                    const success = await handleAdd(value as API.UserResponse);
                     if (success) {
                         handleModalVisible(false);
                         if (actionRef.current) {

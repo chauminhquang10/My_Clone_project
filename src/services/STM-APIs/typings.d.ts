@@ -28,7 +28,7 @@ declare namespace API {
 
     type changeMachineStatusParams = {
         id: string;
-        status: string;
+        status: "UNKNOWN" | "IN_SERVICE" | "OUT_OF_SERVICE" | "OFFLINE";
     };
 
     type ChangePasswordRequest = {
@@ -45,9 +45,17 @@ declare namespace API {
         value: string;
     };
 
+    type CheckMachineExistResponse = {
+        existed?: boolean;
+    };
+
     type checkUserExistedParams = {
         key: string;
         value: string;
+    };
+
+    type CheckUserExistResponse = {
+        existed?: boolean;
     };
 
     type CreateManagementUnitRequest = {
@@ -377,6 +385,18 @@ declare namespace API {
         data?: ChangePasswordResponse;
     };
 
+    type ResponseBaseCheckMachineExistResponse = {
+        code?: number;
+        message?: string;
+        data?: CheckMachineExistResponse;
+    };
+
+    type ResponseBaseCheckUserExistResponse = {
+        code?: number;
+        message?: string;
+        data?: CheckUserExistResponse;
+    };
+
     type ResponseBaseGetListDistrictResponse = {
         code?: number;
         message?: string;
@@ -542,7 +562,7 @@ declare namespace API {
 
     type StmDetailResponse = {
         id?: string;
-        order?: number;
+        machineOrder?: number;
         /** Values: STM | ATM | CDM */
         machineType?: "UNKNOWN" | "STM" | "CDM" | "ATM";
         model?: StmModelResponse;
@@ -594,7 +614,7 @@ declare namespace API {
 
     type StmInfoResponse = {
         id?: string;
-        order?: number;
+        machineOrder?: number;
         location?: string;
         province?: Province;
         /** Values: STM | ATM | CDM */
@@ -629,7 +649,7 @@ declare namespace API {
     };
 
     type SystemOperationFilter = {
-        machineType?: string;
+        module?: "MACHINE" | "USER" | "MODEL" | "MANAGEMENT_UNIT" | "VERSION";
         query?: string;
         /** dd-MM-YYYY */
         from?: string;
@@ -789,8 +809,8 @@ declare namespace API {
     };
 
     type UpdateVersionRequest = {
-        modelId?: number;
-        name?: string;
+        modelId: number;
+        name: string;
         file: string;
         content?: string;
         condition?: string;
@@ -803,7 +823,7 @@ declare namespace API {
         name?: string;
         email?: string;
         phoneNumber?: string;
-        status?: "INITIAL" | "ACTIVE" | "INACTIVE";
+        status?: "UNKNOWN" | "ACTIVE" | "INACTIVE";
         machines?: StmInfoResponse[];
         roles?: Role[];
         managementUnit?: ManagementUnitResponse;
@@ -821,11 +841,12 @@ declare namespace API {
         name?: string;
         email?: string;
         phoneNumber?: string;
-        status?: "INITIAL" | "ACTIVE" | "INACTIVE";
+        status?: "UNKNOWN" | "ACTIVE" | "INACTIVE";
     };
 
     type VersionFilter = {
-        machineType?: string;
+        /** Values: STM | ATM | CDM */
+        machineType?: "UNKNOWN" | "STM" | "CDM" | "ATM";
         modelId?: number;
     };
 

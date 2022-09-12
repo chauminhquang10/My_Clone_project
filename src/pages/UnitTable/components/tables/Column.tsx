@@ -1,6 +1,6 @@
 import type { ProColumns } from "@ant-design/pro-components";
-import HeadCell from "./HeadCell";
-import { TextCell } from "./TableCell";
+import HeadCell from "@/components/TableProperties/HeadCell";
+import { TextCell } from "@/components/TableProperties/TableCell";
 
 type ColumnProps = {
     setCurrentRow: (s: API.ManagementUnitResponse) => void;

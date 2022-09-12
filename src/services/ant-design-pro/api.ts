@@ -54,7 +54,7 @@ export async function rule(
     },
     options?: { [key: string]: any }
 ) {
-    return request<APIS.RuleList>("/api/rule", {
+    return request<API.UserResponse>("/api/rule", {
         method: "GET",
         params: {
             ...params,

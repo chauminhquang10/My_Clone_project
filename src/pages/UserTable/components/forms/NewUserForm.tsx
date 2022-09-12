@@ -32,7 +32,7 @@ type CreateFormProps = {
     width: string;
     visible: boolean;
     onVisibleChange: (value: boolean) => void;
-    onFinish: (values: Partial<API.RuleListItem>) => Promise<boolean>;
+    onFinish: (values: Partial<API.UserResponse>) => Promise<boolean>;
 };
 
 interface ItemProps {

@@ -116,7 +116,7 @@ export async function checkMachineExisted(
     params: API.checkMachineExistedParams,
     options?: { [key: string]: any }
 ) {
-    return request<API.ResponseBaseStmInfoResponse>(
+    return request<API.ResponseBaseCheckMachineExistResponse>(
         "/api/v1/machines/checking",
         {
             method: "GET",

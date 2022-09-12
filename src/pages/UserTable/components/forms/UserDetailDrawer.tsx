@@ -39,8 +39,8 @@ type UserRole = {
 type UserDrawerProps = {
     showDetail: boolean;
     setShowDetail: (value: boolean) => void;
-    currentRow: API.RuleListItem | undefined;
-    setCurrentRow: (value: API.RuleListItem | undefined) => void;
+    currentRow: API.UserResponse | undefined;
+    setCurrentRow: (value: API.UserResponse | undefined) => void;
     userAvatar: string;
     userInfo?: {
         userId: string;
@@ -208,7 +208,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
                 closable={true}
                 headerStyle={{ border: "none" }}
             >
-                {currentRow?.employeeName && (
+                {currentRow?.name && (
                     <Form layout="vertical" hideRequiredMark>
                         <Row>
                             <Col span={15}>
@@ -383,42 +383,47 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
                                     >
                                         <Row gutter={[24, 24]}>
                                             {roles.map((role, roleIndex) => {
-                                                <Col span={8} key={roleIndex}>
-                                                    <Form.Item
-                                                        name="machineRole"
-                                                        label={
-                                                            role
-                                                                ? role.roleName
-                                                                : "Tên resource"
-                                                        }
+                                                return (
+                                                    <Col
+                                                        span={8}
+                                                        key={roleIndex}
                                                     >
-                                                        <ul
-                                                            className={
-                                                                styles.roleList
+                                                        <Form.Item
+                                                            name="machineRole"
+                                                            label={
+                                                                role
+                                                                    ? role.roleName
+                                                                    : "Tên resource"
                                                             }
                                                         >
-                                                            {role?.roleDetails.map(
-                                                                (
-                                                                    roleItem,
-                                                                    roleItemIndex
-                                                                ) => {
-                                                                    <li
-                                                                        className={
-                                                                            styles.roleListItem
-                                                                        }
-                                                                        key={
-                                                                            roleItemIndex
-                                                                        }
-                                                                    >
-                                                                        {roleItem
-                                                                            ? roleItem
-                                                                            : "Action"}
-                                                                    </li>;
+                                                            <ul
+                                                                className={
+                                                                    styles.roleList
                                                                 }
-                                                            )}
-                                                        </ul>
-                                                    </Form.Item>
-                                                </Col>;
+                                                            >
+                                                                {role?.roleDetails.map(
+                                                                    (
+                                                                        roleItem,
+                                                                        roleItemIndex
+                                                                    ) => {
+                                                                        <li
+                                                                            className={
+                                                                                styles.roleListItem
+                                                                            }
+                                                                            key={
+                                                                                roleItemIndex
+                                                                            }
+                                                                        >
+                                                                            {roleItem
+                                                                                ? roleItem
+                                                                                : "Action"}
+                                                                        </li>;
+                                                                    }
+                                                                )}
+                                                            </ul>
+                                                        </Form.Item>
+                                                    </Col>
+                                                );
                                             })}
                                         </Row>
                                     </Card>

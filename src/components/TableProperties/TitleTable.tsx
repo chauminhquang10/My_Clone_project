@@ -1,10 +1,15 @@
 import style from "./style.less";
 import { Input } from "antd";
 import searchIcon from "@/assets/images/svg/icon/search-icon.svg";
-function TitleTable() {
+
+type TitleTableProps = {
+    children: string;
+};
+
+function TitleTable({ children }: TitleTableProps) {
     return (
         <div className={style["title-table"]}>
-            <h1 className={style.title}>Danh sách người dùng</h1>
+            <h1 className={style.title}>{children}</h1>
             {/* <div className={style["input-box"]}></div> */}
             <Input
                 className={style["input-box"]}
