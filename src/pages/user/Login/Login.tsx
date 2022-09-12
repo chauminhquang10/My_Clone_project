@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer";
-import { login } from "@/services/ant-design-pro/login";
+import { login } from "@/services/ant-design-pro/api";
 import { getFakeCaptcha } from "@/services/ant-design-pro/login";
 import {
     AlipayCircleOutlined,
@@ -286,7 +286,7 @@ const Login: React.FC = () => {
                                     const result = await getFakeCaptcha({
                                         phone,
                                     });
-                                    if (!result) {
+                                    if (result === false) {
                                         return;
                                     }
                                     message.success(

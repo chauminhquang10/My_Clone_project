@@ -16,7 +16,7 @@ import UserDetailDrawer from "./components/forms/UserDetailDrawer";
 import AddNew from "@/components/TableProperties/AddNew";
 import Column from "./components/tables/Column";
 // import SelectPage from "./components/tables/SelectPage";
-import style from "./components/tables/style.less";
+import style from "@/components/TableProperties/style.less";
 import TitleTable from "@/components/TableProperties/TitleTable";
 
 /**
@@ -87,7 +87,7 @@ const TableCustom = () => {
     });
 
     const [currentPage, setCurrentPage] = useState<number>(0);
-    const pageSize = useRef<number>(30);
+    const pageSize = useRef<number>(20);
     // const [totalPage, setTotalPage] = useState<number>(1);
 
     return (
@@ -154,6 +154,7 @@ const TableCustom = () => {
                         >{`${range[0]}-${range[1]} trong số ${total}`}</div>
                     ),
                     hideOnSinglePage: true,
+                    showQuickJumper: true,
                 }}
             />
 

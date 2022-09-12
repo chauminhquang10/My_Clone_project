@@ -18,7 +18,7 @@ import { FormattedMessage, useIntl } from "umi";
 import AddNew from "@/components/TableProperties/AddNew";
 import Column from "./components/tables/Column";
 // import SelectPage from "./components/tables/SelectPage";
-import style from "./components/tables/style.less";
+import style from "@/components/TableProperties/style.less";
 import TitleTable from "@/components/TableProperties/TitleTable";
 
 /**
@@ -72,7 +72,7 @@ const TableCustom = () => {
     });
 
     const [currentPage, setCurrentPage] = useState<number>(0);
-    const pageSize = useRef<number>(30);
+    const pageSize = useRef<number>(20);
     // const [totalPage, setTotalPage] = useState<number>(1);
 
     return (
@@ -83,7 +83,7 @@ const TableCustom = () => {
             }}
             footer={undefined}
         >
-            <ProTable<API.ManagementUnitResponse, APIS.PageParams>
+            <ProTable
                 headerTitle={<TitleTable>Đơn vị quản lý</TitleTable>}
                 actionRef={actionRef}
                 rowKey="key"
@@ -118,6 +118,7 @@ const TableCustom = () => {
                             className={style["total-box"]}
                         >{`${range[0]}-${range[1]} trong số ${total}`}</div>
                     ),
+                    showQuickJumper: true,
                     hideOnSinglePage: true,
                 }}
             />
