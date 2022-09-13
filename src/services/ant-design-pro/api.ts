@@ -63,6 +63,25 @@ export async function rule(
     });
 }
 
+export async function machineList(
+    params: {
+        // query
+        /** 当前的页码 */
+        current?: number;
+        /** 页面的容量 */
+        pageSize?: number;
+    },
+    options?: { [key: string]: any }
+) {
+    return request<API.UserResponse>("/api/listMachine", {
+        method: "GET",
+        params: {
+            ...params,
+        },
+        ...(options || {}),
+    });
+}
+
 /** 获取规则列表 GET /api/rule */
 export async function unit(
     params: {

@@ -18,6 +18,7 @@ import Column from "./components/tables/Column";
 // import SelectPage from "./components/tables/SelectPage";
 import style from "@/components/TableProperties/style.less";
 import TitleTable from "@/components/TableProperties/TitleTable";
+import TotalPagination from "@/components/TableProperties/TotalPagination";
 
 /**
  * @en-US Add node
@@ -90,6 +91,13 @@ const TableCustom = () => {
     const pageSize = useRef<number>(20);
     // const [totalPage, setTotalPage] = useState<number>(1);
 
+    //-------------- Pagination props --------------------------------
+    const paginationLocale = {
+        items_per_page: "",
+        jump_to: "Trang",
+        page: "",
+    };
+
     return (
         <PageContainer
             className={style["table-container"]}
@@ -145,13 +153,11 @@ const TableCustom = () => {
                     },
                     current: currentPage,
                     className: style["pagination-custom"],
-                    locale: { items_per_page: "" },
+                    locale: { ...paginationLocale },
                     showSizeChanger: false,
                     pageSize: pageSize.current,
                     showTotal: (total, range) => (
-                        <div
-                            className={style["total-box"]}
-                        >{`${range[0]}-${range[1]} trong số ${total}`}</div>
+                        <TotalPagination total={total} range={range} />
                     ),
                     hideOnSinglePage: true,
                     showQuickJumper: true,

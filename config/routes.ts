@@ -33,7 +33,7 @@ const routes = [
                         path: "/machine/list",
                         name: "list",
                         icon: "machine-list",
-                        component: "TableList",
+                        component: "MachineTable",
                     },
                     {
                         path: "/machine/analytics",

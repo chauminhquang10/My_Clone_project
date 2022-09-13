@@ -1,20 +1,17 @@
-import { addRule, unit } from "@/services/ant-design-pro/api";
-import type {
-    ActionType,
-    ProColumns,
-    ProDescriptionsItemProps,
-} from "@ant-design/pro-components";
+import { addRule, machineList } from "@/services/ant-design-pro/api";
+import type { ActionType, ProColumns } from "@ant-design/pro-components";
+// import { getAllUsers } from "@/services/STM-APIs/UserController";
 import {
-    ModalForm,
     PageContainer,
-    ProDescriptions,
     ProFormText,
     ProFormTextArea,
     ProTable,
 } from "@ant-design/pro-components";
-import { Drawer, message } from "antd";
+import { message } from "antd";
 import { useRef, useState } from "react";
-import { FormattedMessage, useIntl } from "umi";
+import { FormattedMessage } from "umi";
+// import {useRequest} from "umi";
+import NewUserForm from "./components/forms/NewUserForm";
 import AddNew from "@/components/TableProperties/AddNew";
 import Column from "./components/tables/Column";
 // import SelectPage from "./components/tables/SelectPage";
@@ -27,7 +24,7 @@ import TotalPagination from "@/components/TableProperties/TotalPagination";
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.ManagementUnitResponse) => {
+const handleAdd = async (fields: API.StmInfoResponse) => {
     const hide = message.loading("正在添加");
     try {
         await addRule({ ...fields });
@@ -42,6 +39,24 @@ const handleAdd = async (fields: API.ManagementUnitResponse) => {
 };
 
 const TableCustom = () => {
+    //--------------- listUSer -----------------------------------
+    // const [listUser, setListUser] = useState<API.StmInfoResponse[] | undefined>();
+    //---------------  handle getAllUser -------------------------------
+
+    // const { run: runGetAllUser } = useRequest(
+    //     (params: API.getAllUsersParams) => getAllUsers(params),
+    //     {
+    //         manual: true,
+    //         onSuccess: (res) => {
+    //             const data = res as API.ResponseBasePageResponseObject;
+    //             const listUserRespone = data.data?.items;
+    //             setListUser(listUserRespone);
+    //         },
+    //         onError: (error) => {
+    //             console.log(error);
+    //         },
+    //     }
+    // );
     /**
      * @en-US Pop-up window of new window
      * @zh-CN 新建窗口的弹窗
@@ -56,18 +71,19 @@ const TableCustom = () => {
     const [showDetail, setShowDetail] = useState<boolean>(false);
 
     const actionRef = useRef<ActionType>();
-    const [currentRow, setCurrentRow] = useState<API.ManagementUnitResponse>();
+    const [currentRow, setCurrentRow] = useState<API.StmInfoResponse>();
+
+    console.log(showDetail, currentRow);
 
     /**
      * @en-US International configuration
      * @zh-CN 国际化配置
      * */
-    const intl = useIntl();
 
     // const [page, setPage] = useState<number>();
     // const [pageSize, setPageSize] = useState<number>();
     // const pageSizeRef = useRef<number>(20);
-    const columns: ProColumns<API.ManagementUnitResponse>[] = Column({
+    const columns: ProColumns<API.StmInfoResponse>[] = Column({
         setCurrentRow,
         setShowDetail,
     });
@@ -92,7 +108,7 @@ const TableCustom = () => {
             footer={undefined}
         >
             <ProTable
-                headerTitle={<TitleTable>Đơn vị quản lý</TitleTable>}
+                headerTitle={<TitleTable>Danh sách máy</TitleTable>}
                 actionRef={actionRef}
                 rowKey="key"
                 search={false}
@@ -104,7 +120,7 @@ const TableCustom = () => {
                         }}
                     />,
                 ]}
-                request={unit}
+                request={machineList}
                 // request={async (params = {}) => {
                 //     const filterParams: API.UserFilter = {
                 //         managementUnit: "",
@@ -149,24 +165,23 @@ const TableCustom = () => {
                 }}
             />
 
-            <ModalForm
-                title={intl.formatMessage({
-                    id: "pages.searchTable.createForm.newRule",
-                    defaultMessage: "New rule",
-                })}
-                width="400px"
+            <NewUserForm
+                title="Tạo người dùng mới"
+                width="934px"
                 visible={createModalVisible}
                 onVisibleChange={handleModalVisible}
                 onFinish={async (value) => {
                     const success = await handleAdd(
-                        value as API.ManagementUnitResponse
+                        value as API.StmInfoResponse
                     );
                     if (success) {
                         handleModalVisible(false);
                         if (actionRef.current) {
                             actionRef.current.reload();
                         }
+                        return true;
                     }
+                    return false;
                 }}
             >
                 <ProFormText
@@ -185,33 +200,7 @@ const TableCustom = () => {
                     name="name"
                 />
                 <ProFormTextArea width="md" name="desc" />
-            </ModalForm>
-
-            <Drawer
-                width={600}
-                visible={showDetail}
-                onClose={() => {
-                    setCurrentRow(undefined);
-                    setShowDetail(false);
-                }}
-                closable={false}
-            >
-                {currentRow?.name && (
-                    <ProDescriptions<API.ManagementUnitResponse>
-                        column={2}
-                        title={currentRow?.name}
-                        request={async () => ({
-                            data: currentRow || {},
-                        })}
-                        params={{
-                            id: currentRow?.name,
-                        }}
-                        columns={
-                            columns as ProDescriptionsItemProps<API.ManagementUnitResponse>[]
-                        }
-                    />
-                )}
-            </Drawer>
+            </NewUserForm>
         </PageContainer>
     );
 };
