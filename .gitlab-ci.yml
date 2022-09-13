@@ -46,7 +46,7 @@ deploy-dev:
     - cd /workspace
     - git checkout $CHART_BRANCH
     - chmod +x scripts/update-pull-secret.sh&&./scripts/update-pull-secret.sh
-    - helm upgrade --install --recreate-pods --create-namespace -n $NAME_SPACE $SERVICE_NAME $CHART_DIR -f values/dev/$SERVICE_NAME.yaml
+    - helm upgrade --install --recreate-pods -n $NAME_SPACE $SERVICE_NAME $CHART_DIR -f values/dev/$SERVICE_NAME.yaml
   only:
     - develop
   tags:
