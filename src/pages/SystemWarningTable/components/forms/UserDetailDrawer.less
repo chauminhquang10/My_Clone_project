@@ -1,0 +1,238 @@
+.drawerHeaderTitle {
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
+    font-size: 20px;
+    font-family: "Roboto";
+    font-style: normal;
+    line-height: 28px;
+}
+
+.btnGroupTitle {
+    color: #434343;
+    font-weight: 400;
+    font-size: 14px;
+    font-family: "Roboto";
+    font-style: normal;
+    line-height: 22px;
+}
+
+.btnItem {
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.016);
+}
+
+.avatarGroupContainer {
+    margin-top: 20px;
+    margin-bottom: 24px;
+}
+
+.avatarItem {
+    width: 100px;
+    height: 100px;
+}
+
+.myDrawer {
+    :global {
+        .ant-drawer-close {
+            padding: 0;
+            font-size: 11px;
+        }
+        .ant-drawer-content {
+            background: #fff;
+            border-radius: 12px 0 0 12px;
+        }
+        .ant-drawer-header {
+            padding: 20px 0 0 20px;
+        }
+
+        .ant-drawer-body {
+            padding: 15px 20px 0 20px;
+        }
+    }
+}
+
+.myDrawerHeaderBtnGroup {
+    :global {
+        .ant-btn {
+            padding: 5px 9px;
+        }
+    }
+}
+
+.myCard {
+    border: 1px solid #d9d9d9;
+    border-radius: 12px;
+
+    .roleList {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    .roleListItem {
+        padding: 8px;
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: 400;
+        font-size: 14px;
+        font-family: "Roboto";
+        font-style: normal;
+        line-height: 22px;
+        background: #f6f8f8;
+
+        &::before {
+            margin-right: 12px;
+            content: url("../../../../assets/images/svg/icon/hollow-circle.svg");
+        }
+    }
+
+    :global {
+        .ant-card-head {
+            padding: 8px 20px;
+        }
+
+        .ant-card-head-title {
+            padding: 0 !important;
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: 500;
+            font-size: 16px;
+            font-family: "Roboto";
+            font-style: normal;
+            line-height: 24px;
+        }
+
+        .ant-form-item {
+            margin-bottom: 0;
+        }
+
+        .ant-form-item-label > label {
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: 400;
+            font-size: 14px;
+            font-family: "Roboto";
+            font-style: normal;
+            line-height: 22px;
+        }
+
+        .ant-form-item-control-input-content > input {
+            padding: 5px 12px;
+            background: #f5f5f5;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+
+            &::placeholder {
+                color: #595959;
+                font-weight: 400;
+                font-size: 14px;
+                font-family: "Roboto";
+                font-style: normal;
+                line-height: 22px;
+            }
+        }
+
+        .ant-card-body {
+            padding: 12px 20px 20px 20px;
+        }
+    }
+}
+
+.myTable {
+    :global {
+        .ant-table {
+            border: 1px solid #d9d9d9;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .ant-table.ant-table-bordered > .ant-table-title {
+            border: none;
+        }
+
+        .ant-table-title {
+            padding: 8px 20px;
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: 500;
+            font-size: 16px;
+            font-family: "Roboto";
+            font-style: normal;
+            line-height: 24px;
+        }
+
+        .ant-table-thead > tr > th {
+            padding: 9px 16px;
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: 500;
+            font-size: 14px;
+            font-family: "Roboto";
+            font-style: normal;
+            line-height: 22px;
+            text-align: center !important;
+        }
+
+        .ant-table-tbody > tr > td {
+            padding: 9px 16px;
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: 400;
+            font-size: 14px;
+            font-family: "Roboto";
+            font-style: normal;
+            line-height: 22px;
+        }
+    }
+}
+
+.lockModalTitle {
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
+    font-size: 16px;
+    font-family: "Roboto";
+    font-style: normal;
+    line-height: 24px;
+}
+
+.myConfirmModal {
+    .lockModalDesc {
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: 400;
+        font-size: 14px;
+        font-family: "Roboto";
+        font-style: normal;
+        line-height: 22px;
+    }
+
+    .cancelLockModalButton {
+        padding: 8px 32px;
+        color: rgba(0, 0, 0, 0.45);
+        font-weight: 400;
+        font-size: 16px;
+        font-family: "Roboto";
+        font-style: normal;
+        line-height: 24px;
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.45);
+        border-radius: 4px;
+    }
+
+    .submitLockModalButton {
+        padding: 8px 32px;
+        color: #f6f8f8;
+        font-weight: 400;
+        font-size: 16px;
+        font-family: "Roboto";
+        font-style: normal;
+        line-height: 24px;
+        background: #f26122;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+    }
+
+    :global {
+        .ant-modal-content {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08),
+                0 9px 28px 8px rgba(0, 0, 0, 0.05);
+        }
+    }
+}
