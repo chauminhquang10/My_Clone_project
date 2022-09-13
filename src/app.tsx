@@ -27,9 +27,9 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await Api.UserController.getMyProfile();
+      const { data } = await Api.UserController.getMyProfile();
 
-      return msg.data.data;
+      return data;
     } catch (error) {
       history.push(loginPath);
     }
@@ -82,7 +82,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
-    childrenRender: (children, props) => {
+    childrenRender: (children: any, props: { location: { pathname: string | string[] } }) => {
       // if (initialState?.loading) return <PageLoading />;
       return (
         <>
