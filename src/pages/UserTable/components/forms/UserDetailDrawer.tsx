@@ -1,8 +1,4 @@
-import {
-    CloseOutlined,
-    EditOutlined,
-    ExclamationCircleOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 // import { PageContainer } from "@ant-design/pro-components";
 import {
     Col,
@@ -15,7 +11,6 @@ import {
     Space,
     Card,
     Table,
-    Modal,
     Tooltip,
 } from "antd";
 import type { ColumnsType } from "antd/lib/table";
@@ -24,12 +19,19 @@ import UserDetailStatus from "./UserDetailStatus";
 import UserHistoryAction from "./UserHistoryAction";
 import lockIcon from "@/assets/images/svg/icon/Locked.svg";
 import styles from "./UserDetailDrawer.less";
+import ModalCustom from "@/components/FormCustom/ModalCustom";
 
 interface DataType {
     staffId: string;
     action: string;
     createdTime: Date;
 }
+
+type ButtonType = {
+    title: string;
+    action: () => void;
+    type: "out-line" | "warning" | "confirm";
+};
 
 type UserRole = {
     roleName: string;
@@ -194,6 +196,30 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
     ];
 
     const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
+    //------------- Declare Modal --------------------------------
+    //------------- Button List --------------------
+
+    const buttonList: ButtonType[] = [
+        {
+            title: "Huỷ bỏ",
+            type: "out-line",
+            action: () => {
+                setOpenConfirmModal(false);
+            },
+        },
+        {
+            title: "Xác nhận",
+            type: "warning",
+            action: () => {},
+        },
+    ];
+
+    //------------- Description List --------------------------------
+
+    const descriptionList: string[] = [
+        "Bạn có chắc chắn muốn tạm khóa ?",
+        "Người dùng này sẽ không thể truy cập vào hệ thống.",
+    ];
 
     return (
         <>
@@ -446,68 +472,18 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
                 )}
             </Drawer>
 
-            <Modal
-                footer={null}
-                centered
-                closable={false}
-                visible={openConfirmModal}
-                className={styles.myConfirmModal}
-            >
-                <Col span={24}>
-                    <Row>
-                        <Col span={2}>
-                            <ExclamationCircleOutlined
-                                style={{ color: "#FFC53D", fontSize: "22px" }}
-                            />
-                        </Col>
-                        <Col span={22}>
-                            <Row align="middle" justify="space-between">
-                                <h3 className={styles.lockModalTitle}>
-                                    Tạm khoá người dùng
-                                </h3>
-                                <CloseOutlined
-                                    style={{
-                                        fontSize: "16px",
-                                        color: "rgba(0, 0, 0, 0.45)",
-                                        cursor: "pointer",
-                                    }}
-                                    onClick={() => setOpenConfirmModal(false)}
-                                />
-                            </Row>
-                            <Row>
-                                <span className={styles.lockModalDesc}>
-                                    Bạn có chắc chắn muốn tạm khóa mã nhân viên
-                                    - tên nhân viên?{" "}
-                                </span>
-                                <span className={styles.lockModalDesc}>
-                                    Người dùng này sẽ không thể truy cập vào hệ
-                                    thống.
-                                </span>
-                            </Row>
-                        </Col>
-                    </Row>
-                    <Row
-                        align="middle"
-                        justify="end"
-                        style={{ gap: "8px", marginTop: "24px" }}
-                    >
-                        <Button
-                            className={styles.cancelLockModalButton}
-                            size="large"
-                            onClick={() => setOpenConfirmModal(false)}
-                        >
-                            Huỷ bỏ
-                        </Button>
-                        <Button
-                            className={styles.submitLockModalButton}
-                            size="large"
-                            onClick={() => setOpenConfirmModal(false)}
-                        >
-                            Xác nhận
-                        </Button>
-                    </Row>
-                </Col>
-            </Modal>
+            <ModalCustom
+                openConfirmModal={openConfirmModal}
+                setOpenConfirmModal={setOpenConfirmModal}
+                buttonList={buttonList}
+                descriptionList={descriptionList}
+                title="Tạm khoá người dùng"
+                icon={
+                    <ExclamationCircleOutlined
+                        style={{ color: "#FFC53D", fontSize: "22px" }}
+                    />
+                }
+            />
         </>
     );
 };
