@@ -107,6 +107,131 @@ function DropdownItem({ machine, onClick }: DropdownItemProps) {
     );
 }
 
+//--------------- User Item Tag --------------------------------
+
+type UserItemTagProps = {
+    children: API.UserResponse;
+};
+
+export function UserItemTag({ children }: UserItemTagProps) {
+    console.log(children);
+    return (
+        <div className={style["user-item-tag"]}>
+            <div className={style["img-box"]}>
+                <img
+                    className={style.avatar}
+                    src={children.avatar}
+                    alt="no-image"
+                />
+            </div>
+            <p className={style["user-name"]}>{children.name}</p>
+        </div>
+    );
+}
+
+//--------------- User Dropdown Item --------------------------------
+
+type UserDropdownItemProps = {
+    user: API.UserResponse;
+    onClick: () => void;
+};
+
+export function UserDropdownItem({ user, onClick }: UserDropdownItemProps) {
+    return (
+        <div
+            className={style["user-item-dropdown"]}
+            onClick={() => {
+                onClick();
+            }}
+        >
+            <div className={style["img-box"]}>
+                <img
+                    src={user.avatar}
+                    className={style.avatar}
+                    alt="no-image"
+                />
+            </div>
+            <p className={style["user-name"]}>{user.name}</p>
+        </div>
+    );
+}
+
+//--------------- List UserCellGroup of Table --------------------------------
+
+type UserCellGroupProps = {
+    listUser: API.UserResponse[] | undefined;
+};
+
+export function UserCellGroup({ listUser }: UserCellGroupProps) {
+    const amountUser = listUser?.length;
+    const [active, setActive] = useState(false);
+    const boxHoverRef = useRef<HTMLDivElement | null>(null);
+    //------------ function see detail machine --------------------
+    const openDetailMachine = () => {
+        console.log("open");
+    };
+    //------------ function open dropdown --------------------
+    const openDropdown = () => {
+        console.log(boxHoverRef.current);
+        setActive(true);
+    };
+    //------------ handle close dropdown ----------------
+    useEffect(() => {
+        const closeDropdown = (e: any) => {
+            if (e.target !== boxHoverRef.current && active) {
+                setActive(false);
+            }
+        };
+        addEventListener("click", closeDropdown);
+        return () => {
+            removeEventListener("click", closeDropdown);
+        };
+    }, [active]);
+    const amountDisplay = 3;
+    return (
+        <div className={style["manage-cell"]}>
+            {amountUser && amountUser <= amountDisplay
+                ? listUser.map((item) => {
+                      return <UserItemTag key={item.id}>{item}</UserItemTag>;
+                  })
+                : amountUser && (
+                      <>
+                          {listUser?.map((item, index) => {
+                              if (index < amountDisplay)
+                                  return (
+                                      <UserItemTag key={item.id}>
+                                          {item}
+                                      </UserItemTag>
+                                  );
+                              return null;
+                          })}
+                          <RestItem onClick={openDropdown}>{`+${
+                              amountUser - amountDisplay
+                          }`}</RestItem>
+                      </>
+                  )}
+            {amountUser && (
+                <div
+                    className={`${style["box-hover"]} ${
+                        active ? style.active : ""
+                    } ${amountUser > 5 ? style.scroll : ""}`}
+                    ref={boxHoverRef}
+                >
+                    {listUser.map((item) => {
+                        return (
+                            <UserDropdownItem
+                                user={item}
+                                key={item.id}
+                                onClick={openDetailMachine}
+                            />
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
+
 //--------------- ManageCell of Table ----------------
 
 type MachineType = {

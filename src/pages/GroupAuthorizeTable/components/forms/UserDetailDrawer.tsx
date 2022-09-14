@@ -2,8 +2,8 @@ import {
     CloseOutlined,
     EditOutlined,
     ExclamationCircleOutlined,
-    UnlockOutlined,
 } from "@ant-design/icons";
+// import { PageContainer } from "@ant-design/pro-components";
 import {
     Col,
     Drawer,
@@ -22,11 +22,8 @@ import type { ColumnsType } from "antd/lib/table";
 import React, { useState } from "react";
 import UserDetailStatus from "./UserDetailStatus";
 import UserHistoryAction from "./UserHistoryAction";
-import UpdateUserForm from "./UpdateUserForm";
-import lockIcon from "/src/assets/images/svg/icon/Locked.svg";
+import lockIcon from "@/assets/images/svg/icon/Locked.svg";
 import styles from "./UserDetailDrawer.less";
-import StatusTag from "@/components/TableProperties/StatusTag";
-import { TextCell } from "@/components/TableProperties/TableCell";
 
 interface DataType {
     staffId: string;
@@ -57,14 +54,6 @@ type UserDrawerProps = {
     roles?: UserRole[];
     children?: React.ReactNode;
 };
-
-interface MachineDataType {
-    machineId: string;
-    machineName: string;
-    IPAddress: string;
-    machineAddress: string;
-    status: string;
-}
 
 const UserDetailDrawer: React.FC<UserDrawerProps> = ({
     showDetail,
@@ -204,105 +193,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
         },
     ];
 
-    const machineListColumns: ColumnsType<MachineDataType> = [
-        {
-            title: "Tên máy",
-            dataIndex: "machineName",
-            key: "machineName",
-            width: "17%",
-            align: "left",
-            render: (text) => <TextCell>{text}</TextCell>,
-        },
-        {
-            title: "Terminal ID",
-            dataIndex: "machineId",
-            key: "machineId",
-            width: "20.5%",
-            align: "center",
-            render: (text) => <span>{text}</span>,
-        },
-        {
-            title: "Địa chỉ IP",
-            dataIndex: "IPAddress",
-            key: "IPAddress",
-            width: "20.5%",
-            align: "center",
-            render: (text) => <span>{text}</span>,
-        },
-        {
-            title: "Tình trạng",
-            key: "status",
-            dataIndex: "status",
-            width: "21.5%",
-            align: "center",
-            render: (_, { status }) => (
-                <StatusTag
-                    title={status}
-                    icon={<UnlockOutlined />}
-                    type="DISABLE"
-                />
-            ),
-        },
-        {
-            title: "Địa chỉ máy",
-            dataIndex: "machineAddress",
-            key: "IPAddress",
-            width: "20.5%",
-            align: "center",
-            render: (text) => <span>{text}</span>,
-        },
-    ];
-
-    const machineListData: MachineDataType[] = [
-        {
-            machineName: "Test Machine",
-            machineId: "1",
-            IPAddress: "Test IP",
-            status: "IN SERVICE",
-            machineAddress: "Test Machine",
-        },
-        {
-            machineName: "Test Machine",
-            machineId: "2",
-            IPAddress: "Test IP",
-            status: "IN SERVICE",
-            machineAddress: "Test Machine",
-        },
-        {
-            machineName: "Test Machine",
-            machineId: "3",
-            IPAddress: "Test IP",
-            status: "IN SERVICE",
-            machineAddress: "Test Machine",
-        },
-        {
-            machineName: "Test Machine",
-            machineId: "4",
-            IPAddress: "Test IP",
-            status: "IN SERVICE",
-            machineAddress: "Test Machine",
-        },
-        {
-            machineName: "Test Machine",
-            machineId: "5",
-            IPAddress: "Test IP",
-            status: "OUT OF SERVICE",
-            machineAddress: "Test Machine",
-        },
-        {
-            machineName: "Test Machine",
-            machineId: "6",
-            IPAddress: "Test IP",
-            status: "OUT OF SERVICE",
-            machineAddress: "Test Machine",
-        },
-    ];
-
     const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
-
-    // xử  lí trạng thái của form chỉnh sửa
-    const [updateModalVisible, handleUpdateModalVisible] =
-        useState<boolean>(false);
 
     return (
         <>
@@ -338,9 +229,6 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
                                                 <EditOutlined color="#434343" />
                                             }
                                             className={styles.btnItem}
-                                            onClick={() => {
-                                                handleUpdateModalVisible(true);
-                                            }}
                                         >
                                             <span
                                                 className={styles.btnGroupTitle}
@@ -485,46 +373,6 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
                                     </Row>
                                 </Card>
                             </Col>
-                            <Col span={24}>
-                                <Card
-                                    title="Đơn vị quản lý"
-                                    size="small"
-                                    className={styles.myCard}
-                                >
-                                    <Row gutter={24}>
-                                        <Col span={12}>
-                                            <Form.Item
-                                                name="unitName"
-                                                label="Mã - Tên đơn vị"
-                                            >
-                                                <Input
-                                                    disabled
-                                                    placeholder={
-                                                        unitInfo
-                                                            ? unitInfo.unitId
-                                                            : "example"
-                                                    }
-                                                />
-                                            </Form.Item>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Form.Item
-                                                name="address"
-                                                label="Địa chỉ đơn vị"
-                                            >
-                                                <Input
-                                                    disabled
-                                                    placeholder={
-                                                        unitInfo
-                                                            ? unitInfo.unitAddress
-                                                            : "example"
-                                                    }
-                                                />
-                                            </Form.Item>
-                                        </Col>
-                                    </Row>
-                                </Card>
-                            </Col>
 
                             {roles && roles.length > 0 && (
                                 <Col span={24}>
@@ -535,59 +383,52 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
                                     >
                                         <Row gutter={[24, 24]}>
                                             {roles.map((role, roleIndex) => {
-                                                <Col span={8} key={roleIndex}>
-                                                    <Form.Item
-                                                        name="machineRole"
-                                                        label={
-                                                            role
-                                                                ? role.roleName
-                                                                : "Tên resource"
-                                                        }
+                                                return (
+                                                    <Col
+                                                        span={8}
+                                                        key={roleIndex}
                                                     >
-                                                        <ul
-                                                            className={
-                                                                styles.roleList
+                                                        <Form.Item
+                                                            name="machineRole"
+                                                            label={
+                                                                role
+                                                                    ? role.roleName
+                                                                    : "Tên resource"
                                                             }
                                                         >
-                                                            {role?.roleDetails.map(
-                                                                (
-                                                                    roleItem,
-                                                                    roleItemIndex
-                                                                ) => {
-                                                                    <li
-                                                                        className={
-                                                                            styles.roleListItem
-                                                                        }
-                                                                        key={
-                                                                            roleItemIndex
-                                                                        }
-                                                                    >
-                                                                        {roleItem
-                                                                            ? roleItem
-                                                                            : "Action"}
-                                                                    </li>;
+                                                            <ul
+                                                                className={
+                                                                    styles.roleList
                                                                 }
-                                                            )}
-                                                        </ul>
-                                                    </Form.Item>
-                                                </Col>;
+                                                            >
+                                                                {role?.roleDetails.map(
+                                                                    (
+                                                                        roleItem,
+                                                                        roleItemIndex
+                                                                    ) => {
+                                                                        <li
+                                                                            className={
+                                                                                styles.roleListItem
+                                                                            }
+                                                                            key={
+                                                                                roleItemIndex
+                                                                            }
+                                                                        >
+                                                                            {roleItem
+                                                                                ? roleItem
+                                                                                : "Action"}
+                                                                        </li>;
+                                                                    }
+                                                                )}
+                                                            </ul>
+                                                        </Form.Item>
+                                                    </Col>
+                                                );
                                             })}
                                         </Row>
                                     </Card>
                                 </Col>
                             )}
-
-                            <Col span={24}>
-                                <Table
-                                    columns={machineListColumns}
-                                    dataSource={machineListData}
-                                    bordered
-                                    title={() => "Danh sách máy quản lý"}
-                                    className={styles.myMachineListTable}
-                                    pagination={false}
-                                    scroll={{ y: 200 }}
-                                />
-                            </Col>
 
                             <Col span={24}>
                                 <Table
@@ -604,25 +445,6 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
                     </Form>
                 )}
             </Drawer>
-
-            <UpdateUserForm
-                title="Chỉnh sửa người dùng"
-                width="934px"
-                visible={updateModalVisible}
-                onVisibleChange={handleUpdateModalVisible}
-                onFinish={async () => {
-                    // const success = await handleAdd(value as API.RuleListItem);
-                    // if (success) {
-                    //   handleUpdateModalVisible(false);
-                    //   if (actionRef.current) {
-                    //     actionRef.current.reload();
-                    //   }
-                    //   return true;
-                    // }
-                    handleUpdateModalVisible(false);
-                    return false;
-                }}
-            />
 
             <Modal
                 footer={null}

@@ -7,7 +7,7 @@ type ColumnProps = {
     setShowDetail: (s: boolean) => void;
 };
 
-function Column({}: ColumnProps) {
+function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
     const columns: ProColumns<API.ManagementUnitResponse>[] = [
         {
             title: <HeadCell>STT</HeadCell>,
@@ -24,8 +24,17 @@ function Column({}: ColumnProps) {
             title: <HeadCell>Mã đơn vị</HeadCell>,
             dataIndex: "code",
             valueType: "textarea",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
+            render: (dom, entity) => {
+                return (
+                    <TextCell
+                        onClick={() => {
+                            setCurrentRow(entity);
+                            setShowDetail(true);
+                        }}
+                    >
+                        {dom}
+                    </TextCell>
+                );
             },
         },
         {
@@ -33,8 +42,17 @@ function Column({}: ColumnProps) {
             dataIndex: "name",
             sorter: true,
             hideInForm: true,
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
+            render: (dom, entity) => {
+                return (
+                    <TextCell
+                        onClick={() => {
+                            setCurrentRow(entity);
+                            setShowDetail(true);
+                        }}
+                    >
+                        {dom}
+                    </TextCell>
+                );
             },
         },
         {

@@ -1,23 +1,30 @@
-import { addRule, unit } from "@/services/ant-design-pro/api";
+import { addRule, groupAuthorizeList } from "@/services/ant-design-pro/api";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
-import { PageContainer, ProTable } from "@ant-design/pro-components";
-import UnitDetailDrawer from "./components/forms/UnitDetailDrawer";
+// import { getAllUsers } from "@/services/STM-APIs/UserController";
+import {
+    PageContainer,
+    ProFormText,
+    ProFormTextArea,
+    ProTable,
+} from "@ant-design/pro-components";
 import { message } from "antd";
 import { useRef, useState } from "react";
+import { FormattedMessage } from "umi";
+// import {useRequest} from "umi";
+import NewUserForm from "./components/forms/NewUserForm";
 import AddNew from "@/components/TableProperties/AddNew";
 import Column from "./components/tables/Column";
 // import SelectPage from "./components/tables/SelectPage";
 import style from "@/components/TableProperties/style.less";
 import TitleTable from "@/components/TableProperties/TitleTable";
 import TotalPagination from "@/components/TableProperties/TotalPagination";
-import NewUnitForm from "./components/forms/NewUnitForm";
 
 /**
  * @en-US Add node
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.ManagementUnitResponse) => {
+const handleAdd = async (fields: API.RoleGroupResponse) => {
     const hide = message.loading("正在添加");
     try {
         await addRule({ ...fields });
@@ -32,12 +39,29 @@ const handleAdd = async (fields: API.ManagementUnitResponse) => {
 };
 
 const TableCustom = () => {
+    //--------------- listUSer -----------------------------------
+    // const [listUser, setListUser] = useState<API.RoleGroupResponse[] | undefined>();
+    //---------------  handle getAllUser -------------------------------
+
+    // const { run: runGetAllUser } = useRequest(
+    //     (params: API.getAllUsersParams) => getAllUsers(params),
+    //     {
+    //         manual: true,
+    //         onSuccess: (res) => {
+    //             const data = res as API.ResponseBasePageResponseObject;
+    //             const listUserRespone = data.data?.items;
+    //             setListUser(listUserRespone);
+    //         },
+    //         onError: (error) => {
+    //             console.log(error);
+    //         },
+    //     }
+    // );
     /**
      * @en-US Pop-up window of new window
      * @zh-CN 新建窗口的弹窗
      *  */
-    const [createModalVisible, handleCreateModalVisible] =
-        useState<boolean>(false);
+    const [createModalVisible, handleModalVisible] = useState<boolean>(false);
     /**
      * @en-US The pop-up window of the distribution update window
      * @zh-CN 分布更新窗口的弹窗
@@ -47,7 +71,9 @@ const TableCustom = () => {
     const [showDetail, setShowDetail] = useState<boolean>(false);
 
     const actionRef = useRef<ActionType>();
-    const [currentRow, setCurrentRow] = useState<API.ManagementUnitResponse>();
+    const [currentRow, setCurrentRow] = useState<API.RoleGroupResponse>();
+
+    console.log(showDetail, currentRow);
 
     /**
      * @en-US International configuration
@@ -57,7 +83,7 @@ const TableCustom = () => {
     // const [page, setPage] = useState<number>();
     // const [pageSize, setPageSize] = useState<number>();
     // const pageSizeRef = useRef<number>(20);
-    const columns: ProColumns<API.ManagementUnitResponse>[] = Column({
+    const columns: ProColumns<API.RoleGroupResponse>[] = Column({
         setCurrentRow,
         setShowDetail,
     });
@@ -72,6 +98,7 @@ const TableCustom = () => {
         jump_to: "Trang",
         page: "",
     };
+
     return (
         <PageContainer
             className={style["table-container"]}
@@ -81,7 +108,7 @@ const TableCustom = () => {
             footer={undefined}
         >
             <ProTable
-                headerTitle={<TitleTable>Đơn vị quản lý</TitleTable>}
+                headerTitle={<TitleTable>Danh sách máy</TitleTable>}
                 actionRef={actionRef}
                 rowKey="key"
                 search={false}
@@ -89,11 +116,11 @@ const TableCustom = () => {
                     <AddNew
                         key="primary"
                         onClick={() => {
-                            handleCreateModalVisible(true);
+                            handleModalVisible(true);
                         }}
                     />,
                 ]}
-                request={unit}
+                request={groupAuthorizeList}
                 // request={async (params = {}) => {
                 //     const filterParams: API.UserFilter = {
                 //         managementUnit: "",
@@ -138,17 +165,17 @@ const TableCustom = () => {
                 }}
             />
 
-            <NewUnitForm
-                title="Tạo đơn vị quản lý mới"
+            <NewUserForm
+                title="Tạo người dùng mới"
                 width="934px"
                 visible={createModalVisible}
-                onVisibleChange={handleCreateModalVisible}
+                onVisibleChange={handleModalVisible}
                 onFinish={async (value) => {
                     const success = await handleAdd(
-                        value as API.ManagementUnitResponse
+                        value as API.RoleGroupResponse
                     );
                     if (success) {
-                        handleCreateModalVisible(false);
+                        handleModalVisible(false);
                         if (actionRef.current) {
                             actionRef.current.reload();
                         }
@@ -156,14 +183,24 @@ const TableCustom = () => {
                     }
                     return false;
                 }}
-            />
-
-            <UnitDetailDrawer
-                currentRow={currentRow}
-                setCurrentRow={setCurrentRow}
-                showDetail={showDetail}
-                setShowDetail={setShowDetail}
-            />
+            >
+                <ProFormText
+                    rules={[
+                        {
+                            required: true,
+                            message: (
+                                <FormattedMessage
+                                    id="pages.searchTable.ruleName"
+                                    defaultMessage="Rule name is required"
+                                />
+                            ),
+                        },
+                    ]}
+                    width="md"
+                    name="name"
+                />
+                <ProFormTextArea width="md" name="desc" />
+            </NewUserForm>
         </PageContainer>
     );
 };

@@ -48,7 +48,7 @@
         }
 
         .ant-drawer-body {
-            padding: 15px 20px 0 20px;
+            padding: 15px 20px 15px 20px;
         }
     }
 }
@@ -83,7 +83,7 @@
 
         &::before {
             margin-right: 12px;
-            content: url("../../../../assets/images/svg/icon/hollow-circle.svg");
+            content: url("/src/assets/images/svg/icon/hollow-circle.svg");
         }
     }
 
@@ -172,6 +172,20 @@
 
         .ant-table-tbody > tr > td {
             padding: 9px 16px;
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: 400;
+            font-size: 14px;
+            font-family: "Roboto";
+            font-style: normal;
+            line-height: 22px;
+        }
+    }
+}
+
+.myMachineListTable {
+    :global {
+        .ant-table-tbody > tr > td {
+            padding: 4px 12px;
             color: rgba(0, 0, 0, 0.85);
             font-weight: 400;
             font-size: 14px;

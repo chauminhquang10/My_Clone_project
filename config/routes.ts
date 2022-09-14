@@ -102,7 +102,7 @@ const routes = [
                         path: "/users/group-authorize",
                         name: "group-authorize",
                         icon: "group-policy",
-                        component: "./Welcome",
+                        component: "GroupAuthorizeTable",
                     },
                     {
                         path: "/users/management-unit",
