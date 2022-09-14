@@ -1,4 +1,4 @@
-export const UserMessageError = {
+export const USER_MESSAGE_ERROR = {
   '104': 'Tài khoản không tồn tại',
   '105': 'Mật khẩu không đúng',
   '110': 'Tài khoản đang vô hiệu hóa',

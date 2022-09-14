@@ -212,7 +212,7 @@ declare namespace API {
   };
 
   type getProvincesParams = {
-    location: string;
+    location?: string;
   };
 
   type getRoleDetailParams = {
@@ -221,6 +221,17 @@ declare namespace API {
 
   type getSystemOperationParams = {
     module?: 'MACHINE' | 'USER' | 'MODEL' | 'MANAGEMENT_UNIT' | 'VERSION';
+    action?: 'CREATE' | 'UPDATE' | 'CHANGE_STATUS' | 'BLOCK' | 'UNBLOCK' | 'ASSIGN_ACCESS';
+    from?: string;
+    to?: string;
+    query?: string;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
+  };
+
+  type getTransactionConfigurationParams = {
     query?: string;
     pageNumber?: number;
     pageSize?: number;
@@ -267,7 +278,7 @@ declare namespace API {
   };
 
   type ListTransactionsResponse = {
-    transactions?: Transaction[];
+    transactions?: TransactionResponse[];
   };
 
   type LoginRequest = {
@@ -663,7 +674,7 @@ declare namespace API {
     minCapacity?: number;
   };
 
-  type Transaction = {
+  type TransactionResponse = {
     id?: string;
     cardNumber?: string;
     accountNumber?: string;

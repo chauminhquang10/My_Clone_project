@@ -10,7 +10,7 @@ import defaultSettings from '../config/defaultSettings';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
-
+const setupPasswordPath = '/user/setup-password';
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
   loading: <PageLoading />,
@@ -36,7 +36,7 @@ export async function getInitialState(): Promise<{
     return undefined;
   };
   // 如果不是登录页面，执行
-  if (history.location.pathname !== loginPath) {
+  if (history.location.pathname !== loginPath && history.location.pathname !== setupPasswordPath) {
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
@@ -60,11 +60,15 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
-      // const { location } = history;
+      const { location } = history;
       // 如果没有登录，重定向到 login
-      // if (!initialState?.currentUser && location.pathname !== loginPath) {
-      //   history.push(loginPath);
-      // }
+      if (
+        !initialState?.currentUser &&
+        location.pathname !== loginPath &&
+        location.pathname !== setupPasswordPath
+      ) {
+        history.push(loginPath);
+      }
     },
     links: isDev
       ? [

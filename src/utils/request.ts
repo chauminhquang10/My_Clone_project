@@ -93,7 +93,12 @@ const requestInterceptor: RequestInterceptor = (url, options) => {
   if (!token) {
     token = localStorage.getItem('accessToken');
   }
-  if (!url.includes('login') && !url.includes('refresh-token') && !url.includes('utility')) {
+  if (
+    token &&
+    !url.includes('login') &&
+    !url.includes('refresh-token') &&
+    !url.includes('utility')
+  ) {
     headers.Authorization = `Bearer ${token}`;
   }
 
@@ -155,8 +160,10 @@ const responseInterceptor: ResponseInterceptor = async (response, options) => {
 
   if (url.includes('login')) {
     const { data } = body;
-    localStorage.setItem('accessToken', data?.token);
-    localStorage.setItem('refreshToken', data?.refreshToken);
+    if (data?.token && data?.refreshToken) {
+      localStorage.setItem('accessToken', data?.token);
+      localStorage.setItem('refreshToken', data?.refreshToken);
+    }
   }
 
   return { ...body };

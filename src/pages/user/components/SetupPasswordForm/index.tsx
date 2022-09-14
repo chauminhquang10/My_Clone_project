@@ -11,10 +11,8 @@ import {
 } from '@/utils';
 import { LockOutlined } from '@ant-design/icons';
 import { Button, Form } from 'antd';
-import React, { useState } from 'react';
-import { history, useHistory } from 'umi';
+import React, { useEffect, useState } from 'react';
 import InputPassword from '../InputPassword';
-
 import styles from './index.less';
 
 const validationList = [
@@ -45,12 +43,29 @@ const validationList = [
   },
 ];
 
-const SetupPasswordForm: React.FC<{ tokenReset?: string }> = ({ tokenReset }) => {
-  console.log('token get from login page: ', tokenReset);
+type FormSetupPasswordType = {
+  password: string;
+  retypePassword: string;
+};
 
+const SetupPasswordForm: React.FC<{ handleOpen: (isOpen: boolean) => void }> = ({ handleOpen }) => {
   const [form] = Form.useForm();
   const [newPassword, setNewPassword] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    const message = 'Are you sure you want to leave? All provided data will be lost.';
+    e.returnValue = message;
+    return message;
+  };
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   const handleSubmit = async (values: API.ResetPasswordRequest) => {
     try {
@@ -58,14 +73,13 @@ const SetupPasswordForm: React.FC<{ tokenReset?: string }> = ({ tokenReset }) =>
         ...values,
       });
 
+      // reset password successfull
       if (res.code === 0) {
         const message = 'Thiết lập mật khẩu thành công!';
-        openNotification('success', message);
+        const desc = 'Vui lòng đăng nhập lại để tiếp tục';
+        openNotification('success', message, desc);
 
-        if (!useHistory) return;
-        const { query } = history.location;
-        const { redirect } = query as { redirect: string };
-        history.push(redirect || '/');
+        handleOpen(false);
         return;
       }
 
@@ -76,10 +90,21 @@ const SetupPasswordForm: React.FC<{ tokenReset?: string }> = ({ tokenReset }) =>
       const message = 'Thiết lập mật khẩu không thành công!';
       openNotification('error', message, error as string);
     }
+
+    localStorage.removeItem('tokenResetPassword');
   };
 
-  const onFinish = async (values: any) => {
-    console.log('values: ', values);
+  const onFinish = async (values: FormSetupPasswordType) => {
+    const tokenResetPassword = localStorage.getItem('tokenResetPassword');
+
+    if (!tokenResetPassword) {
+      const message = 'Thiết lặp mật khẩu không thành công';
+      const desc = 'Vui lòng thử lại';
+      openNotification('error', message, desc);
+
+      handleOpen(false);
+      return;
+    }
 
     // compare password and retype password
     if (values.password !== values.retypePassword) {
@@ -91,7 +116,7 @@ const SetupPasswordForm: React.FC<{ tokenReset?: string }> = ({ tokenReset }) =>
 
     setIsSubmitting(true);
     await handleSubmit({
-      token: tokenReset as string,
+      token: tokenResetPassword as string,
       password: values.password,
     });
     setIsSubmitting(false);
@@ -99,7 +124,7 @@ const SetupPasswordForm: React.FC<{ tokenReset?: string }> = ({ tokenReset }) =>
 
   const handleNewPasswordChange = (password: string) => {
     setNewPassword(password);
-    form.setFieldValue('newPassword', password);
+    form.setFieldValue('password', password);
   };
 
   const handleRetypePasswordChange = (password: string) => {
@@ -119,7 +144,7 @@ const SetupPasswordForm: React.FC<{ tokenReset?: string }> = ({ tokenReset }) =>
         <Form.Item
           name="password"
           label="Mật khẩu mới"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu mới!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu mới' }]}
         >
           <InputPassword
             onChange={handleNewPasswordChange}
