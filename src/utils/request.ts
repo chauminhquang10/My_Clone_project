@@ -1,8 +1,8 @@
-import { notification } from 'antd';
+import Api from '@/services/Stm-controller';
 import jwtDecode from 'jwt-decode';
 import type { RequestInterceptor, ResponseError, ResponseInterceptor } from 'umi-request';
 import Reqs, { extend } from 'umi-request';
-import Api from '@/services/Stm-controller';
+import { openNotification } from './helpers/openNotification';
 
 let isRefreshing = false;
 let _cacheRequest: {
@@ -42,21 +42,17 @@ const { cancel } = Reqs.CancelToken.source();
 const errorHandler = async (error: ResponseError) => {
   if (Reqs.isCancel(error)) return;
 
-  console.log('error: ', error);
-
   const { response, data } = error;
   const status: keyof typeof codeMessage = data?.status >= 400 ? data?.status : response?.status;
   if (status >= 400) {
     const errorText = codeMessage[status] || response.statusText;
-    notification.error({
-      message: `Request error ${status}`,
-      description: errorText,
-    });
+    openNotification('error', `Request error ${status}`, errorText);
   } else if (!response) {
-    notification.error({
-      description: 'Your network is abnormal and you cannot connect to the server',
-      message: 'Network anomaly',
-    });
+    openNotification(
+      'error',
+      'Network anomaly',
+      'Your network is abnormal and you cannot connect to the server',
+    );
   }
 
   throw error;
@@ -65,8 +61,7 @@ const errorHandler = async (error: ResponseError) => {
 export const request = extend({
   prefix: `${API_ENDPOINT}`,
   requestType: 'json',
-  getResponse: true,
-  // timeout: 3000,
+  timeout: 3000,
   timeoutMessage: 'Server không phản hồi trong khoảng thời gian dài',
   errorHandler,
 });
@@ -82,16 +77,14 @@ const onRefresh = async () => {
 
   const response = await Api.AuthController.refreshToken({ refreshToken });
 
-  console.log('refresh data: ', response);
-
   if (!response || !response.data) throw Error('Request invalid');
-  if (!response.data.data?.token) throw Error('Access token is undefined');
-  if (!response.data.data.refreshToken) throw Error('Refresh token is undefined');
+  if (!response.data?.token) throw Error('Access token is undefined');
+  if (!response.data.refreshToken) throw Error('Refresh token is undefined');
 
-  token = response.data.data?.token;
+  token = response.data?.token;
   processQueue(null);
-  localStorage.setItem('accessToken', response.data.data?.token);
-  localStorage.setItem('refreshToken', response.data.data.refreshToken);
+  localStorage.setItem('accessToken', response.data?.token);
+  localStorage.setItem('refreshToken', response.data.refreshToken);
   isRefreshing = false;
 };
 
@@ -100,18 +93,19 @@ const requestInterceptor: RequestInterceptor = (url, options) => {
   if (!token) {
     token = localStorage.getItem('accessToken');
   }
-  if (!url.includes('login') && !url.includes('refresh-token') && !url.includes('utility')) {
+  if (
+    token &&
+    !url.includes('login') &&
+    !url.includes('refresh-token') &&
+    !url.includes('utility')
+  ) {
     headers.Authorization = `Bearer ${token}`;
   }
-
-  console.log('token: ', token);
-  console.log('request call: ', { url, options: { ...options, headers } });
 
   return { url, options: { ...options, headers } };
 };
 
 const responseInterceptor: ResponseInterceptor = async (response, options) => {
-  console.log('response: ', response);
   const { status, url } = response;
 
   if (status === 401 && !url.includes('refresh-token')) {
@@ -152,8 +146,6 @@ const responseInterceptor: ResponseInterceptor = async (response, options) => {
 
   const body = await response.clone().json();
 
-  console.log('body: ', body);
-
   if (response.status >= 400 || body.status >= 400) {
     const error: ResponseError = {
       response,
@@ -168,8 +160,10 @@ const responseInterceptor: ResponseInterceptor = async (response, options) => {
 
   if (url.includes('login')) {
     const { data } = body;
-    localStorage.setItem('accessToken', data?.token);
-    localStorage.setItem('refreshToken', data?.refreshToken);
+    if (data?.token && data?.refreshToken) {
+      localStorage.setItem('accessToken', data?.token);
+      localStorage.setItem('refreshToken', data?.refreshToken);
+    }
   }
 
   return { ...body };

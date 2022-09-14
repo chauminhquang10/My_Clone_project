@@ -1,109 +1,113 @@
 import logoKSBank from '@/assets/images/ksbank-logo.svg';
-import React from 'react';
-import { SetupPasswordForm } from '../components';
-
+import { BLOCK_TIME, MAX_LOGIN_TIMES, USER_MESSAGE_ERROR } from '@/constants';
+import Api from '@/services/Stm-controller';
+import { openNotification } from '@/utils';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input } from 'antd';
+import React, { useState } from 'react';
+import { history, useModel } from 'umi';
+import { InputPassword, SetupPasswordForm } from '../components';
 import styles from './index.less';
 
-// function isMinimumCharacter(str: string, num: number): boolean {
-//   return str.length >= num;
-// }
-
-// function isContainLowerCase(str: string): boolean {
-//   const len = str.length;
-//   for (let i = 0; i < len; i++) {
-//     const c = str.charAt(i);
-//     if (!isNaN(+c)) continue;
-//     if (c.toLowerCase() === c) return true;
-//   }
-
-//   return false;
-// }
-
-// function isContainUpperCase(str: string): boolean {
-//   const len = str.length;
-//   for (let i = 0; i < len; i++) {
-//     const c = str.charAt(i);
-//     if (!isNaN(+c)) continue;
-//     if (c.toUpperCase() === c) return true;
-//   }
-
-//   return false;
-// }
-
-// function isContainNumber(str: string) {
-//   return /\d/.test(str);
-// }
-
-// function isContainSpecialLetter(str: string) {
-//   return /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(str);
-// }
+type DataResponseType = {
+  loginTimes: number;
+  blockedAt: string;
+} & API.AccessTokenResponseCustom;
 
 const Login: React.FC = () => {
-  // const [form] = Form.useForm();
-  // const [, setUserLoginState] = useState<API.LoginResult>({});
+  const [form] = Form.useForm();
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isLogin, setIsLogin] = useState<boolean>(true);
 
-  // const { initialState, setInitialState } = useModel('@@initialState');
+  const fetchUserInfo = async () => {
+    const userInfo = await initialState?.fetchUserInfo?.();
 
-  // const fetchUserInfo = async () => {
-  //   const userInfo = await initialState?.fetchUserInfo?.();
-  //   if (userInfo) {
-  //     await setInitialState((s) => ({
-  //       ...s,
-  //       currentUser: userInfo,
-  //     }));
-  //   }
-  // };
+    if (userInfo) {
+      await setInitialState((s) => ({
+        ...s,
+        currentUser: userInfo,
+      }));
+    }
+  };
 
-  // const handleSubmit = async (values: any) => {
-  //   try {
-  //     const msg = await Api.AuthController.login({
-  //       ...values,
-  //     });
+  const handleSubmit = async (values: API.LoginRequest) => {
+    try {
+      const res = await Api.AuthController.login({
+        ...values,
+      });
 
-  //     if (!msg) {
-  //       openNotification('error', 'Đăng nhập không thành công!');
-  //       return;
-  //     }
+      // login thanh cong
+      if (res.code === 0) {
+        const message = 'Đăng nhập thành công!';
+        openNotification('success', message);
 
-  //     if (msg.code === 0) {
-  //       const message = 'Đăng nhập thành công!';
-  //       openNotification('success', message);
+        await fetchUserInfo();
 
-  //       // const currentUser = await getMyProfile();
+        if (!history) return;
+        const { query } = history.location;
+        const { redirect } = query as { redirect: string };
+        history.push(redirect || '/');
+        return;
+      }
 
-  //       // console.log('currentUser: ', currentUser);
+      // login sai mat khau tu 1 -> 2 lan
+      if (res.code === 105) {
+        const data = res.data as DataResponseType;
+        if (data.loginTimes === MAX_LOGIN_TIMES) {
+          const today = new Date();
+          const diffTimes = today.getTime() - Date.parse(data?.blockedAt);
+          const diffMins = Math.floor((((diffTimes + BLOCK_TIME) % 86400000) % 3600000) / 60000);
+          const desc = `Tài khoản bị tạm khóa. Vui lòng quay lại sau ${diffMins} phút.`;
+          openNotification('error', USER_MESSAGE_ERROR[res.code], desc);
+        } else {
+          const desc = `Tài khoản sẽ tạm khóa trong 30 phút nếu nhập sai 3 lần. Bạn còn ${
+            MAX_LOGIN_TIMES - data?.loginTimes
+          } lần thử lại.`;
+          openNotification('warning', USER_MESSAGE_ERROR[res.code], desc);
+        }
+        return;
+      }
 
-  //       await fetchUserInfo();
-  //       if (!history) return;
-  //       const { query } = history.location;
-  //       const { redirect } = query as { redirect: string };
+      // dang nhap mat khau he thong, first time login
+      if (res.code === 112) {
+        // set token reset password
+        localStorage.setItem('tokenResetPassword', res.data?.token as string);
 
-  //       console.log('login successful');
-  //       // console.log('history: ', history);
-  //       return;
-  //     }
+        openNotification('warning', USER_MESSAGE_ERROR[res.code]);
+        setIsLogin(false);
+        return;
+      }
 
-  //     openNotification('error', msg.message);
-  //   } catch (error) {
-  //     console.log('error login: ', error);
-  //     const message = 'Đăng nhập không thành công!';
-  //     openNotification('error', message);
-  //   }
-  // };
+      // login sai mat khau 3 lan. tam khoa tai khoan.
+      if (res.code === 111) {
+        const data = res.data as DataResponseType;
+        const today = new Date();
+        const diffTimes = today.getTime() - Date.parse(data?.blockedAt);
+        const diffMins = Math.floor((((diffTimes + BLOCK_TIME) % 86400000) % 3600000) / 60000);
+        const desc = `Tài khoản bị tạm khóa. Vui lòng quay lại sau ${diffMins} phút.`;
+        openNotification('error', USER_MESSAGE_ERROR[res.code], desc);
+        return;
+      }
 
-  // const onFinish = async (values: any) => {
-  //   await handleSubmit(values as any);
-  // };
+      // cac truong hop con lai.
+      if (res.code) openNotification('error', USER_MESSAGE_ERROR[res.code], 'Vui lòng thử lại sau');
+    } catch (error) {
+      console.log('error login: ', error);
+      const message = 'Đăng nhập không thành công!';
+      openNotification('error', message, error as string);
+    }
+  };
 
-  // const handlePasswordChange = (password: string) => {
-  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
-  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
-  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
-  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
-  //   // console.log('is minimum 8 characters: ', isMinimumCharacter(password));
+  const onFinish = async (values: API.LoginRequest) => {
+    setIsSubmitting(true);
+    await handleSubmit(values);
+    setIsSubmitting(false);
+  };
 
-  //   form.setFieldValue('password', password);
-  // };
+  const handlePasswordChange = (password: string) => {
+    form.setFieldValue('password', password);
+  };
 
   return (
     <div className={styles.container}>
@@ -111,47 +115,49 @@ const Login: React.FC = () => {
         <div className={styles.logo}>
           <img src={logoKSBank} alt="logo-ksbank" />
         </div>
-        <SetupPasswordForm />
 
-        {/* <div className={styles['form-wrapper']}>
-          <h1 className={styles.title}>Đăng nhập</h1>
-          <Form
-            form={form}
-            name="login-form"
-            onFinish={onFinish}
-            className={styles.form}
-            layout="vertical"
-            validateTrigger="onFinish"
-          >
-            <Form.Item
-              name="username"
-              label="Tên đăng nhập"
-              className={styles['form-username']}
-              rules={[{ required: true, message: 'Tên đăng nhập là bắt buộc nhập' }]}
+        {isLogin ? (
+          <div className={styles['form-wrapper']}>
+            <h1 className={styles.title}>Đăng nhập</h1>
+            <Form
+              form={form}
+              name="login-form"
+              onFinish={onFinish}
+              className={styles.form}
+              layout="vertical"
             >
-              <Input placeholder="Admin" prefix={<UserOutlined />} />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              label="Mật khẩu"
-              rules={[{ required: true, message: 'Mật khẩu là bắt buộc nhập' }]}
-            >
-              <InputPassword
-                onChange={handlePasswordChange}
-                placeholder="Nhập mật khẩu"
-                prefix={<LockOutlined />}
-              />
-            </Form.Item>
-            <div className={styles['forgot-password']}>
-              <a href="">Quên mật khẩu?</a>
+              <Form.Item
+                name="username"
+                label="Tên đăng nhập"
+                className={styles['form-username']}
+                rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập' }]}
+              >
+                <Input placeholder="Admin" prefix={<UserOutlined />} />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                label="Mật khẩu"
+                rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
+              >
+                <InputPassword
+                  onChange={handlePasswordChange}
+                  placeholder="Nhập mật khẩu"
+                  prefix={<LockOutlined />}
+                />
+              </Form.Item>
+              <div className={styles['forgot-password']}>
+                <a href="/user/forgot-password">Quên mật khẩu?</a>
+              </div>
+            </Form>
+            <div className={styles['btn-submit']}>
+              <Button type="primary" htmlType="submit" form="login-form" loading={isSubmitting}>
+                Đăng nhập
+              </Button>
             </div>
-          </Form>
-          <div className={styles['btn-submit']}>
-            <Button type="primary" htmlType="submit" form="login-form">
-              Đăng nhập
-            </Button>
           </div>
-        </div> */}
+        ) : (
+          <SetupPasswordForm handleOpen={(isOpenForm: boolean) => setIsLogin(!isOpenForm)} />
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-components';
 import { Alert, Card, Typography } from 'antd';
 import React from 'react';
-import { FormattedMessage, useIntl } from 'umi';
+import { FormattedMessage, useIntl, useModel } from 'umi';
 import styles from './Welcome.less';
 
 const CodePreview: React.FC = ({ children }) => (
@@ -14,6 +14,10 @@ const CodePreview: React.FC = ({ children }) => (
 
 const Welcome: React.FC = () => {
   const intl = useIntl();
+
+  const { initialState } = useModel('@@initialState');
+
+  console.log('initialState: ', initialState);
 
   return (
     <PageContainer>

@@ -29,7 +29,11 @@
     width: 100%;
 
     .section-validate {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
       margin: 8px 0 20px;
+
       .item-validate {
         display: flex;
         align-items: center;
@@ -144,6 +148,24 @@
       font-family: 'Roboto';
       font-style: normal;
       line-height: 24px;
+    }
+
+    button[disabled],
+    button[disabled]:hover,
+    button[disabled]:focus,
+    button[disabled]:active {
+      background: #f6f8f8;
+      border: 1px solid #e2e7e9;
+
+      span {
+        color: rgba(0, 0, 0, 0.25);
+        font-weight: 500;
+        font-size: 16px;
+        font-family: 'Roboto';
+        font-style: normal;
+        line-height: 24px;
+        text-align: center;
+      }
     }
   }
 }

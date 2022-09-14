@@ -1,143 +1,135 @@
+import iconCheckActive from '@/assets/icons/icon-check-active.svg';
 import iconCheckDisable from '@/assets/icons/icon-check-disable.svg';
 import Api from '@/services/Stm-controller';
-import { getMyProfile } from '@/services/Stm-controller/UserController';
-import { openNotification } from '@/utils';
+import {
+  isContainLowerCase,
+  isContainNumber,
+  isContainSpecialLetter,
+  isContainUpperCase,
+  isMinimumCharacter,
+  openNotification,
+} from '@/utils';
 import { LockOutlined } from '@ant-design/icons';
 import { Button, Form } from 'antd';
-import React, { useState } from 'react';
-import { history } from 'umi';
+import React, { useEffect, useState } from 'react';
 import InputPassword from '../InputPassword';
-
 import styles from './index.less';
 
 const validationList = [
   {
     id: 0,
     message: 'Mật khẩu tối thiểu 08 ký tự',
+    checkFunction: (str: string) => isMinimumCharacter(str, 8),
   },
   {
     id: 1,
     message: 'Chữ thường',
+    checkFunction: isContainLowerCase,
   },
   {
     id: 2,
     message: 'Chữ cái HOA',
+    checkFunction: isContainUpperCase,
   },
   {
     id: 3,
     message: 'Chữ số',
+    checkFunction: isContainNumber,
   },
   {
     id: 4,
     message: ' Ký tự đặc biệt',
+    checkFunction: isContainSpecialLetter,
   },
 ];
 
-const SetupPasswordForm: React.FC = () => {
+type FormSetupPasswordType = {
+  password: string;
+  retypePassword: string;
+};
+
+const SetupPasswordForm: React.FC<{ handleOpen: (isOpen: boolean) => void }> = ({ handleOpen }) => {
   const [form] = Form.useForm();
-  // const [, setUserLoginState] = useState<API.LoginResult>({});F
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // const { initialState, setInitialState } = useModel('@@initialState');
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    const message = 'Are you sure you want to leave? All provided data will be lost.';
+    e.returnValue = message;
+    return message;
+  };
 
-  // const fetchUserInfo = async () => {
-  //   const userInfo = await initialState?.fetchUserInfo?.();
-  //   if (userInfo) {
-  //     await setInitialState((s) => ({
-  //       ...s,
-  //       currentUser: userInfo,
-  //     }));
-  //   }
-  // };
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
-  const [validationPassword, setValidationPassword] = useState([
-    {
-      id: 0,
-      check: false,
-    },
-    {
-      id: 1,
-      check: false,
-    },
-    {
-      id: 2,
-      check: false,
-    },
-    {
-      id: 3,
-      check: false,
-    },
-    {
-      id: 4,
-      check: false,
-    },
-  ]);
-
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: API.ResetPasswordRequest) => {
     try {
-      const msg = await Api.AuthController.login({
+      const res = await Api.AuthController.resetPassword({
         ...values,
       });
 
-      console.log('msg: ', msg);
+      // reset password successfull
+      if (res.code === 0) {
+        const message = 'Thiết lập mật khẩu thành công!';
+        const desc = 'Vui lòng đăng nhập lại để tiếp tục';
+        openNotification('success', message, desc);
 
-      if (!msg) {
-        openNotification('error', 'Đăng nhập không thành công!');
+        handleOpen(false);
         return;
       }
 
-      if (msg.code === 0) {
-        const message = 'Đăng nhập thành công!';
-        openNotification('success', message);
-
-        const currentUser = await getMyProfile();
-
-        console.log('currentUser: ', currentUser);
-
-        // await fetchUserInfo();
-        if (!history) return;
-        const { query } = history.location;
-        const { redirect } = query as { redirect: string };
-        history.push(redirect || '/');
-        return;
-      }
-
-      openNotification('error', msg.message);
+      const message = 'Thiết lập mật khẩu không thành công!';
+      openNotification('error', message, res.message);
     } catch (error) {
       console.log('error login: ', error);
-      const message = 'Đăng nhập không thành công!';
-      openNotification('error', message);
-    }
-  };
-
-  const onFinish = async (values: any) => {
-    await handleSubmit(values as any);
-  };
-
-  console.log('validation: ', validationPassword);
-
-  const handlePasswordChange = (password: string) => {
-    console.log('password change: ', password);
-
-    if (password.length >= 8) {
-      setValidationPassword((prev) => {
-        const result = prev.map((item) => {
-          if (item.id === 0)
-            return {
-              id: 0,
-              check: true,
-            };
-
-          return { ...item };
-        });
-
-        return [...result];
-      });
+      const message = 'Thiết lập mật khẩu không thành công!';
+      openNotification('error', message, error as string);
     }
 
+    localStorage.removeItem('tokenResetPassword');
+  };
+
+  const onFinish = async (values: FormSetupPasswordType) => {
+    const tokenResetPassword = localStorage.getItem('tokenResetPassword');
+
+    if (!tokenResetPassword) {
+      const message = 'Thiết lặp mật khẩu không thành công';
+      const desc = 'Vui lòng thử lại';
+      openNotification('error', message, desc);
+
+      handleOpen(false);
+      return;
+    }
+
+    // compare password and retype password
+    if (values.password !== values.retypePassword) {
+      const message = 'Mật khẩu không trùng nhau';
+      const desc = 'Vui lòng thiết lập lại mật khẩu';
+      openNotification('error', message, desc);
+      return;
+    }
+
+    setIsSubmitting(true);
+    await handleSubmit({
+      token: tokenResetPassword as string,
+      password: values.password,
+    });
+    setIsSubmitting(false);
+  };
+
+  const handleNewPasswordChange = (password: string) => {
+    setNewPassword(password);
     form.setFieldValue('password', password);
   };
 
-  console.log('password: ', form.getFieldValue('password'));
+  const handleRetypePasswordChange = (password: string) => {
+    form.setFieldValue('retypePassword', password);
+  };
 
   return (
     <div className={styles['setup-password-form-wrapper']}>
@@ -148,41 +140,49 @@ const SetupPasswordForm: React.FC = () => {
         onFinish={onFinish}
         className={styles.form}
         layout="vertical"
-        validateTrigger="onFinish"
       >
         <Form.Item
           name="password"
           label="Mật khẩu mới"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu mới!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu mới' }]}
         >
           <InputPassword
-            onChange={handlePasswordChange}
+            onChange={handleNewPasswordChange}
             placeholder="Nhập mật khẩu"
             prefix={<LockOutlined />}
           />
-          <div className={styles['section-validate']}>
-            {validationList.map((item) => (
-              <li key={item.id} className={styles['item-validate']}>
-                <img src={iconCheckDisable} alt="icon-check" />
-                <span>{item.message}</span>
-              </li>
-            ))}
-          </div>
         </Form.Item>
+        <div className={styles['section-validate']}>
+          {validationList.map((item) => (
+            <li key={item.id} className={styles['item-validate']}>
+              <img
+                src={item.checkFunction(newPassword) ? iconCheckActive : iconCheckDisable}
+                alt="icon-check"
+              />
+              <span>{item.message}</span>
+            </li>
+          ))}
+        </div>
         <Form.Item
-          name="password"
+          name="retypePassword"
           label="Xác nhận mật khẩu"
           rules={[{ required: true, message: 'Vui lòng xác nhận mật khẩu!' }]}
         >
           <InputPassword
-            onChange={handlePasswordChange}
+            onChange={handleRetypePasswordChange}
             placeholder="Nhập lại mật khẩu"
             prefix={<LockOutlined />}
           />
         </Form.Item>
       </Form>
       <div className={styles['btn-submit']}>
-        <Button type="primary" htmlType="submit" form="login-form">
+        <Button
+          type="primary"
+          htmlType="submit"
+          form="set-password-form"
+          disabled={!validationList.every((item) => item.checkFunction(newPassword))}
+          loading={isSubmitting}
+        >
           Hoàn tất
         </Button>
       </div>
