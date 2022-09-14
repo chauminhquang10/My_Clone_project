@@ -1,0 +1,53 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  NAME: stm-controller-dashboard
+  IMAGE_NAME: ${NAME}
+  SERVICE_NAME: ${NAME}
+  ECR_REGISTRY: 858763302989.dkr.ecr.ap-southeast-1.amazonaws.com
+
+build-dev:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  before_script:
+    - export $(xargs < $ENV_DEV)
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"credsStore\":\"ecr-login\"}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${ECR_REGISTRY}/${IMAGE_NAME}:${TAG}"
+  only:
+    - develop
+  tags:
+    - shared-docker-runner-2
+
+deploy-dev:
+  stage: deploy
+  image:
+    name: public.ecr.aws/i8h0s4d4/auto-eks:latest
+    entrypoint: [""]
+  before_script:
+    - export $(xargs < $ENV_DEV)
+  script:
+    - echo $GIT_SSH_KEY |base64 --decode > /root/.ssh/id_rsa
+    - chmod 600 /root/.ssh/id_rsa
+    - echo -e "[default]\naws_access_key_id = $AWS_ACCESS_KEY_ID \naws_secret_access_key = $AWS_SECRET_ACCESS_KEY\n" > /root/.aws/credentials
+    - mkdir ~/.kube
+    - echo $KUBE_CONFIG |base64 --decode > ~/.kube/config
+
+    - git clone $CHART_GIT_SSH_URL /workspace
+    - cd /workspace
+    - git checkout $CHART_BRANCH
+    - chmod +x scripts/update-pull-secret.sh&&./scripts/update-pull-secret.sh
+    - helm upgrade --install --recreate-pods -n $NAME_SPACE $SERVICE_NAME $CHART_DIR -f values/dev/$SERVICE_NAME.yaml
+  only:
+    - develop
+  tags:
+    - shared-docker-runner-2
