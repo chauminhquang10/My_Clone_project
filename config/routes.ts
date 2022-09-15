@@ -9,6 +9,11 @@ const routes = [
         component: './user/Login',
       },
       {
+        name: 'forgot-password',
+        path: '/user/forgot-password',
+        component: './user/ForgotPassword',
+      },
+      {
         component: './404',
       },
     ],
