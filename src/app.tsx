@@ -23,14 +23,14 @@ export async function getInitialState(): Promise<{
   const fetchUserInfo = async () => {
     try {
       const { data } = await Api.UserController.getMyProfile();
-
       return data;
     } catch (error) {
       history.push(loginPath);
     }
     return undefined;
   };
-  // 如果不是登录页面，执行
+
+  // if not login and setup password page, fetch user info
   if (history.location.pathname !== loginPath && history.location.pathname !== setupPasswordPath) {
     const currentUser = await fetchUserInfo();
     return {
@@ -39,6 +39,7 @@ export async function getInitialState(): Promise<{
       settings: defaultSettings,
     };
   }
+
   return {
     fetchUserInfo,
     settings: defaultSettings,

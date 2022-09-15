@@ -166,6 +166,11 @@ const responseInterceptor: ResponseInterceptor = async (response, options) => {
     }
   }
 
+  if (url.includes('logout')) {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  }
+
   return { ...body };
 };
 

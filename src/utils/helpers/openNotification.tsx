@@ -14,7 +14,6 @@ export const openNotification = (type: NotificationType, message: string, descri
     message,
     description,
     placement: 'top',
-    duration: 0,
     icon: iconNotification[type] || undefined,
   });
 };
