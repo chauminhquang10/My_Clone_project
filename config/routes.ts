@@ -1,3 +1,5 @@
+import route from "mock/route";
+
 const routes = [
     {
         path: "/user",
@@ -58,12 +60,6 @@ const routes = [
                         name: "system-warning",
                         icon: "machine-warning",
                         component: "SystemWarningTable",
-                    },
-                    {
-                        path: "/machine/history",
-                        name: "history",
-                        icon: "machine-history",
-                        component: "TableList",
                     },
                 ],
             },
@@ -133,6 +129,13 @@ const routes = [
                         component: "TableList",
                     },
                 ],
+            },
+            {
+                name: "history",
+                icon: "machine-history",
+                path: "/history",
+                component: "UserTable",
+                access: "canAdmin",
             },
         ],
     },

@@ -1,23 +1,18 @@
 import { addRule, groupAuthorizeList } from "@/services/ant-design-pro/api";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 // import { getAllUsers } from "@/services/STM-APIs/UserController";
-import {
-    PageContainer,
-    ProFormText,
-    ProFormTextArea,
-    ProTable,
-} from "@ant-design/pro-components";
+import { PageContainer, ProTable } from "@ant-design/pro-components";
 import { message } from "antd";
 import { useRef, useState } from "react";
-import { FormattedMessage } from "umi";
 // import {useRequest} from "umi";
-import NewUserForm from "./components/forms/NewUserForm";
+import NewRoleListForm from "./components/forms/NewRoleListForm";
 import AddNew from "@/components/TableProperties/AddNew";
 import Column from "./components/tables/Column";
 // import SelectPage from "./components/tables/SelectPage";
 import style from "@/components/TableProperties/style.less";
 import TitleTable from "@/components/TableProperties/TitleTable";
 import TotalPagination from "@/components/TableProperties/TotalPagination";
+import RoleListDetailDrawer from "./components/forms/RoleListDetailDrawer";
 
 /**
  * @en-US Add node
@@ -165,8 +160,8 @@ const TableCustom = () => {
                 }}
             />
 
-            <NewUserForm
-                title="Tạo người dùng mới"
+            <NewRoleListForm
+                title="Tạo nhóm quyền"
                 width="934px"
                 visible={createModalVisible}
                 onVisibleChange={handleModalVisible}
@@ -183,24 +178,13 @@ const TableCustom = () => {
                     }
                     return false;
                 }}
-            >
-                <ProFormText
-                    rules={[
-                        {
-                            required: true,
-                            message: (
-                                <FormattedMessage
-                                    id="pages.searchTable.ruleName"
-                                    defaultMessage="Rule name is required"
-                                />
-                            ),
-                        },
-                    ]}
-                    width="md"
-                    name="name"
-                />
-                <ProFormTextArea width="md" name="desc" />
-            </NewUserForm>
+            />
+            <RoleListDetailDrawer
+                currentRow={currentRow}
+                setCurrentRow={setCurrentRow}
+                showDetail={showDetail}
+                setShowDetail={setShowDetail}
+            />
         </PageContainer>
     );
 };

@@ -2,7 +2,7 @@ import type { ProColumns } from "@ant-design/pro-components";
 import HeadCell from "@/components/TableProperties/HeadCell";
 import { TextCell } from "@/components/TableProperties//TableCell";
 import StatusTag from "@/components/TableProperties/StatusTag";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 type ColumnProps = {
     setCurrentRow: (s: API.StmInfoResponse) => void;
@@ -86,18 +86,38 @@ function Column({}: ColumnProps) {
                 },
                 OUT_OF_SERVICE: {
                     text: (
-                        <StatusTag
-                            title={"OUT OF SERVICE"}
-                            type="INACTIVE"
-                            icon={<ExclamationCircleOutlined />}
-                        />
+                        <StatusTag title={"OUT OF SERVICE"} type="INACTIVE" />
                     ),
                 },
                 UNKNOWN: {
-                    text: <StatusTag title={"UNKNOWN"} type="DEFAULT" />,
+                    text: (
+                        <StatusTag
+                            title={"UNKNOWN"}
+                            type="DISABLE"
+                            icon={
+                                <ExclamationCircleFilled
+                                    style={{
+                                        color: "#A8071A",
+                                    }}
+                                />
+                            }
+                        />
+                    ),
                 },
                 OFFLINE: {
-                    text: <StatusTag title={"OFFLINE"} type="DISABLE" />,
+                    text: (
+                        <StatusTag
+                            title={"OFFLINE"}
+                            type="DISABLE"
+                            icon={
+                                <ExclamationCircleFilled
+                                    style={{
+                                        color: "#A8071A",
+                                    }}
+                                />
+                            }
+                        />
+                    ),
                 },
             },
         },
