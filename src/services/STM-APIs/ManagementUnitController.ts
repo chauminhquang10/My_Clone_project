@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get list of management units - Get list of management units GET /api/v1/management-units */
 export async function getAllManagementUnits(options?: { [key: string]: any }) {

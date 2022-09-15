@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get list STM API - Get list STM, pass filter values and page's values as parameters in the request URL GET /api/v1/machines */
 export async function getListMachines(

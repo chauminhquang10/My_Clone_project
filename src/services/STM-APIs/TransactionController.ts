@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get list transaction configuration for all machine Get list transaction configuration for all machine GET /api/v1/transactions */
 export async function getTransactionConfiguration(

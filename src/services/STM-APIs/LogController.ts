@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get daily log API  - Get daily log GET /api/v1/logs/${param0} */
 export async function getLogs(

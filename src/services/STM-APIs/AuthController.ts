@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Change Password API - Change user password PUT /api/v1/auth/change-password */
 export async function changePassword(

@@ -90,7 +90,6 @@ const routes = [
         path: '/users',
         name: 'Quản trị người dùng',
         icon: 'user-management',
-        access: 'canAdmin',
         routes: [
           {
             path: '/users/list',

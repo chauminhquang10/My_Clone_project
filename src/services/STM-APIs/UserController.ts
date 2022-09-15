@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get all users API  - Get all user management API (Pagination) GET /api/v1/users */
 export async function getAllUsers(

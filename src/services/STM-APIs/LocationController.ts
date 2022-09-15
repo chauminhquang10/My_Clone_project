@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get list district API  - Get list districts by province's ID GET /api/v1/location/districts */
 export async function getDistricts(

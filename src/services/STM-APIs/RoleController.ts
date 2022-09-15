@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get list of roles  - Get list of roles GET /api/v1/roles */
 export async function getListRoles(options?: { [key: string]: any }) {

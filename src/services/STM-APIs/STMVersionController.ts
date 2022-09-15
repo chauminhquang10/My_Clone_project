@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get list versions  - Get all versions (no machineType param) or versions by machine Type.  GET /api/v1/versions */
 export async function getAllVersion(

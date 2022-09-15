@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get list physical devices  - Get list physical device GET /api/v1/devices */
 export async function getAllDevices(options?: { [key: string]: any }) {

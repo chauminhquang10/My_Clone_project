@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
+import { request } from '@/utils';
 
 /** Get STM list models  - Get list STM Models GET /api/v1/models */
 export async function getListModels(
