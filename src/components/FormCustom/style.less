@@ -1,0 +1,108 @@
+.lockModalTitle {
+    /* identical to box height, or 150% */
+
+    display: flex;
+    align-items: center;
+
+    /* Character/Title .85 */
+
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
+    font-size: 16px;
+    font-family: "Roboto";
+    font-style: normal;
+    line-height: 24px;
+}
+.lockModalDesc {
+    /* or 157% */
+
+    /* Character/Title .85 */
+
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 400;
+    font-size: 14px;
+    font-family: "Roboto";
+    font-style: normal;
+    line-height: 22px;
+}
+.out-line {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    width: 114px;
+    height: 40px;
+    padding: 8px 32px;
+
+    /* Character/Secondary .45 */
+
+    color: rgba(0, 0, 0, 0.45);
+    font-weight: 400;
+    font-size: 16px;
+    font-family: "Roboto";
+    font-style: normal;
+    line-height: 24px;
+
+    /* identical to box height, or 150% */
+
+    text-align: center;
+
+    /* Neutral/1 */
+
+    background: #fff;
+
+    /* Character/Secondary .45 */
+
+    border: 1px solid rgba(0, 0, 0, 0.45);
+    border-radius: 4px;
+    isolation: isolate;
+}
+.warning {
+    /* Auto layout */
+
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 131px;
+    height: 40px;
+    padding: 8px 32px;
+    color: white;
+
+    /* STM/orange/default */
+
+    background: #f26122;
+
+    /* STM/orange/default */
+
+    border: 1px solid #f26122;
+    border-radius: 4px;
+    isolation: isolate;
+}
+.customModal {
+    .lockModalDesc {
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: 400;
+        font-size: 14px;
+        font-family: "Roboto";
+        font-style: normal;
+        line-height: 22px;
+    }
+
+    :global {
+        .ant-modal-content {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08),
+                0 9px 28px 8px rgba(0, 0, 0, 0.05);
+        }
+    }
+
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08),
+        0 9px 28px 8px rgba(0, 0, 0, 0.05);
+}

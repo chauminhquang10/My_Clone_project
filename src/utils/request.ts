@@ -1,4 +1,4 @@
-import Api from '@/services/Stm-controller';
+import Api from '@/services/STM-APIs';
 import jwtDecode from 'jwt-decode';
 import type { RequestInterceptor, ResponseError, ResponseInterceptor } from 'umi-request';
 import Reqs, { extend } from 'umi-request';

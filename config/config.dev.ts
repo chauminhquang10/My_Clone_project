@@ -12,4 +12,16 @@ export default defineConfig({
     babelPlugins: [],
     babelOptions: {},
   },
+  define: {
+    API_ENDPOINT: 'https://api-stmc-ca-dev.hcm.unicloud.ai',
+    API_PREFIX: '',
+  },
+  openAPI: [
+    {
+      requestLibPath: "import { request } from '@/utils'",
+      schemaPath: 'https://api-stmc-ca-dev.hcm.unicloud.ai/v3/api-docs',
+      projectName: 'STM-APIs',
+      mock: false,
+    },
+  ],
 });

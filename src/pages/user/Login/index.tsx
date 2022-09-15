@@ -1,6 +1,6 @@
 import logoKSBank from '@/assets/images/ksbank-logo.svg';
 import { BLOCK_TIME, MAX_LOGIN_TIMES, USER_MESSAGE_ERROR } from '@/constants';
-import Api from '@/services/Stm-controller';
+import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';

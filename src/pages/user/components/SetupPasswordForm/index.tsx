@@ -1,6 +1,6 @@
 import iconCheckActive from '@/assets/icons/icon-check-active.svg';
 import iconCheckDisable from '@/assets/icons/icon-check-disable.svg';
-import Api from '@/services/Stm-controller';
+import Api from '@/services/STM-APIs';
 import {
   isContainLowerCase,
   isContainNumber,
