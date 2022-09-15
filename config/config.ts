@@ -46,6 +46,10 @@ export default defineConfig({
   },
   // Fast Refresh 热更新
   fastRefresh: {},
+  define: {
+    API_ENDPOINT: 'https://api-stmc-ca-dev.hcm.unicloud.ai',
+    API_PREFIX: '',
+  },
   openAPI: [
     {
       requestLibPath: "import { request } from 'umi'",
