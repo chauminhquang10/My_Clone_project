@@ -1,47 +1,47 @@
-import {
-    PageLoading,
-    Settings as LayoutSettings,
-} from "@ant-design/pro-components";
-import { history } from "umi";
-import defaultSettings from "../config/defaultSettings";
-import { currentUser as queryCurrentUser } from "./services/ant-design-pro/api";
+import Api from '@/services/STM-APIs';
+import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import { PageLoading } from '@ant-design/pro-components';
+import { history } from 'umi';
+import defaultSettings from '../config/defaultSettings';
 
-const loginPath = "/user/login";
-
+const loginPath = '/user/login';
+const setupPasswordPath = '/user/setup-password';
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
-    loading: <PageLoading />,
+  loading: <PageLoading />,
 };
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
 export async function getInitialState(): Promise<{
-    settings?: Partial<LayoutSettings>;
-    currentUser?: API.CurrentUser;
-    loading?: boolean;
-    fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  settings?: Partial<LayoutSettings>;
+  currentUser?: API.UserDetailResponse;
+  loading?: boolean;
+  fetchUserInfo?: () => Promise<API.UserDetailResponse | undefined>;
 }> {
-    const fetchUserInfo = async () => {
-        try {
-            const msg = await queryCurrentUser();
-            return msg.data;
-        } catch (error) {
-            history.push(loginPath);
-        }
-        return undefined;
-    };
-    // 如果不是登录页面，执行
-    if (history.location.pathname !== loginPath) {
-        const currentUser = await fetchUserInfo();
-        return {
-            fetchUserInfo,
-            currentUser,
-            settings: defaultSettings,
-        };
+  const fetchUserInfo = async () => {
+    try {
+      const { data } = await Api.UserController.getMyProfile();
+      return data;
+    } catch (error) {
+      history.push(loginPath);
     }
+    return undefined;
+  };
+
+  // if not login and setup password page, fetch user info
+  if (history.location.pathname !== loginPath && history.location.pathname !== setupPasswordPath) {
+    const currentUser = await fetchUserInfo();
     return {
-        fetchUserInfo,
-        settings: defaultSettings,
+      fetchUserInfo,
+      currentUser,
+      settings: defaultSettings,
     };
+  }
+
+  return {
+    fetchUserInfo,
+    settings: defaultSettings,
+  };
 }
