@@ -9,12 +9,14 @@ import ProLayout from '@ant-design/pro-layout';
 import 'antd/dist/antd.css';
 import cx from 'classnames';
 import { useCallback } from 'react';
-import { Link, useIntl } from 'umi';
+import { history, Link, useIntl, useModel } from 'umi';
 import logo from '../assets/logo/Logo.svg';
 import RightContent from '../components/RightContent';
 import { icons } from './data';
 import styles from './layouts.less';
 import MenuItem from './MenuItem';
+
+const loginPath = '/user/login';
 
 export type BasicLayoutProps = {
   breadcrumbNameMap: Record<string, MenuDataItem>;
@@ -42,6 +44,11 @@ const BasicLayout = ({ children, routes, ...props }: BasicLayoutProps) => {
   const handleCollapsed = useCallback(() => {
     setCollapsed((prev: boolean) => !prev);
   }, []);
+
+  const { initialState } = useModel('@@initialState');
+
+  console.log('initialState: ', initialState);
+
   const menuRender = useCallback(
     (menuProps, dom) => {
       return (
@@ -57,6 +64,7 @@ const BasicLayout = ({ children, routes, ...props }: BasicLayoutProps) => {
     },
     [collapsed],
   );
+
   const subMenuItemRender = useCallback((item) => {
     const Icon = icons[item.icon as keyof typeof item.icon];
 
@@ -105,7 +113,14 @@ const BasicLayout = ({ children, routes, ...props }: BasicLayoutProps) => {
         <MenuItem defaultDom={defaultDom} menuItemProps={menuItemProps} />
       )}
       headerRender={headerRender}
-      className={styles['layout-container-custom']}
+      className={styles['l[ayout-container-custom']}
+      onPageChange={() => {
+        const { location } = history;
+
+        if (!initialState?.currentUser && location.pathname !== loginPath) {
+          history.push(loginPath);
+        }
+      }}
     >
       {children}
     </ProLayout>
