@@ -56,7 +56,7 @@ export default {
     "menu.machine-management.config": "Cấu hình dòng máy",
     "menu.machine-management.update-firmware": "Cập nhật phần mềm",
     "menu.machine-management.system-warning": "Cảnh báo hệ thống",
-    "menu.machine-management.history": "Lịch sử",
+    "menu.history": "Lịch sử",
     "menu.camera-management": "Giám sát Camera",
     "menu.camera-management.log": "Log hoạt động",
     "menu.camera-management.transaction-list": "Danh sách hoạt động",

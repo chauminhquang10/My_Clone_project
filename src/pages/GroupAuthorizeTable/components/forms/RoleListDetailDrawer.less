@@ -33,11 +33,43 @@
     height: 100px;
 }
 
+.roleGroupContainer {
+    :global {
+        .ant-form-item {
+            margin-bottom: 0;
+        }
+        .ant-form-item-label > label {
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: 400;
+            font-size: 14px;
+            font-family: "Roboto";
+            font-style: normal;
+            line-height: 22px;
+        }
+
+        .ant-form-item-control-input-content > input {
+            padding: 5px 12px;
+            background: #f5f5f5;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+
+            &::placeholder {
+                color: #595959;
+                font-weight: 400;
+                font-size: 14px;
+                font-family: "Roboto";
+                font-style: normal;
+                line-height: 22px;
+            }
+        }
+    }
+}
+
 .myDrawer {
     :global {
         .ant-drawer-close {
-            padding: 0;
-            font-size: 11px;
+            padding: 5px;
+            font-size: 14px;
         }
         .ant-drawer-content {
             background: #fff;
@@ -48,7 +80,7 @@
         }
 
         .ant-drawer-body {
-            padding: 15px 20px 15px 20px;
+            padding: 20px;
         }
     }
 }
@@ -138,6 +170,13 @@
 }
 
 .myTable {
+    .visibleUserDetail {
+        opacity: 0;
+    }
+    :global(.ant-table-tbody > tr:hover td:nth-child(2)) .visibleUserDetail {
+        opacity: 1;
+    }
+
     :global {
         .ant-table {
             border: 1px solid #d9d9d9;
@@ -171,7 +210,8 @@
         }
 
         .ant-table-tbody > tr > td {
-            padding: 9px 16px;
+            width: fit-content;
+            padding: 4px 12px;
             color: rgba(0, 0, 0, 0.85);
             font-weight: 400;
             font-size: 14px;
@@ -180,6 +220,24 @@
             line-height: 22px;
         }
     }
+}
+
+.machineListTableTitle {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.staffNameCell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.staffUserInfo {
+    display: flex;
+    gap: 4px;
+    align-items: center;
 }
 
 .lockModalTitle {

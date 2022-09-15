@@ -10,18 +10,11 @@ type ColumnProps = {
 function Column({}: ColumnProps) {
     const columns: ProColumns<API.StmInfoResponse>[] = [
         {
-            title: <HeadCell>STT</HeadCell>,
+            title: <HeadCell>Tên phiên bản</HeadCell>,
             dataIndex: "id",
             render: (dom) => {
                 const stt = dom as number;
                 return <TextCell>{stt}</TextCell>;
-            },
-        },
-        {
-            title: <HeadCell>Tên máy</HeadCell>,
-            dataIndex: "name",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
             },
             sorter: (a, b) => {
                 if (a.name && b.name) return a.name.localeCompare(b.name);
@@ -29,73 +22,59 @@ function Column({}: ColumnProps) {
             },
         },
         {
-            title: <HeadCell>Khu vực</HeadCell>,
+            title: <HeadCell>Loại máy</HeadCell>,
+            dataIndex: "name",
+            render: (dom) => {
+                return <TextCell>{dom}</TextCell>;
+            },
+            filters: [
+                { text: "6", value: "6" },
+                { text: "5", value: "5" },
+            ],
+            onFilter: (value, record) => {
+                return record.name?.includes(value as string) as boolean;
+            },
+        },
+        {
+            title: <HeadCell>Dòng máy</HeadCell>,
             dataIndex: "location",
             render: (dom) => {
                 return <TextCell>{dom}</TextCell>;
             },
             filters: [
                 { text: "6", value: "6" },
-                { text: "777", value: "777" },
+                { text: "5", value: "5" },
             ],
             onFilter: (value, record) => {
-                return record.location?.includes(value as string) as boolean;
+                return record.name?.includes(value as string) as boolean;
             },
         },
         {
-            title: <HeadCell>Tỉnh/ Thành phố</HeadCell>,
+            title: <HeadCell>Nội dung</HeadCell>,
             dataIndex: "province",
             render: (_, entity) => {
                 return <TextCell>{entity.province?.name}</TextCell>;
             },
-            filters: [
-                { text: "6", value: "6" },
-                { text: "777", value: "777" },
-            ],
-            onFilter: (value, record) => {
-                return record.location?.includes(value as string) as boolean;
-            },
         },
         {
-            title: <HeadCell>Loại máy</HeadCell>,
+            title: <HeadCell>Điều kiện nâng cấp</HeadCell>,
             dataIndex: "machineType",
             render: (dom) => {
                 return <TextCell>{dom}</TextCell>;
             },
-            filters: [
-                { text: "6", value: "6" },
-                { text: "777", value: "777" },
-            ],
-            onFilter: (value, record) => {
-                return record.location?.includes(value as string) as boolean;
-            },
         },
         {
-            title: <HeadCell>Tình trạng</HeadCell>,
+            title: <HeadCell>Thời gian tải lên</HeadCell>,
             dataIndex: "status",
             render: (dom) => {
                 return <TextCell>{dom}</TextCell>;
             },
             filters: [
                 { text: "6", value: "6" },
-                { text: "777", value: "777" },
+                { text: "5", value: "5" },
             ],
             onFilter: (value, record) => {
-                return record.location?.includes(value as string) as boolean;
-            },
-        },
-        {
-            title: <HeadCell>Terminal ID</HeadCell>,
-            dataIndex: "terminalId",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
-            },
-        },
-        {
-            title: <HeadCell>Địa chỉ IP</HeadCell>,
-            dataIndex: "ipAddress",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
+                return record.name?.includes(value as string) as boolean;
             },
         },
     ];

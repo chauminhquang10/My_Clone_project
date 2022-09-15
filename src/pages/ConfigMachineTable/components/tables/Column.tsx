@@ -10,7 +10,7 @@ type ColumnProps = {
 function Column({}: ColumnProps) {
     const columns: ProColumns<API.StmInfoResponse>[] = [
         {
-            title: <HeadCell>STT</HeadCell>,
+            title: <HeadCell>Loại thiết bị</HeadCell>,
             dataIndex: "id",
             render: (dom) => {
                 const stt = dom as number;
@@ -18,7 +18,7 @@ function Column({}: ColumnProps) {
             },
         },
         {
-            title: <HeadCell>Tên máy</HeadCell>,
+            title: <HeadCell>Đơn vị tính</HeadCell>,
             dataIndex: "name",
             render: (dom) => {
                 return <TextCell>{dom}</TextCell>;
@@ -29,7 +29,7 @@ function Column({}: ColumnProps) {
             },
         },
         {
-            title: <HeadCell>Khu vực</HeadCell>,
+            title: <HeadCell>Sức chứa tối thiểu</HeadCell>,
             dataIndex: "location",
             render: (dom) => {
                 return <TextCell>{dom}</TextCell>;
@@ -40,62 +40,6 @@ function Column({}: ColumnProps) {
             ],
             onFilter: (value, record) => {
                 return record.location?.includes(value as string) as boolean;
-            },
-        },
-        {
-            title: <HeadCell>Tỉnh/ Thành phố</HeadCell>,
-            dataIndex: "province",
-            render: (_, entity) => {
-                return <TextCell>{entity.province?.name}</TextCell>;
-            },
-            filters: [
-                { text: "6", value: "6" },
-                { text: "777", value: "777" },
-            ],
-            onFilter: (value, record) => {
-                return record.location?.includes(value as string) as boolean;
-            },
-        },
-        {
-            title: <HeadCell>Loại máy</HeadCell>,
-            dataIndex: "machineType",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
-            },
-            filters: [
-                { text: "6", value: "6" },
-                { text: "777", value: "777" },
-            ],
-            onFilter: (value, record) => {
-                return record.location?.includes(value as string) as boolean;
-            },
-        },
-        {
-            title: <HeadCell>Tình trạng</HeadCell>,
-            dataIndex: "status",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
-            },
-            filters: [
-                { text: "6", value: "6" },
-                { text: "777", value: "777" },
-            ],
-            onFilter: (value, record) => {
-                return record.location?.includes(value as string) as boolean;
-            },
-        },
-        {
-            title: <HeadCell>Terminal ID</HeadCell>,
-            dataIndex: "terminalId",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
-            },
-        },
-        {
-            title: <HeadCell>Địa chỉ IP</HeadCell>,
-            dataIndex: "ipAddress",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
             },
         },
     ];

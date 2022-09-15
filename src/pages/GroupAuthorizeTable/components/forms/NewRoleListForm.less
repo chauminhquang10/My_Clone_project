@@ -45,7 +45,6 @@
 
         .ant-form-item-control-input-content > input {
             padding: 5px 12px;
-            background: #fff;
             border: 1px solid #d9d9d9;
             border-radius: 4px;
 
@@ -65,6 +64,62 @@
 
         .ant-modal-footer {
             display: none;
+        }
+    }
+}
+
+.myRoleGroupTree {
+    width: 100%;
+    :global {
+        .ant-motion-collapse-appear {
+            width: 100%;
+        }
+        .ant-motion-collapse-leave {
+            width: 100%;
+        }
+        .ant-tree-treenode {
+            width: 100%;
+            padding: 10px 16px;
+        }
+        .ant-tree-switcher {
+            flex-basis: 1%;
+            align-self: flex-start;
+            order: 1;
+        }
+        .ant-tree-node-content-wrapper {
+            flex-basis: 98%;
+            align-self: center;
+            order: 2;
+        }
+        .ant-tree-checkbox {
+            flex-basis: 1%;
+            align-self: center;
+            order: 3;
+            margin-top: 0;
+            margin-right: 0;
+            .ant-tree-checkbox-inner {
+                width: 20px;
+                height: 20px;
+            }
+        }
+        .ant-tree-title {
+            margin-left: 8px;
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: 400;
+            font-size: 12px;
+            font-family: "Roboto";
+            font-style: normal;
+            line-height: 20px;
+        }
+    }
+}
+
+.myAllCheckBox {
+    margin-right: 16px;
+    :global {
+        .ant-checkbox-inner {
+            width: 20px;
+            height: 20px;
         }
     }
 }
@@ -91,6 +146,7 @@
 }
 
 .cancelButton {
+    padding: 8px 32px;
     color: rgba(0, 0, 0, 0.45);
     font-weight: 400;
     font-size: 16px;
@@ -103,6 +159,7 @@
 }
 
 .submitButton {
+    padding: 8px 32px;
     color: #f6f8f8;
     font-weight: 400;
     font-size: 16px;

@@ -10,7 +10,7 @@ type ColumnProps = {
     setShowDetail: (s: boolean) => void;
 };
 
-function Column({}: ColumnProps) {
+function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
     const columns: ProColumns<API.RoleGroupResponse>[] = [
         {
             title: <HeadCell>STT</HeadCell>,
@@ -23,8 +23,17 @@ function Column({}: ColumnProps) {
         {
             title: <HeadCell>Tên nhóm quyền</HeadCell>,
             dataIndex: "name",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
+            render: (dom, entity) => {
+                return (
+                    <TextCell
+                        onClick={() => {
+                            setCurrentRow(entity);
+                            setShowDetail(true);
+                        }}
+                    >
+                        {dom}
+                    </TextCell>
+                );
             },
             sorter: (a, b) => {
                 if (a.name && b.name) {

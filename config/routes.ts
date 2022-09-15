@@ -1,3 +1,5 @@
+import route from 'mock/route';
+
 const routes = [
   {
     path: '/user',

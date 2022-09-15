@@ -10,7 +10,7 @@ type ColumnProps = {
 function Column({}: ColumnProps) {
     const columns: ProColumns<API.StmInfoResponse>[] = [
         {
-            title: <HeadCell>STT</HeadCell>,
+            title: <HeadCell>Loại máy</HeadCell>,
             dataIndex: "id",
             render: (dom) => {
                 const stt = dom as number;
@@ -18,7 +18,7 @@ function Column({}: ColumnProps) {
             },
         },
         {
-            title: <HeadCell>Tên máy</HeadCell>,
+            title: <HeadCell>Thời gian cảnh báo</HeadCell>,
             dataIndex: "name",
             render: (dom) => {
                 return <TextCell>{dom}</TextCell>;
@@ -29,7 +29,7 @@ function Column({}: ColumnProps) {
             },
         },
         {
-            title: <HeadCell>Khu vực</HeadCell>,
+            title: <HeadCell>Terminal ID</HeadCell>,
             dataIndex: "location",
             render: (dom) => {
                 return <TextCell>{dom}</TextCell>;
@@ -43,7 +43,7 @@ function Column({}: ColumnProps) {
             },
         },
         {
-            title: <HeadCell>Tỉnh/ Thành phố</HeadCell>,
+            title: <HeadCell>Địa chỉ IP</HeadCell>,
             dataIndex: "province",
             render: (_, entity) => {
                 return <TextCell>{entity.province?.name}</TextCell>;
@@ -57,7 +57,7 @@ function Column({}: ColumnProps) {
             },
         },
         {
-            title: <HeadCell>Loại máy</HeadCell>,
+            title: <HeadCell>Nhân viên quản lý</HeadCell>,
             dataIndex: "machineType",
             render: (dom) => {
                 return <TextCell>{dom}</TextCell>;
@@ -85,15 +85,8 @@ function Column({}: ColumnProps) {
             },
         },
         {
-            title: <HeadCell>Terminal ID</HeadCell>,
+            title: <HeadCell>Tình trạng xử lý</HeadCell>,
             dataIndex: "terminalId",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
-            },
-        },
-        {
-            title: <HeadCell>Địa chỉ IP</HeadCell>,
-            dataIndex: "ipAddress",
             render: (dom) => {
                 return <TextCell>{dom}</TextCell>;
             },
