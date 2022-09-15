@@ -214,18 +214,24 @@ export function UserCellGroup({ listUser }: UserCellGroupProps) {
                 <div
                     className={`${style["box-hover"]} ${
                         active ? style.active : ""
-                    } ${amountUser > 5 ? style.scroll : ""}`}
+                    }`}
                     ref={boxHoverRef}
                 >
-                    {listUser.map((item) => {
-                        return (
-                            <UserDropdownItem
-                                user={item}
-                                key={item.id}
-                                onClick={openDetailMachine}
-                            />
-                        );
-                    })}
+                    <div
+                        className={`${style["drop-down"]} ${
+                            amountUser > 5 ? style.scroll : ""
+                        }`}
+                    >
+                        {listUser.map((item) => {
+                            return (
+                                <UserDropdownItem
+                                    user={item}
+                                    key={item.id}
+                                    onClick={openDetailMachine}
+                                />
+                            );
+                        })}
+                    </div>
                 </div>
             )}
         </div>

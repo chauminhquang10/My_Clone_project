@@ -1,6 +1,8 @@
 import type { ProColumns } from "@ant-design/pro-components";
 import HeadCell from "@/components/TableProperties/HeadCell";
 import { TextCell } from "@/components/TableProperties//TableCell";
+import StatusTag from "@/components/TableProperties/StatusTag";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 type ColumnProps = {
     setCurrentRow: (s: API.StmInfoResponse) => void;
@@ -74,14 +76,29 @@ function Column({}: ColumnProps) {
             title: <HeadCell>Tình trạng</HeadCell>,
             dataIndex: "status",
             render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
+                return dom;
             },
-            filters: [
-                { text: "6", value: "6" },
-                { text: "777", value: "777" },
-            ],
-            onFilter: (value, record) => {
-                return record.location?.includes(value as string) as boolean;
+            filters: true,
+            onFilter: true,
+            valueEnum: {
+                IN_SERVICE: {
+                    text: <StatusTag title={"IN SERVICE"} type="ACTIVE" />,
+                },
+                OUT_OF_SERVICE: {
+                    text: (
+                        <StatusTag
+                            title={"OUT OF SERVICE"}
+                            type="INACTIVE"
+                            icon={<ExclamationCircleOutlined />}
+                        />
+                    ),
+                },
+                UNKNOWN: {
+                    text: <StatusTag title={"UNKNOWN"} type="DEFAULT" />,
+                },
+                OFFLINE: {
+                    text: <StatusTag title={"OFFLINE"} type="DISABLE" />,
+                },
             },
         },
         {

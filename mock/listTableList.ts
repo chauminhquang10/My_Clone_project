@@ -295,7 +295,7 @@ const genListMachine = (current: number, pageSize: number) => {
             },
             machineType: "STM",
             terminalId: `terminal-${index}`,
-            status: "IN_SERVICE",
+            status: "OFFLINE",
             activity: "MAINTAINING",
             ipAddress: `ipAddress-${index}`,
         });
