@@ -1,49 +1,46 @@
-import type { ProColumns } from "@ant-design/pro-components";
-import HeadCell from "@/components/TableProperties/HeadCell";
-import { TextCell } from "@/components/TableProperties//TableCell";
+import type { ProColumns } from '@ant-design/pro-components';
+import HeadCell from '@/components/TableProperties/HeadCell';
+import { TextCell } from '@/components/TableProperties//TableCell';
 
 type ColumnProps = {
-    setCurrentRow: (s: API.StmInfoResponse) => void;
-    setShowDetail: (s: boolean) => void;
+  setCurrentRow: (s: API.StorageItem) => void;
+  setShowDetail: (s: boolean) => void;
 };
 
 function Column({}: ColumnProps) {
-    const columns: ProColumns<API.StmInfoResponse>[] = [
-        {
-            title: <HeadCell>Loại thiết bị</HeadCell>,
-            dataIndex: "id",
-            render: (dom) => {
-                const stt = dom as number;
-                return <TextCell>{stt}</TextCell>;
-            },
-        },
-        {
-            title: <HeadCell>Đơn vị tính</HeadCell>,
-            dataIndex: "name",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
-            },
-            sorter: (a, b) => {
-                if (a.name && b.name) return a.name.localeCompare(b.name);
-                else return 1;
-            },
-        },
-        {
-            title: <HeadCell>Sức chứa tối thiểu</HeadCell>,
-            dataIndex: "location",
-            render: (dom) => {
-                return <TextCell>{dom}</TextCell>;
-            },
-            filters: [
-                { text: "6", value: "6" },
-                { text: "777", value: "777" },
-            ],
-            onFilter: (value, record) => {
-                return record.location?.includes(value as string) as boolean;
-            },
-        },
-    ];
-    return columns;
+  const columns: ProColumns<API.StorageItem>[] = [
+    {
+      title: <HeadCell>Loại thiết bị</HeadCell>,
+      dataIndex: 'deviceType',
+      render: (_, entity) => {
+        return <TextCell>{entity.deviceType?.name}</TextCell>;
+      },
+    },
+    {
+      title: <HeadCell>Đơn vị tính</HeadCell>,
+      dataIndex: 'deviceType',
+      render: (_, entity) => {
+        return <TextCell>{entity.deviceType?.unit}</TextCell>;
+      },
+      sorter: (a, b) => {
+        if (a.deviceType?.unit && b.deviceType?.unit)
+          return a.deviceType.unit.localeCompare(b.deviceType.unit);
+        else return 1;
+      },
+    },
+    {
+      title: <HeadCell>Sức chứa tối thiểu</HeadCell>,
+      dataIndex: 'minCapacity',
+      render: (dom) => {
+        return <TextCell>{dom}</TextCell>;
+      },
+      sorter: (a, b) => {
+        if (a.minCapacity && b.minCapacity) return a.minCapacity - b.minCapacity;
+        return 1;
+      },
+    },
+  ];
+  return columns;
 }
 
 export default Column;
