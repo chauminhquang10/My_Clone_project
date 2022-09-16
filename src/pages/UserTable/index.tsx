@@ -1,42 +1,21 @@
 import { addRule } from '@/services/ant-design-pro/api';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 // import { getAllUsers } from "@/services/STM-APIs/UserController";
+import Api from '@/services/STM-APIs';
 import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { FormattedMessage } from 'umi';
+import { FormattedMessage, useRequest } from 'umi';
 // import {useRequest} from "umi";
+import AddNew from '@/components/TableProperties/AddNew';
 import NewUserForm from './components/forms/NewUserForm';
 import UserDetailDrawer from './components/forms/UserDetailDrawer';
-import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-
-const genList = (current: number, pageSize: number) => {
-  const tableListDataSource: API.UserResponse[] = [];
-
-  for (let i = 0; i < pageSize; i += 1) {
-    const index = (current - 1) * 10 + i;
-    tableListDataSource.push({
-      id: `${index}`,
-      name: `TradeCode-${index}`,
-      staffId: `No-${index}`,
-      email: `Email${index}@gmail.com`,
-      phoneNumber: `${Math.floor(Math.random() * 1000)}`,
-      status: 'ACTIVE',
-      managementUnit: {
-        code: 'ABC',
-        name: `${index}`,
-      },
-    });
-  }
-  return tableListDataSource;
-};
-
-const tableListDataSource = genList(1, 100);
+import { openNotification } from '@/utils';
 
 /**
  * @en-US Add node
@@ -57,25 +36,24 @@ const handleAdd = async (fields: API.UserResponse) => {
   }
 };
 
-const TableCustom = () => {
-  //--------------- listUSer -----------------------------------
-  // const [listUser, setListUser] = useState<API.UserResponse[] | undefined>();
-  //---------------  handle getAllUser -------------------------------
-
-  // const { run: runGetAllUser } = useRequest(
-  //     (params: API.getAllUsersParams) => getAllUsers(params),
-  //     {
-  //         manual: true,
-  //         onSuccess: (res) => {
-  //             const data = res as API.ResponseBasePageResponseObject;
-  //             const listUserRespone = data.data?.items;
-  //             setListUser(listUserRespone);
-  //         },
-  //         onError: (error) => {
-  //             console.log(error);
-  //         },
-  //     }
-  // );
+const UserManagementTable: React.FC = () => {
+  const { run: runGetAllUser } = useRequest(
+    (params: API.getAllUsersParams) => Api.UserController.getAllUsers(params),
+    {
+      manual: true,
+      onSuccess: (res) => {
+        if (!res) {
+          openNotification('error', 'Đã xảy ra lỗi', 'Vui lòng thử lại sau');
+          return;
+        }
+        console.log('user list data: ', res);
+        return res;
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    },
+  );
   /**
    * @en-US Pop-up window of new window
    * @zh-CN 新建窗口的弹窗
@@ -138,27 +116,28 @@ const TableCustom = () => {
           />,
         ]}
         // request={rule}
-        dataSource={tableListDataSource}
-        // request={async (params = {}) => {
-        //     const filterParams: API.UserFilter = {
-        //         managementUnit: "",
-        //         staffId: "",
-        //     };
+        request={async (params = {}) => {
+          console.log('params request user list: ', params);
+          const filterParams = {
+            managementUnit: '',
+            staffId: '',
+          };
 
-        //     const pageRequestParams: API.PageReq = {
-        //         pageNumber: params.current,
-        //         pageSize: params.pageSize,
-        //         sortDirection: "",
-        //         sortBy: "",
-        //     };
-        //     await runGetAllUser({
-        //         filter: filterParams,
-        //         pageRequest: pageRequestParams,
-        //     });
-        //     return {
-        //         data: listUser,
-        //     };
-        // }}
+          const pageRequestParams = {
+            // pageNumber: params.current,
+            // pageSize: params.pageSize,
+            // sortDirection: '',
+            sortBy: '',
+          };
+          const res = await runGetAllUser({
+            ...filterParams,
+            ...pageRequestParams,
+          });
+
+          return {
+            data: res?.items || [],
+          };
+        }}
         columns={columns}
         options={false}
         // rowSelection={{
@@ -166,6 +145,7 @@ const TableCustom = () => {
         //         setSelectedRows(selectedRows);
         //     },
         // }}
+        scroll={{ x: 'max-content', y: 'max-content' }}
         pagination={{
           onChange(current) {
             setCurrentPage(current);
@@ -226,4 +206,4 @@ const TableCustom = () => {
   );
 };
 
-export default TableCustom;
+export default UserManagementTable;
