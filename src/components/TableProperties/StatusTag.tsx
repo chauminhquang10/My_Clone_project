@@ -114,7 +114,7 @@ const StatusTag: React.FC<StatusTagProps> = ({ title, icon, type, width, changab
         </div>
       ) : (
         <div className={styles.statusContent}>
-          <span className={styles.statusTitle}>{title ? title : 'STATUS'}</span>
+          <span className={styles.statusTitle}>{title ? title : 'UNKNOWN'}</span>
           {icon ? icon : <DefaultIcon style={{ width: '18px', height: '18px' }} />}
         </div>
       )}

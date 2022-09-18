@@ -9,13 +9,13 @@ import { FormattedMessage, useRequest } from 'umi';
 // import {useRequest} from "umi";
 import AddNew from '@/components/TableProperties/AddNew';
 import NewUserForm from './components/forms/NewUserForm';
-import UserDetailDrawer from './components/forms/UserDetailDrawer';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
 import { openNotification } from '@/utils';
+import { UserDetailDrawer } from './components/forms';
 
 /**
  * @en-US Add node
@@ -46,7 +46,6 @@ const UserManagementTable: React.FC = () => {
           openNotification('error', 'Đã xảy ra lỗi', 'Vui lòng thử lại sau');
           return;
         }
-        console.log('user list data: ', res);
         return res;
       },
       onError: (error) => {
@@ -200,7 +199,6 @@ const UserManagementTable: React.FC = () => {
         setCurrentRow={setCurrentRow}
         showDetail={showDetail}
         setShowDetail={setShowDetail}
-        userAvatar=""
       />
     </PageContainer>
   );
