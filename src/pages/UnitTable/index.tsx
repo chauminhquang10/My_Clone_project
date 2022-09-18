@@ -1,92 +1,27 @@
-import { addRule } from '@/services/ant-design-pro/api';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import UnitDetailDrawer from './components/forms/UnitDetailDrawer';
-import { message } from 'antd';
 import { useRef, useState } from 'react';
+import { useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
-// import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
 import NewUnitForm from './components/forms/NewUnitForm';
-
-const genListUnit = (current: number, pageSize: number) => {
-  const tableListDataSource: API.ManagementUnitResponse[] = [];
-
-  for (let i = 0; i < pageSize; i += 1) {
-    const index = (current - 1) * 10 + i;
-    tableListDataSource.push({
-      id: index,
-      code: `code-${index}`,
-      name: `name-${index}`,
-      location: `location-${index}`,
-      province: {
-        id: 1,
-        name: `province-${index}`,
-      },
-      district: {
-        id: 1,
-        name: `districtrict-${index}`,
-      },
-      ward: {
-        id: 1,
-        name: `ward-${index}`,
-      },
-      address: `address-${index}`,
-      createdAt: `createdAt-${index}`,
-    });
-  }
-  return tableListDataSource;
-};
-
-const listUnit = genListUnit(1, 100);
-
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.ManagementUnitResponse) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addRule({ ...fields });
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
+import {
+  createManagementUnit,
+  getAllManagementUnits,
+} from '@/services/STM-APIs/ManagementUnitController';
+import { message } from 'antd';
 
 const TableCustom = () => {
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
-  /**
-   * @en-US The pop-up window of the distribution update window
-   * @zh-CN 分布更新窗口的弹窗
-   * */
-  // const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.ManagementUnitResponse>();
 
-  /**
-   * @en-US International configuration
-   * @zh-CN 国际化配置
-   * */
-
-  // const [page, setPage] = useState<number>();
-  // const [pageSize, setPageSize] = useState<number>();
-  // const pageSizeRef = useRef<number>(20);
   const columns: ProColumns<API.ManagementUnitResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
@@ -102,6 +37,44 @@ const TableCustom = () => {
     jump_to: 'Trang',
     page: '',
   };
+
+  const { run: runGetAllManagementUnits } = useRequest<API.ResponseBaseListManagementUnitResponse>(
+    () => getAllManagementUnits(),
+    {
+      manual: true,
+      onSuccess(data) {
+        console.log(data);
+        // const dataNew = data as API.BaseResponseListLanguageSupport;
+        // if (dataNew?.success && dataNew.data) {
+        //   setListSupportLanguages(dataNew.data);
+        // }
+      },
+      onError(error) {
+        console.log('error', error);
+
+        // notification.error({
+        //   message: messageErrorData,
+        //   description: e?.data?.code,
+        // });
+      },
+    },
+  );
+
+  const handleAdd = async (record: API.CreateManagementUnitRequest) => {
+    const hide = message.loading('Loading...');
+
+    try {
+      await createManagementUnit({ ...record });
+      hide();
+      message.success('Added successfully');
+      handleCreateModalVisible(false);
+      actionRef.current?.reload();
+    } catch (error) {
+      hide();
+      message.error('Adding failed, please try again!');
+    }
+  };
+
   return (
     <PageContainer
       className={style['table-container']}
@@ -123,35 +96,16 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        // request={unit}
-        dataSource={listUnit}
-        // request={async (params = {}) => {
-        //     const filterParams: API.UserFilter = {
-        //         managementUnit: "",
-        //         staffId: "",
-        //     };
-
-        //     const pageRequestParams: API.PageReq = {
-        //         pageNumber: params.current,
-        //         pageSize: params.pageSize,
-        //         sortDirection: "",
-        //         sortBy: "",
-        //     };
-        //     await runGetAllUser({
-        //         filter: filterParams,
-        //         pageRequest: pageRequestParams,
-        //     });
-        //     return {
-        //         data: listUser,
-        //     };
-        // }}
+        request={async () => {
+          const res = await runGetAllManagementUnits();
+          return {
+            data: res?.managementUnits,
+            total: res?.managementUnits ? res.managementUnits.length : 0,
+            success: true,
+          };
+        }}
         columns={columns}
         options={false}
-        // rowSelection={{
-        //     onChange: (_, selectedRows) => {
-        //         setSelectedRows(selectedRows);
-        //     },
-        // }}
         pagination={{
           onChange(current) {
             setCurrentPage(current);
@@ -173,15 +127,7 @@ const TableCustom = () => {
         visible={createModalVisible}
         onVisibleChange={handleCreateModalVisible}
         onFinish={async (value) => {
-          const success = await handleAdd(value as API.ManagementUnitResponse);
-          if (success) {
-            handleCreateModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-            return true;
-          }
-          return false;
+          await handleAdd(value as API.CreateManagementUnitRequest);
         }}
       />
 
