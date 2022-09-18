@@ -1,37 +1,36 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 // import { getAllUsers } from "@/services/STM-APIs/UserController";
-import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { message } from 'antd';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+// import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { FormattedMessage } from 'umi';
 // import {useRequest} from "umi";
-import NewUserForm from './components/forms/NewUserForm';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
+import AnaylyticDetail from '../MachineTable/components/drawers/AnalyticDetail';
 
 /**
  * @en-US Add node
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.StmInfoResponse) => {
-  const hide = message.loading('正在添加');
-  try {
-    // await addRule({ ...fields });
-    console.log(fields);
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
+// const handleAdd = async (fields: API.StmInfoResponse) => {
+//   const hide = message.loading('正在添加');
+//   try {
+//     // await addRule({ ...fields });
+//     console.log(fields);
+//     hide();
+//     message.success('Added successfully');
+//     return true;
+//   } catch (error) {
+//     hide();
+//     message.error('Adding failed, please try again!');
+//     return false;
+//   }
+// };
 
 type TransactionConfiguration = {
   machine: API.StmInfoResponse;
@@ -84,6 +83,8 @@ const TableCustom = () => {
    * @zh-CN 新建窗口的弹窗
    *  */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
+  console.log(createModalVisible);
+
   /**
    * @en-US The pop-up window of the distribution update window
    * @zh-CN 分布更新窗口的弹窗
@@ -185,7 +186,8 @@ const TableCustom = () => {
         }}
       />
 
-      <NewUserForm
+      <AnaylyticDetail handleClose={() => setShowDetail(false)} open={showDetail} />
+      {/* <NewUserForm
         title="Tạo người dùng mới"
         width="934px"
         visible={createModalVisible}
@@ -218,7 +220,7 @@ const TableCustom = () => {
           name="name"
         />
         <ProFormTextArea width="md" name="desc" />
-      </NewUserForm>
+      </NewUserForm> */}
     </PageContainer>
   );
 };
