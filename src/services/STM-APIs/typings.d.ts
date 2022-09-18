@@ -245,6 +245,11 @@ declare namespace API {
     to?: string;
   };
 
+  type getUserNotificationParams = {
+    pageNumber?: number;
+    pageSize?: number;
+  };
+
   type getUserParams = {
     userId: string;
   };
@@ -331,6 +336,41 @@ declare namespace API {
     size?: number;
     totalSize?: number;
     items?: Record<string, any>[];
+  };
+
+  type PageResponseStmInfoResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: StmInfoResponse[];
+  };
+
+  type PageResponseSystemOperationResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: SystemOperationResponse[];
+  };
+
+  type PageResponseTransactionConfigurationResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: TransactionConfigurationResponse[];
+  };
+
+  type PageResponseUserResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: UserResponse[];
+  };
+
+  type PageResponseVersionResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: VersionResponse[];
   };
 
   type PhysicalDevice = {
@@ -506,6 +546,36 @@ declare namespace API {
     data?: PageResponseObject;
   };
 
+  type ResponseBasePageResponseStmInfoResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseStmInfoResponse;
+  };
+
+  type ResponseBasePageResponseSystemOperationResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseSystemOperationResponse;
+  };
+
+  type ResponseBasePageResponseTransactionConfigurationResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseTransactionConfigurationResponse;
+  };
+
+  type ResponseBasePageResponseUserResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseUserResponse;
+  };
+
+  type ResponseBasePageResponseVersionResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseVersionResponse;
+  };
+
   type ResponseBasePhysicalDevicesResponse = {
     code?: number;
     message?: string;
@@ -672,6 +742,22 @@ declare namespace API {
   type StorageItemRequest = {
     deviceTypeId: number;
     minCapacity?: number;
+  };
+
+  type SystemOperationResponse = {
+    id?: number;
+    time?: string;
+    action?: 'CREATE' | 'UPDATE' | 'CHANGE_STATUS' | 'BLOCK' | 'UNBLOCK' | 'ASSIGN_ACCESS';
+    module?: 'MACHINE' | 'USER' | 'MODEL' | 'MANAGEMENT_UNIT' | 'VERSION';
+    content?: string;
+    createdBy?: UserResponse;
+  };
+
+  type TransactionConfigurationResponse = {
+    machine?: StmInfoResponse;
+    total?: number;
+    success?: number;
+    failure?: number;
   };
 
   type TransactionResponse = {

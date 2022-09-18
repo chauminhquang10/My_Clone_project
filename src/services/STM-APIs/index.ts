@@ -11,6 +11,7 @@ import * as AuthController from './AuthController';
 import * as RoleController from './RoleController';
 import * as StmStatusController from './StmStatusController';
 import * as TransactionController from './TransactionController';
+import * as NotificationController from './NotificationController';
 import * as LogController from './LogController';
 import * as LocationController from './LocationController';
 import * as PhysicalDevicesController from './PhysicalDevicesController';
@@ -25,6 +26,7 @@ export default {
   RoleController,
   StmStatusController,
   TransactionController,
+  NotificationController,
   LogController,
   LocationController,
   PhysicalDevicesController,

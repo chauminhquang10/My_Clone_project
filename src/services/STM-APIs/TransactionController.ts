@@ -8,16 +8,19 @@ export async function getTransactionConfiguration(
   params: API.getTransactionConfigurationParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBasePageResponseObject>('/api/v1/transactions', {
-    method: 'GET',
-    params: {
-      // pageSize has a default value: 10
-      pageSize: '10',
+  return request<API.ResponseBasePageResponseTransactionConfigurationResponse>(
+    '/api/v1/transactions',
+    {
+      method: 'GET',
+      params: {
+        // pageSize has a default value: 10
+        pageSize: '10',
 
-      ...params,
+        ...params,
+      },
+      ...(options || {}),
     },
-    ...(options || {}),
-  });
+  );
 }
 
 /** Get list transactions  - Get list all transactions of a machine (FROM and TO date - optional) GET /api/v1/transactions/${param0} */

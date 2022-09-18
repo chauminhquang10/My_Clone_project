@@ -33,15 +33,8 @@ const handleAdd = async (fields: API.StmInfoResponse) => {
   }
 };
 
-type TransactionConfiguration = {
-  machine: API.StmInfoResponse;
-  total: number;
-  success: number;
-  failure: number;
-};
-
 const genListMachine = (current: number, pageSize: number) => {
-  const tableListDataSource: TransactionConfiguration[] = [];
+  const tableListDataSource: API.TransactionConfigurationResponse[] = [];
 
   for (let i = 0; i < pageSize; i += 1) {
     tableListDataSource.push({
@@ -105,7 +98,7 @@ const TableCustom = () => {
   // const [page, setPage] = useState<number>();
   // const [pageSize, setPageSize] = useState<number>();
   // const pageSizeRef = useRef<number>(20);
-  const columns: ProColumns<TransactionConfiguration>[] = Column({
+  const columns: ProColumns<API.TransactionConfigurationResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
   });

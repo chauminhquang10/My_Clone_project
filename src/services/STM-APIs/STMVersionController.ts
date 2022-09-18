@@ -8,7 +8,7 @@ export async function getAllVersion(
   params: API.getAllVersionParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBasePageResponseObject>('/api/v1/versions', {
+  return request<API.ResponseBasePageResponseVersionResponse>('/api/v1/versions', {
     method: 'GET',
     params: {
       ...params,
