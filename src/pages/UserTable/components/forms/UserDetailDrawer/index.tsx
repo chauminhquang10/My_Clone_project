@@ -1,13 +1,14 @@
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Drawer, Form, Modal, Row } from 'antd';
+import { Button, Col, Drawer, Form, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import {
   Header,
   MachineListRow,
   ManagementUnitRow,
+  RoleGroupRow,
   UserInfoRow,
   UserStatusRow,
 } from './components';
@@ -33,9 +34,10 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
   setShowDetail,
   currentRow,
   setCurrentRow,
-  roles,
 }) => {
   const [userInfo, setUserInfo] = useState<API.UserDetailResponse>({});
+
+  console.log('userInfo: ', userInfo);
 
   const { run: runDetailUser } = useRequest(
     (params: API.getUserParams) => Api.UserController.getUser(params),
@@ -103,32 +105,8 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
                 name={userInfo.managementUnit?.name}
                 address={userInfo.managementUnit?.address}
               />
-
-              {roles && roles.length > 0 && (
-                <Col span={24}>
-                  <Card title="Nhóm quyền" size="small" className={styles.myCard}>
-                    <Row gutter={[24, 24]}>
-                      {roles.map((role, roleIndex) => {
-                        <Col span={8} key={roleIndex}>
-                          <Form.Item
-                            name="machineRole"
-                            label={role ? role.roleName : 'Tên resource'}
-                          >
-                            <ul className={styles.roleList}>
-                              {role?.roleDetails.map((roleItem, roleItemIndex) => {
-                                <li className={styles.roleListItem} key={roleItemIndex}>
-                                  {roleItem ? roleItem : 'Action'}
-                                </li>;
-                              })}
-                            </ul>
-                          </Form.Item>
-                        </Col>;
-                      })}
-                    </Row>
-                  </Card>
-                </Col>
-              )}
-
+              {/* Nhom quyen so huu */}
+              <RoleGroupRow {...userInfo.roleGroup} />
               {/* Danh sach may quan ly */}
               <MachineListRow machines={userInfo.machines} />
               {/* Lich su */}

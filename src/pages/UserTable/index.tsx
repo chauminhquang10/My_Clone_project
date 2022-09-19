@@ -1,37 +1,52 @@
-import { addRule } from '@/services/ant-design-pro/api';
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
-// import { getAllUsers } from "@/services/STM-APIs/UserController";
+import AddNew from '@/components/TableProperties/AddNew';
+import style from '@/components/TableProperties/style.less';
+import TitleTable from '@/components/TableProperties/TitleTable';
+import TotalPagination from '@/components/TableProperties/TotalPagination';
 import Api from '@/services/STM-APIs';
+import { openNotification } from '@/utils';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
 import { FormattedMessage, useRequest } from 'umi';
-// import {useRequest} from "umi";
-import AddNew from '@/components/TableProperties/AddNew';
-import NewUserForm from './components/forms/NewUserForm';
+import { NewUserForm, UserDetailDrawer } from './components/forms';
 import Column from './components/tables/Column';
-// import SelectPage from "./components/tables/SelectPage";
-import style from '@/components/TableProperties/style.less';
-import TitleTable from '@/components/TableProperties/TitleTable';
-import TotalPagination from '@/components/TableProperties/TotalPagination';
-import { openNotification } from '@/utils';
-import { UserDetailDrawer } from './components/forms';
 
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.UserResponse) => {
-  const hide = message.loading('正在添加');
+const handleAdd = async (fields: API.CreateUserRequest) => {
+  const hide = message.loading('Loading...');
+  hide();
   try {
-    await addRule({ ...fields });
-    hide();
-    message.success('Added successfully');
-    return true;
+    const res = await Api.UserController.createUser({ ...fields });
+    if (!res.code) return false;
+
+    if (res.code === 0) {
+      message.success('Thêm người dùng thành công');
+      return true;
+    }
+
+    switch (res.code) {
+      case 100:
+        openNotification('error', 'Email đã được sử dụng');
+        return false;
+      case 101:
+        openNotification('error', 'Số điện thoại đã được sử dụng');
+        return false;
+      case 106:
+        openNotification('error', 'Mã nhân viên đã được sử dụng');
+        return false;
+      case 107:
+        openNotification('error', 'Email đã được sử dụng');
+        return false;
+      case 108:
+        openNotification('error', 'Người dừng quản lý đã tồn tại');
+        return false;
+      default:
+        message.error('Thêm người dùng không thành công, vui lòng thử lại sau!');
+        return false;
+    }
   } catch (error) {
     hide();
-    message.error('Adding failed, please try again!');
+    message.error('Thêm người dùng không thành công, vui lòng thử lại sau!');
     return false;
   }
 };
@@ -166,7 +181,7 @@ const UserManagementTable: React.FC = () => {
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
         onFinish={async (value) => {
-          const success = await handleAdd(value as API.UserResponse);
+          const success = await handleAdd(value as API.CreateUserRequest);
           if (success) {
             handleModalVisible(false);
             if (actionRef.current) {

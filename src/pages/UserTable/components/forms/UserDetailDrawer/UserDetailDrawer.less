@@ -65,13 +65,26 @@
   border: 1px solid #d9d9d9;
   border-radius: 12px;
 
+  .roleListTitle {
+    margin-bottom: 4px;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
+    font-size: 14px;
+    font-family: 'Roboto';
+    font-style: normal;
+    line-height: 22px;
+  }
+
   .roleList {
     margin: 0;
     padding: 0;
     list-style-type: none;
+    background: #f6f8f8;
+    border-radius: 4px;
   }
 
   .roleListItem {
+    align-items: baseline;
     padding: 8px;
     color: rgba(0, 0, 0, 0.85);
     font-weight: 400;
@@ -79,11 +92,10 @@
     font-family: 'Roboto';
     font-style: normal;
     line-height: 22px;
-    background: #f6f8f8;
 
-    &::before {
+    img {
+      width: 7px;
       margin-right: 12px;
-      content: url('/src/assets/images/svg/icon/hollow-circle.svg');
     }
   }
 
