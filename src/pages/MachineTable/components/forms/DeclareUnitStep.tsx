@@ -1,95 +1,118 @@
 import { CloseIcon } from '@/assets';
-import { StepsForm } from '@ant-design/pro-components';
-import { Card, Col, Form, Input, Row, Table, Typography } from 'antd';
+import { Button, Card, Col, Form, Input, Row, Select, Table, Typography } from 'antd';
+import { Store } from 'sunflower-antd';
 import { data, informationColumns } from '../../data';
 import styles from './editMachine.less';
 
 interface DeclareUnitStepProps {
-  handleCancle: () => void;
+  onCancel: () => void;
+  submit: (values?: Store | undefined) => Promise<unknown>;
+  onPrevious: () => void;
 }
 
-export default function DeclareUnitStep({ handleCancle }: DeclareUnitStepProps) {
+export default function DeclareUnitStep({ onCancel, submit, onPrevious }: DeclareUnitStepProps) {
   return (
-    <StepsForm.StepForm name="step2">
+    <>
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
         <Col>
           <p className={styles.modalTitle}>Khai báo đơn vị quản lý</p>
         </Col>
         <Col>
-          <span className={styles.closeIcon} onClick={handleCancle}>
+          <span className={styles.closeIcon} onClick={onCancel}>
             <img src={CloseIcon} />
           </span>
         </Col>
       </Row>
 
-      <Form layout="vertical" className={styles.drawerBody}>
-        <Card
-          title="Đơn vị quản lý"
-          size="small"
-          className={styles.myCard}
-          style={{ borderRadius: 12 }}
+      <Card
+        title="Đơn vị quản lý"
+        size="small"
+        className={styles.myCard}
+        style={{ borderRadius: 12 }}
+      >
+        <Row gutter={24} align="bottom">
+          <Col span={12}>
+            <Form.Item name="managementUnitId" label="Mã - Tên đơn vị">
+              <Select placeholder="Mã - Tên đơn vị"></Select>
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item name="Seri máy" label="Địa chỉ đơn vị">
+              <Input disabled placeholder={'Địa chỉ đơn vị'} />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item name="userIds" label="Mã - Tên nhân viên quản lý">
+              <Select placeholder="Mã - Tên nhân viên quản lý"></Select>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item label="Danh sách nhân viên quản lý">
+              <Table columns={informationColumns} dataSource={data} pagination={false} bordered />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Card>
+      <Card title="Địa chỉ máy" size="small" style={{ borderRadius: 12, marginTop: 24 }}>
+        <Row gutter={[24, 24]} align="bottom">
+          <Col span={12}>
+            <Form.Item name="location" label="Khu vực">
+              <Input placeholder={'Khu vực'} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item name="provinceId" label="Tỉnh/ Thành phố">
+              <Input placeholder={'Tỉnh/ Thành phố'} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item name="districtId" label="Quận/ Huyện">
+              <Input placeholder={'Quận/ Huyện'} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item name="wardId" label="Phường/ Xã">
+              <Input placeholder={'Phường/ Xã'} />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item name="adress" label="Tên đường, Số nhà">
+              <Input placeholder={'Tên đường, Số nhà'} />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item name="machineName" label="Tên máy">
+              <Input placeholder={'Tên máy'} />
+              <Typography.Text disabled>
+                Tên máy là duy nhất, không chứa ký tự đặc biệt, tối đa 50 ký tự
+              </Typography.Text>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Card>
+      <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
+        <Button
+          className={styles.cancelButton}
+          size="large"
+          onClick={() => {
+            // onReset();
+            onPrevious();
+          }}
         >
-          <Row gutter={24} align="bottom">
-            <Col span={12}>
-              <Form.Item name="Mã - Tên đơn vị" label="Mã - Tên đơn vị">
-                <Input disabled placeholder={'Mã - Tên đơn vị'} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="Seri máy" label="Địa chỉ đơn vị">
-                <Input disabled placeholder={'Địa chỉ đơn vị'} />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item name="Loại khoá" label="Mã - Tên nhân viên quản lý">
-                <Input disabled placeholder={'example'} />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item name="Cổng" label="Danh sách nhân viên quản lý">
-                <Table columns={informationColumns} dataSource={data} pagination={false} bordered />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Card>
-        <Card title="Địa chỉ máy" size="small" style={{ borderRadius: 12, marginTop: 24 }}>
-          <Row gutter={[24, 24]} align="bottom">
-            <Col span={12}>
-              <Form.Item name="Mã - Tên đơn vị" label="Khu vực">
-                <Input disabled placeholder={'Khu vực'} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="Seri máy" label="Tỉnh/ Thành phố">
-                <Input disabled placeholder={'Tỉnh/ Thành phố'} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="Loại khoá" label="Quận/ Huyện">
-                <Input disabled placeholder={'Quận/ Huyện'} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="Loại khoá" label="Phường/ Xã">
-                <Input disabled placeholder={'Phường/ Xã'} />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item name="Loại khoá" label="Tên đường, Số nhà">
-                <Input disabled placeholder={'Tên đường, Số nhà'} />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item name="Loại khoá" label="Tên máy">
-                <Input disabled placeholder={'Tên máy'} />
-                <Typography.Text disabled>
-                  Tên máy là duy nhất, không chứa ký tự đặc biệt, tối đa 50 ký tự
-                </Typography.Text>
-              </Form.Item>
-            </Col>
-          </Row>
-        </Card>
-      </Form>
-    </StepsForm.StepForm>
+          Quay lại
+        </Button>
+        <Button
+          className={styles.submitButton}
+          size="large"
+          onClick={() => {
+            submit().then((result) => {
+              if (result === 'ok') console.log('Form submitted');
+            });
+          }}
+        >
+          Hoàn tất
+        </Button>
+      </Row>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
 import { ModalForm } from '@ant-design/pro-components';
 import { Button, Card, Col, Form, Input, Row, Table, Typography } from 'antd';
+import { Store } from 'sunflower-antd';
 import { data, informationColumns } from '../../data';
 import styles from './editMachine.less';
 
@@ -9,6 +10,8 @@ interface DeclareUnitFormProps {
   visible: boolean;
   onVisibleChange?: (value: boolean) => void;
   onFinish?: (values: Partial<API.RuleListItem>) => Promise<boolean>;
+  submit: (values?: Store | undefined) => Promise<unknown>;
+  form: any;
 }
 
 export default function DeclareUnitForm({
@@ -16,9 +19,9 @@ export default function DeclareUnitForm({
   visible,
   onVisibleChange,
   onFinish,
+  submit,
+  form,
 }: DeclareUnitFormProps) {
-  const [form] = Form.useForm();
-
   const onReset = () => {
     form.resetFields();
     if (onVisibleChange) onVisibleChange(false);
@@ -119,10 +122,24 @@ export default function DeclareUnitForm({
         </Card>
       </Form>
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
-        <Button className={styles.cancelButton} size="large" onClick={onReset}>
+        <Button
+          className={styles.cancelButton}
+          size="large"
+          onClick={() => {
+            onReset();
+          }}
+        >
           Quay lại
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit">
+        <Button
+          className={styles.submitButton}
+          size="large"
+          onClick={() => {
+            submit().then((result) => {
+              if (result === 'ok') console.log('Form submitted');
+            });
+          }}
+        >
           Hoàn tất
         </Button>
       </Row>

@@ -1,21 +1,44 @@
 import { CloseIcon } from '@/assets';
-import { StepsForm } from '@ant-design/pro-components';
-import { Col, Form, Input, Row, Select } from 'antd';
+import { DenominationRule, KeyType, MachineType, Protocol } from '@/common';
+import Api from '@/services/STM-APIs';
+import { objectKeys } from '@/utils';
+import { useRequest } from 'ahooks';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
 import styles from './declareMachineForm.less';
 
 interface DeclareMachineStepProps {
-  handleCancle: () => void;
+  onCancel: () => void;
+  onOk: () => void;
 }
 
-export default function DeclareMachineStep({ handleCancle }: DeclareMachineStepProps) {
+const getTotalMachine = (machineType: MachineType) => () =>
+  Api.STMController.getListMachines({ machineType }).then((res) => res.data?.totalSize);
+
+const getModels = (machineType: MachineType) => () =>
+  Api.STMModelController.getListModels({ machineType }).then((res) => res.data?.models);
+
+const getDenominations: () => Promise<API.Denomination[] | undefined> = () =>
+  Api.DenominationsController.getListDenominations().then(
+    (res: API.ResponseBaseListDenominationsResponse) => res.data?.denominations,
+  );
+
+export default function DeclareMachineStep({
+  onCancel: handleCancel,
+  onOk,
+}: DeclareMachineStepProps) {
+  const { data: machineCount } = useRequest(getTotalMachine(MachineType.ATM), { refreshDeps: [] });
+  const { data: models } = useRequest(getModels(MachineType.STM));
+  const { data: denominations } = useRequest(getDenominations);
+  console.log({ denominations });
+
   return (
-    <StepsForm.StepForm name="step1">
+    <>
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
         <Col>
           <p className={styles.modalTitle}>Khai báo thiết bị</p>
         </Col>
         <Col>
-          <span className={styles.closeIcon} onClick={handleCancle}>
+          <span className={styles.closeIcon} onClick={handleCancel}>
             <img src={CloseIcon} />
           </span>
         </Col>
@@ -23,114 +46,128 @@ export default function DeclareMachineStep({ handleCancle }: DeclareMachineStepP
 
       <Row gutter={[24, 24]}>
         <Col span={8}>
-          <Form.Item name="unitId" label="Số thứ tự">
-            <Input placeholder={'Số thứ tự'} disabled />
+          <Form.Item name="stt" label="Số thứ tự">
+            <Input placeholder={`${machineCount}`} disabled />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="area" label="Loại máy">
+          <Form.Item name="machineType" label="Loại máy" valuePropName="">
             <Select placeholder="Loại máy">
-              <Select.Option value="private">Private</Select.Option>
-              <Select.Option value="public">Public</Select.Option>
+              {objectKeys(MachineType).map((type) => (
+                <Select.Option value={type} key={type}>
+                  {type}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="area" label="Dòng máy">
+          <Form.Item name="modelId" label="Dòng máy">
             <Select placeholder="Dòng máy">
-              <Select.Option value="private">Private</Select.Option>
-              <Select.Option value="public">Public</Select.Option>
+              {models?.map((model) => (
+                <Select.Option value={model.id} key={model.id}>
+                  {model.name}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="city" label="Series máy">
+          <Form.Item name="serialNumber" label="Series máy">
             <Input placeholder="Series máy" />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="district" label="Loại khoá">
+          <Form.Item name="keyType" label="Loại khoá">
             <Select placeholder="Loại khoá">
-              <Select.Option value="private">Private</Select.Option>
-              <Select.Option value="public">Public</Select.Option>
+              {objectKeys(KeyType).map((keyType) => (
+                <Select.Option key={keyType}>{keyType}</Select.Option>
+              ))}
             </Select>
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="subDistrict" label="Terminal ID">
+          <Form.Item name="terminalId" label="Terminal ID">
             <Input placeholder="Terminal ID" />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="address" label="Địa chỉ IP">
+          <Form.Item name="ipAdress" label="Địa chỉ IP">
             <Input placeholder="Địa chỉ IP" />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="address" label="Acquirer ID">
+          <Form.Item name="acquirerId" label="Acquirer ID">
             <Input placeholder={'Acquirer ID'} />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="address" label="Cổng">
+          <Form.Item name="gate" label="Cổng">
             <Input placeholder={'Cổng'} />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="address" label="Master (A)/(B) Key">
+          <Form.Item name="masterKey" label="Master (A)/(B) Key">
             <Input placeholder={'Master (A)/(B) Key'} />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="address" label="Protocol">
+          <Form.Item name="protocol" label="Protocol">
             <Select placeholder="Loại khoá">
-              <Select.Option value="private">Private</Select.Option>
-              <Select.Option value="public">Public</Select.Option>
+              {objectKeys(Protocol).map((item) => (
+                <Select.Option value={item} key={item}>
+                  {item}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
         </Col>
         <Col span={24}>
-          <Form.Item name="address" label="Tên đường, số nhà">
+          <Form.Item name="mac" label="MAC">
             <Input placeholder={'example'} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="city" label="MAC">
+          <Form.Item name="accountingAccountUSD" label="Tài khoản hạch toán - USD">
             <Input placeholder="MAC" />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="district" label="Quận/Huyện">
-            <Select placeholder="Chọn Quận/Huyện">
-              <Select.Option value="private">Private</Select.Option>
-              <Select.Option value="public">Public</Select.Option>
+          <Form.Item name="accountingAccountVND" label="Tài khoản hạch toán - VNĐ">
+            <Input placeholder="MAC" />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item name="denominationRule" label="Quy tắc chi tiền">
+            <Select placeholder="Quy tắc chi tiền">
+              {objectKeys(DenominationRule).map((rule) => (
+                <Select.Option key={rule} value={rule}>
+                  {rule}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="Quy tắc chi tiền" label="Quy tắc chi tiền">
-            <Input disabled placeholder={'example'} />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="Loại mệnh giá tiền" label="Loại mệnh giá tiền">
+          <Form.Item name="denominations" label="Loại mệnh giá tiền">
             <Row gutter={12}>
-              <Col span={6}>
-                <Input disabled placeholder={'500'} />
-              </Col>
-              <Col span={6}>
-                <Input disabled placeholder={'200'} />
-              </Col>
-              <Col span={6}>
-                <Input disabled placeholder={'100'} />
-              </Col>
-              <Col span={6}>
-                <Input disabled placeholder={'50'} />
-              </Col>
+              {denominations?.map((denomination) => (
+                <Col span={24 / denominations.length}>
+                  <Input disabled placeholder={`${denomination.value}`} />
+                </Col>
+              ))}
             </Row>
           </Form.Item>
         </Col>
       </Row>
-    </StepsForm.StepForm>
+      <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
+        <Button className={styles.cancelButton} size="large" onClick={handleCancel}>
+          Huỷ bỏ
+        </Button>
+        <Button className={styles.submitButton} size="large" htmlType="submit" onClick={onOk}>
+          Tiếp tục
+        </Button>
+      </Row>
+    </>
   );
 }

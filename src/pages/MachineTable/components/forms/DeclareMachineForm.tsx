@@ -9,6 +9,8 @@ interface DeclareMachineFormProps extends API.StmDetailResponse {
   visible: boolean;
   onVisibleChange?: (value: boolean) => void;
   onFinish?: (values: Partial<API.RuleListItem>) => Promise<boolean>;
+  onOk: () => void;
+  onCancel: () => void;
 }
 
 export default function DeclareMachineForm({
@@ -16,6 +18,8 @@ export default function DeclareMachineForm({
   visible,
   onVisibleChange,
   onFinish,
+  onCancel,
+  onOk,
 }: DeclareMachineFormProps) {
   const [form] = Form.useForm();
 
@@ -162,10 +166,17 @@ export default function DeclareMachineForm({
       </Row>
 
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
-        <Button className={styles.cancelButton} size="large" onClick={onReset}>
+        <Button
+          className={styles.cancelButton}
+          size="large"
+          onClick={() => {
+            onReset();
+            onCancel();
+          }}
+        >
           Huỷ bỏ
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit">
+        <Button className={styles.submitButton} size="large" htmlType="submit" onClick={onOk}>
           Tiếp tục
         </Button>
       </Row>
