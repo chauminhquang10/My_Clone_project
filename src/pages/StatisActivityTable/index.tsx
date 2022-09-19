@@ -26,6 +26,7 @@ const genListMachine = (current: number, pageSize: number) => {
         name: 'STM',
         terminalId: `${Math.floor(Math.random() * 100)}-terminal`,
         ipAddress: `${Math.floor(Math.random() * 100)}-ipAddress`,
+        status: 'IN_SERVICE',
       },
     });
   }

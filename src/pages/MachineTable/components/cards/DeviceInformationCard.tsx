@@ -1,6 +1,5 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Card, Button, Row, Col, Form, Input } from 'antd';
-import React from 'react';
+import { Button, Card, Col, Form, Input, Row } from 'antd';
 import { UnitCardProps } from './UnitCard';
 
 export default function DeviceInformationCard({ onExtraClick, className }: UnitCardProps) {

@@ -5,7 +5,7 @@ import CardInputBody from './CardInputBody';
 import type { CardCol } from './CardInputBody';
 
 export interface UnitCardProps {
-  onExtraClick: MouseEventHandler;
+  onExtraClick?: MouseEventHandler;
   className?: string;
 }
 

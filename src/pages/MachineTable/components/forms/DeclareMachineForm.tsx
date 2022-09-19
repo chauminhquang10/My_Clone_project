@@ -4,7 +4,7 @@ import { Button, Col, Form, Input, Row, Select } from 'antd';
 import styles from './declareMachineForm.less';
 const { Option } = Select;
 
-interface DeclareMachineFormProps {
+interface DeclareMachineFormProps extends API.StmDetailResponse {
   width: string;
   visible: boolean;
   onVisibleChange?: (value: boolean) => void;

@@ -105,19 +105,19 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       dataIndex: 'id',
       render: (_, data, index) => {
         const stt = index + 1;
-        const handleClick = () => {
-          setShowDetail(true);
-          setCurrentRow(data);
-        };
 
-        return <TextCell onClick={handleClick}>{stt}</TextCell>;
+        return <TextCell>{stt}</TextCell>;
       },
     },
     {
       title: <HeadCell>Tên máy</HeadCell>,
       dataIndex: 'name',
-      render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+      render: (dom, data) => {
+        const handleClick = () => {
+          setShowDetail(true);
+          setCurrentRow(data);
+        };
+        return <TextCell onClick={handleClick}>{dom}</TextCell>;
       },
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);

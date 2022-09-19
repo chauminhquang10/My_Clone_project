@@ -1,11 +1,28 @@
 import { EditOutlined, FilterOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Drawer, Dropdown, Form, Input, Row, Table, Typography } from 'antd';
-import { useState } from 'react';
-import { data, informationColumns } from '../../data';
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Drawer,
+  Dropdown,
+  Form,
+  Input,
+  Row,
+  Table,
+  Typography,
+} from 'antd';
+import { useEffect, useState } from 'react';
 import DeclareMachineForm from '../forms/DeclareMachineForm';
 import FilterOverlay from './FilterOverlay';
 import styles from './analyticDetail.less';
 import TransactionTable from '../tables/TransactionTable';
+import StatusTag from '@/components/TableProperties/StatusTag';
+import type { ColumnsType } from 'antd/lib/table';
+import { openNotification } from '@/utils';
+import { useRequest } from 'umi';
+import { blue, green } from '@ant-design/colors';
+import api from '@/services/STM-APIs';
 
 interface AnaylyticDetailProps {
   open: boolean;
@@ -15,12 +32,157 @@ interface AnaylyticDetailProps {
 interface AnaylyticDetailProps {
   currentEntity: API.StmInfoResponse | undefined;
 }
+//-------------------- User Management ---------------
+const columns: ColumnsType<API.UserResponse> = [
+  {
+    title: 'STT',
+    align: 'center',
+    render: (_, __, index) => {
+      return <div style={{ textAlign: 'center' }}>{index + 1}</div>;
+    },
+  },
+  {
+    title: <div style={{ textAlign: 'center' }}>Họ và tên</div>,
+    dataIndex: 'name',
+  },
+  {
+    title: <div style={{ textAlign: 'center' }}>Email</div>,
+    dataIndex: 'email',
+  },
+  {
+    title: 'Số điện thoại',
+    dataIndex: 'phoneNumber',
+    align: 'center',
+  },
+];
+
+//------------ information activity -------------------------
+const informationColumns: ColumnsType<API.TransactionResponse> = [
+  {
+    title: (
+      <Typography.Text>
+        Loại hoạt động <Badge count={99} style={{ fontSize: 12, backgroundColor: blue[6] }} />
+      </Typography.Text>
+    ),
+    dataIndex: 'device',
+    width: '33%',
+  },
+  {
+    title: (
+      <Typography.Text>
+        Thành công
+        <span style={{ background: 'rgba(255, 255, 255, 1e-05)' }}>
+          <Badge count={99} style={{ fontSize: 12, backgroundColor: green[6] }} />
+        </span>
+      </Typography.Text>
+    ),
+    className: 'column-money',
+    dataIndex: 'status',
+    width: '33%',
+  },
+  {
+    title: (
+      <Typography.Text>
+        Thất bại <Badge count={99} style={{ fontSize: 12 }} />
+      </Typography.Text>
+    ),
+    dataIndex: 'reserved',
+    width: '33%',
+  },
+];
+
+const data: API.TransactionResponse[] = [
+  {
+    id: '1',
+  },
+  {
+    id: '2',
+  },
+  {
+    id: '3',
+  },
+  {
+    id: '4',
+  },
+  {
+    id: '5',
+  },
+  {
+    id: '6',
+  },
+  {
+    id: '7',
+  },
+];
 
 export default function AnaylyticDetail({
   handleClose,
   open,
   currentEntity,
 }: AnaylyticDetailProps) {
+  //-------------------- Get transaction details --------------------------------
+  //-------------------- Detail Transaction --------------------------------
+  const [fromDate, setFromDate] = useState<string>('');
+  const [toDate, setToDate] = useState<string>('');
+  const [detailTransaction, setDetailTransaction] = useState<
+    API.TransactionResponse[] | undefined
+  >();
+  console.log(detailTransaction);
+
+  const { run: getDetailTransaction } = useRequest(
+    (params: API.getTransactionsParams) => api.TransactionController.getTransactions(params),
+    {
+      manual: true,
+      onSuccess: (res) => {
+        if (!res) {
+          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+        } else {
+          setDetailTransaction(res.transactions);
+        }
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    },
+  );
+  useEffect(() => {
+    const params: API.getTransactionsParams = {
+      machineId: currentEntity?.id || '',
+      from: fromDate,
+      to: toDate,
+    };
+    getDetailTransaction(params);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentEntity, fromDate, toDate]);
+
+  //-------------------- detail Machine --------------------------------
+  const [detailMachine, setDetailMachine] = useState<API.StmDetailResponse | undefined>();
+
+  const { run: getDetailMachine } = useRequest(
+    (params: API.getMachineDetailParams) => api.STMController.getMachineDetail(params),
+    {
+      manual: true,
+      onSuccess: (res) => {
+        if (!res) {
+          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+        } else {
+          setDetailMachine(res);
+        }
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    },
+  );
+
+  useEffect(() => {
+    const params: API.getMachineDetailParams = {
+      id: currentEntity?.id || '',
+    };
+    getDetailMachine(params);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentEntity]);
+
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [transacationTableOpen, setTransactionTableOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -43,6 +205,7 @@ export default function AnaylyticDetail({
           handleUpdateModalVisible(false);
           return false;
         }}
+        {...detailMachine}
       />
       <TransactionTable
         width="1400px"
@@ -63,14 +226,20 @@ export default function AnaylyticDetail({
         >
           <div className={styles.drawerSectionContainer}>
             <div className={styles.drawerHeader}>
-              <Typography.Title level={4}>STM Ngô Gia Tự</Typography.Title>
+              <Typography.Title level={4}>Chi tiết hoạt động</Typography.Title>
               <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                 <Input prefix={<SearchOutlined />} height={32} style={{ width: '40%' }} />
                 <Dropdown
                   open={dropdownOpen}
                   onOpenChange={handleDropdownOpen}
                   trigger={['click']}
-                  overlay={<FilterOverlay onClick={handleDropdownClose} />}
+                  overlay={
+                    <FilterOverlay
+                      onClick={handleDropdownClose}
+                      setFromDate={setFromDate}
+                      setToDate={setToDate}
+                    />
+                  }
                 >
                   <Button style={{ borderRadius: 4 }} icon={<FilterOutlined />}>
                     Bộ lọc
@@ -80,7 +249,7 @@ export default function AnaylyticDetail({
             </div>
             <Form layout="vertical" className={styles.drawerBody}>
               <Card
-                title="Thông tin thiết bị"
+                title="Thông tin máy"
                 extra={
                   <Button
                     type="link"
@@ -98,49 +267,60 @@ export default function AnaylyticDetail({
               >
                 <Row gutter={24} align="bottom">
                   <Col span={12}>
-                    <Form.Item name="Dòng máy" label="Dòng máy">
-                      <Input disabled placeholder={'example'} />
+                    <Form.Item name="Tên máy" label="Tên máy">
+                      <Input disabled placeholder={currentEntity?.name} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Seri máy" label="Seri máy">
-                      <Input disabled placeholder={'example'} />
+                    <Form.Item name="Terminal ID" label="Terminal ID">
+                      <Input disabled placeholder={currentEntity?.terminalId} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Loại khoá" label="Loại khoá">
-                      <Input disabled placeholder={'example'} />
+                    <Form.Item name="Địa chỉ IP" label="Địa chỉ IP">
+                      <Input disabled placeholder={currentEntity?.ipAddress} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Cổng" label="Cổng">
-                      <Input disabled placeholder={'example'} />
+                    <Form.Item name="Tình trạng máy" label="Tình trạng máy">
+                      <StatusTag type={currentEntity?.status} />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
-                    <Form.Item name="Protocol" label="Protocol">
-                      <Input disabled placeholder={'example'} />
+                    <Form.Item name="Địa chỉ máy" label="Địa chỉ máy">
+                      <Input disabled placeholder={detailMachine?.address} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Master (A)/(B) Key" label="Master (A)/(B) Key">
-                      <Input disabled placeholder={'example'} />
+                    <Form.Item name="Mã - Tên đơn vị" label="Mã - Tên đơn vị">
+                      <Input
+                        disabled
+                        placeholder={`${detailMachine?.managementUnit?.code} - ${detailMachine?.managementUnit?.name}`}
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="MAC" label="MAC">
-                      <Input disabled placeholder={'example'} />
+                    <Form.Item name="Địa chỉ đơn vị" label="Địa chỉ đơn vị">
+                      <Input disabled placeholder={detailMachine?.managementUnit?.address} />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
-                    <Form.Item name="Tài khoản hạch toán USD" label="Tài khoản hạch toán USD">
-                      <Input disabled placeholder={'example'} />
+                    <Form.Item
+                      name="Danh sách nhân viên quản lý"
+                      label="Danh sách nhân viên quản lý"
+                    >
+                      <Table
+                        columns={columns}
+                        dataSource={detailMachine?.managementUsers}
+                        pagination={false}
+                        bordered
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
               </Card>
               <Card
-                title="Thông tin phần cứng"
+                title="Thông tin hoạt động"
                 size="small"
                 style={{ borderRadius: 12 }}
                 bodyStyle={{ padding: 0 }}

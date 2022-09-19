@@ -19,6 +19,7 @@ import UserManagementListIcon from './icon/user-management-list.svg';
 import UserManagementIcon from './icon/user-management.svg';
 import Logo from './logo/Logo.svg';
 import CloseIcon from './images/svg/icon/close-icon.svg';
+import MapIcon from './images/svg/icon/Map.svg';
 
 export {
   Logo,
@@ -42,4 +43,5 @@ export {
   CollapseIcon,
   UnCollapseIcon,
   CloseIcon,
+  MapIcon,
 };

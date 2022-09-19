@@ -1,15 +1,12 @@
 import { Button, Card, DatePicker, Row, Space, Typography } from 'antd';
-import type { DatePickerProps } from 'antd';
-
-const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-  console.log(date, dateString);
-};
 
 interface FilterOverlayProps {
   onClick: () => void;
+  setFromDate: (date: string) => void;
+  setToDate: (date: string) => void;
 }
 
-export default function FilterOverlay({ onClick }: FilterOverlayProps) {
+export default function FilterOverlay({ onClick, setFromDate, setToDate }: FilterOverlayProps) {
   return (
     <Card
       size="small"
@@ -25,8 +22,16 @@ export default function FilterOverlay({ onClick }: FilterOverlayProps) {
       </Row>
       <Row>
         <Space size={2}>
-          <DatePicker onChange={onChange} />
-          <DatePicker onChange={onChange} />
+          <DatePicker
+            onChange={(_, dateString) => {
+              setFromDate(dateString);
+            }}
+          />
+          <DatePicker
+            onChange={(_, dateString) => {
+              setToDate(dateString);
+            }}
+          />
         </Space>
       </Row>
     </Card>

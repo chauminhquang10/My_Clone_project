@@ -1,5 +1,4 @@
-import Card from '@/components/Card';
-import { Table } from 'antd';
+import { Table, Card } from 'antd';
 import { data, informationColumns } from '../../data';
 
 export default function HardwareInformationCard() {

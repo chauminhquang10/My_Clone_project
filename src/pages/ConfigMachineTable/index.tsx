@@ -13,63 +13,63 @@ import api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 
 const TableCustom = () => {
-  //-------------- Create model ----------------
+  // //-------------- Create model ----------------
 
-  const { run: createSTMModel } = useRequest(
-    (params: API.CreateStmModelRequest) => api.STMModelController.createModel(params),
-    {
-      manual: true,
-      onSuccess: () => {
-        openNotification('success', 'Thành công');
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    },
-  );
-  const paramCreate: API.CreateStmModelRequest = {
-    machineType: 'STM',
-    name: '',
-    storages: [
-      {
-        deviceTypeId: 1,
-        minCapacity: 1000,
-      },
-    ],
-  };
+  // const { run: createSTMModel } = useRequest(
+  //   (params: API.CreateStmModelRequest) => api.STMModelController.createModel(params),
+  //   {
+  //     manual: true,
+  //     onSuccess: () => {
+  //       openNotification('success', 'Thành công');
+  //     },
+  //     onError: (error) => {
+  //       console.log(error);
+  //     },
+  //   },
+  // );
+  // const paramCreate: API.CreateStmModelRequest = {
+  //   machineType: 'STM',
+  //   name: '',
+  //   storages: [
+  //     {
+  //       deviceTypeId: 1,
+  //       minCapacity: 1000,
+  //     },
+  //   ],
+  // };
 
-  createSTMModel(paramCreate);
+  // createSTMModel(paramCreate);
 
-  //-------------- Update model ----------------
+  // //-------------- Update model ----------------
 
-  const { run: updateSTMModel } = useRequest(
-    (params: API.updateModelParams, body: API.UpdateModelRequest) =>
-      api.STMModelController.updateModel(params, body),
-    {
-      manual: true,
-      onSuccess: () => {
-        openNotification('success', 'Thành công');
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    },
-  );
-  const paramsUpdate: API.updateModelParams = {
-    modelId: '',
-  };
+  // const { run: updateSTMModel } = useRequest(
+  //   (params: API.updateModelParams, body: API.UpdateModelRequest) =>
+  //     api.STMModelController.updateModel(params, body),
+  //   {
+  //     manual: true,
+  //     onSuccess: () => {
+  //       openNotification('success', 'Thành công');
+  //     },
+  //     onError: (error) => {
+  //       console.log(error);
+  //     },
+  //   },
+  // );
+  // const paramsUpdate: API.updateModelParams = {
+  //   modelId: '',
+  // };
 
-  const bodyUpdate: API.UpdateModelRequest = {
-    name: '',
-    storages: [
-      {
-        deviceTypeId: 0,
-        minCapacity: 100,
-      },
-    ],
-  };
+  // const bodyUpdate: API.UpdateModelRequest = {
+  //   name: '',
+  //   storages: [
+  //     {
+  //       deviceTypeId: 0,
+  //       minCapacity: 100,
+  //     },
+  //   ],
+  // };
 
-  updateSTMModel(paramsUpdate, bodyUpdate);
+  // updateSTMModel(paramsUpdate, bodyUpdate);
   //---------------  handle get All Model -------------------------------
 
   const { run: getAllConfigMachine } = useRequest(
