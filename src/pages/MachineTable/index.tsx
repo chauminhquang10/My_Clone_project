@@ -1,18 +1,18 @@
-import { addRule } from '@/services/ant-design-pro/api';
+// import { addRule } from '@/services/ant-design-pro/api';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 // import { getAllUsers } from "@/services/STM-APIs/UserController";
-import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { message } from 'antd';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+// import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { FormattedMessage } from 'umi';
 // import {useRequest} from "umi";
-import NewUserForm from './components/forms/NewUserForm';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
+import AddNewMachine from './components/forms/AddNewMachine';
+import MachineDrawer from './MachineDrawer';
 
 const MachineType: ('UNKNOWN' | 'STM' | 'CDM' | 'ATM' | undefined)[] = [
   'STM',
@@ -68,19 +68,19 @@ const listMachine = genListMachine(1, 100);
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.StmInfoResponse) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addRule({ ...fields });
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
+// const handleAdd = async (fields: API.StmInfoResponse) => {
+//   const hide = message.loading('正在添加');
+//   try {
+//     await addRule({ ...fields });
+//     hide();
+//     message.success('Added successfully');
+//     return true;
+//   } catch (error) {
+//     hide();
+//     message.error('Adding failed, please try again!');
+//     return false;
+//   }
+// };
 
 const TableCustom = () => {
   //--------------- listUSer -----------------------------------
@@ -208,40 +208,8 @@ const TableCustom = () => {
         }}
       />
 
-      <NewUserForm
-        title="Tạo người dùng mới"
-        width="934px"
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.StmInfoResponse);
-          if (success) {
-            handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-            return true;
-          }
-          return false;
-        }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </NewUserForm>
+      <MachineDrawer open={showDetail} handleClose={() => setShowDetail(false)} />
+      <AddNewMachine handleModalVisible={handleModalVisible} visible={createModalVisible} />
     </PageContainer>
   );
 };

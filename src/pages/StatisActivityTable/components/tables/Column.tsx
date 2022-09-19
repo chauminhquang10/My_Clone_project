@@ -7,13 +7,18 @@ type ColumnProps = {
   setShowDetail: (s: boolean) => void;
 };
 
-function Column({}: ColumnProps) {
+function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
   const columns: ProColumns<API.TransactionConfigurationResponse>[] = [
     {
       title: <HeadCell>Tên máy</HeadCell>,
       dataIndex: 'machine',
       render: (_, entity) => {
-        return <TextCell>{entity.machine?.name}</TextCell>;
+        const handleClick = () => {
+          setShowDetail(true);
+          setCurrentRow(entity.machine as API.StmInfoResponse);
+        };
+
+        return <TextCell onClick={handleClick}>{entity.machine?.name}</TextCell>;
       },
       sorter: (a, b) => {
         if (a.machine?.name && b.machine?.name) return a.machine.name.localeCompare(b.machine.name);

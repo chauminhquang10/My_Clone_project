@@ -1,3 +1,5 @@
+import { v4 as uuid } from 'uuid';
+
 export function isMinimumCharacter(str: string, num: number): boolean {
   return str.length >= num;
 }
@@ -31,3 +33,19 @@ export function isContainNumber(str: string) {
 export function isContainSpecialLetter(str: string) {
   return /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(str);
 }
+
+export const formatDate: (
+  date: string | number | undefined,
+  formatOptions: Intl.DateTimeFormatOptions,
+) => Error | string = (
+  date: string | number | undefined,
+  formatOptions = { day: 'numeric', month: 'numeric', year: 'numeric' },
+) => {
+  if (typeof date === 'string' || typeof date === 'number') {
+    return new Date(date).toLocaleDateString('en-GB', formatOptions);
+  }
+
+  return new Error('date should be string or number');
+};
+
+export const genKey = () => uuid();

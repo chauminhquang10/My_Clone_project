@@ -98,14 +98,19 @@ const filterStatus = (value: string | number | boolean, record: API.StmInfoRespo
   return record.status?.includes(value as string) as boolean;
 };
 
-function Column({}: ColumnProps) {
+function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
   const columns: ProColumns<API.StmInfoResponse>[] = [
     {
       title: <HeadCell>STT</HeadCell>,
       dataIndex: 'id',
-      render: (_, __, index) => {
+      render: (_, data, index) => {
         const stt = index + 1;
-        return <TextCell>{stt}</TextCell>;
+        const handleClick = () => {
+          setShowDetail(true);
+          setCurrentRow(data);
+        };
+
+        return <TextCell onClick={handleClick}>{stt}</TextCell>;
       },
     },
     {
