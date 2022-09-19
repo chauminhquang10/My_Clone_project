@@ -1,82 +1,78 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-// import { getAllUsers } from "@/services/STM-APIs/UserController";
-import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { message } from 'antd';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
-import { FormattedMessage } from 'umi';
-// import {useRequest} from "umi";
-import NewUserForm from './components/forms/NewUserForm';
+// import { useEffect } from 'react';
+import { useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
+import api from '@/services/STM-APIs';
+import { openNotification } from '@/utils';
 
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.StmInfoResponse) => {
-  const hide = message.loading('正在添加');
-  try {
-    // await addRule({ ...fields });
-    console.log(fields);
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
+// const APIForDetail = (currentEntity: API.StmInfoResponse) => {
+//   const [detailTransaction, setDetailTransaction] = useState<
+//     API.ListTransactionsResponse | undefined
+//   >();
 
-const genListMachine = (current: number, pageSize: number) => {
-  const tableListDataSource: API.TransactionConfigurationResponse[] = [];
-
-  for (let i = 0; i < pageSize; i += 1) {
-    tableListDataSource.push({
-      total: Math.floor(Math.random() * 100),
-      success: Math.floor(Math.random() * 100),
-      failure: Math.floor(Math.random() * 100),
-      machine: {
-        name: 'STM',
-        terminalId: `${Math.floor(Math.random() * 100)}-terminal`,
-        ipAddress: `${Math.floor(Math.random() * 100)}-ipAddress`,
-      },
-    });
-  }
-  return tableListDataSource;
-};
-
-const listMachine = genListMachine(1, 100);
+//   const [fromDate, setFromDate] = useState<string>('');
+//   const [toDate, setToDate] = useState<string>('');
+//   const { run: getDetailTransaction } = useRequest(
+//     (params: API.getTransactionsParams) => api.TransactionController.getTransactions(params),
+//     {
+//       manual: true,
+//       onSuccess: (res) => {
+//         if (!res) {
+//           openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+//         } else {
+//           setDetailTransaction(res);
+//         }
+//       },
+//       onError: (error) => {
+//         console.log(error);
+//       },
+//     },
+//   );
+//   useEffect(() => {
+//     const params: API.getTransactionsParams = {
+//       machineId: currentEntity.id || '',
+//       from: fromDate,
+//       to: toDate,
+//     };
+//     getDetailTransaction(params);
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [currentEntity, fromDate, toDate]);
+//   return <div>ihi</div>;
+// };
 
 const TableCustom = () => {
-  //--------------- listUSer -----------------------------------
-  // const [listUser, setListUser] = useState<API.StmInfoResponse[] | undefined>();
-  //---------------  handle getAllUser -------------------------------
+  //---------------  handle getAllTransaction -------------------------------
 
-  // const { run: runGetAllUser } = useRequest(
-  //     (params: API.getAllUsersParams) => getAllUsers(params),
-  //     {
-  //         manual: true,
-  //         onSuccess: (res) => {
-  //             const data = res as API.ResponseBasePageResponseObject;
-  //             const listUserRespone = data.data?.items;
-  //             setListUser(listUserRespone);
-  //         },
-  //         onError: (error) => {
-  //             console.log(error);
-  //         },
-  //     }
-  // );
+  const { run: getAllTransaction } = useRequest(
+    (params: API.getTransactionConfigurationParams) =>
+      api.TransactionController.getTransactionConfiguration(params),
+    {
+      manual: true,
+      onSuccess: (res) => {
+        if (!res) {
+          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+        }
+        return res;
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    },
+  );
   /**
    * @en-US Pop-up window of new window
    * @zh-CN 新建窗口的弹窗
    *  */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
+  console.log(createModalVisible);
+
   /**
    * @en-US The pop-up window of the distribution update window
    * @zh-CN 分布更新窗口的弹窗
@@ -135,27 +131,23 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        dataSource={listMachine}
-        // request={async (params = {}) => {
-        //     const filterParams: API.UserFilter = {
-        //         managementUnit: "",
-        //         staffId: "",
-        //     };
+        request={async (params = {}) => {
+          console.log(params);
 
-        //     const pageRequestParams: API.PageReq = {
-        //         pageNumber: params.current,
-        //         pageSize: params.pageSize,
-        //         sortDirection: "",
-        //         sortBy: "",
-        //     };
-        //     await runGetAllUser({
-        //         filter: filterParams,
-        //         pageRequest: pageRequestParams,
-        //     });
-        //     return {
-        //         data: listUser,
-        //     };
-        // }}
+          const pageRequestParams = {
+            // pageNumber: params.current,
+            // pageSize: params.pageSize,
+            // sortDirection: '',
+            sortBy: '',
+          };
+          const res = await getAllTransaction({
+            ...pageRequestParams,
+          });
+
+          return {
+            data: res?.items || [],
+          };
+        }}
         columns={columns}
         options={false}
         // rowSelection={{
@@ -177,41 +169,6 @@ const TableCustom = () => {
           showQuickJumper: true,
         }}
       />
-
-      <NewUserForm
-        title="Tạo người dùng mới"
-        width="934px"
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.StmInfoResponse);
-          if (success) {
-            handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-            return true;
-          }
-          return false;
-        }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </NewUserForm>
     </PageContainer>
   );
 };
