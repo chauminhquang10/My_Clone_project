@@ -4,7 +4,7 @@ import { MouseEventHandler } from 'react';
 import CardInputBody, { CardCol } from './CardInputBody';
 
 export interface UnitCardProps {
-  onExtraClick: MouseEventHandler;
+  onExtraClick?: MouseEventHandler;
   className?: string;
 }
 

@@ -7,11 +7,53 @@ import DeclareMachineForm from '../forms/DeclareMachineForm';
 import FilterOverlay from './FilterOverlay';
 import styles from './analyticDetail.less';
 import TransactionTable from '../tables/TransactionTable';
+import StatusTag from '@/components/TableProperties/StatusTag';
+import { ColumnsType } from 'antd/lib/table';
+import { genKey } from '@/utils';
 
 interface AnaylyticDetailProps {
   open: boolean;
   handleClose: () => void;
 }
+
+interface EmployeeList {
+  key: string;
+  order: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+}
+
+const columns: ColumnsType<EmployeeList> = [
+  {
+    title: 'STT',
+    dataIndex: 'order',
+    align: 'center',
+  },
+  {
+    title: <div style={{ textAlign: 'center' }}>Họ và tên</div>,
+    dataIndex: 'fullName',
+  },
+  {
+    title: <div style={{ textAlign: 'center' }}>Email</div>,
+    dataIndex: 'email',
+  },
+  {
+    title: 'Số điện thoại',
+    dataIndex: 'phoneNumber',
+    align: 'center',
+  },
+];
+
+const dataMock: EmployeeList[] = [
+  {
+    email: 'email@gmail.com',
+    fullName: 'Nguyen Van A',
+    key: genKey(),
+    order: '9999',
+    phoneNumber: '095 165 8795',
+  },
+];
 
 export default function AnaylyticDetail({ handleClose, open }: AnaylyticDetailProps) {
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
@@ -55,7 +97,7 @@ export default function AnaylyticDetail({ handleClose, open }: AnaylyticDetailPr
         >
           <div className={styles.drawerSectionContainer}>
             <div className={styles.drawerHeader}>
-              <Typography.Title level={4}>STM Ngô Gia Tự</Typography.Title>
+              <Typography.Title level={4}>Chi tiết hoạt động</Typography.Title>
               <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                 <Input prefix={<SearchOutlined />} height={32} style={{ width: '40%' }} />
                 <Dropdown
@@ -72,7 +114,7 @@ export default function AnaylyticDetail({ handleClose, open }: AnaylyticDetailPr
             </div>
             <Form layout="vertical" className={styles.drawerBody}>
               <Card
-                title="Thông tin thiết bị"
+                title="Thông tin máy"
                 extra={
                   <Button
                     type="link"
@@ -90,49 +132,52 @@ export default function AnaylyticDetail({ handleClose, open }: AnaylyticDetailPr
               >
                 <Row gutter={24} align="bottom">
                   <Col span={12}>
-                    <Form.Item name="Dòng máy" label="Dòng máy">
+                    <Form.Item name="Tên máy" label="Tên máy">
                       <Input disabled placeholder={'example'} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Seri máy" label="Seri máy">
+                    <Form.Item name="Terminal ID" label="Terminal ID">
                       <Input disabled placeholder={'example'} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Loại khoá" label="Loại khoá">
+                    <Form.Item name="Địa chỉ IP" label="Địa chỉ IP">
                       <Input disabled placeholder={'example'} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Cổng" label="Cổng">
+                    <Form.Item name="Tình trạng máy" label="Tình trạng máy">
+                      <StatusTag type="defaultStatus" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item name="Địa chỉ máy" label="Địa chỉ máy">
+                      <Input disabled placeholder={'example'} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item name="Mã - Tên đơn vị" label="Mã - Tên đơn vị">
+                      <Input disabled placeholder={'example'} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item name="Địa chỉ đơn vị" label="Địa chỉ đơn vị">
                       <Input disabled placeholder={'example'} />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
-                    <Form.Item name="Protocol" label="Protocol">
-                      <Input disabled placeholder={'example'} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="Master (A)/(B) Key" label="Master (A)/(B) Key">
-                      <Input disabled placeholder={'example'} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="MAC" label="MAC">
-                      <Input disabled placeholder={'example'} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item name="Tài khoản hạch toán USD" label="Tài khoản hạch toán USD">
-                      <Input disabled placeholder={'example'} />
+                    <Form.Item
+                      name="Danh sách nhân viên quản lý"
+                      label="Danh sách nhân viên quản lý"
+                    >
+                      <Table columns={columns} dataSource={dataMock} pagination={false} bordered />
                     </Form.Item>
                   </Col>
                 </Row>
               </Card>
               <Card
-                title="Thông tin phần cứng"
+                title="Thông tin hoạt động"
                 size="small"
                 style={{ borderRadius: 12 }}
                 bodyStyle={{ padding: 0 }}

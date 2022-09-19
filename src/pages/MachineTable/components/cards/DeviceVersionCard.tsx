@@ -2,8 +2,8 @@ import { SyncOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Input, Row } from 'antd';
 
 export interface DeviceVersionCardProps {
-  className: string;
-  btnClassName: string;
+  className?: string;
+  btnClassName?: string;
 }
 
 export default function DeviceVersionCard({ btnClassName, className }: DeviceVersionCardProps) {
