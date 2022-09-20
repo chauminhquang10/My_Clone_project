@@ -26,13 +26,12 @@ const TableCustom = () => {
 
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.ManagementUnitResponse>();
+  console.log(currentRow);
 
   const columns: ProColumns<API.ManagementUnitResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
   });
-
-  console.log(currentRow);
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const pageSize = useRef<number>(10);
@@ -143,11 +142,12 @@ const TableCustom = () => {
         }}
       />
 
-      {currentUnit?.name && (
+      {showDetail && (
         <UnitDetailDrawer
           showDetail={showDetail}
           setShowDetail={setShowDetail}
           currentUnit={currentUnit || {}}
+          detailActionRef={actionRef}
         />
       )}
     </PageContainer>

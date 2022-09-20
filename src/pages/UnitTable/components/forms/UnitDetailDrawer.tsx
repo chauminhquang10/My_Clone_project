@@ -1,3 +1,5 @@
+import type { MutableRefObject } from 'react';
+import type { ActionType } from '@ant-design/pro-components';
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
 import {
@@ -27,6 +29,7 @@ import UpdateUnitForm from './UpdateUnitForm';
 import ModalCustom from '@/components/FormCustom/ModalCustom';
 import { TextCell } from '@/components/TableProperties/TableCell';
 import {
+  deleteManagementUnit,
   getManagementUnit,
   updateManagementUnit,
 } from '@/services/STM-APIs/ManagementUnitController';
@@ -41,6 +44,7 @@ type UnitDrawerProps = {
   showDetail: boolean;
   setShowDetail: (value: boolean) => void;
   currentUnit: API.ManagementUnitResponse;
+  detailActionRef: MutableRefObject<ActionType | undefined>;
   children?: React.ReactNode;
 };
 
@@ -64,6 +68,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
   showDetail,
   setShowDetail,
   currentUnit,
+  detailActionRef,
 }) => {
   const unitListColumns: ColumnsType<Required<API.UserResponse>> = [
     {
@@ -169,6 +174,10 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
     },
   ];
 
+  // xử  lí trạng thái của form chỉnh sửa
+  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
+
   const { data: unitDetail } = useRequest<API.ResponseBaseManagementUnitDetailResponse>(
     () => {
       return getManagementUnit({ unitId: currentUnit?.id?.toString() || '' });
@@ -178,9 +187,45 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
     },
   );
 
-  // xử  lí trạng thái của form chỉnh sửa
-  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
+  //------------- Description List --------------------------------
+
+  const descriptionList: string[] = [
+    `Bạn có chắc chắn muốn xóa ${currentUnit?.code} - ${currentUnit?.name}?`,
+  ];
+
+  const handleUpdateUnit = async (fields: API.UpdateManagementUnitRequest) => {
+    const hide = message.loading('Configuring...');
+    try {
+      await updateManagementUnit({ unitId: currentUnit?.id?.toString() || '' }, { ...fields });
+      hide();
+      message.success('Chỉnh sửa đơn vị thành công');
+      handleUpdateModalVisible(false);
+      setShowDetail(false);
+      detailActionRef.current?.reload();
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Configuration failed, please try again!');
+      return false;
+    }
+  };
+
+  const handleRemoveUnit = async () => {
+    const hide = message.loading('Loading...');
+    try {
+      await deleteManagementUnit({ unitId: currentUnit?.id?.toString() || '' });
+      setShowDetail(false);
+      detailActionRef.current?.reloadAndRest?.();
+      hide();
+      message.success('Xoá đơn vị thành công');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Delete failed, please try again');
+      return false;
+    }
+  };
+
   //------------- Declare Modal --------------------------------
   //------------- Button List --------------------
 
@@ -195,30 +240,11 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
     {
       title: 'Xác nhận',
       type: 'warning',
-      action: () => {},
+      action: () => {
+        handleRemoveUnit();
+      },
     },
   ];
-
-  //------------- Description List --------------------------------
-
-  const descriptionList: string[] = [
-    'Bạn có chắc chắn muốn tạm khóa ?',
-    'Người dùng này sẽ không thể truy cập vào hệ thống.',
-  ];
-
-  const handleUpdateUnit = async (fields: API.UpdateManagementUnitRequest) => {
-    const hide = message.loading('Configuring...');
-    try {
-      await updateManagementUnit({ unitId: currentUnit?.id?.toString() || '' }, { ...fields });
-      hide();
-      message.success('Chỉnh sửa đơn vị thành công');
-      return true;
-    } catch (error) {
-      hide();
-      message.error('Configuration failed, please try again!');
-      return false;
-    }
-  };
 
   return (
     <>
@@ -311,28 +337,29 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
         </Form>
       </Drawer>
 
-      {currentUnit?.name && (
+      {updateModalVisible && (
         <UpdateUnitForm
           title="Chỉnh sửa đơn vị quản lý"
           width="934px"
           visible={updateModalVisible}
-          currentUnit={currentUnit}
+          unitDetail={unitDetail as API.ManagementUnitDetailResponse}
           onVisibleChange={handleUpdateModalVisible}
           onFinish={async (value) => {
             await handleUpdateUnit(value as API.UpdateManagementUnitRequest);
-            handleUpdateModalVisible(false);
           }}
         />
       )}
 
-      <ModalCustom
-        openConfirmModal={openConfirmModal}
-        setOpenConfirmModal={setOpenConfirmModal}
-        buttonList={buttonList}
-        descriptionList={descriptionList}
-        title="Tạm khoá người dùng"
-        icon={<ExclamationCircleOutlined style={{ color: '#FFC53D', fontSize: '22px' }} />}
-      />
+      {openConfirmModal && (
+        <ModalCustom
+          openConfirmModal={openConfirmModal}
+          setOpenConfirmModal={setOpenConfirmModal}
+          buttonList={buttonList}
+          descriptionList={descriptionList}
+          title="Cảnh báo"
+          icon={<ExclamationCircleOutlined style={{ color: '#FFC53D', fontSize: '22px' }} />}
+        />
+      )}
     </>
   );
 };

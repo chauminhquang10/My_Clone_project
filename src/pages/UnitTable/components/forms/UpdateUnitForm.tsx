@@ -5,6 +5,7 @@ import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
 import styles from './UpdateUnitForm.less';
 import { useRequest } from 'umi';
 import { getDistricts, getProvinces, getWards } from '@/services/STM-APIs/LocationController';
+
 const { Option } = Select;
 
 type ProvinceItem = {
@@ -54,16 +55,16 @@ type ResponseGetWardListByDistrict = {
 };
 
 const INITIAL_ENABLE_STATE = {
-  provinceDisabled: true,
-  districtDisabled: true,
-  wardDisabled: true,
+  provinceDisabled: false,
+  districtDisabled: false,
+  wardDisabled: false,
 };
 
 type UpdateUnitFormProps = {
   title: string;
   width: string;
   visible: boolean;
-  currentUnit: API.ManagementUnitResponse;
+  unitDetail: API.ManagementUnitDetailResponse;
   onVisibleChange: (value: boolean) => void;
   onFinish: (values: Partial<API.UpdateManagementUnitRequest>) => Promise<void>;
 };
@@ -72,7 +73,7 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
   title,
   width,
   visible,
-  currentUnit,
+  unitDetail,
   onVisibleChange,
   onFinish,
 }) => {
@@ -86,61 +87,36 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
   const [handleEnableDropdownList, setHandleEnableDropdownList] =
     useState<Record<string, boolean>>(INITIAL_ENABLE_STATE);
 
-  const {
-    data: provincesData,
-    loading: provincesLoading,
-    cancel: cancelProvinces,
-  } = useRequest<ResponseGetProvinceListByLocation>(
-    () => {
-      if (form.getFieldValue('location'))
+  const { data: provincesData, loading: provincesLoading } =
+    useRequest<ResponseGetProvinceListByLocation>(
+      () => {
         return getProvinces({ location: form.getFieldValue('location') });
-      return new Promise(() => {
-        cancelProvinces();
-      });
-    },
-    {
-      ready: form.getFieldValue('location') ? true : false,
-      refreshDeps: [form.getFieldValue('location')],
-    },
-  );
+      },
+      {
+        refreshDeps: [form.getFieldValue('location')],
+      },
+    );
 
-  const {
-    data: districtsData,
-    loading: districtsLoading,
-    cancel: cancelDistricts,
-  } = useRequest<ResponseGetDistrictListByProvince>(
-    () => {
-      if (form.getFieldValue('provinceId'))
+  const { data: districtsData, loading: districtsLoading } =
+    useRequest<ResponseGetDistrictListByProvince>(
+      () => {
         return getDistricts({ provinceId: form.getFieldValue('provinceId') });
-      return new Promise(() => {
-        cancelDistricts();
-      });
-    },
-    {
-      ready: form.getFieldValue('provinceId') ? true : false,
-      refreshDeps: [form.getFieldValue('provinceId')],
-    },
-  );
+      },
+      {
+        refreshDeps: [form.getFieldValue('provinceId')],
+      },
+    );
 
-  const {
-    data: wardsData,
-    loading: wardsLoading,
-    cancel: cancelWards,
-  } = useRequest<ResponseGetWardListByDistrict>(
+  const { data: wardsData, loading: wardsLoading } = useRequest<ResponseGetWardListByDistrict>(
     () => {
-      if (form.getFieldValue('districtId'))
-        return getWards({ districtId: form.getFieldValue('districtId') });
-      return new Promise(() => {
-        cancelWards();
-      });
+      return getWards({ districtId: form.getFieldValue('districtId') });
     },
     {
-      ready: form.getFieldValue('districtId') ? true : false,
       refreshDeps: [form.getFieldValue('districtId')],
     },
   );
 
-  const handleSelectChange = (determineSelect: string, selectValue: string) => {
+  const handleSelectChange = (determineSelect: string, selectValue: string | number) => {
     switch (determineSelect) {
       case 'location':
         form.resetFields(['provinceId', 'districtId', 'wardId']);
@@ -152,6 +128,7 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
         });
         break;
       case 'province':
+        console.log('a1 a2', typeof selectValue);
         form.resetFields(['districtId', 'wardId']);
         form.setFieldValue('provinceId', selectValue);
         setHandleEnableDropdownList({
@@ -185,6 +162,15 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
         className: styles.myModalForm,
       }}
       submitTimeout={2000}
+      onInit={() => {
+        form.setFieldValue('code', unitDetail?.code);
+        form.setFieldValue('name', unitDetail?.name);
+        form.setFieldValue('location', unitDetail?.location);
+        form.setFieldValue('provinceId', unitDetail?.province?.id);
+        form.setFieldValue('districtId', unitDetail?.district?.id);
+        form.setFieldValue('wardId', unitDetail?.ward?.id);
+        form.setFieldValue('address', unitDetail?.address);
+      }}
     >
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
         <Col>
@@ -212,7 +198,6 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
           <Form.Item name="location" label="Khu vực">
             <Select
               placeholder="Chọn khu vực"
-              defaultValue={currentUnit?.location}
               onChange={(selectValue) => handleSelectChange('location', selectValue)}
             >
               <Option value="north">Miền Bắc</Option>
@@ -225,7 +210,6 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
           <Form.Item name="provinceId" label="Tỉnh/Thành phố">
             <Select
               placeholder="Chọn Tỉnh/Thành phố"
-              //defaultValue={currentUnit?.province?.id}
               onChange={(selectValue) => handleSelectChange('province', selectValue)}
               disabled={handleEnableDropdownList.provinceDisabled ? true : false}
               loading={provincesLoading}
