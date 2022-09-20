@@ -16,8 +16,13 @@ import {
 import { message } from 'antd';
 
 const TableCustom = () => {
+  // const [resultResponse, setResultResponse] = useState<API.PageResponseManagementUnitResponse>();
+
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
+
+  // xử lí xem chi tiết của đơn vị
+  const [currentUnit, setCurrentUnit] = useState<API.ManagementUnitResponse>();
 
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.ManagementUnitResponse>();
@@ -27,8 +32,10 @@ const TableCustom = () => {
     setShowDetail,
   });
 
+  console.log(currentRow);
+
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const pageSize = useRef<number>(20);
+  const pageSize = useRef<number>(10);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -38,35 +45,35 @@ const TableCustom = () => {
     page: '',
   };
 
-  const { run: runGetAllManagementUnits } = useRequest<API.ResponseBaseListManagementUnitResponse>(
-    () => getAllManagementUnits(),
-    {
-      manual: true,
-      onSuccess(data) {
-        console.log(data);
-        // const dataNew = data as API.BaseResponseListLanguageSupport;
-        // if (dataNew?.success && dataNew.data) {
-        //   setListSupportLanguages(dataNew.data);
-        // }
+  const { run: runGetAllManagementUnits } =
+    useRequest<API.ResponseBasePageResponseManagementUnitResponse>(
+      (params: API.getAllManagementUnitsParams) => getAllManagementUnits(params),
+      {
+        onSuccess(data) {
+          console.log(data);
+          // setResultResponse(data);
+          // const dataNew = data as API.BaseResponseListLanguageSupport;
+          // if (dataNew?.success && dataNew.data) {
+          //   setListSupportLanguages(dataNew.data);
+          // }
+        },
+        onError(error) {
+          console.log('error', error);
+          // notification.error({
+          //   message: messageErrorData,
+          //   description: e?.data?.code,
+          // });
+        },
       },
-      onError(error) {
-        console.log('error', error);
+    );
 
-        // notification.error({
-        //   message: messageErrorData,
-        //   description: e?.data?.code,
-        // });
-      },
-    },
-  );
-
-  const handleAdd = async (record: API.CreateManagementUnitRequest) => {
+  const handleAddNewUnit = async (record: API.CreateManagementUnitRequest) => {
     const hide = message.loading('Loading...');
 
     try {
       await createManagementUnit({ ...record });
       hide();
-      message.success('Added successfully');
+      message.success('Thêm đơn vị mới thành công');
       handleCreateModalVisible(false);
       actionRef.current?.reload();
     } catch (error) {
@@ -99,8 +106,8 @@ const TableCustom = () => {
         request={async () => {
           const res = await runGetAllManagementUnits();
           return {
-            data: res?.managementUnits,
-            total: res?.managementUnits ? res.managementUnits.length : 0,
+            data: res?.items,
+            total: res?.items ? res.items.length : 0,
             success: true,
           };
         }}
@@ -119,6 +126,11 @@ const TableCustom = () => {
           hideOnSinglePage: true,
           showQuickJumper: true,
         }}
+        onRow={(rowData) => ({
+          onClick: () => {
+            setCurrentUnit(rowData);
+          },
+        })}
       />
 
       <NewUnitForm
@@ -127,16 +139,17 @@ const TableCustom = () => {
         visible={createModalVisible}
         onVisibleChange={handleCreateModalVisible}
         onFinish={async (value) => {
-          await handleAdd(value as API.CreateManagementUnitRequest);
+          await handleAddNewUnit(value as API.CreateManagementUnitRequest);
         }}
       />
 
-      <UnitDetailDrawer
-        currentRow={currentRow}
-        setCurrentRow={setCurrentRow}
-        showDetail={showDetail}
-        setShowDetail={setShowDetail}
-      />
+      {currentUnit?.name && (
+        <UnitDetailDrawer
+          showDetail={showDetail}
+          setShowDetail={setShowDetail}
+          currentUnit={currentUnit || {}}
+        />
+      )}
     </PageContainer>
   );
 };
