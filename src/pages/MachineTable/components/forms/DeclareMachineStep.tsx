@@ -3,16 +3,15 @@ import { DenominationRule, KeyType, MachineType, Protocol } from '@/common';
 import Api from '@/services/STM-APIs';
 import { objectKeys } from '@/utils';
 import { useRequest } from 'ahooks';
-import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { Button, Col, Form, FormInstance, Input, Row, Select } from 'antd';
+import { useEffect } from 'react';
 import styles from './declareMachineForm.less';
 
 interface DeclareMachineStepProps {
   onCancel: () => void;
   onOk: () => void;
+  form: FormInstance;
 }
-
-const getTotalMachine = (machineType: MachineType) => () =>
-  Api.STMController.getListMachines({ machineType }).then((res) => res.data?.totalSize);
 
 const getModels = (machineType: MachineType) => () =>
   Api.STMModelController.getListModels({ machineType }).then((res) => res.data?.models);
@@ -25,11 +24,19 @@ const getDenominations: () => Promise<API.Denomination[] | undefined> = () =>
 export default function DeclareMachineStep({
   onCancel: handleCancel,
   onOk,
+  form,
 }: DeclareMachineStepProps) {
-  const { data: machineCount } = useRequest(getTotalMachine(MachineType.ATM), { refreshDeps: [] });
   const { data: models } = useRequest(getModels(MachineType.STM));
-  const { data: denominations } = useRequest(getDenominations);
-  console.log({ denominations });
+  const { data: denominations } = useRequest(getDenominations, { cacheKey: 'denominations' });
+
+  useEffect(() => {
+    if (denominations) {
+      form.setFieldValue(
+        'denominations',
+        denominations.map((denomination) => denomination.value),
+      );
+    }
+  }, [denominations]);
 
   return (
     <>
@@ -45,13 +52,12 @@ export default function DeclareMachineStep({
       </Row>
 
       <Row gutter={[24, 24]}>
-        <Col span={8}>
-          <Form.Item name="stt" label="Số thứ tự">
-            <Input placeholder={`${machineCount}`} disabled />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="machineType" label="Loại máy" valuePropName="">
+        <Col span={12}>
+          <Form.Item
+            name="machineType"
+            label="Loại máy"
+            rules={[{ required: true, message: 'Loại máy không được để trống' }]}
+          >
             <Select placeholder="Loại máy">
               {objectKeys(MachineType).map((type) => (
                 <Select.Option value={type} key={type}>
@@ -61,8 +67,12 @@ export default function DeclareMachineStep({
             </Select>
           </Form.Item>
         </Col>
-        <Col span={8}>
-          <Form.Item name="modelId" label="Dòng máy">
+        <Col span={12}>
+          <Form.Item
+            name="modelId"
+            label="Dòng máy"
+            rules={[{ required: true, message: 'Dòng máy không được để trống' }]}
+          >
             <Select placeholder="Dòng máy">
               {models?.map((model) => (
                 <Select.Option value={model.id} key={model.id}>
@@ -73,7 +83,11 @@ export default function DeclareMachineStep({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="serialNumber" label="Series máy">
+          <Form.Item
+            name="serialNumber"
+            label="Series máy"
+            rules={[{ required: true, message: 'Series máy không được để trống' }]}
+          >
             <Input placeholder="Series máy" />
           </Form.Item>
         </Col>
@@ -87,12 +101,20 @@ export default function DeclareMachineStep({
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="terminalId" label="Terminal ID">
+          <Form.Item
+            name="terminalId"
+            label="Terminal ID"
+            rules={[{ required: true, message: 'Terminal ID không được để trống' }]}
+          >
             <Input placeholder="Terminal ID" />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="ipAdress" label="Địa chỉ IP">
+          <Form.Item
+            name="ipAddress"
+            label="Địa chỉ IP"
+            rules={[{ required: true, message: 'Địa chỉ IP không được để trống' }]}
+          >
             <Input placeholder="Địa chỉ IP" />
           </Form.Item>
         </Col>
@@ -107,7 +129,11 @@ export default function DeclareMachineStep({
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="masterKey" label="Master (A)/(B) Key">
+          <Form.Item
+            name="masterKey"
+            label="Master (A)/(B) Key"
+            rules={[{ required: true, message: 'MasterKey không được để trống' }]}
+          >
             <Input placeholder={'Master (A)/(B) Key'} />
           </Form.Item>
         </Col>
@@ -129,19 +155,19 @@ export default function DeclareMachineStep({
         </Col>
         <Col span={12}>
           <Form.Item name="accountingAccountUSD" label="Tài khoản hạch toán - USD">
-            <Input placeholder="MAC" />
+            <Input placeholder="Tài khoản hạch toán - USD" />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item name="accountingAccountVND" label="Tài khoản hạch toán - VNĐ">
-            <Input placeholder="MAC" />
+            <Input placeholder="Tài khoản hạch toán - VNĐ" />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item name="denominationRule" label="Quy tắc chi tiền">
             <Select placeholder="Quy tắc chi tiền">
               {objectKeys(DenominationRule).map((rule) => (
-                <Select.Option key={rule} value={rule}>
+                <Select.Option key={rule} value={DenominationRule[rule]}>
                   {rule}
                 </Select.Option>
               ))}
@@ -149,11 +175,15 @@ export default function DeclareMachineStep({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="denominations" label="Loại mệnh giá tiền">
+          <Form.Item
+            name="denominations"
+            label="Loại mệnh giá tiền"
+            rules={[{ required: true, message: 'Loại mệnh giá tiền không được để trống' }]}
+          >
             <Row gutter={12}>
               {denominations?.map((denomination) => (
                 <Col span={24 / denominations.length}>
-                  <Input disabled placeholder={`${denomination.value}`} />
+                  <Input disabled value={`${denomination.value}`} />
                 </Col>
               ))}
             </Row>
@@ -164,9 +194,24 @@ export default function DeclareMachineStep({
         <Button className={styles.cancelButton} size="large" onClick={handleCancel}>
           Huỷ bỏ
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit" onClick={onOk}>
-          Tiếp tục
-        </Button>
+        <Form.Item shouldUpdate>
+          {() => {
+            const test = form.getFieldsValue();
+            const disabledNextBtn = objectKeys(test).some((key) => !test[key]);
+
+            return (
+              <Button
+                className={styles.submitButton}
+                size="large"
+                htmlType="submit"
+                onClick={onOk}
+                disabled={disabledNextBtn}
+              >
+                Tiếp tục
+              </Button>
+            );
+          }}
+        </Form.Item>
       </Row>
     </>
   );

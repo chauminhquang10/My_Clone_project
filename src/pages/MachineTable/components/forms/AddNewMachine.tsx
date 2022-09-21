@@ -1,9 +1,11 @@
-import { ModalForm } from '@ant-design/pro-components';
+import { FormInstance, ModalForm } from '@ant-design/pro-components';
 import type { Dispatch, SetStateAction } from 'react';
 import { useStepsForm } from 'sunflower-antd';
 import styles from './declareMachineForm.less';
 import DeclareMachineStep from './DeclareMachineStep';
 import DeclareUnitStep from './DeclareUnitStep';
+import Api from '@/services/STM-APIs';
+import { openNotification } from '@/utils';
 
 interface AddNewMachineProps {
   visible: boolean;
@@ -12,7 +14,7 @@ interface AddNewMachineProps {
 
 export default function AddNewMachine({ handleModalVisible, visible }: AddNewMachineProps) {
   const {
-    // form,
+    form,
     current: step,
     gotoStep: setStep,
     // stepsProps,
@@ -22,16 +24,36 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
   } = useStepsForm({
     async submit(values) {
       console.log(values);
-      await new Promise((r) => setTimeout(r, 1000));
-      return 'ok';
+      try {
+        const postMachineRes = await Api.STMController.createMachine({
+          ...values,
+          privateKey: 'test-private',
+        } as API.CreateStmRequest);
+
+        if (postMachineRes.code === 0) {
+          openNotification(
+            'success',
+            'Khai báo máy thành công',
+            `Khai báo thành công cho máy ${postMachineRes.data?.name}`,
+          );
+        }
+
+        return 'ok';
+      } catch (e) {
+        console.log(e);
+      }
     },
     total: 2,
   });
-  console.log('Render');
+
+  const handleResetForm = () => {
+    (form as FormInstance).resetFields();
+  };
 
   const handleCancle = () => {
     handleModalVisible(false);
     setStep(0);
+    handleResetForm();
   };
 
   const handlePrevious = () => {
@@ -39,8 +61,13 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
   };
 
   const formList = [
-    <DeclareMachineStep onCancel={handleCancle} onOk={() => setStep(step + 1)} />,
-    <DeclareUnitStep onPrevious={handlePrevious} submit={submit} onCancel={handleCancle} />,
+    <DeclareMachineStep form={form} onCancel={handleCancle} onOk={() => setStep(step + 1)} />,
+    <DeclareUnitStep
+      form={form}
+      onPrevious={handlePrevious}
+      submit={submit}
+      onCancel={handleCancle}
+    />,
   ];
 
   return (
