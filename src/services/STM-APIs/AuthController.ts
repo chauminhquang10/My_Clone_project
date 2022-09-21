@@ -56,6 +56,24 @@ export async function refreshToken(
   });
 }
 
+/** Request Reset Password API - Request reset password PUT /api/v1/auth/request-reset-password */
+export async function requestResetPassword(
+  body: API.RequestResetPasswordRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseBaseRequestResetPasswordResponse>(
+    '/api/v1/auth/request-reset-password',
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    },
+  );
+}
+
 /** Reset Password API - Reset password in the first time login or forgot password PUT /api/v1/auth/reset-password */
 export async function resetPassword(
   body: API.ResetPasswordRequest,

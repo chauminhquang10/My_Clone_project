@@ -1,10 +1,12 @@
 import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
+import Api from '@/services/STM-APIs';
 import { DeleteOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
 import { ModalForm } from '@ant-design/pro-components';
 import { Avatar, Button, Col, Form, Input, message, Row, Skeleton, Upload } from 'antd';
 import type { UploadChangeParam } from 'antd/es/upload';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useRequest } from 'umi';
 import { ManagementUnitField, RoleGroupField } from './components';
 import styles from './NewUserForm.less';
 
@@ -13,7 +15,8 @@ type CreateFormProps = {
   width: string;
   visible: boolean;
   onVisibleChange: (value: boolean) => void;
-  onFinish: (values: API.CreateUserRequest) => Promise<boolean>;
+  onFinish: (body: API.CreateUserRequest, avatar?: File) => Promise<boolean>;
+  userInfo?: API.UserDetailResponse;
 };
 
 const NewUserForm: React.FC<CreateFormProps> = ({
@@ -21,13 +24,22 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   width,
   visible,
   onVisibleChange,
-  onFinish,
+  // onFinish,
+  userInfo,
 }) => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<API.CreateUserRequest>();
 
   const [loadingImage, setLoadingImage] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string>();
+  const [imageFile, setImageFile] = useState<File>();
   const [isAllowedSubmit, setIsAllowedSubmit] = useState<boolean>(false);
+
+  // get avatar if in update form
+  useEffect(() => {
+    if (userInfo?.avatar) {
+      setImageUrl(userInfo.avatar);
+    }
+  }, [userInfo?.avatar]);
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -56,7 +68,6 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   };
 
   const handleChange: UploadProps['onChange'] = async (info: UploadChangeParam<UploadFile>) => {
-    console.log(info.file);
     if (info.file.status === 'uploading') {
       setLoadingImage(true);
       return;
@@ -67,6 +78,7 @@ const NewUserForm: React.FC<CreateFormProps> = ({
       }
       setLoadingImage(false);
       setImageUrl(info.file.url || (info.file.preview as string));
+      setImageFile(info.file.originFileObj);
     }
   };
 
@@ -96,10 +108,10 @@ const NewUserForm: React.FC<CreateFormProps> = ({
     return;
   }, [form]);
 
-  const hanleChangeManagementUnit = (id: API.ManagementUnitResponse['id']) => {
-    form.setFieldValue('managementUnitId', id);
-    handleAllowSubmit();
-  };
+  // const hanleChangeManagementUnit = (id: API.ManagementUnitResponse['id']) => {
+  //   form.setFieldValue('managementUnitId', id);
+  //   handleAllowSubmit();
+  // };
 
   const handleChangeRoleGroup = (id: number) => {
     form.setFieldValue('roleGroupId', id);
@@ -109,15 +121,34 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   const handleSubmit = async (values: API.CreateUserRequest) => {
     console.log('values: ', values);
     console.log('imageUrl: ', imageUrl);
+    console.log('imageFile: ', imageFile);
+
+    return true;
     // chua handle avatar upload
-    try {
-      const success = await onFinish({ ...values });
-      return success;
-    } catch (error) {
-      console.log('error: ', error);
-    }
-    return false;
+    // try {
+    //   const success = await onFinish({ ...values }, imageFile);
+    //   return success;
+    // } catch (error) {
+    //   console.log('error: ', error);
+    // }
+    // return false;
   };
+
+  const { data: managementUnitList, loading: managementUnitLoading } = useRequest<
+    API.ManagementUnitResponse[]
+  >(() => {
+    return Api.ManagementUnitController.getAllManagementUnits({});
+  });
+
+  const { data: roleGroupList, loading: roleGroupLoading } = useRequest<API.RoleGroupResponse[]>(
+    () => {
+      return Api.RoleController.getAllRoleGroup();
+    },
+  );
+
+  console.log('managementUnitList: ', managementUnitList);
+  console.log('roleGroupList: ', roleGroupList);
+  console.log('roleGroupLoading: ', roleGroupLoading);
 
   return (
     <ModalForm
@@ -135,6 +166,18 @@ const NewUserForm: React.FC<CreateFormProps> = ({
       submitTimeout={2000}
       onChange={() => {
         handleAllowSubmit();
+      }}
+      onInit={() => {
+        console.log('onInit!!!');
+
+        form.setFieldValue('staffId', userInfo?.staffId || '');
+        form.setFieldValue('name', userInfo?.name || '');
+        form.setFieldValue('phoneNumber', userInfo?.phoneNumber || '');
+        form.setFieldValue('email', userInfo?.email || '');
+        form.setFieldValue('managementUnitId', userInfo?.managementUnit?.id);
+        form.setFieldValue('roleGroupId', userInfo?.roleGroup?.id || '');
+
+        console.log('form data: ', form.getFieldsValue());
       }}
     >
       {/* Header */}
@@ -251,7 +294,14 @@ const NewUserForm: React.FC<CreateFormProps> = ({
           </Form.Item>
         </Col>
         {/* Don vi quan ly */}
-        <ManagementUnitField onChangeManagementUnit={hanleChangeManagementUnit} />
+        {!managementUnitLoading && (
+          <ManagementUnitField
+            form={form}
+            managementUnitList={
+              (managementUnitList as API.PageResponseManagementUnitResponse).items
+            }
+          />
+        )}
         {/* Nhom quyen */}
         <RoleGroupField onChangeRoleGroup={handleChangeRoleGroup} />
       </Row>

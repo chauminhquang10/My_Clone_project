@@ -37,8 +37,6 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
 }) => {
   const [userInfo, setUserInfo] = useState<API.UserDetailResponse>({});
 
-  console.log('userInfo: ', userInfo);
-
   const { run: runDetailUser } = useRequest(
     (params: API.getUserParams) => Api.UserController.getUser(params),
     {
@@ -88,7 +86,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
         {currentRow?.name && (
           <Form layout="vertical" hideRequiredMark>
             {/* Header */}
-            <Header setOpenConfirmModal={setOpenConfirmModal} />
+            <Header setOpenConfirmModal={setOpenConfirmModal} userInfo={userInfo} />
             {/* Trang thai nguoi dung */}
             <UserStatusRow avatar={userInfo.avatar} status={userInfo.status} />
             <Row gutter={[0, 24]}>

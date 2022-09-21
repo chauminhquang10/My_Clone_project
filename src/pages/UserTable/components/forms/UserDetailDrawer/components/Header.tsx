@@ -7,10 +7,11 @@ import lockIcon from '/src/assets/images/svg/icon/Locked.svg';
 
 interface HeaderProps {
   setOpenConfirmModal: (isVisible: boolean) => void;
+  userInfo: API.UserDetailResponse;
 }
 
-const Header: React.FC<HeaderProps> = ({ setOpenConfirmModal }) => {
-  const [isVisibleModalForm, setIsVisibleModalForm] = useState<boolean>(false);
+const Header: React.FC<HeaderProps> = ({ setOpenConfirmModal, userInfo }) => {
+  const [isVisibleUpdateUser, setIsVisibleUpdateUser] = useState<boolean>(false);
 
   return (
     <>
@@ -25,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ setOpenConfirmModal }) => {
                 icon={<EditOutlined color="#434343" />}
                 className={styles.btnItem}
                 onClick={() => {
-                  setIsVisibleModalForm(true);
+                  setIsVisibleUpdateUser(true);
                 }}
               >
                 <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
@@ -43,22 +44,9 @@ const Header: React.FC<HeaderProps> = ({ setOpenConfirmModal }) => {
       </Row>
 
       <UpdateUserForm
-        title="Chỉnh sửa người dùng"
-        width="934px"
-        visible={isVisibleModalForm}
-        onVisibleChange={setIsVisibleModalForm}
-        onFinish={async () => {
-          // const success = await handleAdd(value as API.RuleListItem);
-          // if (success) {
-          //   handleUpdateModalVisible(false);
-          //   if (actionRef.current) {
-          //     actionRef.current.reload();
-          //   }
-          //   return true;
-          // }
-          setIsVisibleModalForm(false);
-          return false;
-        }}
+        userInfo={userInfo}
+        isVisibleUpdateUser={isVisibleUpdateUser}
+        setIsVisibleUpdateUser={setIsVisibleUpdateUser}
       />
     </>
   );

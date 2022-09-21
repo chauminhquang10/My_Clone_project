@@ -64,3 +64,17 @@ export async function updateModel(
     ...(options || {}),
   });
 }
+
+/** Delete model  - Delete model when there is no machine in this model DELETE /api/v1/models/${param0} */
+export async function deleteModel(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.deleteModelParams,
+  options?: { [key: string]: any },
+) {
+  const { modelId: param0, ...queryParams } = params;
+  return request<API.ResponseBaseStmModelResponse>(`/api/v1/models/${param0}`, {
+    method: 'DELETE',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}

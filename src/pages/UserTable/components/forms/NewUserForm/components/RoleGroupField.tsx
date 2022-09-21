@@ -2,17 +2,15 @@ import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 import { Col, Form, Select, Tag } from 'antd';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../NewUserForm.less';
 
 const { Option } = Select;
 
-function getActionsByRoleGroupId(id: number, list?: API.RoleGroupResponse[]) {
+function getActionsByRoleGroupId(id?: number, list?: API.RoleGroupResponse[]) {
   if (!id || !list || list.length < 1) return [];
 
   const foundUnit = list.find((item) => item.id === id);
-
-  console.log('fountUnit: ', foundUnit);
 
   if (!foundUnit) return [];
   return foundUnit.actions
@@ -24,6 +22,7 @@ function getActionsByRoleGroupId(id: number, list?: API.RoleGroupResponse[]) {
 
 interface RoleGroupFieldProps {
   onChangeRoleGroup: (id: number) => void;
+  initialValue?: number;
 }
 
 const tagRender = (props: CustomTagProps) => {
@@ -35,9 +34,15 @@ const tagRender = (props: CustomTagProps) => {
   );
 };
 
-const RoleGroupField: React.FC<RoleGroupFieldProps> = ({ onChangeRoleGroup }) => {
+const RoleGroupField: React.FC<RoleGroupFieldProps> = ({ onChangeRoleGroup, initialValue }) => {
   const [roleGroupList, setRoleGroupList] = useState<API.RoleGroupResponse[] | undefined>();
   const [selectedValue, setSelectedValue] = useState<number>();
+
+  useEffect(() => {
+    if (initialValue) {
+      setSelectedValue(initialValue);
+    }
+  }, [initialValue]);
 
   useEffect(() => {
     const getRoleGroupList = async () => {
@@ -58,6 +63,28 @@ const RoleGroupField: React.FC<RoleGroupFieldProps> = ({ onChangeRoleGroup }) =>
     onChangeRoleGroup(value);
   };
 
+  const buildActionRow = useMemo(() => {
+    if (!selectedValue) return null;
+
+    const initialActionList = getActionsByRoleGroupId(selectedValue, roleGroupList);
+
+    console.log('initial action list: ', initialActionList);
+
+    return (
+      <Col span={24} className={styles.roleGroupField}>
+        <Form.Item name="actions" label="Quyền tương ứng" initialValue={{ ...initialActionList }}>
+          <Select
+            mode="multiple"
+            tagRender={tagRender}
+            style={{ width: '100%' }}
+            disabled
+            className={styles.selectActions}
+          />
+        </Form.Item>
+      </Col>
+    );
+  }, [roleGroupList, selectedValue]);
+
   return (
     <>
       <Col span={24}>
@@ -70,6 +97,7 @@ const RoleGroupField: React.FC<RoleGroupFieldProps> = ({ onChangeRoleGroup }) =>
               message: 'Vui lòng chọn nhóm quyền',
             },
           ]}
+          initialValue={initialValue}
         >
           <Select placeholder="Chọn nhóm quyền" onChange={handleSelectChange}>
             {roleGroupList?.map((role) => {
@@ -82,23 +110,7 @@ const RoleGroupField: React.FC<RoleGroupFieldProps> = ({ onChangeRoleGroup }) =>
           </Select>
         </Form.Item>
       </Col>
-      {selectedValue && (
-        <Col span={24} className={styles.roleGroupField}>
-          <Form.Item
-            name="actions"
-            label="Quyền tương ứng"
-            initialValue={getActionsByRoleGroupId(selectedValue, roleGroupList)}
-          >
-            <Select
-              mode="multiple"
-              tagRender={tagRender}
-              style={{ width: '100%' }}
-              disabled
-              className={styles.selectActions}
-            />
-          </Form.Item>
-        </Col>
-      )}
+      {buildActionRow}
     </>
   );
 };

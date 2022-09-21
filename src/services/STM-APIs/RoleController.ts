@@ -46,3 +46,36 @@ export async function getRoleDetail(
     ...(options || {}),
   });
 }
+
+/** Update role group  - Update role group PUT /api/v1/roles/groups/${param0} */
+export async function updateRoleGroup(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.updateRoleGroupParams,
+  body: API.UpdateRoleGroupRequest,
+  options?: { [key: string]: any },
+) {
+  const { groupId: param0, ...queryParams } = params;
+  return request<API.ResponseBaseRoleGroupResponse>(`/api/v1/roles/groups/${param0}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** Delete role group  - Delete role group when there is no user in this group DELETE /api/v1/roles/groups/${param0} */
+export async function deleteRoleGroup(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.deleteRoleGroupParams,
+  options?: { [key: string]: any },
+) {
+  const { groupId: param0, ...queryParams } = params;
+  return request<API.ResponseBaseRoleGroupResponse>(`/api/v1/roles/groups/${param0}`, {
+    method: 'DELETE',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}

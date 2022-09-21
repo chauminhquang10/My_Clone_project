@@ -5,18 +5,18 @@ import TotalPagination from '@/components/TableProperties/TotalPagination';
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { FormattedMessage, useRequest } from 'umi';
+import { useRequest } from 'umi';
 import { NewUserForm, UserDetailDrawer } from './components/forms';
 import Column from './components/tables/Column';
 
-const handleAdd = async (fields: API.CreateUserRequest) => {
+const handleAdd = async (fields: API.CreateUserRequest, avatar?: File) => {
   const hide = message.loading('Loading...');
   hide();
   try {
-    const res = await Api.UserController.createUser({ ...fields });
+    const res = await Api.UserController.createUser({ ...fields }, avatar);
     if (!res.code) return false;
 
     if (res.code === 0) {
@@ -38,7 +38,7 @@ const handleAdd = async (fields: API.CreateUserRequest) => {
         openNotification('error', 'Email đã được sử dụng');
         return false;
       case 108:
-        openNotification('error', 'Người dừng quản lý đã tồn tại');
+        openNotification('error', 'Số điện thoại người quản lý đã tồn tại');
         return false;
       default:
         message.error('Thêm người dùng không thành công, vui lòng thử lại sau!');
@@ -139,7 +139,7 @@ const UserManagementTable: React.FC = () => {
 
           const pageRequestParams = {
             // pageNumber: params.current,
-            // pageSize: params.pageSize,
+            pageSize: 20,
             // sortDirection: '',
             sortBy: '',
           };
@@ -154,11 +154,6 @@ const UserManagementTable: React.FC = () => {
         }}
         columns={columns}
         options={false}
-        // rowSelection={{
-        //     onChange: (_, selectedRows) => {
-        //         setSelectedRows(selectedRows);
-        //     },
-        // }}
         scroll={{ x: 'max-content', y: 'max-content' }}
         pagination={{
           onChange(current) {
@@ -170,7 +165,7 @@ const UserManagementTable: React.FC = () => {
           showSizeChanger: false,
           pageSize: pageSize.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
-          hideOnSinglePage: true,
+          hideOnSinglePage: false,
           showQuickJumper: true,
         }}
       />
@@ -180,8 +175,8 @@ const UserManagementTable: React.FC = () => {
         width="934px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.CreateUserRequest);
+        onFinish={async (values, avatar) => {
+          const success = await handleAdd(values as API.CreateUserRequest, avatar);
           if (success) {
             handleModalVisible(false);
             if (actionRef.current) {
@@ -191,24 +186,7 @@ const UserManagementTable: React.FC = () => {
           }
           return false;
         }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </NewUserForm>
+      />
       <UserDetailDrawer
         currentRow={currentRow}
         setCurrentRow={setCurrentRow}

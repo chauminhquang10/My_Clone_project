@@ -1,8 +1,7 @@
 /* eslint-disable react/jsx-no-undef */
-import Api from '@/services/STM-APIs';
-import { openNotification } from '@/utils';
 import { Col, Form, Input, Select } from 'antd';
-import React, { useEffect, useState } from 'react';
+import type { FormInstance } from 'antd/es/form/Form';
+import React, { useState } from 'react';
 
 function getAddressByManagementUnitId(
   id: API.ManagementUnitResponse['id'],
@@ -19,32 +18,17 @@ function getAddressByManagementUnitId(
 const { Option } = Select;
 
 interface ManagementUnitFieldProps {
-  onChangeManagementUnit: (id: API.ManagementUnitResponse['id']) => void;
+  form: FormInstance<API.CreateUserRequest>;
+  managementUnitList?: API.ManagementUnitResponse[];
 }
 
-const ManagementUnitField: React.FC<ManagementUnitFieldProps> = ({ onChangeManagementUnit }) => {
-  const [managementUnitList, setManagementUnitList] = useState<
-    API.ManagementUnitResponse[] | undefined
-  >();
+const ManagementUnitField: React.FC<ManagementUnitFieldProps> = ({ managementUnitList, form }) => {
   const [selectedValue, setSelectedValue] = useState<API.ManagementUnitResponse['id']>();
 
-  useEffect(() => {
-    const getManagementUnitList = async () => {
-      try {
-        const res = await Api.ManagementUnitController.getAllManagementUnits();
-        setManagementUnitList(res.data?.managementUnits);
-      } catch (error) {
-        console.log('error: ', error);
-        openNotification('error', 'Đã có lỗi xảy ra', 'Vui lòng thử lại sau');
-      }
-    };
-
-    getManagementUnitList();
-  }, []);
+  console.log('form: ', form);
 
   const handleSelectChange = (value: API.ManagementUnitResponse['id']) => {
     setSelectedValue(value);
-    onChangeManagementUnit(value);
   };
 
   return (
