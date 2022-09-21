@@ -1,16 +1,15 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 // import { getAllUsers } from "@/services/STM-APIs/UserController";
-import { PageContainer, ProTable } from '@ant-design/pro-components';
-import React, { useRef, useState } from 'react';
-import { useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+import { useRef, useState } from 'react';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-import api from '@/services/STM-APIs';
-import { openNotification } from '@/utils';
+import DeclareMachineSeriesForm from './components/drawers/DeclareMachineSeriesForm';
+import ConfigMachineDrawer from './components/drawers/MachineDetailForm';
 
 const TableCustom = () => {
   // //-------------- Create model ----------------
@@ -72,21 +71,21 @@ const TableCustom = () => {
   // updateSTMModel(paramsUpdate, bodyUpdate);
   //---------------  handle get All Model -------------------------------
 
-  const { run: getAllConfigMachine } = useRequest(
-    (params: API.getListModelsParams) => api.STMModelController.getListModels(params),
-    {
-      manual: true,
-      onSuccess: (res) => {
-        if (!res) {
-          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
-        }
-        return res;
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    },
-  );
+  // const { run: getAllConfigMachine } = useRequest(
+  //   (params: API.getListModelsParams) => api.STMModelController.getListModels(params),
+  //   {
+  //     manual: true,
+  //     onSuccess: (res) => {
+  //       if (!res) {
+  //         openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+  //       }
+  //       return res;
+  //     },
+  //     onError: (error) => {
+  //       console.log(error);
+  //     },
+  //   },
+  // );
   /**
    * @en-US The pop-up window of the distribution update window
    * @zh-CN 分布更新窗口的弹窗
@@ -127,63 +126,75 @@ const TableCustom = () => {
   };
 
   return (
-    <PageContainer
-      className={style['table-container']}
-      header={{
-        title: '',
-      }}
-      footer={undefined}
-    >
-      <ProTable
-        headerTitle={<TitleTable>Cấu hình dòng máy</TitleTable>}
-        actionRef={actionRef}
-        rowKey="key"
-        search={false}
-        toolBarRender={() => [
-          <AddNew
-            key="primary"
-            onClick={() => {
-              handleModalVisible(true);
-            }}
-          />,
-        ]}
-        // request={machineList}
-        request={async (params = {}) => {
-          console.log(params);
-
-          const pageRequestParams: API.getListModelsParams = {
-            machineType: '',
-          };
-          const res = await getAllConfigMachine({
-            ...pageRequestParams,
-          });
-
-          return {
-            data: res?.models || [],
-          };
+    <>
+      <DeclareMachineSeriesForm
+        onFinish={async () => {
+          return true;
         }}
-        columns={columns}
-        options={false}
-        // rowSelection={{
-        //     onChange: (_, selectedRows) => {
-        //         setSelectedRows(selectedRows);
-        //     },
-        // }}
-        pagination={{
-          onChange(current) {
-            setCurrentPage(current);
-          },
-          current: currentPage,
-          className: style['pagination-custom'],
-          locale: { ...paginationLocale },
-          showSizeChanger: false,
-          pageSize: pageSize.current,
-          showTotal: (total, range) => <TotalPagination total={total} range={range} />,
-          hideOnSinglePage: true,
-          showQuickJumper: true,
-        }}
+        onVisibleChange={handleModalVisible}
+        visible={createModalVisible}
+        width="934px"
       />
-    </PageContainer>
+      <ConfigMachineDrawer open handleClose={() => {}} />
+      <PageContainer
+        className={style['table-container']}
+        header={{
+          title: '',
+        }}
+        footer={undefined}
+      >
+        <ProTable
+          headerTitle={<TitleTable>Cấu hình dòng máy</TitleTable>}
+          actionRef={actionRef}
+          rowKey="key"
+          search={false}
+          toolBarRender={() => [
+            <AddNew
+              key="primary"
+              onClick={() => {
+                handleModalVisible(true);
+              }}
+            />,
+          ]}
+          // request={machineList}
+          request={async (params = {}) => {
+            console.log(params);
+
+            // const pageRequestParams: API.getListModelsParams = {
+            //   machineType: '',
+            // };
+            // const res = await getAllConfigMachine({
+            //   ...pageRequestParams,
+            // });
+
+            return {
+              data: [],
+              // data: res?.models || [],
+            };
+          }}
+          columns={columns}
+          options={false}
+          // rowSelection={{
+          //     onChange: (_, selectedRows) => {
+          //         setSelectedRows(selectedRows);
+          //     },
+          // }}
+          pagination={{
+            onChange(current) {
+              setCurrentPage(current);
+            },
+            current: currentPage,
+            className: style['pagination-custom'],
+            locale: { ...paginationLocale },
+            showSizeChanger: false,
+            pageSize: pageSize.current,
+            showTotal: (total, range) => <TotalPagination total={total} range={range} />,
+            hideOnSinglePage: true,
+            showQuickJumper: true,
+          }}
+        />
+      </PageContainer>
+    </>
   );
 };
 
