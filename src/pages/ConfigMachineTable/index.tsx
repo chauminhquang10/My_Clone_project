@@ -1,7 +1,7 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 // import { getAllUsers } from "@/services/STM-APIs/UserController";
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
@@ -96,7 +96,7 @@ const TableCustom = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.StorageItem>();
+  const [currentRow, setCurrentRow] = useState<API.StmModelResponse>();
 
   console.log(showDetail, currentRow);
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -110,7 +110,7 @@ const TableCustom = () => {
   // const [page, setPage] = useState<number>();
   // const [pageSize, setPageSize] = useState<number>();
   // const pageSizeRef = useRef<number>(20);
-  const columns: ProColumns<API.StorageItem>[] = Column({
+  const columns: ProColumns<API.StmModelResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
   });
@@ -147,12 +147,9 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        // request={machineList}
-        request={async (params = {}) => {
-          console.log(params);
-
+        request={async () => {
           const pageRequestParams: API.getListModelsParams = {
-            machineType: '',
+            machineType: 'STM',
           };
           const res = await getAllConfigMachine({
             ...pageRequestParams,
@@ -164,11 +161,6 @@ const TableCustom = () => {
         }}
         columns={columns}
         options={false}
-        // rowSelection={{
-        //     onChange: (_, selectedRows) => {
-        //         setSelectedRows(selectedRows);
-        //     },
-        // }}
         pagination={{
           onChange(current) {
             setCurrentPage(current);

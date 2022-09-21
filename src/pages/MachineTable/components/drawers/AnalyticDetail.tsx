@@ -91,29 +91,29 @@ const informationColumns: ColumnsType<API.TransactionResponse> = [
   },
 ];
 
-const data: API.TransactionResponse[] = [
-  {
-    id: '1',
-  },
-  {
-    id: '2',
-  },
-  {
-    id: '3',
-  },
-  {
-    id: '4',
-  },
-  {
-    id: '5',
-  },
-  {
-    id: '6',
-  },
-  {
-    id: '7',
-  },
-];
+// const data: API.TransactionResponse[] = [
+//   {
+//     id: '1',
+//   },
+//   {
+//     id: '2',
+//   },
+//   {
+//     id: '3',
+//   },
+//   {
+//     id: '4',
+//   },
+//   {
+//     id: '5',
+//   },
+//   {
+//     id: '6',
+//   },
+//   {
+//     id: '7',
+//   },
+// ];
 
 export default function AnaylyticDetail({
   handleClose,
@@ -137,7 +137,7 @@ export default function AnaylyticDetail({
         if (!res) {
           openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
         } else {
-          setDetailTransaction(res.transactions);
+          setDetailTransaction(res.items);
         }
       },
       onError: (error) => {
@@ -155,6 +155,7 @@ export default function AnaylyticDetail({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEntity, fromDate, toDate]);
 
+  console.log(detailTransaction);
   //-------------------- detail Machine --------------------------------
   const [detailMachine, setDetailMachine] = useState<API.StmDetailResponse | undefined>();
 
@@ -194,7 +195,6 @@ export default function AnaylyticDetail({
     setDropdownOpen(false);
   };
 
-  console.log(currentEntity);
   return (
     <>
       <DeclareMachineForm
@@ -215,6 +215,7 @@ export default function AnaylyticDetail({
           setTransactionTableOpen(false);
           return false;
         }}
+        detailTransaction={detailTransaction}
       />
       <>
         <Drawer
@@ -336,7 +337,12 @@ export default function AnaylyticDetail({
                   </Button>
                 }
               >
-                <Table columns={informationColumns} dataSource={data} pagination={false} bordered />
+                <Table
+                  columns={informationColumns}
+                  dataSource={detailTransaction}
+                  pagination={false}
+                  bordered
+                />
               </Card>
             </Form>
           </div>

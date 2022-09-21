@@ -3,40 +3,56 @@ import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties//TableCell';
 
 type ColumnProps = {
-  setCurrentRow: (s: API.StorageItem) => void;
+  setCurrentRow: (s: API.StmModelResponse) => void;
   setShowDetail: (s: boolean) => void;
 };
 
-function Column({}: ColumnProps) {
-  const columns: ProColumns<API.StorageItem>[] = [
+function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
+  const columns: ProColumns<API.StmModelResponse>[] = [
     {
-      title: <HeadCell>Loại thiết bị</HeadCell>,
-      dataIndex: 'deviceType',
-      render: (_, entity) => {
-        return <TextCell>{entity.deviceType?.name}</TextCell>;
+      title: <HeadCell>Loại máy</HeadCell>,
+      dataIndex: 'machineType',
+      render: (dom, entity) => {
+        return (
+          <TextCell
+            onClick={() => {
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
+          >
+            {dom}
+          </TextCell>
+        );
       },
     },
     {
-      title: <HeadCell>Đơn vị tính</HeadCell>,
-      dataIndex: 'deviceType',
-      render: (_, entity) => {
-        return <TextCell>{entity.deviceType?.unit}</TextCell>;
-      },
-      sorter: (a, b) => {
-        if (a.deviceType?.unit && b.deviceType?.unit)
-          return a.deviceType.unit.localeCompare(b.deviceType.unit);
-        else return 1;
+      title: <HeadCell>Dòng máy</HeadCell>,
+      dataIndex: 'name',
+      render: (dom, entity) => {
+        return (
+          <TextCell
+            onClick={() => {
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
+          >
+            {dom}
+          </TextCell>
+        );
       },
     },
     {
-      title: <HeadCell>Sức chứa tối thiểu</HeadCell>,
-      dataIndex: 'minCapacity',
+      title: <HeadCell>Người tạo</HeadCell>,
+      dataIndex: 'createdBy',
+      render: (_, entity) => {
+        return <TextCell>{`${entity.createdBy?.staffId} - ${entity.createdBy?.name}`}</TextCell>;
+      },
+    },
+    {
+      title: <HeadCell>Ngày tạo</HeadCell>,
+      dataIndex: 'createdAt',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
-      },
-      sorter: (a, b) => {
-        if (a.minCapacity && b.minCapacity) return a.minCapacity - b.minCapacity;
-        return 1;
       },
     },
   ];

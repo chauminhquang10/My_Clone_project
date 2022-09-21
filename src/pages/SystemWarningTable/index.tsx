@@ -4,40 +4,14 @@ import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-desi
 import { message } from 'antd';
 import { useRef, useState } from 'react';
 import { FormattedMessage } from 'umi';
-// import {useRequest} from "umi";
+// import { useRequest } from 'umi';
 import NewUserForm from './components/forms/NewUserForm';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
-// import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-
-const genListMachine = (current: number, pageSize: number) => {
-  const tableListDataSource: API.StmInfoResponse[] = [];
-
-  for (let i = 0; i < pageSize; i += 1) {
-    const index = (current - 1) * 10 + i;
-    tableListDataSource.push({
-      id: `${index}`,
-      machineOrder: index * 1000,
-      name: `name-${index}`,
-      location: `location-${index}`,
-      province: {
-        id: 1,
-        name: `province-${index}`,
-      },
-      machineType: 'STM',
-      terminalId: `terminal-${index}`,
-      status: 'OFFLINE',
-      activity: 'MAINTAINING',
-      ipAddress: `ipAddress-${index}`,
-    });
-  }
-  return tableListDataSource;
-};
-
-const listMachine = genListMachine(1, 100);
+// import api from '@/services/STM-APIs';
 
 /**
  * @en-US Add node
@@ -60,28 +34,18 @@ const handleAdd = async (fields: API.StmInfoResponse) => {
 };
 
 const TableCustom = () => {
-  //--------------- listUSer -----------------------------------
-  // const [listUser, setListUser] = useState<API.StmInfoResponse[] | undefined>();
-  //---------------  handle getAllUser -------------------------------
-
-  // const { run: runGetAllUser } = useRequest(
-  //     (params: API.getAllUsersParams) => getAllUsers(params),
-  //     {
-  //         manual: true,
-  //         onSuccess: (res) => {
-  //             const data = res as API.ResponseBasePageResponseObject;
-  //             const listUserRespone = data.data?.items;
-  //             setListUser(listUserRespone);
-  //         },
-  //         onError: (error) => {
-  //             console.log(error);
-  //         },
-  //     }
+  // const { run: runGetAllWarning } = useRequest(
+  //   (params: API.getUserNotificationParams) =>
+  //     api.NotificationController.getUserNotification(params),
+  //   {
+  //     manual: true,
+  //     onSuccess: (res) => {},
+  //     onError: (error) => {
+  //       console.log(error);
+  //     },
+  //   },
   // );
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
+
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   /**
    * @en-US The pop-up window of the distribution update window

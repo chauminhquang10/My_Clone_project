@@ -1,27 +1,27 @@
-import StatusTag from '@/components/TableProperties/StatusTag';
 import { Card } from 'antd';
 import CardInputBody from './CardInputBody';
 import type { CardCol } from './CardInputBody';
+import { MachineStatusTag } from '@/components/TableProperties/TableCell';
 
-interface OveralCardProps {
-  className: string;
+interface OveralCardProps extends API.StmDetailResponse {
+  className?: string;
 }
 
-export default function OveralCard({ className }: OveralCardProps) {
+export default function OveralCard({ className, machineType, createdAt, status }: OveralCardProps) {
   const cols: CardCol[] = [
     {
       formItemProps: { name: 'MachineType', label: 'Loại máy' },
-      inputProps: { disabled: true, placeholder: 'Smart Teller Machine' },
+      inputProps: { disabled: true, placeholder: machineType },
       props: { span: 8 },
     },
     {
       formItemProps: { name: 'Thời gian hoạt động', label: 'Thời gian hoạt động' },
-      inputProps: { disabled: true, placeholder: 'Smart Teller Machine' },
+      inputProps: { disabled: true, placeholder: createdAt },
       props: { span: 8 },
     },
     {
       formItemProps: { name: 'Tình trạng máy', label: 'Tình trạng máy' },
-      formItemChildren: <StatusTag type="ACTIVE" />,
+      formItemChildren: <MachineStatusTag status={status ? status : 'UNKNOWN'} />,
       props: { span: 8 },
     },
   ];

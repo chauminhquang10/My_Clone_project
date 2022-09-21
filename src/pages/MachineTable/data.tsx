@@ -54,48 +54,15 @@ export const unitColumns: ColumnsType<DataType> = [
   },
 ];
 
-export const data: DataType[] = [
+export const data: API.TransactionResponse[] = [
   {
-    key: '1',
-    device: 'John Brown',
-    reserved: ReserveStatus.full,
-    status: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    device: 'Jim Green',
-    reserved: ReserveStatus.low,
-    status: 'London No. 1 Lake Park',
-  },
-  {
-    key: '3',
-    device: 'Joe Black',
-    reserved: ReserveStatus.normal,
-    status: 'Sidney No. 1 Lake Park',
-  },
-  {
-    key: '4',
-    device: 'Joe Black',
-    reserved: ReserveStatus.normal,
-    status: 'Sidney No. 1 Lake Park',
-  },
-  {
-    key: '5',
-    device: 'Joe Black',
-    reserved: ReserveStatus.normal,
-    status: 'Sidney No. 1 Lake Park',
-  },
-  {
-    key: '6',
-    device: 'Joe Black',
-    reserved: ReserveStatus.normal,
-    status: 'Sidney No. 1 Lake Park',
-  },
-  {
-    key: '7',
-    device: 'Joe Black',
-    reserved: ReserveStatus.normal,
-    status: 'Sidney No. 1 Lake Park',
+    id: '1',
+    accountNumber: '8132234',
+    customerName: 'phuc',
+    type: 'CARD_LOGIN',
+    status: 'UNKNOWN',
+    error: 'AMOUNT_LIMITED_BY_CUSTOMER',
+    time: new Date().toDateString(),
   },
 ];
 

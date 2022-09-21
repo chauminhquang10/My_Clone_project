@@ -30,11 +30,17 @@ export async function getTransactions(
   options?: { [key: string]: any },
 ) {
   const { machineId: param0, ...queryParams } = params;
-  return request<API.ResponseBaseListTransactionsResponse>(`/api/v1/transactions/${param0}`, {
-    method: 'GET',
-    params: {
-      ...queryParams,
+  return request<API.ResponseBasePageResponseTransactionResponse>(
+    `/api/v1/transactions/${param0}`,
+    {
+      method: 'GET',
+      params: {
+        // pageSize has a default value: 10
+        pageSize: '10',
+
+        ...queryParams,
+      },
+      ...(options || {}),
     },
-    ...(options || {}),
-  });
+  );
 }

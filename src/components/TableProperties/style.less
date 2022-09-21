@@ -260,6 +260,7 @@
   width: 95px;
   height: 32px;
   padding: 5px 9px;
+  white-space: nowrap;
   background: #f26122;
   border: 1px solid #f26122;
   border-radius: 4px;
@@ -364,4 +365,24 @@
   &:hover {
     background-color: #fde3d8;
   }
+}
+
+.machine-status-custom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  :global {
+    p {
+      margin: 0;
+    }
+  }
+}
+.out-of-service {
+  background: #fff1b8;
+}
+.offline {
+  background: #ffccc7;
 }

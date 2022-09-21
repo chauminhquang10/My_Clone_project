@@ -108,6 +108,7 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
 
         return <TextCell>{stt}</TextCell>;
       },
+      width: '80px',
     },
     {
       title: <HeadCell>Tên máy</HeadCell>,
@@ -123,6 +124,7 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else return 1;
       },
+      width: '216px',
     },
     {
       title: <HeadCell>Khu vực</HeadCell>,
@@ -132,6 +134,7 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       },
       filters: filterLocationList,
       onFilter: filterLocation,
+      width: '140px',
     },
     {
       title: <HeadCell>Tỉnh/ Thành phố</HeadCell>,
@@ -141,6 +144,7 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       },
       filters: filterProvinceList,
       onFilter: filterProvince,
+      width: '216px',
     },
     {
       title: <HeadCell>Loại máy</HeadCell>,
@@ -150,6 +154,7 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       },
       filters: filterTypeMachineList,
       onFilter: filterTypeMachine,
+      width: '140px',
     },
     {
       title: <HeadCell>Tình trạng</HeadCell>,
@@ -157,6 +162,7 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       render: (dom) => {
         return dom;
       },
+      width: '180px',
       filters: filterStatusList,
       onFilter: filterStatus,
       valueEnum: {
@@ -204,6 +210,7 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '216px',
     },
     {
       title: <HeadCell>Terminal ID</HeadCell>,
@@ -211,6 +218,7 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '200px',
     },
     {
       title: <HeadCell>Địa chỉ IP</HeadCell>,
@@ -218,6 +226,7 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '200px',
     },
   ];
   return columns;
