@@ -106,7 +106,7 @@ const TableCustom = () => {
           />,
         ]}
         // request={machineList}
-        dataSource={listMachine}
+        // dataSource={listMachine}
         // request={async (params = {}) => {
         //     const filterParams: API.UserFilter = {
         //         managementUnit: "",

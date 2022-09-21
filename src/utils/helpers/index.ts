@@ -36,7 +36,7 @@ export function isContainSpecialLetter(str: string) {
 
 export const formatDate: (
   date: string | number | undefined,
-  formatOptions: Intl.DateTimeFormatOptions,
+  formatOptions?: Intl.DateTimeFormatOptions,
 ) => Error | string = (
   date: string | number | undefined,
   formatOptions = { day: 'numeric', month: 'numeric', year: 'numeric' },
@@ -56,3 +56,6 @@ export function formatPhoneNumber(str: string) {
 
   return `${first} ${second} ${third}`;
 }
+
+export const objectKeys = <T extends Object>(obj: T): (keyof T)[] =>
+  Object.keys(obj) as (keyof T)[];

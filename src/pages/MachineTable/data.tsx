@@ -117,7 +117,7 @@ export const informationColumns: ColumnsType<DataType> = [
   {
     title: (
       <Typography.Text>
-        Tình trạng vật lý <Badge count={99} style={{ fontSize: 12, backgroundColor: blue[6] }} />
+        Tình trạng vật lý <Badge count={99} style={{ fontSize: 12, backgroundColor: blue[5] }} />
       </Typography.Text>
     ),
     dataIndex: 'device',
@@ -126,10 +126,7 @@ export const informationColumns: ColumnsType<DataType> = [
   {
     title: (
       <Typography.Text>
-        Tình trạng vật lý
-        <span style={{ background: 'rgba(255, 255, 255, 1e-05)' }}>
-          <Badge count={99} style={{ fontSize: 12, backgroundColor: green[6] }} />
-        </span>
+        Tình trạng vật lý <Badge count={99} style={{ fontSize: 12, backgroundColor: green[5] }} />
       </Typography.Text>
     ),
     className: 'column-money',
