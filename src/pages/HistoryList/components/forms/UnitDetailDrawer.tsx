@@ -299,7 +299,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
               <Col span={24}>
                 <Table
-                  columns={unitListColumns as ColumnsType<API.UserResponse>}
+                  columns={unitListColumns}
                   dataSource={unitDetail?.users}
                   bordered
                   title={() => 'Danh sách người dùng'}
@@ -311,7 +311,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
               <Col span={24}>
                 <Table
-                  columns={machineListColumns as ColumnsType<API.StmInfoResponse>}
+                  columns={machineListColumns}
                   dataSource={unitDetail?.machines}
                   bordered
                   title={() => 'Danh sách máy quản lý'}

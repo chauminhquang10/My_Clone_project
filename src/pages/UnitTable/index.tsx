@@ -21,12 +21,8 @@ const TableCustom = () => {
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  // xử lí xem chi tiết của đơn vị
-  const [currentUnit, setCurrentUnit] = useState<API.ManagementUnitResponse>();
-
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.ManagementUnitResponse>();
-  console.log(currentRow);
 
   const columns: ProColumns<API.ManagementUnitResponse>[] = Column({
     setCurrentRow,
@@ -127,26 +123,29 @@ const TableCustom = () => {
         }}
         onRow={(rowData) => ({
           onClick: () => {
-            setCurrentUnit(rowData);
+            setCurrentRow(rowData);
           },
         })}
       />
 
-      <NewUnitForm
-        title="Tạo đơn vị quản lý mới"
-        width="934px"
-        visible={createModalVisible}
-        onVisibleChange={handleCreateModalVisible}
-        onFinish={async (value) => {
-          await handleAddNewUnit(value as API.CreateManagementUnitRequest);
-        }}
-      />
+      {createModalVisible && (
+        <NewUnitForm
+          title="Tạo đơn vị quản lý mới"
+          width="934px"
+          visible={createModalVisible}
+          onVisibleChange={handleCreateModalVisible}
+          onFinish={async (value) => {
+            await handleAddNewUnit(value as API.CreateManagementUnitRequest);
+          }}
+        />
+      )}
 
       {showDetail && (
         <UnitDetailDrawer
           showDetail={showDetail}
           setShowDetail={setShowDetail}
-          currentUnit={currentUnit || {}}
+          currentUnit={currentRow || {}}
+          setCurrentUnit={setCurrentRow}
           detailActionRef={actionRef}
         />
       )}

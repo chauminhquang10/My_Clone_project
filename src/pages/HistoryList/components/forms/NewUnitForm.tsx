@@ -198,11 +198,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
 
       <Row gutter={[24, 24]}>
         <Col span={12}>
-          <Form.Item
-            name="code"
-            label="Mã đơn vị"
-            //rules={[{ required: true, message: 'Please enter service name!' }]}
-          >
+          <Form.Item name="code" label="Mã đơn vị">
             <Input placeholder={'Nhập mã đơn vị'} />
           </Form.Item>
         </Col>
