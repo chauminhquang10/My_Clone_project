@@ -49,3 +49,10 @@ export const formatDate: (
 };
 
 export const genKey = () => uuid();
+export function formatPhoneNumber(str: string) {
+  const first = str.slice(0, 4);
+  const second = str.slice(4, 7);
+  const third = str.slice(7);
+
+  return `${first} ${second} ${third}`;
+}
