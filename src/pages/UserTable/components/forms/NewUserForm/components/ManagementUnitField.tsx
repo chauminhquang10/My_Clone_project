@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-undef */
 import { Col, Form, Input, Select } from 'antd';
 
-function getAddressByManagementUnitId(
+export function getAddressByManagementUnitId(
   id: API.ManagementUnitResponse['id'],
   list?: API.ManagementUnitResponse[],
 ) {

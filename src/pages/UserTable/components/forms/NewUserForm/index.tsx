@@ -9,6 +9,8 @@ import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import { ManagementUnitField, RoleGroupField } from './components';
+import { getAddressByManagementUnitId } from './components/ManagementUnitField';
+import { getActionsByRoleGroupId } from './components/RoleGroupField';
 import styles from './NewUserForm.less';
 
 type CreateFormProps = {
@@ -25,10 +27,12 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   width,
   visible,
   onVisibleChange,
-  // onFinish,
+  onFinish,
   userInfo,
 }) => {
-  const [form] = Form.useForm<API.CreateUserRequest>();
+  const [form] = Form.useForm<
+    API.CreateUserRequest & { unitAddress: string; actions: { value?: string }[] }
+  >();
 
   const [loadingImage, setLoadingImage] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -40,7 +44,7 @@ const NewUserForm: React.FC<CreateFormProps> = ({
     if (userInfo?.avatar) {
       setImageUrl(userInfo.avatar);
     }
-  }, [userInfo?.avatar]);
+  }, [userInfo, userInfo?.avatar]);
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -110,19 +114,13 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   }, [form]);
 
   const handleSubmit = async (values: API.CreateUserRequest) => {
-    console.log('values: ', values);
-    console.log('imageUrl: ', imageUrl);
-    console.log('imageFile: ', imageFile);
-
-    return true;
-    // chua handle avatar upload
-    // try {
-    //   const success = await onFinish({ ...values }, imageFile);
-    //   return success;
-    // } catch (error) {
-    //   console.log('error: ', error);
-    // }
-    // return false;
+    try {
+      const success = await onFinish({ ...values }, imageFile);
+      return success;
+    } catch (error) {
+      console.log('error: ', error);
+    }
+    return false;
   };
 
   const { data: managementUnitList } =
@@ -161,8 +159,6 @@ const NewUserForm: React.FC<CreateFormProps> = ({
       }}
       submitTimeout={2000}
       onChange={() => {
-        console.log('form change: ', form.getFieldsValue());
-
         handleAllowSubmit();
       }}
       onInit={() => {
@@ -173,6 +169,17 @@ const NewUserForm: React.FC<CreateFormProps> = ({
           email: userInfo?.email || '',
           managementUnitId: userInfo?.managementUnit?.id,
           roleGroupId: userInfo?.roleGroup?.id,
+          unitAddress:
+            userInfo?.managementUnit?.id && managementUnitList?.items
+              ? getAddressByManagementUnitId(
+                  userInfo?.managementUnit?.id,
+                  managementUnitList?.items,
+                )
+              : '',
+          actions:
+            userInfo?.roleGroup?.id && roleGroupList?.roleGroups
+              ? getActionsByRoleGroupId(userInfo?.roleGroup?.id, roleGroupList?.roleGroups)
+              : undefined,
         });
       }}
     >

@@ -4,7 +4,7 @@ import styles from '../NewUserForm.less';
 
 const { Option } = Select;
 
-function getActionsByRoleGroupId(id?: number, list?: API.RoleGroupResponse[]) {
+export function getActionsByRoleGroupId(id?: number, list?: API.RoleGroupResponse[]) {
   if (!id || !list || list.length < 1) return [];
 
   const foundUnit = list.find((item) => item.id === id);
