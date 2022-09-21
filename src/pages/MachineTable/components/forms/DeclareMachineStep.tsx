@@ -182,7 +182,7 @@ export default function DeclareMachineStep({
           >
             <Row gutter={12}>
               {denominations?.map((denomination) => (
-                <Col span={24 / denominations.length}>
+                <Col span={24 / denominations.length} key={denomination.id}>
                   <Input disabled value={`${denomination.value}`} />
                 </Col>
               ))}

@@ -64,7 +64,7 @@ export default function LocationFields<T>({
           <Select
             placeholder="Chọn Tỉnh/Thành phố"
             onChange={(selectValue) => handleSelectChange('province', selectValue)}
-            disabled={handleEnableDropdownList.provinceDisabled ? true : false}
+            disabled={handleEnableDropdownList?.provinceDisabled ? true : false}
             loading={provincesLoading}
             onSelect={onSelectProvince}
           >
