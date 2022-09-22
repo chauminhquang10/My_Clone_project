@@ -28,30 +28,6 @@ const STATUS_ICON = {
   OFFLINE: undefined,
 };
 
-const dataSource: API.UserDetailResponse['machines'] = [
-  {
-    location: 'Dia chi',
-    name: 'may 1',
-    terminalId: 'Text example',
-    status: 'IN_SERVICE',
-    ipAddress: 'Text example',
-  },
-  {
-    location: 'Dia chi',
-    name: 'may 2',
-    terminalId: 'Text example',
-    status: 'OUT_OF_SERVICE',
-    ipAddress: 'Text example',
-  },
-  {
-    location: 'Dia chi',
-    name: 'may 3',
-    terminalId: 'Text example',
-    status: 'UNKNOWN',
-    ipAddress: 'Text example',
-  },
-];
-
 const machineListColumns: ColumnsType<API.StmInfoResponse> = [
   {
     title: 'Tên máy',
@@ -65,7 +41,7 @@ const machineListColumns: ColumnsType<API.StmInfoResponse> = [
     title: 'Terminal ID',
     dataIndex: 'terminalId',
     key: 'terminalId',
-    width: '172.33px',
+    width: '258px',
     align: 'center',
     render: (text) => <span>{text}</span>,
   },
@@ -73,7 +49,7 @@ const machineListColumns: ColumnsType<API.StmInfoResponse> = [
     title: 'Địa chỉ IP',
     dataIndex: 'ipAddress',
     key: 'ipAddress',
-    width: '172.33px',
+    width: '258px',
     align: 'center',
     render: (text) => <span>{text}</span>,
   },
@@ -91,26 +67,16 @@ const machineListColumns: ColumnsType<API.StmInfoResponse> = [
       />
     ),
   },
-  {
-    title: 'Địa chỉ máy',
-    dataIndex: 'location',
-    key: 'location',
-    width: '172.33px',
-    align: 'center',
-    render: (text) => <span>{text}</span>,
-  },
 ];
 
 const MachineListRow: React.FC<{ machines: API.UserDetailResponse['machines'] }> = ({
   machines,
 }) => {
-  console.log('machines: ', machines);
-
   return (
     <Col span={24}>
       <Table
         columns={machineListColumns}
-        dataSource={dataSource}
+        dataSource={machines}
         bordered
         title={() => 'Danh sách máy quản lý'}
         className={styles.myMachineListTable}

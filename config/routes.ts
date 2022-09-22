@@ -9,6 +9,16 @@ const routes = [
         component: './user/Login',
       },
       {
+        name: 'forgot-password',
+        path: '/user/forgot-password',
+        component: './user/ForgotPassword',
+      },
+      {
+        name: 'reset-password',
+        path: '/user/reset-password',
+        component: './user/ResetPassword',
+      },
+      {
         component: './404',
       },
     ],

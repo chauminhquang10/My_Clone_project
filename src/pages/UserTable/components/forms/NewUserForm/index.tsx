@@ -251,7 +251,7 @@ const NewUserForm: React.FC<CreateFormProps> = ({
         {/* Phone number */}
         <Col span={12}>
           <Form.Item name="phoneNumber" label="Số điện thoại">
-            <Input placeholder={'Nhập số điện thoại'} />
+            <Input placeholder={'Nhập số điện thoại'} disabled={!!userInfo} />
           </Form.Item>
         </Col>
         {/* Email */}
