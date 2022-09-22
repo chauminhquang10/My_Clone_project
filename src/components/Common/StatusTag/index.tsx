@@ -25,46 +25,53 @@ const DEFAULT_TAG = {
 };
 
 interface IStatusTag {
-  type: 'success' | 'warning' | 'error' | 'default';
+  type: 'success' | 'warning' | 'error' | 'default' | undefined;
   title?: string;
   icon?: React.ReactNode;
 }
 
 interface StatusTagProps {
-  currentTag: IStatusTag;
-  swapTag?: IStatusTag;
+  type: 'success' | 'warning' | 'error' | 'default' | undefined;
+  title?: string;
+  icon?: React.ReactNode;
+  titleNext?: string;
   width?: string;
   swapIcon?: React.ReactNode;
   handleChange?: (prev: IStatusTag) => void;
 }
 
 const StatusTag: React.FC<StatusTagProps> = ({
-  currentTag,
   width = '100%',
   swapIcon = <SwapIcon />,
-  swapTag,
+  titleNext,
   handleChange,
+  type,
+  title,
+  icon,
 }) => {
   // if dont change status, return
-  const { title: defaultTitle, icon: defaultIcon } = DEFAULT_TAG[currentTag.type];
+  const { title: defaultTitle, icon: defaultIcon } = DEFAULT_TAG[type || 'default'];
 
   return (
-    <Button className={`${styles.myCustomStatusTag} ${styles[currentTag.type]}`} style={{ width }}>
+    <Button
+      className={`${styles.myCustomStatusTag} ${styles[type || 'default']}`}
+      style={{ width }}
+    >
       <div className={styles.statusContent}>
-        <span className={styles.statusTitle}>{currentTag.title || defaultTitle}</span>
-        {swapTag ? (
+        <span className={styles.statusTitle}>{title || defaultTitle}</span>
+        {titleNext ? (
           <span
             onClick={() => {
               if (!handleChange) return;
-              handleChange({ ...currentTag });
+              handleChange({ type, title, icon });
             }}
           >
-            <Tooltip placement="bottom" title={swapTag.title || DEFAULT_TAG[swapTag.type].title}>
+            <Tooltip placement="bottom" title={titleNext}>
               {swapIcon}
             </Tooltip>
           </span>
         ) : (
-          currentTag.icon || defaultIcon
+          icon || defaultIcon
         )}
       </div>
     </Button>
