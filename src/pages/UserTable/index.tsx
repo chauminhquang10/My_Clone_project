@@ -17,7 +17,7 @@ const handleAdd = async (fields: API.CreateUserRequest, avatar?: File) => {
   hide();
   try {
     const res = await Api.UserController.createUser({ ...fields }, avatar);
-    if (!res.code) return false;
+    if (!res) return false;
 
     if (res.code === 0) {
       message.success('Thêm người dùng thành công');

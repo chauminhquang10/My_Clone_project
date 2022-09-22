@@ -9,6 +9,7 @@ import * as STMModelController from './STMModelController';
 import * as ManagementUnitController from './ManagementUnitController';
 import * as STMController from './STMController';
 import * as AuthController from './AuthController';
+import * as MediaController from './MediaController';
 import * as StmStatusController from './StmStatusController';
 import * as TransactionController from './TransactionController';
 import * as NotificationController from './NotificationController';
@@ -24,6 +25,7 @@ export default {
   ManagementUnitController,
   STMController,
   AuthController,
+  MediaController,
   StmStatusController,
   TransactionController,
   NotificationController,

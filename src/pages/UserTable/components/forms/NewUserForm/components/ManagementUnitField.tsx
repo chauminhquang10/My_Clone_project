@@ -1,9 +1,7 @@
 /* eslint-disable react/jsx-no-undef */
 import { Col, Form, Input, Select } from 'antd';
-import type { FormInstance } from 'antd/es/form/Form';
-import React, { useState } from 'react';
 
-function getAddressByManagementUnitId(
+export function getAddressByManagementUnitId(
   id: API.ManagementUnitResponse['id'],
   list?: API.ManagementUnitResponse[],
 ) {
@@ -18,34 +16,23 @@ function getAddressByManagementUnitId(
 const { Option } = Select;
 
 interface ManagementUnitFieldProps {
-  form: FormInstance<API.CreateUserRequest>;
-  managementUnitList?: API.ManagementUnitResponse[];
+  data?: API.ManagementUnitResponse[];
+  handleSelect: (unitId: number, address: string) => void;
 }
 
-const ManagementUnitField: React.FC<ManagementUnitFieldProps> = ({ managementUnitList, form }) => {
-  const [selectedValue, setSelectedValue] = useState<API.ManagementUnitResponse['id']>();
+const ManagementUnitField: React.FC<ManagementUnitFieldProps> = ({ data, handleSelect }) => {
+  const handleSelectChange = (value?: number) => {
+    if (!value || !handleSelect) return;
 
-  console.log('form: ', form);
-
-  const handleSelectChange = (value: API.ManagementUnitResponse['id']) => {
-    setSelectedValue(value);
+    handleSelect(value, getAddressByManagementUnitId(value, data));
   };
 
   return (
     <>
       <Col span={12}>
-        <Form.Item
-          name="managementUnitId"
-          label="Mã - Tên đơn vị"
-          rules={[
-            {
-              required: true,
-              message: 'Vui lòng chọn đơn vị',
-            },
-          ]}
-        >
+        <Form.Item name="managementUnitId" label="Mã - Tên đơn vị">
           <Select placeholder="Chọn đơn vị" onChange={handleSelectChange}>
-            {managementUnitList?.map((unit) => {
+            {data?.map((unit) => {
               return (
                 <Option key={unit.id} value={unit.id}>
                   {unit.code} - {unit.name}
@@ -57,10 +44,7 @@ const ManagementUnitField: React.FC<ManagementUnitFieldProps> = ({ managementUni
       </Col>
       <Col span={12}>
         <Form.Item name="unitAddress" label="Địa chỉ đơn vị">
-          <Input
-            disabled
-            placeholder={getAddressByManagementUnitId(selectedValue, managementUnitList)}
-          />
+          <Input disabled placeholder="Chọn địa chỉ" />
         </Form.Item>
       </Col>
     </>

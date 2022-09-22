@@ -1,7 +1,6 @@
 import { CloseIcon } from '@/assets';
 import LocationFields from '@/pages/UnitTable/components/LocationFields';
 import Api from '@/services/STM-APIs';
-import { AimOutlined } from '@ant-design/icons';
 import { useDebounce, useRequest } from 'ahooks';
 import {
   AutoComplete,
@@ -19,8 +18,8 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useState } from 'react';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { Store } from 'sunflower-antd';
+import Map from '../map/Map';
 import styles from './editMachine.less';
 
 interface DeclareUnitStepProps<T> {
@@ -105,7 +104,6 @@ export default function DeclareUnitStep<T>({
     !form.getFieldValue('wardId');
 
   const disabledUserIds = !form.getFieldValue('managementUnitId');
-  console.log({ disabledUserIds });
 
   const { data: addressData } = useRequest(
     getAddressData(debounceAddress, province, district, ward),
@@ -156,6 +154,8 @@ export default function DeclareUnitStep<T>({
     setUserIds(staffIdName);
     form.setFieldValue('userIds', ids);
   };
+
+  console.log({ coordinate });
 
   return (
     <>
@@ -267,52 +267,7 @@ export default function DeclareUnitStep<T>({
             </Form.Item>
           </Col>
           <Col span={24}>
-            <MapContainer
-              center={coordinate}
-              zoom={13}
-              scrollWheelZoom={false}
-              style={{ width: '100%', height: 348 }}
-            >
-              <Card
-                bodyStyle={{ padding: 0 }}
-                style={{
-                  position: 'absolute',
-                  zIndex: 400,
-                  right: 16,
-                  top: 16,
-                }}
-              >
-                <Row>
-                  <Card size="small" title="Vĩ độ">
-                    <Input disabled value={coordinate[0]} />
-                  </Card>
-                </Row>
-                <Row>
-                  <Card size="small" title="Vĩ độ">
-                    <Input disabled value={coordinate[1]} />
-                  </Card>
-                </Row>
-                <Row gutter={16}>
-                  <Col span={8}>
-                    <Button>
-                      <AimOutlined />
-                    </Button>
-                  </Col>
-                  <Col span={16}>
-                    <Button block>Xác nhận</Button>
-                  </Col>
-                </Row>
-              </Card>
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={coordinate}>
-                <Popup>
-                  A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-              </Marker>
-            </MapContainer>
+            <Map coordinate={coordinate} />
           </Col>
           <Col span={24}>
             <Form.Item name="machineName" label="Tên máy">
