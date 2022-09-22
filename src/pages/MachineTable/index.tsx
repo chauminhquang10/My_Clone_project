@@ -35,7 +35,7 @@ const TableCustom = () => {
   );
 
   useEffect(() => {
-    runGetAllMachine();
+    runGetAllMachine({});
   }, []);
 
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
