@@ -1,4 +1,5 @@
 import { EditOutlined } from '@ant-design/icons';
+import type { ActionType } from '@ant-design/pro-components';
 import { Button, Col, Row, Tooltip } from 'antd';
 import React, { useState } from 'react';
 import UpdateUserForm from '../../UpdateUserForm';
@@ -8,9 +9,16 @@ import lockIcon from '/src/assets/images/svg/icon/Locked.svg';
 interface HeaderProps {
   setOpenConfirmModal: (isVisible: boolean) => void;
   userInfo: API.UserDetailResponse;
+  actionRef: React.MutableRefObject<ActionType | undefined>;
+  onCloseDrawer: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ setOpenConfirmModal, userInfo }) => {
+const Header: React.FC<HeaderProps> = ({
+  setOpenConfirmModal,
+  userInfo,
+  actionRef,
+  onCloseDrawer,
+}) => {
   const [isVisibleUpdateUser, setIsVisibleUpdateUser] = useState<boolean>(false);
 
   return (
@@ -47,6 +55,8 @@ const Header: React.FC<HeaderProps> = ({ setOpenConfirmModal, userInfo }) => {
         userInfo={userInfo}
         isVisibleUpdateUser={isVisibleUpdateUser}
         setIsVisibleUpdateUser={setIsVisibleUpdateUser}
+        actionRef={actionRef}
+        onCloseDrawer={onCloseDrawer}
       />
     </>
   );
