@@ -2,6 +2,7 @@ import { CloseIcon } from '@/assets';
 import LocationFields from '@/pages/UnitTable/components/LocationFields';
 import Api from '@/services/STM-APIs';
 import { useDebounce, useRequest } from 'ahooks';
+import type { FormInstance } from 'antd';
 import {
   AutoComplete,
   Button,
@@ -9,31 +10,31 @@ import {
   Col,
   Dropdown,
   Form,
-  FormInstance,
   Input,
   Row,
   Select,
   Table,
   Typography,
 } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-import { useState } from 'react';
-import { Store } from 'sunflower-antd';
+import type { ColumnsType } from 'antd/lib/table';
+import { useCallback, useEffect, useState } from 'react';
 import Map from '../map/Map';
 import styles from './editMachine.less';
 
-interface DeclareUnitStepProps<T> {
+interface DeclareUnitStepProps<T> extends API.StmDetailResponse {
   onCancel: () => void;
-  submit: (values?: Store | undefined) => Promise<unknown>;
-  onPrevious: () => void;
+  onPrevious?: () => void;
   form: FormInstance<T>;
+  submitButtonLabel?: string;
+  onSubmit?: () => void;
+  cancelButtonLabel?: string;
 }
 
-interface UserData extends Pick<API.UserResponse, 'email' | 'name' | 'phoneNumber'> {
+interface UserData extends API.UserResponse {
   index: number;
 }
 
-const userColumns: ColumnsType<UserData> = [
+const userColumns: ColumnsType<Pick<UserData, 'name' | 'email' | 'phoneNumber'>> = [
   {
     title: 'STT',
     align: 'center',
@@ -87,9 +88,12 @@ interface AddressDataResponse {
 
 export default function DeclareUnitStep<T>({
   onCancel,
-  submit,
+  onSubmit,
   onPrevious,
   form,
+  submitButtonLabel = 'Lưu',
+  cancelButtonLabel = 'Huỷ bỏ',
+  ...machineDetail
 }: DeclareUnitStepProps<T>) {
   const { data: unitList } = useRequest(getAllUnit);
   const [address, setAddress] = useState<string>();
@@ -97,7 +101,11 @@ export default function DeclareUnitStep<T>({
   const [province, setProvince] = useState<string>();
   const [district, setDistrict] = useState<string>();
   const [ward, setWard] = useState<string>();
-  const [coordinate, setCoordinate] = useState<[number, number]>([14.058324, 108.277199]);
+  const [coordinate, setCoordinate] = useState<[number, number]>(() =>
+    machineDetail
+      ? [machineDetail.latitude || 14.058324, machineDetail.longitude || 108.277199]
+      : [14.058324, 108.277199],
+  );
   const disabledAddress =
     !form.getFieldValue('provinceId') ||
     !form.getFieldValue('districtId') ||
@@ -113,49 +121,70 @@ export default function DeclareUnitStep<T>({
     },
   );
   const [unitDetail, setUnitDetail] = useState<API.ManagementUnitDetailResponse>();
-  const [userIds, setUserIds] = useState<string[]>([]);
+  const [userIds, setUserIds] = useState<string[]>(() =>
+    machineDetail
+      ? machineDetail.managementUsers?.map((user) => `${user.staffId} - ${user.name}`) || []
+      : [],
+  );
 
-  const onSearch = (searchText: string) => {
+  const onSearch = useCallback((searchText: string) => {
     setAddress(searchText);
-  };
+  }, []);
 
-  const handleSelectAddress = (data: string) => {
-    const shortLabel = addressData?.find((addr) => addr.attributes.ShortLabel === data);
+  const handleSelectAddress = useCallback(
+    (data: string) => {
+      const shortLabel = addressData?.find((addr) => addr.attributes.ShortLabel === data);
 
-    if (!shortLabel) throw Error(`Address should not be ${shortLabel}`);
+      if (!shortLabel) throw Error(`Address should not be ${shortLabel}`);
 
-    setCoordinate([shortLabel.location.y, shortLabel.location.x]);
-  };
+      setCoordinate([shortLabel.location.y, shortLabel.location.x]);
+    },
+    [addressData],
+  );
 
-  const handleChangeUnitId = async (id: number) => {
-    if (unitList) {
-      form.setFieldValue('managementUnitId', id);
-      form.setFieldValue('unitAddress', unitList.find((el) => el.id === id)?.address);
+  const handleChangeUnitId = useCallback(
+    async (id: number) => {
+      if (unitList) {
+        form.setFieldValue('managementUnitId', id);
+        form.setFieldValue('unitAddress', unitList.find((el) => el.id === id)?.address);
+        form.setFieldValue('userIds', []);
+        setUserIds([]);
 
-      try {
-        const uDetail = (
-          await Api.ManagementUnitController.getManagementUnit({
-            unitId: form.getFieldValue('managementUnitId'),
-          })
-        ).data;
-        setUnitDetail(uDetail);
-      } catch (e) {
-        console.error(e);
+        try {
+          const uDetail = (
+            await Api.ManagementUnitController.getManagementUnit({
+              unitId: form.getFieldValue('managementUnitId'),
+            })
+          ).data;
+          setUnitDetail(uDetail);
+        } catch (e) {
+          console.error(e);
+        }
       }
+    },
+    [unitList, form],
+  );
+
+  const handleUserChange = useCallback(
+    (ids: string[]) => {
+      const staffIdName = unitDetail?.users
+        ?.filter((user) => ids.includes(user.id!))
+        .map((user) => `${user.staffId} - ${user.name}`);
+      if (!staffIdName) throw Error(`staffIdName should not be ${staffIdName}!`);
+
+      setUserIds(staffIdName);
+      form.setFieldValue('userIds', ids);
+    },
+    [form, unitDetail],
+  );
+
+  useEffect(() => {
+    if (machineDetail) {
+      Api.ManagementUnitController.getManagementUnit({
+        unitId: `${machineDetail.managementUnit?.id}`,
+      }).then((res) => setUnitDetail(res.data));
     }
-  };
-
-  const handleUserChange = (ids: string[]) => {
-    const staffIdName = unitDetail?.users
-      ?.filter((user) => ids.includes(user.id!))
-      .map((user) => `${user.staffId} - ${user.name}`);
-    if (!staffIdName) throw Error(`staffIdName should not be ${staffIdName}!`);
-
-    setUserIds(staffIdName);
-    form.setFieldValue('userIds', ids);
-  };
-
-  console.log({ coordinate });
+  }, []);
 
   return (
     <>
@@ -203,7 +232,12 @@ export default function DeclareUnitStep<T>({
                 trigger={['click']}
                 disabled={disabledUserIds}
                 overlay={
-                  <Select showSearch onChange={handleUserChange} mode="multiple">
+                  <Select
+                    value={form.getFieldValue('userIds')}
+                    showSearch
+                    onChange={handleUserChange}
+                    mode="multiple"
+                  >
                     {unitDetail?.users?.map((user) => (
                       <Select.Option value={user.id} key={user.id}>
                         {`${user.staffId} - ${user.name}`}
@@ -248,6 +282,7 @@ export default function DeclareUnitStep<T>({
             onSelectWard={(_, options) => setWard(options.children)}
             onSelectDistrict={(_, options) => setDistrict(options.children)}
             form={form}
+            {...machineDetail}
           />
           <Col span={24}>
             <Form.Item
@@ -256,7 +291,7 @@ export default function DeclareUnitStep<T>({
               rules={[{ required: true, message: 'Tên đường, Số nhà không được để trống' }]}
             >
               <AutoComplete
-                placeholder="Tên đường, Số nhà"
+                placeholder={machineDetail.address ?? 'Tên đường, Số nhà'}
                 options={addressData?.map((addr) => ({
                   value: addr.attributes.ShortLabel,
                 }))}
@@ -267,11 +302,11 @@ export default function DeclareUnitStep<T>({
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Map coordinate={coordinate} />
+            <Map setPosition={setCoordinate} coordinate={coordinate} />
           </Col>
           <Col span={24}>
             <Form.Item name="machineName" label="Tên máy">
-              <Input placeholder={'Tên máy'} />
+              <Input placeholder={machineDetail.name ?? 'Tên máy'} />
             </Form.Item>
             <Typography.Text disabled>
               Tên máy là duy nhất, không chứa ký tự đặc biệt, tối đa 50 ký tự
@@ -280,28 +315,11 @@ export default function DeclareUnitStep<T>({
         </Row>
       </Card>
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
-        <Button
-          className={styles.cancelButton}
-          size="large"
-          onClick={() => {
-            // onReset();
-            onPrevious();
-          }}
-        >
-          Quay lại
+        <Button className={styles.cancelButton} size="large" onClick={onPrevious ?? onCancel}>
+          {cancelButtonLabel}
         </Button>
-        <Button
-          className={styles.submitButton}
-          size="large"
-          onClick={() => {
-            submit().then((result) => {
-              if (result === 'ok') {
-                onCancel();
-              }
-            });
-          }}
-        >
-          Hoàn tất
+        <Button className={styles.submitButton} htmlType="submit" size="large" onClick={onSubmit}>
+          {submitButtonLabel}
         </Button>
       </Row>
     </>

@@ -1,11 +1,14 @@
-import { FormInstance, ModalForm } from '@ant-design/pro-components';
+import type { FormInstance } from '@ant-design/pro-components';
+import { ModalForm } from '@ant-design/pro-components';
 import type { Dispatch, SetStateAction } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useStepsForm } from 'sunflower-antd';
 import styles from './declareMachineForm.less';
 import DeclareMachineStep from './DeclareMachineStep';
 import DeclareUnitStep from './DeclareUnitStep';
 import Api from '@/services/STM-APIs';
-import { openNotification } from '@/utils';
+import { genKey, openNotification } from '@/utils';
+import type { ModalProps } from 'antd';
 
 interface AddNewMachineProps {
   visible: boolean;
@@ -17,58 +20,100 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
     form,
     current: step,
     gotoStep: setStep,
-    // stepsProps,
     formProps,
     submit,
-    // formLoading,
   } = useStepsForm({
     async submit(values) {
       console.log(values);
       try {
-        const postMachineRes = await Api.STMController.createMachine({
-          ...values,
-          privateKey: 'test-private',
-        } as API.CreateStmRequest);
+        const postMachineRes = await Api.STMController.createMachine(
+          values as API.CreateStmRequest,
+        );
+
+        if (postMachineRes.code === 1) {
+          openNotification(
+            'error',
+            `khai báo máy ${values.machineType} - ${values.machineName} thất bại`,
+            postMachineRes.message,
+          );
+        }
 
         if (postMachineRes.code === 0) {
           openNotification(
             'success',
             'Khai báo máy thành công',
-            `Khai báo thành công cho máy ${postMachineRes.data?.name}`,
+            `Khai báo thành công cho máy ${postMachineRes.data?.machineType} - ${postMachineRes.data?.name}`,
           );
         }
 
-        return 'ok';
+        return true;
       } catch (e) {
-        console.log(e);
+        openNotification('error', 'Khai báo máy thất bại');
       }
+
+      return false;
     },
     total: 2,
   });
 
-  const handleResetForm = () => {
+  const handleResetForm = useCallback(() => {
     (form as FormInstance).resetFields();
-  };
+  }, [form]);
 
-  const handleCancle = () => {
+  const handleCancle = useCallback(() => {
     handleModalVisible(false);
     setStep(0);
     handleResetForm();
-  };
+  }, [handleModalVisible, handleResetForm, setStep]);
 
-  const handlePrevious = () => {
-    setStep(step - 1);
-  };
+  const handlePrevious = useCallback(() => {
+    setStep((currStep: number) => currStep - 1);
+  }, [setStep]);
 
-  const formList = [
-    <DeclareMachineStep form={form} onCancel={handleCancle} onOk={() => setStep(step + 1)} />,
-    <DeclareUnitStep
-      form={form}
-      onPrevious={handlePrevious}
-      submit={submit}
-      onCancel={handleCancle}
-    />,
-  ];
+  const handleSubmit = useCallback(() => {
+    submit().then((result: unknown) => {
+      if (result) {
+        handleCancle();
+      }
+    });
+  }, [handleCancle, submit]);
+
+  const handleMachineSubmit = useCallback(
+    () => setStep((prevStep: number) => prevStep + 1),
+    [setStep],
+  );
+
+  const modalProps: Omit<ModalProps, 'visible'> = useMemo(
+    () => ({
+      centered: true,
+      closable: false,
+      destroyOnClose: true,
+      className: styles.myModalForm,
+    }),
+    [],
+  );
+
+  const formList = useMemo(
+    () => [
+      <DeclareMachineStep
+        form={form}
+        onCancel={handleCancle}
+        onSubmit={handleMachineSubmit}
+        key={genKey()}
+        submitButtonLabel="Tiếp tục"
+      />,
+      <DeclareUnitStep
+        form={form}
+        onPrevious={handlePrevious}
+        onCancel={handleCancle}
+        onSubmit={handleSubmit}
+        submitButtonLabel="Hoàn tất"
+        cancelButtonLabel="Quay lại"
+        key={genKey()}
+      />,
+    ],
+    [form, handleCancle, handlePrevious, handleSubmit, handleMachineSubmit],
+  );
 
   return (
     <ModalForm
@@ -76,15 +121,9 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
       width="934px"
       visible={visible}
       onVisibleChange={handleModalVisible}
-      onFinish={undefined}
       submitTimeout={5000}
       layout="vertical"
-      modalProps={{
-        centered: true,
-        closable: false,
-        destroyOnClose: true,
-        className: styles.myModalForm,
-      }}
+      modalProps={modalProps}
     >
       {formList[step]}
     </ModalForm>

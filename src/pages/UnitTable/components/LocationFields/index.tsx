@@ -1,6 +1,7 @@
 import { useLocationFields } from '@/hooks/useLocationFields';
-import { Col, Form, FormInstance, Select } from 'antd';
-import { DistrictItem, ProvinceItem, WardItem } from '../forms/NewUnitForm';
+import type { FormInstance } from 'antd';
+import { Col, Form, Select } from 'antd';
+import type { DistrictItem, ProvinceItem, WardItem } from '../forms/NewUnitForm';
 
 interface SelectOption {
   children: string;
@@ -13,7 +14,7 @@ interface SelectOption {
 
 type HandleSelect = (value: string, options: SelectOption) => void;
 
-interface LocationFieldsProps<T> {
+interface LocationFieldsProps<T> extends API.StmDetailResponse {
   form: FormInstance<T>;
   onSelectProvince?: HandleSelect;
   onSelectDistrict?: HandleSelect;
@@ -25,6 +26,7 @@ export default function LocationFields<T>({
   onSelectDistrict,
   onSelectProvince,
   onSelectWard,
+  ...detailMachine
 }: LocationFieldsProps<T>) {
   const {
     districtsData,
@@ -36,7 +38,6 @@ export default function LocationFields<T>({
     wardsData,
     wardsLoading,
   } = useLocationFields(form);
-
   return (
     <>
       <Col span={12}>
@@ -46,7 +47,7 @@ export default function LocationFields<T>({
           rules={[{ required: true, message: 'Khu vực không được để trống' }]}
         >
           <Select
-            placeholder="Chọn khu vực"
+            placeholder={detailMachine.location ?? 'Chọn khu vực'}
             onChange={(selectValue: string) => handleSelectChange('location', selectValue)}
           >
             <Select.Option value="north">Miền Bắc</Select.Option>
@@ -62,7 +63,7 @@ export default function LocationFields<T>({
           rules={[{ required: true, message: 'Tỉnh/Thành phố không được để trống' }]}
         >
           <Select
-            placeholder="Chọn Tỉnh/Thành phố"
+            placeholder={detailMachine.province?.name ?? 'Chọn Tỉnh/Thành phố'}
             onChange={(selectValue) => handleSelectChange('province', selectValue)}
             disabled={handleEnableDropdownList?.provinceDisabled ? true : false}
             loading={provincesLoading}
@@ -83,7 +84,7 @@ export default function LocationFields<T>({
           rules={[{ required: true, message: 'Quận/Huyện không được để trống' }]}
         >
           <Select
-            placeholder="Chọn Quận/Huyện"
+            placeholder={detailMachine.district?.name ?? 'Chọn Quận/Huyện'}
             onChange={(selectValue) => handleSelectChange('district', selectValue)}
             disabled={handleEnableDropdownList.districtDisabled ? true : false}
             loading={districtsLoading}
@@ -104,7 +105,7 @@ export default function LocationFields<T>({
           rules={[{ required: true, message: 'Phường/Xã không được để trống' }]}
         >
           <Select
-            placeholder="Chọn Phường/Xã"
+            placeholder={detailMachine.ward?.name ?? 'Chọn Phường/Xã'}
             onChange={(selectValue) => handleSelectChange('ward', selectValue)}
             disabled={handleEnableDropdownList.wardDisabled ? true : false}
             loading={wardsLoading}

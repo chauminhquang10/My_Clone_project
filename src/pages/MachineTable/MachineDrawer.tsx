@@ -1,7 +1,7 @@
 import { MapIcon } from '@/assets';
 import { openNotification } from '@/utils';
 import { Drawer, Form, Space, Typography } from 'antd';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import DeviceInformationCard from './components/cards/DeviceInformationCard';
 import DeviceVersionCard from './components/cards/DeviceVersionCard';
@@ -23,18 +23,6 @@ interface MachineDrawerProps {
 export default function MachineDrawer({ handleClose, open, currentEntity }: MachineDrawerProps) {
   const [showEditMachineForm, setShowEditMachineForm] = useState(false);
   const [showEditUnitForm, setShowUnitForm] = useState(false);
-  const handleOpenEditMachineForm = () => {
-    setShowEditMachineForm(true);
-  };
-  const handleOpenEditUnitForm = () => {
-    setShowUnitForm(true);
-  };
-  const handleCloseEditMachineForm = () => {
-    setShowEditMachineForm(false);
-  };
-  const handleCloseEditUnitForm = () => {
-    setShowUnitForm(false);
-  };
   const [detailMachine, setDetailMachine] = useState<API.StmDetailResponse | undefined>();
 
   const { run: getMachineDetail } = useRequest(
@@ -52,6 +40,19 @@ export default function MachineDrawer({ handleClose, open, currentEntity }: Mach
       },
     },
   );
+
+  const handleOpenEditMachineForm = useCallback(() => {
+    setShowEditMachineForm(true);
+  }, []);
+  const handleOpenEditUnitForm = useCallback(() => {
+    setShowUnitForm(true);
+  }, []);
+  const handleCloseEditMachineForm = useCallback(() => {
+    setShowEditMachineForm(false);
+  }, []);
+  const handleCloseEditUnitForm = useCallback(() => {
+    setShowUnitForm(false);
+  }, []);
 
   useEffect(() => {
     if (currentEntity?.id) {
@@ -87,6 +88,7 @@ export default function MachineDrawer({ handleClose, open, currentEntity }: Mach
             <DeviceInformationCard
               className={styles.myCard}
               onExtraClick={handleOpenEditMachineForm}
+              {...detailMachine}
             />
             <UnitCard
               onExtraClick={handleOpenEditUnitForm}
@@ -99,22 +101,16 @@ export default function MachineDrawer({ handleClose, open, currentEntity }: Mach
       </Drawer>
 
       <DeclareMachineForm
-        onFinish={async () => {
-          handleCloseEditMachineForm();
-          return true;
-        }}
         onVisibleChange={setShowEditMachineForm}
+        onCancel={handleCloseEditMachineForm}
         visible={showEditMachineForm}
-        width="934px"
+        {...detailMachine}
       />
       <DeclareUnitForm
-        onFinish={async () => {
-          handleCloseEditUnitForm();
-          return true;
-        }}
         onVisibleChange={setShowUnitForm}
+        onCancel={handleCloseEditUnitForm}
         visible={showEditUnitForm}
-        width="934px"
+        {...detailMachine}
       />
     </>
   );

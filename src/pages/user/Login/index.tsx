@@ -6,7 +6,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import React, { useState } from 'react';
 import { history, useModel } from 'umi';
-import { InputPassword, SetupPasswordForm } from '../components';
+import { InputPassword } from '../components';
 import styles from './index.less';
 
 type DataResponseType = {
@@ -18,7 +18,6 @@ const Login: React.FC = () => {
   const [form] = Form.useForm();
   const { initialState, setInitialState } = useModel('@@initialState');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isLogin, setIsLogin] = useState<boolean>(true);
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
@@ -34,7 +33,8 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: API.LoginRequest) => {
     try {
       const res = await Api.AuthController.login({
-        ...values,
+        username: values.username.trim(),
+        password: values.password.trim(),
       });
 
       // login thanh cong
@@ -71,11 +71,14 @@ const Login: React.FC = () => {
 
       // dang nhap mat khau he thong, first time login
       if (res.code === 112) {
-        // set token reset password
-        localStorage.setItem('tokenResetPassword', res.data?.token as string);
-
         openNotification('warning', USER_MESSAGE_ERROR[res.code]);
-        setIsLogin(false);
+        if (!history) return;
+        history.push({
+          pathname: '/user/reset-password',
+          query: {
+            token: res.data?.token as string,
+          },
+        });
         return;
       }
 
@@ -115,49 +118,44 @@ const Login: React.FC = () => {
         <div className={styles.logo}>
           <img src={logoKSBank} alt="logo-ksbank" />
         </div>
-
-        {isLogin ? (
-          <div className={styles['form-wrapper']}>
-            <h1 className={styles.title}>Đăng nhập</h1>
-            <Form
-              form={form}
-              name="login-form"
-              onFinish={onFinish}
-              className={styles.form}
-              layout="vertical"
+        <div className={styles['form-wrapper']}>
+          <h1 className={styles.title}>Đăng nhập</h1>
+          <Form
+            form={form}
+            name="login-form"
+            onFinish={onFinish}
+            className={styles.form}
+            layout="vertical"
+          >
+            <Form.Item
+              name="username"
+              label="Tên đăng nhập"
+              className={styles['form-username']}
+              rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập' }]}
             >
-              <Form.Item
-                name="username"
-                label="Tên đăng nhập"
-                className={styles['form-username']}
-                rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập' }]}
-              >
-                <Input placeholder="Admin" prefix={<UserOutlined />} />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                label="Mật khẩu"
-                rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
-              >
-                <InputPassword
-                  onChange={handlePasswordChange}
-                  placeholder="Nhập mật khẩu"
-                  prefix={<LockOutlined />}
-                />
-              </Form.Item>
-              <div className={styles['forgot-password']}>
-                <a href="/user/forgot-password">Quên mật khẩu?</a>
-              </div>
-            </Form>
-            <div className={styles['btn-submit']}>
-              <Button type="primary" htmlType="submit" form="login-form" loading={isSubmitting}>
-                Đăng nhập
-              </Button>
+              <Input placeholder="Admin" prefix={<UserOutlined />} />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label="Mật khẩu"
+              rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
+            >
+              <InputPassword
+                onChange={handlePasswordChange}
+                placeholder="Nhập mật khẩu"
+                prefix={<LockOutlined />}
+              />
+            </Form.Item>
+            <div className={styles['forgot-password']}>
+              <a href="/user/forgot-password">Quên mật khẩu?</a>
             </div>
+          </Form>
+          <div className={styles['btn-submit']}>
+            <Button type="primary" htmlType="submit" form="login-form" loading={isSubmitting}>
+              Đăng nhập
+            </Button>
           </div>
-        ) : (
-          <SetupPasswordForm handleOpen={(isOpenForm: boolean) => setIsLogin(!isOpenForm)} />
-        )}
+        </div>
       </div>
     </div>
   );
