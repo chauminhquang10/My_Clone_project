@@ -1,6 +1,6 @@
 import { EditOutlined } from '@ant-design/icons';
 import { Badge, Button, Card, Col, Drawer, Form, Input, Row, Space, Table, Typography } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import type { ColumnsType } from 'antd/lib/table';
 import { useState } from 'react';
 import DeclareMachineSeriesForm from './DeclareMachineSeriesForm';
 import styles from './machineDetailForm.less';

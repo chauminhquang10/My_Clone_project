@@ -2,7 +2,7 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 // import { message } from 'antd';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
@@ -16,6 +16,8 @@ import api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 
 const TableCustom = () => {
+  //----------- get all machine ---------------------
+  const [listMachine, setListMachine] = useState<API.StmInfoResponse[]>();
   const { run: runGetAllMachine } = useRequest(
     (params: API.getListMachinesParams) => api.STMController.getListMachines(params),
     {
@@ -24,7 +26,7 @@ const TableCustom = () => {
         if (!res) {
           openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
         }
-        return res;
+        setListMachine(res?.items);
       },
       onError: (error) => {
         console.log(error);
@@ -32,13 +34,15 @@ const TableCustom = () => {
     },
   );
 
+  useEffect(() => {
+    runGetAllMachine();
+  }, []);
+
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.StmInfoResponse>();
-
-  console.log(showDetail, currentRow);
 
   const columns: ProColumns<API.StmInfoResponse>[] = Column({
     setCurrentRow,
@@ -76,18 +80,7 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        request={async (params = {}) => {
-          console.log(params);
-
-          const pageRequestParams: API.getListMachinesParams = {};
-          const res = await runGetAllMachine({
-            ...pageRequestParams,
-          });
-
-          return {
-            data: res?.items || [],
-          };
-        }}
+        dataSource={listMachine}
         columns={columns}
         options={false}
         scroll={{ x: 'max-content' }}

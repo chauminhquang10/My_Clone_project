@@ -16,6 +16,7 @@ import ExportFile from '@/components/TableProperties/ExportFile';
 
 const TableCustom = () => {
   //---------------  handle getAllTransaction -------------------------------
+  // const [listTransaction, setListTransaction] = useState<API.TransactionConfigurationResponse[]>();
 
   const { run: getAllTransaction } = useRequest(
     (params: API.getTransactionConfigurationParams) =>
@@ -26,25 +27,16 @@ const TableCustom = () => {
         if (!res) {
           openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
         }
-        return res;
+        // setListTransaction(res?.items);
       },
       onError: (error) => {
         console.log(error);
       },
     },
   );
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
+
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   console.log(createModalVisible);
-
-  /**
-   * @en-US The pop-up window of the distribution update window
-   * @zh-CN 分布更新窗口的弹窗
-   * */
-  // const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 

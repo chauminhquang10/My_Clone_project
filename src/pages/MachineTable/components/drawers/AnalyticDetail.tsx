@@ -127,7 +127,7 @@ export default function AnaylyticDetail({
   const [detailTransaction, setDetailTransaction] = useState<
     API.TransactionResponse[] | undefined
   >();
-  console.log(detailTransaction);
+  console.log('toDate: ', toDate, 'fromDate: ', fromDate);
 
   const { run: getDetailTransaction } = useRequest(
     (params: API.getTransactionsParams) => api.TransactionController.getTransactions(params),
@@ -194,6 +194,10 @@ export default function AnaylyticDetail({
   const handleDropdownClose = () => {
     setDropdownOpen(false);
   };
+
+  useEffect(() => {
+    if (!open) setDropdownOpen(open);
+  }, [open]);
 
   return (
     <>

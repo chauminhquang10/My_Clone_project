@@ -1,7 +1,27 @@
 import { Table, Card } from 'antd';
-import { data, informationColumns } from '../../data';
+import type { ColumnsType } from 'antd/lib/table';
+import React from 'react';
 
-export default function HardwareInformationCard() {
+interface HardwareInformationCardType extends API.StmDetailResponse {
+  children?: React.ReactNode;
+}
+
+const columns: ColumnsType<API.PhysicalDeviceInfo> = [
+  {
+    title: 'Loại thiết bị',
+    dataIndex: 'deviceType',
+  },
+  {
+    title: 'Đơn vị tính',
+    dataIndex: 'unit',
+  },
+  {
+    title: 'Sức chứa tối thiểu',
+    dataIndex: 'capacity',
+  },
+];
+
+const HardwareInformationCard = ({ devices }: HardwareInformationCardType) => {
   return (
     <Card
       title="Thông tin phần cứng"
@@ -9,7 +29,8 @@ export default function HardwareInformationCard() {
       style={{ borderRadius: 12 }}
       bodyStyle={{ padding: 0 }}
     >
-      <Table columns={informationColumns} dataSource={data} pagination={false} bordered />
+      <Table columns={columns} dataSource={devices} pagination={false} bordered />
     </Card>
   );
-}
+};
+export default HardwareInformationCard;

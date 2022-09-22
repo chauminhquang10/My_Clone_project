@@ -8,6 +8,7 @@ const STATUS_STYLES = {
   ACTIVE: 'activeStatus',
   INACTIVE: 'inActiveStatus',
   DISABLE: 'disableStatus',
+  OFFLINE: 'offline',
 };
 
 type StatusTagProps = {
@@ -87,7 +88,12 @@ const StatusTag: React.FC<StatusTagProps> = ({ title, icon, type, width, changab
       <>
         {canSwitch && (
           <Tooltip placement="bottom" title={changableStatus?.statusItems[tooltipIndexStatus]}>
-            <div onClick={handleIconClick}>
+            <div
+              onClick={() => {
+                handleIconClick();
+                console.log('abc');
+              }}
+            >
               {switchIcon ? switchIcon : <DefaultIcon style={{ width: '18px', height: '18px' }} />}
             </div>
           </Tooltip>

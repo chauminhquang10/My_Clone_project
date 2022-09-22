@@ -79,13 +79,21 @@ export default function MachineDrawer({ handleClose, open, currentEntity }: Mach
           <Form layout="vertical" className={styles.drawerBody}>
             <OveralCard className={styles.myCard} {...detailMachine} />
             <MachineHealthCard health={detailMachine?.driveHealth} />
-            <DeviceVersionCard btnClassName={styles.primaryButton} className={styles.myCard} />
+            <DeviceVersionCard
+              btnClassName={styles.primaryButton}
+              className={styles.myCard}
+              {...detailMachine}
+            />
             <DeviceInformationCard
               className={styles.myCard}
               onExtraClick={handleOpenEditMachineForm}
             />
-            <UnitCard onExtraClick={handleOpenEditUnitForm} className={styles.myCard} />
-            <HardwareInformationCard />
+            <UnitCard
+              onExtraClick={handleOpenEditUnitForm}
+              className={styles.myCard}
+              {...detailMachine}
+            />
+            <HardwareInformationCard {...detailMachine} />
           </Form>
         </div>
       </Drawer>

@@ -1,12 +1,54 @@
 import { Card } from 'antd';
 import CardInputBody from './CardInputBody';
 import type { CardCol } from './CardInputBody';
-import { MachineStatusTag } from '@/components/TableProperties/TableCell';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import StatusTag from '@/components/TableProperties/StatusTag';
 
 interface OveralCardProps extends API.StmDetailResponse {
   className?: string;
 }
 
+type enumType = 'DEFAULT' | 'ACTIVE' | 'INACTIVE' | 'OFFLINE' | 'DISABLE' | undefined;
+
+const valueEnum = {
+  UNKNOWN: {
+    text: 'UNKNOWN',
+    type: 'DEFAULT',
+    icon: undefined,
+    changableStatus: false,
+  },
+  IN_SERVICE: {
+    text: 'IN SERVICE',
+    type: 'ACTIVE',
+    icon: undefined,
+    changableStatus: {
+      loop: true,
+      statusItems: ['ACTIVE', 'INACTIVE'],
+      initialStatus: 'ACTIVE',
+    },
+  },
+  OUT_OF_SERVICE: {
+    text: 'OUT OF SERVICE',
+    type: 'INACTIVE',
+    icon: undefined,
+    changableStatus: {
+      loop: true,
+      statusItems: ['ACTIVE', 'INACTIVE'],
+      initialStatus: 'INACTIVE',
+    },
+  },
+  OFFLINE: {
+    text: 'OFFLINE',
+    type: 'OFFLINE',
+    icon: (
+      <ExclamationCircleFilled
+        style={{
+          color: '#A8071A',
+        }}
+      />
+    ),
+  },
+};
 export default function OveralCard({ className, machineType, createdAt, status }: OveralCardProps) {
   const cols: CardCol[] = [
     {
@@ -21,7 +63,13 @@ export default function OveralCard({ className, machineType, createdAt, status }
     },
     {
       formItemProps: { name: 'Tình trạng máy', label: 'Tình trạng máy' },
-      formItemChildren: <MachineStatusTag status={status ? status : 'UNKNOWN'} />,
+      formItemChildren: status && (
+        <StatusTag
+          title={valueEnum[status].text}
+          type={valueEnum[status].type as enumType}
+          // icon={valueEnum[status]}
+        />
+      ),
       props: { span: 8 },
     },
   ];
