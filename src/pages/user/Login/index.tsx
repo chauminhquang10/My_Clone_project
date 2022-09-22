@@ -33,7 +33,8 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: API.LoginRequest) => {
     try {
       const res = await Api.AuthController.login({
-        ...values,
+        username: values.username.trim(),
+        password: values.password.trim(),
       });
 
       // login thanh cong
