@@ -1,185 +1,106 @@
-import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
 import { ModalForm } from '@ant-design/pro-components';
-import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { Form } from 'antd';
+import { useCallback, useMemo } from 'react';
 import styles from './declareMachineForm.less';
-const { Option } = Select;
+import DeclareMachineStep from './DeclareMachineStep';
+import Api from '@/services/STM-APIs';
+import { openNotification } from '@/utils';
 
 interface DeclareMachineFormProps extends API.StmDetailResponse {
-  width: string;
   visible: boolean;
   onVisibleChange?: (value: boolean) => void;
-  onFinish?: (values: Partial<API.RuleListItem>) => Promise<boolean>;
-  onOk: () => void;
   onCancel: () => void;
 }
 
 export default function DeclareMachineForm({
-  width,
   visible,
   onVisibleChange,
-  onFinish,
   onCancel,
-  onOk,
+  ...machineDetail
 }: DeclareMachineFormProps) {
   const [form] = Form.useForm();
+  if (machineDetail) {
+    const defaultUpdateBody: API.UpdateStmRequest = {
+      accountingAccountVND: machineDetail.accountingAccountVND!,
+      acquirerId: machineDetail.acquirerId!,
+      address: machineDetail.address!,
+      denominationRule: machineDetail.denominationRule!,
+      districtId: machineDetail.district?.id || 0,
+      ipAddress: machineDetail.ipAddress!,
+      keyType: machineDetail.keyType!,
+      location: machineDetail.location!,
+      mac: machineDetail.mac!,
+      machineName: machineDetail.name!,
+      machineType: machineDetail.machineType!,
+      masterKey: machineDetail.masterKey!,
+      modelId: machineDetail.model?.id || 0,
+      port: machineDetail.port!,
+      protocol: machineDetail.protocol!,
+      provinceId: machineDetail.province?.id || 0,
+      serialNumber: machineDetail.serialNumber!,
+      terminalId: machineDetail.terminalId!,
+      wardId: machineDetail.ward?.id || 0,
+      accountingAccountUSD: machineDetail.accountingAccountUSD,
+      denominations: machineDetail.denominations,
+      latitude: machineDetail.latitude,
+      longitude: machineDetail.longitude,
+      managementUnitId: machineDetail.managementUnit?.id,
+      note: '',
+      userIds: machineDetail.managementUsers?.map((user) => user.id!),
+    };
+    form.setFieldsValue(defaultUpdateBody);
+  }
+  const modalProps = useMemo(
+    () => ({
+      centered: true,
+      closable: false,
+      destroyOnClose: true,
+      className: styles.myModalForm,
+    }),
+    [],
+  );
 
-  const onReset = () => {
-    form.resetFields();
-    if (onVisibleChange) onVisibleChange(false);
-  };
+  const handleFinish = useCallback(
+    async (values) => {
+      try {
+        const res = await Api.STMController.updateMachine(
+          { id: machineDetail.id! },
+          {
+            ...machineDetail,
+            ...values,
+            machineName: machineDetail.name,
+            districtId: machineDetail.district?.id,
+            provinceId: machineDetail.province?.id,
+            wardId: machineDetail.ward?.id,
+          },
+        );
+
+        if (res.code === 1) {
+          openNotification('error', 'Cập nhật thông tin thiết bị thất bại', res.message);
+        }
+
+        if (res.code === 0) {
+          openNotification('success', 'Cập nhật thông tin thiết bị thành công');
+        }
+      } catch (e) {
+        openNotification('error', 'Cập nhật thông tin thiết bị thất bại');
+      }
+      return true;
+    },
+    [machineDetail],
+  );
 
   return (
     <ModalForm
       form={form}
-      width={width}
+      width="934px"
       visible={visible}
       onVisibleChange={onVisibleChange}
-      onFinish={onFinish}
-      modalProps={{
-        centered: true,
-        closable: false,
-        destroyOnClose: true,
-        className: styles.myModalForm,
-      }}
+      onFinish={handleFinish}
+      modalProps={modalProps}
       submitTimeout={2000}
     >
-      <Row align="top" justify="space-between" className={styles.modalFormHeader}>
-        <Col>
-          <p className={styles.modalTitle}>Khai báo thiết bị</p>
-        </Col>
-        <Col>
-          <span onClick={onReset} className={styles.closeIcon}>
-            <img src={closeIcon} />
-          </span>
-        </Col>
-      </Row>
-
-      <Row gutter={[24, 24]}>
-        <Col span={8}>
-          <Form.Item name="unitId" label="Số thứ tự">
-            <Input placeholder={'Số thứ tự'} disabled />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="area" label="Loại máy">
-            <Select placeholder="Loại máy">
-              <Option value="private">Private</Option>
-              <Option value="public">Public</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="area" label="Dòng máy">
-            <Select placeholder="Dòng máy">
-              <Option value="private">Private</Option>
-              <Option value="public">Public</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="city" label="Series máy">
-            <Input placeholder="Series máy" />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="district" label="Loại khoá">
-            <Select placeholder="Loại khoá">
-              <Option value="private">Private</Option>
-              <Option value="public">Public</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="subDistrict" label="Terminal ID">
-            <Input placeholder="Terminal ID" />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="address" label="Địa chỉ IP">
-            <Input placeholder="Địa chỉ IP" />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="address" label="Acquirer ID">
-            <Input placeholder={'Acquirer ID'} />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="address" label="Cổng">
-            <Input placeholder={'Cổng'} />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="address" label="Master (A)/(B) Key">
-            <Input placeholder={'Master (A)/(B) Key'} />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item name="address" label="Protocol">
-            <Select placeholder="Loại khoá">
-              <Option value="private">Private</Option>
-              <Option value="public">Public</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col span={24}>
-          <Form.Item name="address" label="Tên đường, số nhà">
-            <Input placeholder={'example'} />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="city" label="MAC">
-            <Input placeholder="MAC" />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="district" label="Quận/Huyện">
-            <Select placeholder="Chọn Quận/Huyện">
-              <Option value="private">Private</Option>
-              <Option value="public">Public</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="Quy tắc chi tiền" label="Quy tắc chi tiền">
-            <Input disabled placeholder={'example'} />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item name="Loại mệnh giá tiền" label="Loại mệnh giá tiền">
-            <Row gutter={12}>
-              <Col span={6}>
-                <Input disabled placeholder={'500'} />
-              </Col>
-              <Col span={6}>
-                <Input disabled placeholder={'200'} />
-              </Col>
-              <Col span={6}>
-                <Input disabled placeholder={'100'} />
-              </Col>
-              <Col span={6}>
-                <Input disabled placeholder={'50'} />
-              </Col>
-            </Row>
-          </Form.Item>
-        </Col>
-      </Row>
-
-      <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
-        <Button
-          className={styles.cancelButton}
-          size="large"
-          onClick={() => {
-            onReset();
-            onCancel();
-          }}
-        >
-          Huỷ bỏ
-        </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit" onClick={onOk}>
-          Tiếp tục
-        </Button>
-      </Row>
+      <DeclareMachineStep form={form} onCancel={onCancel} {...machineDetail} />
     </ModalForm>
   );
 }
