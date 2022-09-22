@@ -1,7 +1,7 @@
 import { useMap } from 'react-leaflet';
-import { MapProps } from './Map';
+import type { MapProps } from './Map';
 
-interface ChangeViewProps extends MapProps {
+interface ChangeViewProps extends Pick<MapProps, 'coordinate'> {
   zoom: number;
 }
 
