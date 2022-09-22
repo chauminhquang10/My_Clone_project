@@ -194,9 +194,9 @@ export function UserCellGroup({ listUser }: UserCellGroupProps) {
     };
   }, [active]);
   const amountDisplay = 3;
-  return (
+  return amountUser ? (
     <div className={style['manage-cell']}>
-      {amountUser && amountUser <= amountDisplay
+      {amountUser <= amountDisplay
         ? listUser.map((item) => {
             return <UserItemTag key={item.id}>{item}</UserItemTag>;
           })
@@ -209,7 +209,7 @@ export function UserCellGroup({ listUser }: UserCellGroupProps) {
               <RestItem onClick={openDropdown}>{`+${amountUser - amountDisplay}`}</RestItem>
             </>
           )}
-      {amountUser && (
+      {
         <div className={`${style['box-hover']} ${active ? style.active : ''}`} ref={boxHoverRef}>
           <div className={`${style['drop-down']} ${amountUser > 5 ? style.scroll : ''}`}>
             {listUser.map((item) => {
@@ -217,8 +217,10 @@ export function UserCellGroup({ listUser }: UserCellGroupProps) {
             })}
           </div>
         </div>
-      )}
+      }
     </div>
+  ) : (
+    <></>
   );
 }
 
