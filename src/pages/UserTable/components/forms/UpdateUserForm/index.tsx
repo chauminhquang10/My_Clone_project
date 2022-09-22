@@ -13,7 +13,10 @@ const handleUpdate = async (
   hide();
   try {
     const res = await Api.UserController.updateUser(params, body, avatar);
-    if (!res.code) return false;
+
+    console.log('res update: ', res);
+
+    if (!res) return false;
 
     if (res.code === 0) {
       message.success('Cập nhật người dùng thành công');
@@ -65,7 +68,11 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
       visible={isVisibleUpdateUser}
       onVisibleChange={setIsVisibleUpdateUser}
       onFinish={async (values, avatar) => {
-        const success = await handleUpdate({ userId: '' }, { ...values }, avatar);
+        const success = await handleUpdate(
+          { userId: userInfo.id as string },
+          { ...values },
+          avatar,
+        );
         return !!success;
       }}
       userInfo={userInfo}

@@ -1,5 +1,6 @@
 import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
-import Api from '@/services/STM-APIs';
+import { getAllManagementUnits } from '@/services/STM-APIs/ManagementUnitController';
+import { getAllRoleGroup } from '@/services/STM-APIs/RoleController';
 import { DeleteOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
 import { ModalForm } from '@ant-design/pro-components';
 import { Avatar, Button, Col, Form, Input, message, Row, Skeleton, Upload } from 'antd';
@@ -8,6 +9,8 @@ import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import { ManagementUnitField, RoleGroupField } from './components';
+import { getAddressByManagementUnitId } from './components/ManagementUnitField';
+import { getActionsByRoleGroupId } from './components/RoleGroupField';
 import styles from './NewUserForm.less';
 
 type CreateFormProps = {
@@ -24,10 +27,12 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   width,
   visible,
   onVisibleChange,
-  // onFinish,
+  onFinish,
   userInfo,
 }) => {
-  const [form] = Form.useForm<API.CreateUserRequest>();
+  const [form] = Form.useForm<
+    API.CreateUserRequest & { unitAddress: string; actions: { value?: string }[] }
+  >();
 
   const [loadingImage, setLoadingImage] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -39,7 +44,7 @@ const NewUserForm: React.FC<CreateFormProps> = ({
     if (userInfo?.avatar) {
       setImageUrl(userInfo.avatar);
     }
-  }, [userInfo?.avatar]);
+  }, [userInfo, userInfo?.avatar]);
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -49,7 +54,7 @@ const NewUserForm: React.FC<CreateFormProps> = ({
       reader.onerror = (error) => reject(error);
     });
 
-  // Check loại file khi upload file
+  // check file type before uploading
   const handleBeforeUpload = (file: RcFile) => {
     const isCorrectFileType = file.type === 'image/png' || file.type === 'image/jpeg';
 
@@ -108,47 +113,36 @@ const NewUserForm: React.FC<CreateFormProps> = ({
     return;
   }, [form]);
 
-  // const hanleChangeManagementUnit = (id: API.ManagementUnitResponse['id']) => {
-  //   form.setFieldValue('managementUnitId', id);
-  //   handleAllowSubmit();
-  // };
+  const handleSubmit = async (values: API.CreateUserRequest) => {
+    try {
+      const success = await onFinish({ ...values }, imageFile);
+      return success;
+    } catch (error) {
+      console.log('error: ', error);
+    }
+    return false;
+  };
 
-  const handleChangeRoleGroup = (id: number) => {
-    form.setFieldValue('roleGroupId', id);
+  const { data: managementUnitList } =
+    useRequest<API.ResponseBasePageResponseManagementUnitResponse>(() => getAllManagementUnits({}));
+
+  const { data: roleGroupList } = useRequest<API.ResponseBaseListRoleGroupResponse>(() =>
+    getAllRoleGroup(),
+  );
+
+  const handleSelectManagementUnitChange = (unitId: number, address: string) => {
+    form.setFieldValue('managementUnitId', unitId);
+    form.setFieldValue('unitAddress', address);
+
     handleAllowSubmit();
   };
 
-  const handleSubmit = async (values: API.CreateUserRequest) => {
-    console.log('values: ', values);
-    console.log('imageUrl: ', imageUrl);
-    console.log('imageFile: ', imageFile);
+  const handleSelectRoleGroupChange = (roleGroupId: number, actions: { value?: string }[]) => {
+    form.setFieldValue('roleGroupId', roleGroupId);
+    form.setFieldValue('actions', actions);
 
-    return true;
-    // chua handle avatar upload
-    // try {
-    //   const success = await onFinish({ ...values }, imageFile);
-    //   return success;
-    // } catch (error) {
-    //   console.log('error: ', error);
-    // }
-    // return false;
+    handleAllowSubmit();
   };
-
-  const { data: managementUnitList, loading: managementUnitLoading } = useRequest<
-    API.ManagementUnitResponse[]
-  >(() => {
-    return Api.ManagementUnitController.getAllManagementUnits({});
-  });
-
-  const { data: roleGroupList, loading: roleGroupLoading } = useRequest<API.RoleGroupResponse[]>(
-    () => {
-      return Api.RoleController.getAllRoleGroup();
-    },
-  );
-
-  console.log('managementUnitList: ', managementUnitList);
-  console.log('roleGroupList: ', roleGroupList);
-  console.log('roleGroupLoading: ', roleGroupLoading);
 
   return (
     <ModalForm
@@ -168,16 +162,25 @@ const NewUserForm: React.FC<CreateFormProps> = ({
         handleAllowSubmit();
       }}
       onInit={() => {
-        console.log('onInit!!!');
-
-        form.setFieldValue('staffId', userInfo?.staffId || '');
-        form.setFieldValue('name', userInfo?.name || '');
-        form.setFieldValue('phoneNumber', userInfo?.phoneNumber || '');
-        form.setFieldValue('email', userInfo?.email || '');
-        form.setFieldValue('managementUnitId', userInfo?.managementUnit?.id);
-        form.setFieldValue('roleGroupId', userInfo?.roleGroup?.id || '');
-
-        console.log('form data: ', form.getFieldsValue());
+        form.setFieldsValue({
+          staffId: userInfo?.staffId || '',
+          name: userInfo?.name || '',
+          phoneNumber: userInfo?.phoneNumber || '',
+          email: userInfo?.email || '',
+          managementUnitId: userInfo?.managementUnit?.id,
+          roleGroupId: userInfo?.roleGroup?.id,
+          unitAddress:
+            userInfo?.managementUnit?.id && managementUnitList?.items
+              ? getAddressByManagementUnitId(
+                  userInfo?.managementUnit?.id,
+                  managementUnitList?.items,
+                )
+              : '',
+          actions:
+            userInfo?.roleGroup?.id && roleGroupList?.roleGroups
+              ? getActionsByRoleGroupId(userInfo?.roleGroup?.id, roleGroupList?.roleGroups)
+              : undefined,
+        });
       }}
     >
       {/* Header */}
@@ -235,75 +238,38 @@ const NewUserForm: React.FC<CreateFormProps> = ({
       <Row gutter={[24, 24]} style={{ marginTop: '24px' }}>
         {/* Staff ID */}
         <Col span={12}>
-          <Form.Item
-            name="staffId"
-            label="Mã nhân viên"
-            rules={[
-              {
-                required: true,
-                message: 'Vui lòng nhập mã nhân viên',
-              },
-            ]}
-          >
+          <Form.Item name="staffId" label="Mã nhân viên">
             <Input placeholder={'Nhập mã nhân viên'} />
           </Form.Item>
         </Col>
         {/* Name */}
         <Col span={12}>
-          <Form.Item
-            name="name"
-            label="Tên nhân viên"
-            rules={[
-              {
-                required: true,
-                message: 'Vui lòng nhập tên nhân viên',
-              },
-            ]}
-          >
+          <Form.Item name="name" label="Tên nhân viên">
             <Input placeholder={'Nhập tên nhân viên'} />
           </Form.Item>
         </Col>
         {/* Phone number */}
         <Col span={12}>
-          <Form.Item
-            name="phoneNumber"
-            label="Số điện thoại"
-            rules={[
-              {
-                required: true,
-                message: 'Vui lòng nhập số điện thoại',
-              },
-            ]}
-          >
+          <Form.Item name="phoneNumber" label="Số điện thoại">
             <Input placeholder={'Nhập số điện thoại'} />
           </Form.Item>
         </Col>
         {/* Email */}
         <Col span={12}>
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              {
-                required: true,
-                message: 'Vui lòng nhập email',
-              },
-            ]}
-          >
+          <Form.Item name="email" label="Email">
             <Input placeholder={'Nhập email'} />
           </Form.Item>
         </Col>
         {/* Don vi quan ly */}
-        {!managementUnitLoading && (
-          <ManagementUnitField
-            form={form}
-            managementUnitList={
-              (managementUnitList as API.PageResponseManagementUnitResponse).items
-            }
-          />
-        )}
+        <ManagementUnitField
+          data={managementUnitList?.items}
+          handleSelect={handleSelectManagementUnitChange}
+        />
         {/* Nhom quyen */}
-        <RoleGroupField onChangeRoleGroup={handleChangeRoleGroup} />
+        <RoleGroupField
+          data={roleGroupList?.roleGroups}
+          handleSelect={handleSelectRoleGroupChange}
+        />
       </Row>
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>

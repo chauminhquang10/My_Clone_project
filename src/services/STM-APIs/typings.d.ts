@@ -75,35 +75,32 @@ declare namespace API {
 
   type CreateStmModelRequest = {
     name: string;
-    /** Values: STM | ATM | CDM */
     machineType: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     storages: StorageItemRequest[];
   };
 
   type CreateStmRequest = {
-    /** Values: STM | ATM | CDM */
     machineType: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     machineName: string;
     terminalId: string;
     masterKey: string;
     modelId: number;
     serialNumber: string;
-    privateKey: string;
-    accountingAccountVND?: string;
+    accountingAccountVND: string;
     accountingAccountUSD?: string;
     /** Values: MINIMUM_NOTES | EQUAL_EMPTYING | MAXIMUM_NOTES */
-    denominationRule?: 'MINIMUM_NOTES' | 'EQUAL_EMPTYING' | 'MAXIMUM_NOTES';
+    denominationRule: 'MINIMUM_NOTES' | 'EQUAL_EMPTYING' | 'MAXIMUM_NOTES';
     denominations: number[];
-    gate?: number;
+    port: number;
     ipAddress: string;
-    acquirerId?: string;
+    acquirerId: string;
     /** Values: KEY_3DES */
-    keyType?: 'KEY_3DES';
+    keyType: 'KEY_3DES';
     /** Values: NDC */
-    protocol?: 'NDC';
-    mac?: string;
+    protocol: 'NDC';
+    mac: string;
     managementUnitId: number;
-    userIds?: string[];
+    userIds: string[];
     location: string;
     provinceId: number;
     districtId: number;
@@ -119,7 +116,7 @@ declare namespace API {
     staffId: string;
     name: string;
     email: string;
-    phoneNumber: string;
+    phoneNumber?: string;
     managementUnitId: number;
     roleGroupId: number;
   };
@@ -479,6 +476,18 @@ declare namespace API {
     devices?: PhysicalDevice[];
   };
 
+  type previewPrivateFileParams = {
+    bucketName: string;
+    type: 'version';
+    objectName: string;
+  };
+
+  type previewPublicFileParams = {
+    bucketName: string;
+    type: 'avatar';
+    objectName: string;
+  };
+
   type Province = {
     id?: number;
     name?: string;
@@ -704,6 +713,12 @@ declare namespace API {
     data?: UpdateMachineResponse;
   };
 
+  type ResponseBaseUploadMediaResponse = {
+    code?: number;
+    message?: string;
+    data?: UploadMediaResponse;
+  };
+
   type ResponseBaseUserDetailResponse = {
     code?: number;
     message?: string;
@@ -753,14 +768,13 @@ declare namespace API {
   type StmDetailResponse = {
     id?: string;
     machineOrder?: number;
-    /** Values: STM | ATM | CDM */
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     model?: StmModelResponse;
     name?: string;
     terminalId?: string;
     serialNumber?: string;
     privateKey?: string;
-    gate?: number;
+    port?: number;
     ipAddress?: string;
     acquirerId?: string;
     /** Values: KEY_3DES */
@@ -799,7 +813,6 @@ declare namespace API {
     machineOrder?: number;
     location?: string;
     province?: Province;
-    /** Values: STM | ATM | CDM */
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     name?: string;
     terminalId?: string;
@@ -812,7 +825,6 @@ declare namespace API {
   type StmModelDetailResponse = {
     id?: number;
     name?: string;
-    /** Values: STM | ATM | CDM */
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     createdBy?: UserResponse;
     createdAt?: string;
@@ -822,7 +834,6 @@ declare namespace API {
   type StmModelResponse = {
     id?: number;
     name?: string;
-    /** Values: STM | ATM | CDM */
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     createdBy?: UserResponse;
     createdAt?: string;
@@ -971,27 +982,25 @@ declare namespace API {
   };
 
   type UpdateStmRequest = {
-    /** Values: STM | ATM | CDM */
     machineType: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     machineName: string;
     terminalId: string;
     masterKey: string;
     modelId: number;
-    serialNumber?: string;
-    privateKey?: string;
-    accountingAccountVND?: string;
+    serialNumber: string;
+    accountingAccountVND: string;
     accountingAccountUSD?: string;
     /** Values: MINIMUM_NOTES | EQUAL_EMPTYING | MAXIMUM_NOTES */
-    denominationRule?: 'MINIMUM_NOTES' | 'EQUAL_EMPTYING' | 'MAXIMUM_NOTES';
+    denominationRule: 'MINIMUM_NOTES' | 'EQUAL_EMPTYING' | 'MAXIMUM_NOTES';
     denominations?: number[];
-    gate?: number;
+    port: number;
     ipAddress: string;
-    acquirerId?: string;
+    acquirerId: string;
     /** Values: KEY_3DES */
     keyType: 'KEY_3DES';
     /** Values: NDC */
     protocol: 'NDC';
-    mac?: string;
+    mac: string;
     managementUnitId?: number;
     userIds?: string[];
     location: string;
@@ -1022,11 +1031,25 @@ declare namespace API {
   };
 
   type UpdateVersionRequest = {
-    modelId: number;
-    name: string;
-    file: string;
+    modelId?: number;
+    name?: string;
+    file?: string;
     content?: string;
     conditionId?: number;
+  };
+
+  type UploadMediaResponse = {
+    previewPath?: string;
+  };
+
+  type uploadPrivateFileParams = {
+    bucketName: string;
+    type: 'version';
+  };
+
+  type uploadPublicFileParams = {
+    bucketName: string;
+    type: 'avatar';
   };
 
   type UserDetailResponse = {
@@ -1040,6 +1063,7 @@ declare namespace API {
     machines?: StmInfoResponse[];
     roleGroup?: RoleGroupResponse;
     managementUnit?: ManagementUnitResponse;
+    admin?: boolean;
   };
 
   type UserResponse = {
@@ -1051,12 +1075,12 @@ declare namespace API {
     phoneNumber?: string;
     status?: 'UNKNOWN' | 'ACTIVE' | 'INACTIVE';
     managementUnit?: ManagementUnitResponse;
+    admin?: boolean;
   };
 
   type VersionResponse = {
     id?: number;
     name?: string;
-    /** Values: STM | ATM | CDM */
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     model?: StmModelResponse;
     content?: string;
