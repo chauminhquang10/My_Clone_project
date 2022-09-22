@@ -14,6 +14,7 @@ import { Button, Form } from 'antd';
 import React, { useEffect, useState } from 'react';
 import InputPassword from '../InputPassword';
 import styles from './index.less';
+import { history } from 'umi';
 
 const validationList = [
   {
@@ -48,7 +49,7 @@ type FormSetupPasswordType = {
   retypePassword: string;
 };
 
-const SetupPasswordForm: React.FC<{ handleOpen: (isOpen: boolean) => void }> = ({ handleOpen }) => {
+const SetupPasswordForm: React.FC<{ token?: string }> = ({ token }) => {
   const [form] = Form.useForm();
   const [newPassword, setNewPassword] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -78,8 +79,8 @@ const SetupPasswordForm: React.FC<{ handleOpen: (isOpen: boolean) => void }> = (
         const message = 'Thiết lập mật khẩu thành công!';
         const desc = 'Vui lòng đăng nhập lại để tiếp tục';
         openNotification('success', message, desc);
-
-        handleOpen(false);
+        if (!history) return;
+        history.push('/user/login');
         return;
       }
 
@@ -90,19 +91,13 @@ const SetupPasswordForm: React.FC<{ handleOpen: (isOpen: boolean) => void }> = (
       const message = 'Thiết lập mật khẩu không thành công!';
       openNotification('error', message, error as string);
     }
-
-    localStorage.removeItem('tokenResetPassword');
   };
 
   const onFinish = async (values: FormSetupPasswordType) => {
-    const tokenResetPassword = localStorage.getItem('tokenResetPassword');
-
-    if (!tokenResetPassword) {
+    if (!token) {
       const message = 'Thiết lặp mật khẩu không thành công';
       const desc = 'Vui lòng thử lại';
       openNotification('error', message, desc);
-
-      handleOpen(false);
       return;
     }
 
@@ -116,7 +111,7 @@ const SetupPasswordForm: React.FC<{ handleOpen: (isOpen: boolean) => void }> = (
 
     setIsSubmitting(true);
     await handleSubmit({
-      token: tokenResetPassword as string,
+      token,
       password: values.password,
     });
     setIsSubmitting(false);
