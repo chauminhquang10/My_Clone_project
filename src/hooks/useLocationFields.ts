@@ -1,11 +1,11 @@
-import {
-  INITIAL_ENABLE_STATE,
+import type {
   ResponseGetDistrictListByProvince,
   ResponseGetProvinceListByLocation,
   ResponseGetWardListByDistrict,
 } from '@/pages/UnitTable/components/forms/NewUnitForm';
+import { INITIAL_ENABLE_STATE } from '@/pages/UnitTable/components/forms/NewUnitForm';
 import { getDistricts, getProvinces, getWards } from '@/services/STM-APIs/LocationController';
-import { FormInstance } from 'antd/es/form/Form';
+import type { FormInstance } from 'antd/es/form/Form';
 import { useState } from 'react';
 import { useRequest } from 'umi';
 

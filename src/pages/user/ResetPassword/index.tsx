@@ -6,6 +6,7 @@ import styles from './index.less';
 
 const ResetPassword: React.FC = () => {
   const { query } = history.location;
+  const token = (query?.token as string).replace(' ', '+');
 
   return (
     <div className={styles.container}>
@@ -13,7 +14,7 @@ const ResetPassword: React.FC = () => {
         <div className={styles.logo}>
           <img src={logoKSBank} alt="logo-ksbank" />
         </div>
-        <SetupPasswordForm token={query?.token as string} />
+        <SetupPasswordForm token={token} />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { formatDate } from '../src/utils/helpers/index';
+import { formatDate } from './index';
 
 describe('Test formatDate function helper', () => {
   it('should return dd/mm/yyyy', () => {

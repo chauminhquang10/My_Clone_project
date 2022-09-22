@@ -1,13 +1,33 @@
 import { AimOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Input, Row } from 'antd';
+import type { Dispatch, SetStateAction } from 'react';
+import { useMemo, useRef } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import ChangeView from './ChangeView';
 
 export interface MapProps {
   coordinate: [number, number];
+  setPosition: Dispatch<SetStateAction<[number, number]>>;
 }
 
-export default function Map({ coordinate }: MapProps) {
+interface MarkerMethods {
+  getLatLng: () => [number, number];
+}
+
+export default function Map({ coordinate, setPosition }: MapProps) {
+  const markerRef = useRef<MarkerMethods>(null);
+  const eventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
+        if (marker != null) {
+          setPosition(marker.getLatLng());
+        }
+      },
+    }),
+    [setPosition],
+  );
+
   return (
     <MapContainer
       center={coordinate}
@@ -50,7 +70,7 @@ export default function Map({ coordinate }: MapProps) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={coordinate}>
+      <Marker position={coordinate} ref={markerRef} eventHandlers={eventHandlers} draggable>
         <Popup>
           A pretty CSS3 popup. <br /> Easily customizable.
         </Popup>

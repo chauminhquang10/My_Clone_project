@@ -7,7 +7,7 @@ export default function DeviceInformationCard({
   className,
   model,
   serialNumber,
-  gate,
+  port,
   keyType,
   protocol,
   masterKey,
@@ -47,7 +47,7 @@ export default function DeviceInformationCard({
         </Col>
         <Col span={6}>
           <Form.Item name="Cổng" label="Cổng">
-            <Input disabled placeholder={gate?.toString()} />
+            <Input disabled placeholder={port?.toString()} />
           </Form.Item>
         </Col>
         <Col span={6}>
