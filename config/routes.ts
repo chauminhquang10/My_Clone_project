@@ -59,12 +59,6 @@ const routes = [
             icon: 'machine-warning',
             component: 'SystemWarningTable',
           },
-          {
-            path: '/machine/history',
-            name: 'Lịch sử',
-            icon: 'machine-history',
-            component: 'TableList',
-          },
         ],
       },
       {
@@ -132,6 +126,15 @@ const routes = [
             component: 'TableList',
           },
         ],
+      },
+      {
+        path: '/history',
+        name: 'Lịch sử',
+        icon: 'machine-history',
+        component: 'HistoryList',
+        menu: {
+          flatMenu: true,
+        },
       },
     ],
   },

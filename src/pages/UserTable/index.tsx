@@ -52,6 +52,11 @@ const handleAdd = async (fields: API.CreateUserRequest, avatar?: File) => {
 };
 
 const UserManagementTable: React.FC = () => {
+  //------------ pagination --------------------
+  const pageSizeRef = useRef<number>(20);
+  const [totalSize, setTotalSize] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+
   const { run: runGetAllUser } = useRequest(
     (params: API.getAllUsersParams) => Api.UserController.getAllUsers(params),
     {
@@ -91,13 +96,11 @@ const UserManagementTable: React.FC = () => {
 
   // const [page, setPage] = useState<number>();
   // const [pageSize, setPageSize] = useState<number>();
-  // const pageSizeRef = useRef<number>(20);
   const columns: ProColumns<API.UserResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
   });
 
-  const [currentPage, setCurrentPage] = useState<number>(0);
   const pageSize = useRef<number>(20);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
@@ -129,18 +132,15 @@ const UserManagementTable: React.FC = () => {
             }}
           />,
         ]}
-        // request={rule}
-        request={async (params = {}) => {
-          console.log('params request user list: ', params);
+        request={async () => {
           const filterParams = {
             managementUnit: '',
             staffId: '',
           };
 
           const pageRequestParams = {
-            // pageNumber: params.current,
-            pageSize: 20,
-            // sortDirection: '',
+            pageNumber: page - 1,
+            pageSize: pageSizeRef.current,
             sortBy: '',
           };
           const res = await runGetAllUser({
@@ -148,6 +148,8 @@ const UserManagementTable: React.FC = () => {
             ...pageRequestParams,
           });
 
+          setTotalSize(res?.totalSize as number);
+          console.log(res);
           return {
             data: res?.items || [],
           };
@@ -156,10 +158,11 @@ const UserManagementTable: React.FC = () => {
         options={false}
         scroll={{ x: 'max-content', y: 'max-content' }}
         pagination={{
+          total: totalSize,
           onChange(current) {
-            setCurrentPage(current);
+            setPage(current);
           },
-          current: currentPage,
+          current: page,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,

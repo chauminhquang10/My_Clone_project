@@ -15,8 +15,10 @@ import { openNotification } from '@/utils';
 import ExportFile from '@/components/TableProperties/ExportFile';
 
 const TableCustom = () => {
-  //---------------  handle getAllTransaction -------------------------------
-  // const [listTransaction, setListTransaction] = useState<API.TransactionConfigurationResponse[]>();
+  //------------ pagination --------------------
+  const pageSizeRef = useRef<number>(20);
+  const [totalSize, setTotalSize] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
 
   const { run: getAllTransaction } = useRequest(
     (params: API.getTransactionConfigurationParams) =>
@@ -48,7 +50,6 @@ const TableCustom = () => {
     setShowDetail,
   });
 
-  const [currentPage, setCurrentPage] = useState<number>(0);
   const pageSize = useRef<number>(20);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
@@ -80,20 +81,18 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        // dataSource={listMachine}
         request={async (params = {}) => {
           console.log(params);
 
           const pageRequestParams = {
-            // pageNumber: params.current,
-            // pageSize: params.pageSize,
-            // sortDirection: '',
+            pageNumber: page - 1,
+            pageSize: pageSizeRef.current,
             sortBy: '',
           };
           const res = await getAllTransaction({
             ...pageRequestParams,
           });
-
+          setTotalSize(res?.totalSize as number);
           return {
             data: res?.items || [],
           };
@@ -102,9 +101,10 @@ const TableCustom = () => {
         options={false}
         pagination={{
           onChange(current) {
-            setCurrentPage(current);
+            setPage(current);
           },
-          current: currentPage,
+          total: totalSize,
+          current: page,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
