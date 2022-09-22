@@ -59,3 +59,8 @@ export function formatPhoneNumber(str: string) {
 
 export const objectKeys = <T extends Object>(obj: T): (keyof T)[] =>
   Object.keys(obj) as (keyof T)[];
+
+export function validateEmail(mail: string) {
+  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) return true;
+  return false;
+}

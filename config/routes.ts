@@ -14,6 +14,11 @@ const routes = [
         component: './user/ForgotPassword',
       },
       {
+        name: 'reset-password',
+        path: '/user/reset-password',
+        component: './user/ResetPassword',
+      },
+      {
         component: './404',
       },
     ],
