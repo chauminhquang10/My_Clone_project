@@ -1,0 +1,75 @@
+.card {
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+
+  .roleList {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .roleListItem {
+    padding: 8px;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 400;
+    font-size: 14px;
+    font-family: 'Roboto';
+    font-style: normal;
+    line-height: 22px;
+    background: #f6f8f8;
+
+    &::before {
+      margin-right: 12px;
+      content: url('/src/assets/images/svg/icon/hollow-circle.svg');
+    }
+  }
+
+  :global {
+    .ant-card-head {
+      padding: 8px 20px;
+    }
+
+    .ant-card-head-title {
+      padding: 0 !important;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 500;
+      font-size: 16px;
+      font-family: 'Roboto';
+      font-style: normal;
+      line-height: 24px;
+    }
+
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+
+    .ant-form-item-label > label {
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 400;
+      font-size: 14px;
+      font-family: 'Roboto';
+      font-style: normal;
+      line-height: 22px;
+    }
+
+    .ant-form-item-control-input-content > input {
+      padding: 5px 12px;
+      background: #f5f5f5;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+
+      &::placeholder {
+        color: #595959;
+        font-weight: 400;
+        font-size: 14px;
+        font-family: 'Roboto';
+        font-style: normal;
+        line-height: 22px;
+      }
+    }
+
+    .ant-card-body {
+      padding: 12px 20px 20px 20px;
+    }
+  }
+}

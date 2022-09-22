@@ -1,208 +1,155 @@
-import { addRule, groupAuthorizeList } from "@/services/ant-design-pro/api";
-import type { ActionType, ProColumns } from "@ant-design/pro-components";
-// import { getAllUsers } from "@/services/STM-APIs/UserController";
-import {
-    PageContainer,
-    ProFormText,
-    ProFormTextArea,
-    ProTable,
-} from "@ant-design/pro-components";
-import { message } from "antd";
-import { useRef, useState } from "react";
-import { FormattedMessage } from "umi";
-// import {useRequest} from "umi";
-import NewUserForm from "./components/forms/NewUserForm";
-import AddNew from "@/components/TableProperties/AddNew";
-import Column from "./components/tables/Column";
-// import SelectPage from "./components/tables/SelectPage";
-import style from "@/components/TableProperties/style.less";
-import TitleTable from "@/components/TableProperties/TitleTable";
-import TotalPagination from "@/components/TableProperties/TotalPagination";
-
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.RoleGroupResponse) => {
-    const hide = message.loading("正在添加");
-    try {
-        await addRule({ ...fields });
-        hide();
-        message.success("Added successfully");
-        return true;
-    } catch (error) {
-        hide();
-        message.error("Adding failed, please try again!");
-        return false;
-    }
-};
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+import { message } from 'antd';
+import { useRef, useState } from 'react';
+import { useRequest } from 'umi';
+import NewRoleListForm from './components/forms/NewRoleListForm';
+import AddNew from '@/components/TableProperties/AddNew';
+import Column from './components/tables/Column';
+import style from '@/components/TableProperties/style.less';
+import TitleTable from '@/components/TableProperties/TitleTable';
+import TotalPagination from '@/components/TableProperties/TotalPagination';
+import RoleListDetailDrawer from './components/forms/RoleListDetailDrawer';
+import { createRoleGroup, getAllRoleGroup } from '@/services/STM-APIs/RoleController';
 
 const TableCustom = () => {
-    //--------------- listUSer -----------------------------------
-    // const [listUser, setListUser] = useState<API.RoleGroupResponse[] | undefined>();
-    //---------------  handle getAllUser -------------------------------
+  // xử lí dữ liệu check all để send api
+  const [checkAllKeys, setCheckAllKeys] = useState<(number | string)[]>([]);
 
-    // const { run: runGetAllUser } = useRequest(
-    //     (params: API.getAllUsersParams) => getAllUsers(params),
-    //     {
-    //         manual: true,
-    //         onSuccess: (res) => {
-    //             const data = res as API.ResponseBasePageResponseObject;
-    //             const listUserRespone = data.data?.items;
-    //             setListUser(listUserRespone);
-    //         },
-    //         onError: (error) => {
-    //             console.log(error);
-    //         },
-    //     }
-    // );
-    /**
-     * @en-US Pop-up window of new window
-     * @zh-CN 新建窗口的弹窗
-     *  */
-    const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-    /**
-     * @en-US The pop-up window of the distribution update window
-     * @zh-CN 分布更新窗口的弹窗
-     * */
-    // const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
+  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
+  const [showDetail, setShowDetail] = useState<boolean>(false);
 
-    const [showDetail, setShowDetail] = useState<boolean>(false);
+  const actionRef = useRef<ActionType>();
+  const [currentRow, setCurrentRow] = useState<API.RoleGroupResponse>();
 
-    const actionRef = useRef<ActionType>();
-    const [currentRow, setCurrentRow] = useState<API.RoleGroupResponse>();
+  // const [page, setPage] = useState<number>();
+  // const [pageSize, setPageSize] = useState<number>();
+  // const pageSizeRef = useRef<number>(20);
+  const columns: ProColumns<API.RoleGroupResponse>[] = Column({
+    setCurrentRow,
+    setShowDetail,
+  });
 
-    console.log(showDetail, currentRow);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const pageSize = useRef<number>(20);
+  // const [totalPage, setTotalPage] = useState<number>(1);
 
-    /**
-     * @en-US International configuration
-     * @zh-CN 国际化配置
-     * */
+  //-------------- Pagination props --------------------------------
+  const paginationLocale = {
+    items_per_page: '',
+    jump_to: 'Trang',
+    page: '',
+  };
 
-    // const [page, setPage] = useState<number>();
-    // const [pageSize, setPageSize] = useState<number>();
-    // const pageSizeRef = useRef<number>(20);
-    const columns: ProColumns<API.RoleGroupResponse>[] = Column({
-        setCurrentRow,
-        setShowDetail,
-    });
+  const { run: runGetAllRolesGroup } = useRequest<API.ResponseBaseListRoleGroupResponse>(
+    () => getAllRoleGroup(),
+    {
+      onSuccess(data) {
+        console.log(data);
+      },
+      onError(error) {
+        console.log('error', error);
+        // notification.error({
+        //   message: messageErrorData,
+        //   description: e?.data?.code,
+        // });
+      },
+    },
+  );
 
-    const [currentPage, setCurrentPage] = useState<number>(0);
-    const pageSize = useRef<number>(20);
-    // const [totalPage, setTotalPage] = useState<number>(1);
+  const handleAddNewRoleGroup = async (value: { roleGroupName: string }) => {
+    const hide = message.loading('Loading...');
 
-    //-------------- Pagination props --------------------------------
-    const paginationLocale = {
-        items_per_page: "",
-        jump_to: "Trang",
-        page: "",
-    };
+    // lọc bỏ toàn bộ các key có kiểu string, vì nó là key của  thằng item cha
+    const finalAllKeysData = checkAllKeys.filter((dataKey) => typeof dataKey !== 'string');
 
-    return (
-        <PageContainer
-            className={style["table-container"]}
-            header={{
-                title: "",
+    try {
+      await createRoleGroup({ name: value.roleGroupName, actionIds: finalAllKeysData as number[] });
+      hide();
+      message.success('Thêm nhóm quyền mới thành công');
+      handleModalVisible(false);
+      actionRef.current?.reload();
+    } catch (error) {
+      hide();
+      message.error('Adding failed, please try again!');
+    }
+  };
+
+  return (
+    <PageContainer
+      className={style['table-container']}
+      header={{
+        title: '',
+      }}
+      footer={undefined}
+    >
+      <ProTable
+        headerTitle={<TitleTable>Danh sách nhóm quyền</TitleTable>}
+        actionRef={actionRef}
+        rowKey="key"
+        search={false}
+        toolBarRender={() => [
+          <AddNew
+            key="primary"
+            onClick={() => {
+              handleModalVisible(true);
             }}
-            footer={undefined}
-        >
-            <ProTable
-                headerTitle={<TitleTable>Danh sách máy</TitleTable>}
-                actionRef={actionRef}
-                rowKey="key"
-                search={false}
-                toolBarRender={() => [
-                    <AddNew
-                        key="primary"
-                        onClick={() => {
-                            handleModalVisible(true);
-                        }}
-                    />,
-                ]}
-                request={groupAuthorizeList}
-                // request={async (params = {}) => {
-                //     const filterParams: API.UserFilter = {
-                //         managementUnit: "",
-                //         staffId: "",
-                //     };
+          />,
+        ]}
+        request={async () => {
+          const res = await runGetAllRolesGroup();
+          return {
+            data: res?.roleGroups,
+            total: res?.roleGroups ? res.roleGroups.length : 0,
+            success: true,
+          };
+        }}
+        columns={columns}
+        options={false}
+        pagination={{
+          onChange(current) {
+            setCurrentPage(current);
+          },
+          current: currentPage,
+          className: style['pagination-custom'],
+          locale: { ...paginationLocale },
+          showSizeChanger: false,
+          pageSize: pageSize.current,
+          showTotal: (total, range) => <TotalPagination total={total} range={range} />,
+          hideOnSinglePage: true,
+          showQuickJumper: true,
+        }}
+        onRow={(rowData) => ({
+          onClick: () => {
+            setCurrentRow(rowData);
+          },
+        })}
+      />
+      {createModalVisible && (
+        <NewRoleListForm
+          title="Tạo nhóm quyền"
+          width="934px"
+          checkAllKeys={checkAllKeys}
+          setCheckAllKeys={setCheckAllKeys}
+          visible={createModalVisible}
+          onVisibleChange={handleModalVisible}
+          onFinish={async (value: { roleGroupName: string }) => {
+            await handleAddNewRoleGroup(value);
+          }}
+        />
+      )}
 
-                //     const pageRequestParams: API.PageReq = {
-                //         pageNumber: params.current,
-                //         pageSize: params.pageSize,
-                //         sortDirection: "",
-                //         sortBy: "",
-                //     };
-                //     await runGetAllUser({
-                //         filter: filterParams,
-                //         pageRequest: pageRequestParams,
-                //     });
-                //     return {
-                //         data: listUser,
-                //     };
-                // }}
-                columns={columns}
-                options={false}
-                // rowSelection={{
-                //     onChange: (_, selectedRows) => {
-                //         setSelectedRows(selectedRows);
-                //     },
-                // }}
-                pagination={{
-                    onChange(current) {
-                        setCurrentPage(current);
-                    },
-                    current: currentPage,
-                    className: style["pagination-custom"],
-                    locale: { ...paginationLocale },
-                    showSizeChanger: false,
-                    pageSize: pageSize.current,
-                    showTotal: (total, range) => (
-                        <TotalPagination total={total} range={range} />
-                    ),
-                    hideOnSinglePage: true,
-                    showQuickJumper: true,
-                }}
-            />
-
-            <NewUserForm
-                title="Tạo người dùng mới"
-                width="934px"
-                visible={createModalVisible}
-                onVisibleChange={handleModalVisible}
-                onFinish={async (value) => {
-                    const success = await handleAdd(
-                        value as API.RoleGroupResponse
-                    );
-                    if (success) {
-                        handleModalVisible(false);
-                        if (actionRef.current) {
-                            actionRef.current.reload();
-                        }
-                        return true;
-                    }
-                    return false;
-                }}
-            >
-                <ProFormText
-                    rules={[
-                        {
-                            required: true,
-                            message: (
-                                <FormattedMessage
-                                    id="pages.searchTable.ruleName"
-                                    defaultMessage="Rule name is required"
-                                />
-                            ),
-                        },
-                    ]}
-                    width="md"
-                    name="name"
-                />
-                <ProFormTextArea width="md" name="desc" />
-            </NewUserForm>
-        </PageContainer>
-    );
+      {showDetail && (
+        <RoleListDetailDrawer
+          currentRoleGroup={currentRow}
+          setCurrentRoleGroup={setCurrentRow}
+          showDetail={showDetail}
+          setShowDetail={setShowDetail}
+          detailActionRef={actionRef}
+        />
+      )}
+    </PageContainer>
+  );
 };
 
 export default TableCustom;

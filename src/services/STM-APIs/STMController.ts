@@ -8,7 +8,7 @@ export async function getListMachines(
   params: API.getListMachinesParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBasePageResponseObject>('/api/v1/machines', {
+  return request<API.ResponseBasePageResponseStmInfoResponse>('/api/v1/machines', {
     method: 'GET',
     params: {
       ...params,
@@ -114,11 +114,14 @@ export async function getSystemOperation(
   params: API.getSystemOperationParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBasePageResponseObject>('/api/v1/machines/system-operations', {
-    method: 'GET',
-    params: {
-      ...params,
+  return request<API.ResponseBasePageResponseSystemOperationResponse>(
+    '/api/v1/machines/system-operations',
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
     },
-    ...(options || {}),
-  });
+  );
 }
