@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Typography } from 'antd';
 import activeIcon from '@/assets/images/svg/icon/active-icon.svg';
 import connectBoardIcon from '@/assets/images/svg/icon/connect-boards.svg';
 import inactiveIcon from '@/assets/images/svg/icon/lock-icon.svg';
 import style from './style.less';
 import StatusTag from './StatusTag';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+const { Text } = Typography;
 
 //--------------- TextCell of Table ----------------
 
@@ -132,9 +134,22 @@ export function UserItemTag({ children }: UserItemTagProps) {
   return (
     <div className={style['user-item-tag']}>
       <div className={style['img-box']}>
-        <img className={style.avatar} src={children.avatar} alt="no-image" />
+        {children.avatar ? (
+          <img className={style.avatar} src={children.avatar} alt="" />
+        ) : (
+          <div className={style['no-image']}>
+            <p className={style['image-name']}>{children.name?.toString()[0]}</p>
+          </div>
+        )}
       </div>
-      <p className={style['user-name']}>{children.name}</p>
+      <Text
+        className={style['user-name']}
+        ellipsis={{
+          tooltip: children.name,
+        }}
+      >
+        {children.name}
+      </Text>
     </div>
   );
 }
@@ -155,9 +170,9 @@ export function UserDropdownItem({ user, onClick }: UserDropdownItemProps) {
       }}
     >
       <div className={style['img-box']}>
-        <img src={user.avatar} className={style.avatar} alt="no-image" />
+        <img src={user.avatar} className={style.avatar} alt="" />
       </div>
-      <p className={style['user-name']}>{user.name}</p>
+      <Text className={style['user-name']}>{user.name}</Text>
     </div>
   );
 }
@@ -220,7 +235,9 @@ export function UserCellGroup({ listUser }: UserCellGroupProps) {
       }
     </div>
   ) : (
-    <></>
+    <div className={style['manage-cell']}>
+      <Text className={style['no-data']}>Không có nhân viên sở hữu nhóm quyền</Text>
+    </div>
   );
 }
 
