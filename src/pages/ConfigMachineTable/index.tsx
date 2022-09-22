@@ -1,117 +1,38 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-// import { getAllUsers } from "@/services/STM-APIs/UserController";
-import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { message } from 'antd';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+
 import { useRef, useState } from 'react';
-import { FormattedMessage } from 'umi';
-// import {useRequest} from "umi";
-import NewUserForm from './components/forms/NewUserForm';
+import { useModel, useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
-// import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-
-const unitType: ('CARD' | 'PAPER' | 'TIME' | 'UNKNOWN' | undefined)[] = [
-  'CARD',
-  'PAPER',
-  'TIME',
-  'UNKNOWN',
-];
-
-const genListMachine = (current: number, pageSize: number) => {
-  const tableListDataSource: API.StorageItem[] = [];
-
-  for (let i = 0; i < pageSize; i += 1) {
-    const index = (current - 1) * 10 + i;
-    tableListDataSource.push({
-      minCapacity: Math.floor(Math.random() * 10000),
-      deviceType: {
-        id: index,
-        name: 'device',
-        code: 'code',
-        unit: unitType[Math.floor(Math.random() * unitType.length)],
-      },
-    });
-  }
-  return tableListDataSource;
-};
-
-const listMachine = genListMachine(1, 100);
-
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.StorageItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    // await addRule({ ...fields });
-    console.log(fields);
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
+// import { message } from 'antd';
+import { getListModels } from '@/services/STM-APIs/STMModelController';
+import ConfigModelDetailDrawer from './components/forms/ConfigModelDetailDrawer';
+import NewConfigModelForm from './components/forms/NewConfigModel';
 
 const TableCustom = () => {
-  //--------------- listUSer -----------------------------------
-  // const [listUser, setListUser] = useState<API.StmInfoResponse[] | undefined>();
-  //---------------  handle getAllUser -------------------------------
+  // get current user info
+  const { initialState } = useModel('@@initialState');
 
-  // const { run: runGetAllUser } = useRequest(
-  //     (params: API.getAllUsersParams) => getAllUsers(params),
-  //     {
-  //         manual: true,
-  //         onSuccess: (res) => {
-  //             const data = res as API.ResponseBasePageResponseObject;
-  //             const listUserRespone = data.data?.items;
-  //             setListUser(listUserRespone);
-  //         },
-  //         onError: (error) => {
-  //             console.log(error);
-  //         },
-  //     }
-  // );
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  /**
-   * @en-US The pop-up window of the distribution update window
-   * @zh-CN 分布更新窗口的弹窗
-   * */
-  // const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
+  // xử lí cho phép tạo mới
+  const [enableCreateNew, setEnableCreateNew] = useState<boolean>(true);
 
+  const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.StorageItem>();
+  const [currentRow, setCurrentRow] = useState<API.StmModelResponse>();
 
-  console.log(showDetail, currentRow);
-
-  /**
-   * @en-US International configuration
-   * @zh-CN 国际化配置
-   * */
-
-  // const [page, setPage] = useState<number>();
-  // const [pageSize, setPageSize] = useState<number>();
-  // const pageSizeRef = useRef<number>(20);
-  const columns: ProColumns<API.StorageItem>[] = Column({
+  const columns: ProColumns<API.StmModelResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
   });
 
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const pageSize = useRef<number>(20);
+  const pageSize = useRef<number>(10);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -120,6 +41,50 @@ const TableCustom = () => {
     jump_to: 'Trang',
     page: '',
   };
+
+  const { run: runGetAllConfigModels } = useRequest<API.ResponseBaseListStmModelResponse>(
+    (params: API.getListModelsParams) => getListModels(params),
+    {
+      manual: true,
+      onSuccess(data) {
+        console.log(data);
+        if (!initialState?.currentUser?.admin) {
+          setEnableCreateNew(false);
+        }
+        // setResultResponse(data);
+        // const dataNew = data as API.BaseResponseListLanguageSupport;
+        // if (dataNew?.success && dataNew.data) {
+        //   setListSupportLanguages(dataNew.data);
+        // }
+      },
+      onError(error) {
+        console.log('error', error);
+        // notification.error({
+        //   message: messageErrorData,
+        //   description: e?.data?.code,
+        // });
+      },
+    },
+  );
+
+  // const handleAddNewUnit = async (record: API.CreateManagementUnitRequest) => {
+  //   const hide = message.loading('Loading...');
+
+  //   try {
+  //     const res = await createManagementUnit({ ...record });
+  //     hide();
+  //     if (res.code === 700) {
+  //       message.error(`${record.name} ${record.code} ${record.address} đã được sử dụng`);
+  //       return;
+  //     }
+  //     message.success('Thêm đơn vị mới thành công');
+  //     handleCreateModalVisible(false);
+  //     actionRef.current?.reload();
+  //   } catch (error) {
+  //     hide();
+  //     message.error('Adding failed, please try again!');
+  //   }
+  // };
 
   return (
     <PageContainer
@@ -130,47 +95,29 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Cấu hình dòng máy</TitleTable>}
+        headerTitle={<TitleTable>Đơn vị quản lý</TitleTable>}
         actionRef={actionRef}
         rowKey="key"
         search={false}
         toolBarRender={() => [
           <AddNew
             key="primary"
+            enableCreateNew={enableCreateNew}
             onClick={() => {
-              handleModalVisible(true);
+              handleCreateModalVisible(true);
             }}
           />,
         ]}
-        dataSource={listMachine}
-        // request={machineList}
-        // request={async (params = {}) => {
-        //     const filterParams: API.UserFilter = {
-        //         managementUnit: "",
-        //         staffId: "",
-        //     };
-
-        //     const pageRequestParams: API.PageReq = {
-        //         pageNumber: params.current,
-        //         pageSize: params.pageSize,
-        //         sortDirection: "",
-        //         sortBy: "",
-        //     };
-        //     await runGetAllUser({
-        //         filter: filterParams,
-        //         pageRequest: pageRequestParams,
-        //     });
-        //     return {
-        //         data: listUser,
-        //     };
-        // }}
+        request={async () => {
+          const res = await runGetAllConfigModels({ machineType: 'STM' });
+          return {
+            data: res?.models,
+            total: res?.models ? res.models.length : 0,
+            success: true,
+          };
+        }}
         columns={columns}
         options={false}
-        // rowSelection={{
-        //     onChange: (_, selectedRows) => {
-        //         setSelectedRows(selectedRows);
-        //     },
-        // }}
         pagination={{
           onChange(current) {
             setCurrentPage(current);
@@ -184,42 +131,35 @@ const TableCustom = () => {
           hideOnSinglePage: true,
           showQuickJumper: true,
         }}
+        onRow={(rowData) => ({
+          onClick: () => {
+            setCurrentRow(rowData);
+          },
+        })}
       />
 
-      <NewUserForm
-        title="Tạo người dùng mới"
-        width="934px"
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.StorageItem);
-          if (success) {
-            handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-            return true;
-          }
-          return false;
-        }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="name"
+      {createModalVisible && (
+        <NewConfigModelForm
+          title="Tạo đơn vị quản lý mới"
+          width="934px"
+          visible={createModalVisible}
+          onVisibleChange={handleCreateModalVisible}
+          onFinish={async (value) => {
+            console.log(value);
+            // await handleAddNewUnit(value as API.CreateManagementUnitRequest);
+          }}
         />
-        <ProFormTextArea width="md" name="desc" />
-      </NewUserForm>
+      )}
+
+      {showDetail && (
+        <ConfigModelDetailDrawer
+          showDetail={showDetail}
+          setShowDetail={setShowDetail}
+          currentModel={currentRow || {}}
+          setCurrentModel={setCurrentRow}
+          detailActionRef={actionRef}
+        />
+      )}
     </PageContainer>
   );
 };

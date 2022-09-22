@@ -141,6 +141,7 @@ const TableCustom = () => {
         toolBarRender={() => [
           <AddNew
             key="primary"
+            enableCreateNew={true}
             onClick={() => {
               handleModalVisible(true);
             }}

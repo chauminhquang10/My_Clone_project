@@ -68,6 +68,59 @@
   }
 }
 
+.myTable {
+  .visibleUserDetail {
+    opacity: 0;
+  }
+  :global(.ant-table-tbody > tr:hover td:nth-child(2)) .visibleUserDetail {
+    opacity: 1;
+  }
+
+  :global {
+    .ant-table {
+      border: 1px solid #d9d9d9;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    .ant-table.ant-table-bordered > .ant-table-title {
+      border: none;
+    }
+
+    .ant-table-title {
+      padding: 8px 20px;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 500;
+      font-size: 16px;
+      font-family: 'Roboto';
+      font-style: normal;
+      line-height: 24px;
+    }
+
+    .ant-table-thead > tr > th {
+      padding: 9px 16px;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 500;
+      font-size: 14px;
+      font-family: 'Roboto';
+      font-style: normal;
+      line-height: 22px;
+      text-align: center !important;
+    }
+
+    .ant-table-tbody > tr > td {
+      width: fit-content;
+      padding: 4px 12px;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 400;
+      font-size: 14px;
+      font-family: 'Roboto';
+      font-style: normal;
+      line-height: 22px;
+    }
+  }
+}
+
 .closeIcon {
   cursor: pointer;
 }
@@ -113,4 +166,10 @@
   background: #f26122;
   border: 1px solid #d9d9d9;
   border-radius: 4px;
+}
+
+.deviceTypeCol {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }

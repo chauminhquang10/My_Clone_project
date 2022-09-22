@@ -29,7 +29,7 @@ import StatusTag from './StatusTag';
 import styles from './RoleListDetailDrawer.less';
 import userDetailIcon from '@/assets/images/svg/icon/top-right-arrow.svg';
 import UpdateRoleListForm from './UpdateRoleListForm';
-import { useRequest } from 'umi';
+import { useModel, useRequest } from 'umi';
 import {
   deleteRoleGroup,
   getRoleDetail,
@@ -57,7 +57,7 @@ interface UserRoleGroupListTableTitleProps {
 }
 
 const INITIAL_VALIDATE_DELETE = {
-  enableDeleteBtn: false,
+  enableDeleteBtn: true,
   tooltipMsg: 'Xóa',
 };
 
@@ -154,8 +154,8 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
   // xử lí dữ liệu check all để send api
   const [checkAllKeys, setCheckAllKeys] = useState<(number | string)[]>([]);
 
-  // format lại key data để truyền xuống form chỉnh sửa
-  //const handleFormat
+  // get current user info
+  const { initialState } = useModel('@@initialState');
 
   const { data: roleGroupDetail } = useRequest<API.ResponseBaseRoleGroupResponse>(
     () => {
@@ -165,10 +165,19 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
       onSuccess(data) {
         const allActionKeys = data?.actions?.map((eachAction) => eachAction.id);
         setCheckAllKeys(allActionKeys as number[]);
+
+        if (!initialState?.currentUser?.admin) {
+          setValidateDeleteObj({
+            enableDeleteBtn: false,
+            tooltipMsg: 'Tài khoản chưa được cho phép truy cập chức năng này',
+          });
+          return;
+        }
+
         if (data?.users && data?.users.length > 0) {
           setValidateDeleteObj({
-            ...validateDeleteObj,
-            tooltipMsg: 'Bạn không được phép xóa nhóm quyền khi đã có người sở hữu',
+            enableDeleteBtn: false,
+            tooltipMsg: 'Chưa thể xoá. Nhóm quyền đã có người sở hữu',
           });
         }
       },
@@ -292,12 +301,12 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
               <Col span={24}>
                 <Table
                   columns={userRoleGroupColumns as ColumnsType<API.UserResponse>}
-                  dataSource={currentRoleGroup?.users}
+                  dataSource={roleGroupDetail?.users}
                   bordered
                   title={() => (
                     <UserRoleGroupListTableTitle
                       title="Nhân viên sở hữu nhóm quyền"
-                      quantity={currentRoleGroup?.users?.length}
+                      quantity={roleGroupDetail?.users?.length}
                     />
                   )}
                   className={styles.myTable}

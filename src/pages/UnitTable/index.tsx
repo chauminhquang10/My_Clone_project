@@ -66,8 +66,12 @@ const TableCustom = () => {
     const hide = message.loading('Loading...');
 
     try {
-      await createManagementUnit({ ...record });
+      const res = await createManagementUnit({ ...record });
       hide();
+      if (res.code === 700) {
+        message.error(`${record.name} ${record.code} ${record.address} đã được sử dụng`);
+        return;
+      }
       message.success('Thêm đơn vị mới thành công');
       handleCreateModalVisible(false);
       actionRef.current?.reload();
@@ -93,6 +97,7 @@ const TableCustom = () => {
         toolBarRender={() => [
           <AddNew
             key="primary"
+            enableCreateNew={true}
             onClick={() => {
               handleCreateModalVisible(true);
             }}
