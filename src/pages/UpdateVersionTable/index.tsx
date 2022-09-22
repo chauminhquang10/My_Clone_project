@@ -1,49 +1,17 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-// import { getAllUsers } from "@/services/STM-APIs/UserController";
 import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
 import { FormattedMessage } from 'umi';
-// import {useRequest} from "umi";
+import { useRequest } from 'umi';
 import NewUserForm from './components/forms/NewUserForm';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
-// import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-
-const Status: ('WAITING' | 'PASSED' | 'EXECUTED')[] = ['WAITING', 'PASSED', 'EXECUTED'];
-
-const MachineType: ('UNKNOWN' | 'STM' | 'CDM' | 'ATM')[] = ['UNKNOWN', 'STM', 'CDM', 'ATM'];
-
-const genListMachine = (current: number, pageSize: number) => {
-  const tableListDataSource: API.VersionResponse[] = [];
-
-  for (let i = 0; i < pageSize; i += 1) {
-    const index = (current - 1) * 10 + i;
-    tableListDataSource.push({
-      id: index,
-      machineType: MachineType[Math.floor(Math.random() * MachineType.length)],
-      name: `name-${index}`,
-      status: Status[Math.floor(Math.random() * Status.length)],
-      model: {
-        id: 1,
-        name: `name-${index}`,
-      },
-
-      content: 'content',
-      condition: 'condition',
-      createdAt: Math.floor(Math.random() * 2)
-        ? new Date('Fri Sep 15 2022').toDateString()
-        : new Date('Fri Sep 16 2021').toDateString(),
-    });
-  }
-  return tableListDataSource;
-};
-
-const listMachine = genListMachine(1, 100);
-
+import api from '@/services/STM-APIs';
+import { openNotification } from '@/utils';
 /**
  * @en-US Add node
  * @zh-CN 添加节点
@@ -65,24 +33,21 @@ const handleAdd = async (fields: API.VersionResponse) => {
 };
 
 const TableCustom = () => {
-  //--------------- listUSer -----------------------------------
-  // const [listUser, setListUser] = useState<API.VersionResponse[] | undefined>();
   //---------------  handle getAllUser -------------------------------
 
-  // const { run: runGetAllUser } = useRequest(
-  //     (params: API.getAllUsersParams) => getAllUsers(params),
-  //     {
-  //         manual: true,
-  //         onSuccess: (res) => {
-  //             const data = res as API.ResponseBasePageResponseObject;
-  //             const listUserRespone = data.data?.items;
-  //             setListUser(listUserRespone);
-  //         },
-  //         onError: (error) => {
-  //             console.log(error);
-  //         },
-  //     }
-  // );
+  const { run: runGetAllUpdateVersion } = useRequest(
+    (params: API.getAllVersionParams) => api.STMVersionController.getAllVersion(params),
+    {
+      manual: true,
+      onSuccess: (res) => {
+        if (!res) openNotification('error', 'Có lỗi xảy ra');
+        return res?.items;
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    },
+  );
   /**
    * @en-US Pop-up window of new window
    * @zh-CN 新建窗口的弹窗
@@ -146,28 +111,23 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        // request={machineList}
-        dataSource={listMachine}
-        // request={async (params = {}) => {
-        //     const filterParams: API.UserFilter = {
-        //         managementUnit: "",
-        //         staffId: "",
-        //     };
+        request={async (params = {}) => {
+          console.log(params);
 
-        //     const pageRequestParams: API.PageReq = {
-        //         pageNumber: params.current,
-        //         pageSize: params.pageSize,
-        //         sortDirection: "",
-        //         sortBy: "",
-        //     };
-        //     await runGetAllUser({
-        //         filter: filterParams,
-        //         pageRequest: pageRequestParams,
-        //     });
-        //     return {
-        //         data: listUser,
-        //     };
-        // }}
+          const pageRequestParams: API.getAllVersionParams = {
+            // pageNumber: params.current,
+            // pageSize: params.pageSize,
+            // sortDirection: '',
+            // sortBy: '',
+          };
+          const res = await runGetAllUpdateVersion({
+            ...pageRequestParams,
+          });
+
+          return {
+            data: res?.items || [],
+          };
+        }}
         columns={columns}
         options={false}
         // rowSelection={{

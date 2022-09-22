@@ -61,7 +61,7 @@ const errorHandler = async (error: ResponseError) => {
 export const request = extend({
   prefix: `${API_ENDPOINT}`,
   requestType: 'json',
-  timeout: 3000,
+  // timeout: 3000,
   timeoutMessage: 'Server không phản hồi trong khoảng thời gian dài',
   errorHandler,
 });

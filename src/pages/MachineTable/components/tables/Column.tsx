@@ -98,26 +98,33 @@ const filterStatus = (value: string | number | boolean, record: API.StmInfoRespo
   return record.status?.includes(value as string) as boolean;
 };
 
-function Column({}: ColumnProps) {
+function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
   const columns: ProColumns<API.StmInfoResponse>[] = [
     {
       title: <HeadCell>STT</HeadCell>,
       dataIndex: 'id',
-      render: (_, __, index) => {
+      render: (_, data, index) => {
         const stt = index + 1;
+
         return <TextCell>{stt}</TextCell>;
       },
+      width: '80px',
     },
     {
       title: <HeadCell>Tên máy</HeadCell>,
       dataIndex: 'name',
-      render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+      render: (dom, data) => {
+        const handleClick = () => {
+          setShowDetail(true);
+          setCurrentRow(data);
+        };
+        return <TextCell onClick={handleClick}>{dom}</TextCell>;
       },
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else return 1;
       },
+      width: '216px',
     },
     {
       title: <HeadCell>Khu vực</HeadCell>,
@@ -127,6 +134,7 @@ function Column({}: ColumnProps) {
       },
       filters: filterLocationList,
       onFilter: filterLocation,
+      width: '140px',
     },
     {
       title: <HeadCell>Tỉnh/ Thành phố</HeadCell>,
@@ -136,6 +144,7 @@ function Column({}: ColumnProps) {
       },
       filters: filterProvinceList,
       onFilter: filterProvince,
+      width: '216px',
     },
     {
       title: <HeadCell>Loại máy</HeadCell>,
@@ -145,6 +154,7 @@ function Column({}: ColumnProps) {
       },
       filters: filterTypeMachineList,
       onFilter: filterTypeMachine,
+      width: '140px',
     },
     {
       title: <HeadCell>Tình trạng</HeadCell>,
@@ -152,6 +162,7 @@ function Column({}: ColumnProps) {
       render: (dom) => {
         return dom;
       },
+      width: '180px',
       filters: filterStatusList,
       onFilter: filterStatus,
       valueEnum: {
@@ -199,6 +210,7 @@ function Column({}: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '216px',
     },
     {
       title: <HeadCell>Terminal ID</HeadCell>,
@@ -206,6 +218,7 @@ function Column({}: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '200px',
     },
     {
       title: <HeadCell>Địa chỉ IP</HeadCell>,
@@ -213,6 +226,7 @@ function Column({}: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '200px',
     },
   ];
   return columns;

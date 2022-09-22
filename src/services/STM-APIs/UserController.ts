@@ -8,7 +8,7 @@ export async function getAllUsers(
   params: API.getAllUsersParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBasePageResponseObject>('/api/v1/users', {
+  return request<API.ResponseBasePageResponseUserResponse>('/api/v1/users', {
     method: 'GET',
     params: {
       ...params,

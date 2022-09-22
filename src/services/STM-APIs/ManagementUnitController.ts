@@ -3,9 +3,19 @@
 import { request } from '@/utils';
 
 /** Get list of management units - Get list of management units GET /api/v1/management-units */
-export async function getAllManagementUnits(options?: { [key: string]: any }) {
-  return request<API.ResponseBaseListManagementUnitResponse>('/api/v1/management-units', {
+export async function getAllManagementUnits(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getAllManagementUnitsParams,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseBasePageResponseManagementUnitResponse>('/api/v1/management-units', {
     method: 'GET',
+    params: {
+      // pageSize has a default value: 10
+      pageSize: '10',
+
+      ...params,
+    },
     ...(options || {}),
   });
 }
@@ -57,6 +67,20 @@ export async function updateManagementUnit(
     },
     params: { ...queryParams },
     data: body,
+    ...(options || {}),
+  });
+}
+
+/** Delete management unit - Delete management unit when there is no machine or management user included in this unit DELETE /api/v1/management-units/${param0} */
+export async function deleteManagementUnit(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.deleteManagementUnitParams,
+  options?: { [key: string]: any },
+) {
+  const { unitId: param0, ...queryParams } = params;
+  return request<API.ResponseBaseManagementUnitResponse>(`/api/v1/management-units/${param0}`, {
+    method: 'DELETE',
+    params: { ...queryParams },
     ...(options || {}),
   });
 }
