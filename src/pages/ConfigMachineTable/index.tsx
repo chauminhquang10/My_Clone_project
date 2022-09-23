@@ -9,9 +9,15 @@ import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
 // import { message } from 'antd';
-import { getListModels } from '@/services/STM-APIs/STMModelController';
+import { createModel, getListModels } from '@/services/STM-APIs/STMModelController';
 import ConfigModelDetailDrawer from './components/forms/ConfigModelDetailDrawer';
 import NewConfigModelForm from './components/forms/NewConfigModel';
+import { message } from 'antd';
+
+type CustomPhysicalDevice = API.PhysicalDevice & {
+  key: React.Key;
+  myMinCap: number;
+};
 
 const TableCustom = () => {
   // get current user info
@@ -19,6 +25,12 @@ const TableCustom = () => {
 
   // xử lí cho phép tạo mới
   const [enableCreateNew, setEnableCreateNew] = useState<boolean>(true);
+
+  // xử lí data cho cái bảng god damn editable row
+  const [dataSource, setDataSource] = useState<CustomPhysicalDevice[]>([]);
+
+  // xử lí những thiết bị đc chọn để update
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
@@ -42,7 +54,7 @@ const TableCustom = () => {
     page: '',
   };
 
-  const { run: runGetAllConfigModels } = useRequest<API.ResponseBaseListStmModelResponse>(
+  const { run: runGetAllConfigModels } = useRequest<API.ResponseBasePageResponseStmModelResponse>(
     (params: API.getListModelsParams) => getListModels(params),
     {
       manual: true,
@@ -67,24 +79,34 @@ const TableCustom = () => {
     },
   );
 
-  // const handleAddNewUnit = async (record: API.CreateManagementUnitRequest) => {
-  //   const hide = message.loading('Loading...');
+  const handleAddNewModel = async (value: { machineType: string; name: string }) => {
+    const hide = message.loading('Loading...');
 
-  //   try {
-  //     const res = await createManagementUnit({ ...record });
-  //     hide();
-  //     if (res.code === 700) {
-  //       message.error(`${record.name} ${record.code} ${record.address} đã được sử dụng`);
-  //       return;
-  //     }
-  //     message.success('Thêm đơn vị mới thành công');
-  //     handleCreateModalVisible(false);
-  //     actionRef.current?.reload();
-  //   } catch (error) {
-  //     hide();
-  //     message.error('Adding failed, please try again!');
-  //   }
-  // };
+    try {
+      // format data before create
+      const newDataSource = [...dataSource];
+      const newSelectedDataSource = newDataSource?.filter((item) =>
+        selectedRowKeys?.includes(item?.id as number),
+      );
+
+      const formattedForSendingData = newSelectedDataSource?.map((item) => ({
+        deviceTypeId: item?.id,
+        minCapacity: item?.myMinCap,
+      }));
+
+      await createModel({
+        ...value,
+        storages: formattedForSendingData,
+      } as API.CreateStmModelRequest);
+      hide();
+      message.success('Thêm đơn vị mới thành công');
+      handleCreateModalVisible(false);
+      actionRef.current?.reload();
+    } catch (error) {
+      hide();
+      message.error('Adding failed, please try again!');
+    }
+  };
 
   return (
     <PageContainer
@@ -95,7 +117,7 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Đơn vị quản lý</TitleTable>}
+        headerTitle={<TitleTable>Cấu hình dòng máy</TitleTable>}
         actionRef={actionRef}
         rowKey="key"
         search={false}
@@ -111,8 +133,8 @@ const TableCustom = () => {
         request={async () => {
           const res = await runGetAllConfigModels({ machineType: 'STM' });
           return {
-            data: res?.models,
-            total: res?.models ? res.models.length : 0,
+            data: res?.items,
+            total: res?.items ? res.items.length : 0,
             success: true,
           };
         }}
@@ -140,13 +162,16 @@ const TableCustom = () => {
 
       {createModalVisible && (
         <NewConfigModelForm
-          title="Tạo đơn vị quản lý mới"
+          title="Tạo mới dòng máy"
           width="934px"
+          dataSource={dataSource}
+          setDataSource={setDataSource}
+          selectedRowKeys={selectedRowKeys}
+          setSelectedRowKeys={setSelectedRowKeys}
           visible={createModalVisible}
           onVisibleChange={handleCreateModalVisible}
-          onFinish={async (value) => {
-            console.log(value);
-            // await handleAddNewUnit(value as API.CreateManagementUnitRequest);
+          onFinish={async (value: { machineType: string; name: string }) => {
+            await handleAddNewModel(value);
           }}
         />
       )}

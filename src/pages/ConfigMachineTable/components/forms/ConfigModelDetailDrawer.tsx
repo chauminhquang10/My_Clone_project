@@ -17,6 +17,7 @@ import {
   Tooltip,
   Space,
   Badge,
+  message,
 } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import type { MutableRefObject } from 'react';
@@ -25,7 +26,13 @@ import styles from './ConfigModelDetailDrawer.less';
 // import userDetailIcon from '@/assets/images/svg/icon/top-right-arrow.svg';
 import { useRequest } from 'umi';
 import type { ActionType } from '@ant-design/pro-components';
-import { getModelDetail } from '@/services/STM-APIs/STMModelController';
+import { getModelDetail, updateModel } from '@/services/STM-APIs/STMModelController';
+import UpdateConfigModelForm from './UpdateConfigModel';
+
+type CustomPhysicalDevice = API.PhysicalDevice & {
+  key: React.Key;
+  myMinCap: number;
+};
 
 type ConfigModelDetailDrawerProps = {
   showDetail: boolean;
@@ -46,7 +53,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
   setShowDetail,
   currentModel,
   setCurrentModel,
-  // detailActionRef,
+  detailActionRef,
 }) => {
   const configModelColumns: ColumnsType<API.StorageItem> = [
     {
@@ -93,9 +100,13 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
 
-  console.log(updateModalVisible);
+  // xử lí data cho cái bảng god damn editable row
+  const [dataSource, setDataSource] = useState<CustomPhysicalDevice[]>([]);
 
-  const { data: roleGroupDetail } = useRequest<API.ResponseBaseStmModelDetailResponse>(
+  // xử lí những thiết bị đc chọn để update
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  const { data: modelDetail } = useRequest<API.ResponseBaseStmModelDetailResponse>(
     () => {
       return getModelDetail({ modelId: currentModel?.id?.toString() || '' });
     },
@@ -104,34 +115,41 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
     },
   );
 
-  // const handleUpdateRoleGroup = async (value: { roleGroupName: string }) => {
-  //   const hide = message.loading('Configuring...');
+  const handleUpdateConfigModel = async (value: { machineType: string; name: string }) => {
+    const hide = message.loading('Configuring...');
 
-  //   // lọc bỏ toàn bộ các key có kiểu string, vì nó là key của  thằng item cha
-  //   const finalAllKeysData = checkAllKeys.filter((dataKey) => typeof dataKey !== 'string');
+    try {
+      // format data before create
+      const newDataSource = [...dataSource];
+      const newSelectedDataSource = newDataSource?.filter((item) =>
+        selectedRowKeys?.includes(item?.id as number),
+      );
 
-  //   try {
-  //     await updateRoleGroup(
-  //       { groupId: roleGroupDetail?.id?.toString() || '' },
-  //       { name: value.roleGroupName, actionIds: finalAllKeysData as number[] },
-  //     );
-  //     hide();
-  //     message.success('Chỉnh sửa nhóm quyền thành công');
-  //     handleUpdateModalVisible(false);
-  //     setShowDetail(false);
-  //     detailActionRef.current?.reload();
-  //     return true;
-  //   } catch (error) {
-  //     hide();
-  //     message.error('Configuration failed, please try again!');
-  //     return false;
-  //   }
-  // };
+      const formattedForSendingData = newSelectedDataSource?.map((item) => ({
+        deviceTypeId: item?.id,
+        minCapacity: item?.myMinCap,
+      }));
+      await updateModel({ modelId: modelDetail?.id?.toString() || '' }, {
+        ...value,
+        storages: formattedForSendingData,
+      } as API.CreateStmModelRequest);
+      hide();
+      message.success('Chỉnh sửa nhóm quyền thành công');
+      handleUpdateModalVisible(false);
+      setShowDetail(false);
+      detailActionRef.current?.reload();
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Configuration failed, please try again!');
+      return false;
+    }
+  };
 
   // const handleRemoveRoleGroup = async () => {
   //   const hide = message.loading('Loading...');
   //   try {
-  //     await deleteRoleGroup({ groupId: roleGroupDetail?.id?.toString() || '' });
+  //     await deleteRoleGroup({ groupId: modelDetail?.id?.toString() || '' });
   //     setShowDetail(false);
   //     detailActionRef.current?.reloadAndRest?.();
   //     hide();
@@ -223,12 +241,12 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
               <Col span={24}>
                 <Table
                   columns={configModelColumns}
-                  dataSource={roleGroupDetail?.storages}
+                  dataSource={modelDetail?.storages}
                   bordered
                   title={() => (
                     <UserRoleGroupListTableTitle
                       title="Cấu hình"
-                      quantity={roleGroupDetail?.storages?.length}
+                      quantity={modelDetail?.storages?.length}
                     />
                   )}
                   className={styles.myTable}
@@ -240,21 +258,23 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
           </Space>
         </Form>
       </Drawer>
-      {/*
-        {updateModalVisible && (
-          <UpdateRoleListForm
-            title="Chỉnh sửa nhóm quyền"
-            width="934px"
-            roleGroupDetail={roleGroupDetail as API.RoleGroupResponse}
-            visible={updateModalVisible}
-            onVisibleChange={handleUpdateModalVisible}
-            checkAllKeys={checkAllKeys}
-            setCheckAllKeys={setCheckAllKeys}
-            onFinish={async (value) => {
-              await handleUpdateRoleGroup(value as { roleGroupName: string });
-            }}
-          />
-        )} */}
+
+      {updateModalVisible && (
+        <UpdateConfigModelForm
+          title="Chỉnh sửa nhóm quyền"
+          width="934px"
+          modelDetail={modelDetail as API.StmModelDetailResponse}
+          dataSource={dataSource}
+          setDataSource={setDataSource}
+          visible={updateModalVisible}
+          onVisibleChange={handleUpdateModalVisible}
+          selectedRowKeys={selectedRowKeys}
+          setSelectedRowKeys={setSelectedRowKeys}
+          onFinish={async (value) => {
+            await handleUpdateConfigModel(value as { machineType: string; name: string });
+          }}
+        />
+      )}
 
       {openConfirmModal && (
         <Modal
@@ -283,7 +303,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                 </Row>
                 <Row>
                   <span className={styles.lockModalDesc}>
-                    Bạn có chắc chắn muốn xóa nhóm quyền {roleGroupDetail?.name}?
+                    Bạn có chắc chắn muốn xóa nhóm quyền {modelDetail?.name}?
                   </span>
                 </Row>
               </Col>

@@ -20,10 +20,11 @@ type CustomPhysicalDevice = API.PhysicalDevice & {
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
-type NewConfigModelFormProps = {
+type UpdateConfigModelFormProps = {
   title: string;
   width: string;
   visible: boolean;
+  modelDetail: API.StmModelDetailResponse;
   dataSource: CustomPhysicalDevice[];
   setDataSource: (value: CustomPhysicalDevice[]) => void;
   selectedRowKeys: React.Key[];
@@ -125,10 +126,11 @@ interface UpdatedMachineListTableTitleProps {
   quantity: number;
 }
 
-const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
+const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
   title,
   width,
   visible,
+  modelDetail,
   dataSource,
   selectedRowKeys,
   setSelectedRowKeys,
@@ -155,8 +157,11 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
           data?.devices && data?.devices.map((item) => ({ ...item, key: item?.id, myMinCap: 0 }));
         setDataSource(formattedData as CustomPhysicalDevice[]);
         const getAllSelectedRowKeys = data?.devices && data?.devices.map((item) => item?.id);
-        setSelectedRowKeys(getAllSelectedRowKeys as React.Key[]);
         setInitialSelectedRowKeys(getAllSelectedRowKeys as React.Key[]);
+
+        // set nhung key trong chi tiet dong may thoi
+        const editSelectedRowKeys = modelDetail?.storages?.map((item) => item?.deviceType?.id);
+        setSelectedRowKeys(editSelectedRowKeys as React.Key[]);
       },
     },
   );
@@ -309,6 +314,10 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
         className: styles.myModalForm,
       }}
       submitTimeout={2000}
+      onInit={() => {
+        newForm.setFieldValue('machineType', modelDetail?.machineType);
+        newForm.setFieldValue('name', modelDetail?.name);
+      }}
     >
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
         <Col>
@@ -377,4 +386,4 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
   );
 };
 
-export default NewConfigModelForm;
+export default UpdateConfigModelForm;
