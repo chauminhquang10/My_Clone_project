@@ -8,9 +8,12 @@ export async function getListModels(
   params: API.getListModelsParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBaseListStmModelResponse>('/api/v1/models', {
+  return request<API.ResponseBasePageResponseStmModelResponse>('/api/v1/models', {
     method: 'GET',
     params: {
+      // pageSize has a default value: 10
+      pageSize: '10',
+
       ...params,
     },
     ...(options || {}),

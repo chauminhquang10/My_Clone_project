@@ -1,8 +1,7 @@
-import type { ProColumns } from '@ant-design/pro-components';
-import HeadCell from '@/components/TableProperties/HeadCell';
+import MachineStatusTag from '@/components/Common/MachineStatusTag';
 import { TextCell } from '@/components/TableProperties//TableCell';
-import StatusTag from '@/components/TableProperties/StatusTag';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import HeadCell from '@/components/TableProperties/HeadCell';
+import type { ProColumns } from '@ant-design/pro-components';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmInfoResponse) => void;
@@ -167,40 +166,16 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       onFilter: filterStatus,
       valueEnum: {
         IN_SERVICE: {
-          text: <StatusTag title={'IN SERVICE'} type="ACTIVE" />,
+          text: <MachineStatusTag type="IN_SERVICE" />,
         },
         OUT_OF_SERVICE: {
-          text: <StatusTag title={'OUT OF SERVICE'} type="INACTIVE" />,
+          text: <MachineStatusTag type="OUT_OF_SERVICE" />,
         },
         UNKNOWN: {
-          text: (
-            <StatusTag
-              title={'UNKNOWN'}
-              type="DISABLE"
-              icon={
-                <ExclamationCircleFilled
-                  style={{
-                    color: '#A8071A',
-                  }}
-                />
-              }
-            />
-          ),
+          text: <MachineStatusTag type="UNKNOWN" />,
         },
         OFFLINE: {
-          text: (
-            <StatusTag
-              title={'OFFLINE'}
-              type="DISABLE"
-              icon={
-                <ExclamationCircleFilled
-                  style={{
-                    color: '#A8071A',
-                  }}
-                />
-              }
-            />
-          ),
+          text: <MachineStatusTag type="OFFLINE" />,
         },
       },
     },
