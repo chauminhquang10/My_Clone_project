@@ -1,7 +1,8 @@
 import { ModalForm } from '@ant-design/pro-components';
 import type { ActionType } from '@ant-design/pro-components';
 import { Form } from 'antd';
-import React, { useCallback, useMemo } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useCallback, useMemo } from 'react';
 import styles from './declareMachineForm.less';
 import DeclareMachineStep from './DeclareMachineStep';
 import Api from '@/services/STM-APIs';
@@ -9,7 +10,7 @@ import { openNotification } from '@/utils';
 
 interface DeclareMachineFormProps extends API.StmDetailResponse {
   visible: boolean;
-  onVisibleChange?: (value: boolean) => void;
+  onVisibleChange: Dispatch<SetStateAction<boolean>>;
   onCancel: () => void;
   actionRef: React.MutableRefObject<ActionType | undefined>;
   handleClose: () => void;
@@ -98,6 +99,10 @@ export default function DeclareMachineForm({
     [machineDetail],
   );
 
+  const handleReset = useCallback(() => {
+    form.resetFields();
+  }, [form]);
+
   return (
     <ModalForm
       form={form}
@@ -107,6 +112,7 @@ export default function DeclareMachineForm({
       onFinish={handleFinish}
       modalProps={modalProps}
       submitTimeout={2000}
+      onReset={handleReset}
     >
       <DeclareMachineStep form={form} onCancel={onCancel} {...machineDetail} />
     </ModalForm>

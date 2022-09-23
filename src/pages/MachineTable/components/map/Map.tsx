@@ -1,5 +1,3 @@
-import { AimOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Input, Row } from 'antd';
 import type { Dispatch, SetStateAction } from 'react';
 import { useMemo, useRef } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
@@ -35,7 +33,7 @@ export default function Map({ coordinate, setPosition }: MapProps) {
       scrollWheelZoom={false}
       style={{ width: '100%', height: 348 }}
     >
-      <Card
+      {/* <Card
         bodyStyle={{ padding: 0 }}
         style={{
           position: 'absolute',
@@ -61,10 +59,12 @@ export default function Map({ coordinate, setPosition }: MapProps) {
             </Button>
           </Col>
           <Col span={16}>
-            <Button block>Xác nhận</Button>
+            <Button className={styles.primaryButton} block>
+              Xác nhận
+            </Button>
           </Col>
         </Row>
-      </Card>
+      </Card> */}
       <ChangeView coordinate={coordinate} zoom={13} />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

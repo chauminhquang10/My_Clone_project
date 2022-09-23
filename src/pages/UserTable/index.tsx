@@ -135,14 +135,14 @@ const UserManagementTable: React.FC = () => {
         ]}
         request={async () => {
           const filterParams = {
-            managementUnit: '',
-            staffId: '',
+            // managementUnit: '',
+            // staffId: '',
           };
 
           const pageRequestParams = {
             pageNumber: page - 1,
             pageSize: pageSizeRef.current,
-            sortBy: '',
+            // sortBy: '',
           };
           const res = await runGetAllUser({
             ...filterParams,

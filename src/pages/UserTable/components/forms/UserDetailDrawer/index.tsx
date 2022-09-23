@@ -1,7 +1,7 @@
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { ActionType } from '@ant-design/pro-components';
+import type { ActionType } from '@ant-design/pro-components';
 import { Button, Col, Drawer, Form, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
@@ -13,7 +13,6 @@ import {
   UserInfoRow,
   UserStatusRow,
 } from './components';
-import HistoryRow from './components/HistoryRow';
 import styles from './UserDetailDrawer.less';
 
 type UserRole = {
@@ -116,7 +115,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
               {/* Danh sach may quan ly */}
               <MachineListRow machines={userInfo.machines} />
               {/* Lich su */}
-              <HistoryRow />
+              {/* <HistoryRow /> */}
             </Row>
           </Form>
         )}

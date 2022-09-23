@@ -1,4 +1,5 @@
 import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
+import { EMAIL_REGEX, PHONE_REGEX } from '@/constants';
 import { getAllManagementUnits } from '@/services/STM-APIs/ManagementUnitController';
 import { getAllRoleGroup } from '@/services/STM-APIs/RoleController';
 import { DeleteOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
@@ -250,13 +251,33 @@ const NewUserForm: React.FC<CreateFormProps> = ({
         </Col>
         {/* Phone number */}
         <Col span={12}>
-          <Form.Item name="phoneNumber" label="Số điện thoại">
+          <Form.Item
+            name="phoneNumber"
+            label="Số điện thoại"
+            validateTrigger="onSubmit"
+            rules={[
+              {
+                pattern: PHONE_REGEX,
+                message: 'Số điện thoại không hợp lệ',
+              },
+            ]}
+          >
             <Input placeholder={'Nhập số điện thoại'} disabled={!!userInfo} />
           </Form.Item>
         </Col>
         {/* Email */}
         <Col span={12}>
-          <Form.Item name="email" label="Email">
+          <Form.Item
+            name="email"
+            label="Email"
+            validateTrigger="onSubmit"
+            rules={[
+              {
+                pattern: EMAIL_REGEX,
+                message: 'Email không hợp lệ',
+              },
+            ]}
+          >
             <Input placeholder={'Nhập email'} />
           </Form.Item>
         </Col>
