@@ -1,4 +1,5 @@
 import { ModalForm } from '@ant-design/pro-components';
+import type { ActionType } from '@ant-design/pro-components';
 import { Form } from 'antd';
 import type { Dispatch, SetStateAction } from 'react';
 import { useCallback, useMemo } from 'react';
@@ -11,12 +12,16 @@ interface DeclareMachineFormProps extends API.StmDetailResponse {
   visible: boolean;
   onVisibleChange: Dispatch<SetStateAction<boolean>>;
   onCancel: () => void;
+  actionRef: React.MutableRefObject<ActionType | undefined>;
+  handleClose: () => void;
 }
 
 export default function DeclareMachineForm({
   visible,
   onVisibleChange,
   onCancel,
+  actionRef,
+  handleClose,
   ...machineDetail
 }: DeclareMachineFormProps) {
   const [form] = Form.useForm();
@@ -83,11 +88,14 @@ export default function DeclareMachineForm({
         if (res.code === 0) {
           openNotification('success', 'Cập nhật thông tin thiết bị thành công');
         }
+        handleClose();
+        actionRef.current?.reloadAndRest?.();
       } catch (e) {
         openNotification('error', 'Cập nhật thông tin thiết bị thất bại');
       }
       return true;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [machineDetail],
   );
 

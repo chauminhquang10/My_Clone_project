@@ -272,7 +272,7 @@ export default function DeclareMachineStep({
             validateTrigger="onBlur"
             name="masterKey"
             label="Master (A)/(B) Key"
-            rules={[{ type: 'string', min: 0, max: 32 }]}
+            rules={[{ type: 'string', len: 32 }]}
           >
             <Input defaultValue={machineDetail.masterKey} placeholder={'Master (A)/(B) Key'} />
           </Form.Item>

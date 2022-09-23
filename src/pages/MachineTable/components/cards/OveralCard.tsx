@@ -1,7 +1,7 @@
 import { Card } from 'antd';
 import CardInputBody from './CardInputBody';
 import type { CardCol } from './CardInputBody';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+// import { ExclamationCircleFilled } from '@ant-design/icons';
 import StatusTag from '@/components/TableProperties/StatusTag';
 
 interface OveralCardProps extends API.StmDetailResponse {
@@ -15,16 +15,28 @@ const valueEnum = {
     text: 'UNKNOWN',
     type: 'DEFAULT',
     icon: undefined,
-    changableStatus: false,
+    changableStatus: undefined,
   },
-  IN_SERVICE: {
+  OFFLINE: {
     text: 'IN SERVICE',
     type: 'ACTIVE',
     icon: undefined,
     changableStatus: {
       loop: true,
-      statusItems: ['ACTIVE', 'INACTIVE'],
-      initialStatus: 'ACTIVE',
+      statusItems: [
+        {
+          title: 'IN SERVICE',
+          type: 'ACTIVE',
+        },
+        {
+          title: 'OUT OF SERVICE',
+          type: 'INACTIVE',
+        },
+      ],
+      initialStatus: {
+        title: 'IN SERVICE',
+        type: 'ACTIVE',
+      },
     },
   },
   OUT_OF_SERVICE: {
@@ -37,17 +49,18 @@ const valueEnum = {
       initialStatus: 'INACTIVE',
     },
   },
-  OFFLINE: {
-    text: 'OFFLINE',
-    type: 'OFFLINE',
-    icon: (
-      <ExclamationCircleFilled
-        style={{
-          color: '#A8071A',
-        }}
-      />
-    ),
-  },
+  // OFFLINE: {
+  //   text: 'OFFLINE',
+  //   type: 'OFFLINE',
+  //   icon: (
+  //     <ExclamationCircleFilled
+  //       style={{
+  //         color: '#A8071A',
+  //       }}
+  //     />
+  //   ),
+  //   changableStatus: undefined,
+  // },
 };
 export default function OveralCard({ className, machineType, createdAt, status }: OveralCardProps) {
   const cols: CardCol[] = [
@@ -68,6 +81,7 @@ export default function OveralCard({ className, machineType, createdAt, status }
           title={valueEnum[status].text}
           type={valueEnum[status].type as enumType}
           // icon={valueEnum[status]}
+          changableStatus={valueEnum[status].changableStatus}
         />
       ),
       props: { span: 8 },

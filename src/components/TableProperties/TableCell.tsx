@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Typography } from 'antd';
 import activeIcon from '@/assets/images/svg/icon/active-icon.svg';
 import connectBoardIcon from '@/assets/images/svg/icon/connect-boards.svg';
 import inactiveIcon from '@/assets/images/svg/icon/lock-icon.svg';
 import style from './style.less';
 import StatusTag from './StatusTag';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+const { Text } = Typography;
 
 //--------------- TextCell of Table ----------------
 
@@ -24,7 +26,13 @@ export function TextCell({ children, onClick, blue, position }: TextCellProps) {
         textAlign: position ? position : 'center',
       }}
     >
-      {children}
+      <Text
+        ellipsis={{
+          tooltip: children,
+        }}
+      >
+        {children}
+      </Text>
     </div>
   ) : (
     <div
@@ -33,7 +41,13 @@ export function TextCell({ children, onClick, blue, position }: TextCellProps) {
         textAlign: position ? position : 'center',
       }}
     >
-      {children}
+      <Text
+        ellipsis={{
+          tooltip: children,
+        }}
+      >
+        {children}
+      </Text>
     </div>
   );
 }
@@ -84,7 +98,14 @@ type MachineItemProps = {
 };
 
 function MachineItem({ machine }: MachineItemProps) {
-  return <span className={style['machine-item']}>{`(${machine.text})`}</span>;
+  return (
+    <Text
+      ellipsis={{
+        tooltip: machine.text,
+      }}
+      className={style['machine-item']}
+    >{`(${machine.text})`}</Text>
+  );
 }
 
 //--------------- RestItem of ManageCell ----------------
@@ -96,9 +117,9 @@ type RestItemProps = {
 
 function RestItem({ children, onClick }: RestItemProps) {
   return (
-    <span className={style['rest-item']} onClick={onClick}>
+    <Text className={style['rest-item']} onClick={onClick}>
       {children}
-    </span>
+    </Text>
   );
 }
 
@@ -112,10 +133,17 @@ type DropdownItemProps = {
 function DropdownItem({ machine, onClick }: DropdownItemProps) {
   return (
     <div className={style['dropdown-item']} onClick={onClick}>
-      <span className={style.text}>{machine.text}</span>
+      <Text
+        ellipsis={{
+          tooltip: machine.text,
+        }}
+        className={style.text}
+      >
+        {machine.text}
+      </Text>
       <button className={style['detail-btn']}>
         <img className="detail-icon" src={connectBoardIcon} alt="" />
-        <span className={style['detail-text']}>Chi tiết</span>
+        <Text className={style['detail-text']}>Chi tiết</Text>
       </button>
     </div>
   );
@@ -128,13 +156,25 @@ type UserItemTagProps = {
 };
 
 export function UserItemTag({ children }: UserItemTagProps) {
-  console.log(children);
   return (
     <div className={style['user-item-tag']}>
       <div className={style['img-box']}>
-        <img className={style.avatar} src={children.avatar} alt="no-image" />
+        {children.avatar ? (
+          <img className={style.avatar} src={children.avatar} alt="" />
+        ) : (
+          <div className={style['no-image']}>
+            <Text className={style['image-name']}>{children.name?.toString()[0]}</Text>
+          </div>
+        )}
       </div>
-      <p className={style['user-name']}>{children.name}</p>
+      <Text
+        className={style['user-name']}
+        ellipsis={{
+          tooltip: children.name,
+        }}
+      >
+        {children.name}
+      </Text>
     </div>
   );
 }
@@ -154,10 +194,25 @@ export function UserDropdownItem({ user, onClick }: UserDropdownItemProps) {
         onClick();
       }}
     >
-      <div className={style['img-box']}>
-        <img src={user.avatar} className={style.avatar} alt="no-image" />
-      </div>
-      <p className={style['user-name']}>{user.name}</p>
+      {user.avatar ? (
+        <div className={style['img-box']}>
+          <img src={user.avatar} className={style.avatar} alt="" />
+        </div>
+      ) : (
+        <div className={style['img-box']}>
+          <div className={style['no-image']}>
+            <Text className={style['image-name']}>{user.name?.toString()[0]}</Text>
+          </div>
+        </div>
+      )}
+      <Text
+        ellipsis={{
+          tooltip: user.name,
+        }}
+        className={style['user-name']}
+      >
+        {user.name}
+      </Text>
     </div>
   );
 }
@@ -220,7 +275,9 @@ export function UserCellGroup({ listUser }: UserCellGroupProps) {
       }
     </div>
   ) : (
-    <></>
+    <div className={style['manage-cell']}>
+      <Text className={style['no-data']}>Không có nhân viên sở hữu nhóm quyền</Text>
+    </div>
   );
 }
 
@@ -305,7 +362,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     case 'UNKNOWN':
       return (
         <div className={`${style['machine-status']} ${style.unknown}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',
@@ -316,7 +373,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     case 'IN_SERVICE':
       return (
         <div className={`${style['machine-status']} ${style['in-service']}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',
@@ -327,7 +384,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     case 'OUT_OF_SERVICE':
       return (
         <div className={`${style['machine-status']} ${style['out-of-service']}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',
@@ -338,7 +395,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     case 'OFFLINE':
       return (
         <div className={`${style['machine-status-custom']} ${style.offline}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',
@@ -349,7 +406,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     default:
       return (
         <div className={`${style['machine-status']} ${style.unknown}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',

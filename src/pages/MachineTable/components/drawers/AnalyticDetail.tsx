@@ -23,10 +23,12 @@ import { openNotification } from '@/utils';
 import { useRequest } from 'umi';
 import { blue, green } from '@ant-design/colors';
 import api from '@/services/STM-APIs';
+import type { ActionType } from '@ant-design/pro-components';
 
 interface AnaylyticDetailProps {
   open: boolean;
   handleClose: () => void;
+  actionRef: React.MutableRefObject<ActionType | undefined>;
 }
 
 interface AnaylyticDetailProps {
@@ -91,34 +93,11 @@ const informationColumns: ColumnsType<API.TransactionResponse> = [
   },
 ];
 
-// const data: API.TransactionResponse[] = [
-//   {
-//     id: '1',
-//   },
-//   {
-//     id: '2',
-//   },
-//   {
-//     id: '3',
-//   },
-//   {
-//     id: '4',
-//   },
-//   {
-//     id: '5',
-//   },
-//   {
-//     id: '6',
-//   },
-//   {
-//     id: '7',
-//   },
-// ];
-
 export default function AnaylyticDetail({
   handleClose,
   open,
   currentEntity,
+  actionRef,
 }: AnaylyticDetailProps) {
   //-------------------- Get transaction details --------------------------------
   //-------------------- Detail Transaction --------------------------------
@@ -202,14 +181,14 @@ export default function AnaylyticDetail({
   return (
     <>
       <DeclareMachineForm
-        width="934px"
-        visible={updateModalVisible}
         onVisibleChange={handleUpdateModalVisible}
-        onFinish={async () => {
+        onCancel={() => {
           handleUpdateModalVisible(false);
-          return false;
         }}
+        visible={updateModalVisible}
         {...detailMachine}
+        handleClose={handleClose}
+        actionRef={actionRef}
       />
       <TransactionTable
         width="1400px"

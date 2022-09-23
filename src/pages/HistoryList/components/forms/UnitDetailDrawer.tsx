@@ -165,22 +165,20 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
 
-  // kiểm tra có thể xóa hay không
-  const [canRemoveUnit, setCanRemoveUnit] = useState<boolean>(true);
-
   const { data: unitDetail } = useRequest<API.ResponseBaseManagementUnitDetailResponse>(
     () => {
       return getManagementUnit({ unitId: currentUnit?.id?.toString() || '' });
     },
     {
-      onSuccess(data) {
-        if (data?.machines.length > 0 || data?.users.length > 0) {
-          setCanRemoveUnit(false);
-        }
-      },
       refreshDeps: [currentUnit],
     },
   );
+
+  //------------- Description List --------------------------------
+
+  const descriptionList: string[] = [
+    `Bạn có chắc chắn muốn xóa ${currentUnit?.code} - ${currentUnit?.name}?`,
+  ];
 
   const handleUpdateUnit = async (fields: API.UpdateManagementUnitRequest) => {
     const hide = message.loading('Configuring...');
@@ -235,11 +233,6 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
     },
   ];
 
-  //------------- Description List --------------------------------
-  const descriptionList: string[] = [
-    `Bạn có chắc chắn muốn xóa ${currentUnit?.code} - ${currentUnit?.name}?`,
-  ];
-
   return (
     <>
       <Drawer
@@ -276,19 +269,8 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
                     </Button>
                   </Col>
                   <Col>
-                    <Tooltip
-                      placement="left"
-                      title={
-                        canRemoveUnit
-                          ? 'Xóa'
-                          : 'Chưa thể xoá. Người dùng hoặc máy chưa có đơn vị quản lý'
-                      }
-                    >
-                      <Button
-                        className={styles.btnItem}
-                        onClick={() => setOpenConfirmModal(true)}
-                        disabled={canRemoveUnit ? false : true}
-                      >
+                    <Tooltip placement="left" title="Xóa">
+                      <Button className={styles.btnItem} onClick={() => setOpenConfirmModal(true)}>
                         <DeleteOutlined />
                       </Button>
                     </Tooltip>
@@ -317,7 +299,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
               <Col span={24}>
                 <Table
-                  columns={unitListColumns as ColumnsType<API.UserResponse>}
+                  columns={unitListColumns}
                   dataSource={unitDetail?.users}
                   bordered
                   title={() => 'Danh sách người dùng'}
@@ -329,7 +311,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
               <Col span={24}>
                 <Table
-                  columns={machineListColumns as ColumnsType<API.StmInfoResponse>}
+                  columns={machineListColumns}
                   dataSource={unitDetail?.machines}
                   bordered
                   title={() => 'Danh sách máy quản lý'}

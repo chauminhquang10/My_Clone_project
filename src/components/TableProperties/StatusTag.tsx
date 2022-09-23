@@ -3,12 +3,17 @@ import { Button, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styles from './StatusTag.less';
 
-const STATUS_STYLES = {
+export const STATUS_STYLES = {
   DEFAULT: 'defaultStatus',
   ACTIVE: 'activeStatus',
   INACTIVE: 'inActiveStatus',
   DISABLE: 'disableStatus',
   OFFLINE: 'offline',
+};
+
+type ItemType = {
+  title: string;
+  type: keyof typeof STATUS_STYLES;
 };
 
 type StatusTagProps = {
@@ -18,8 +23,8 @@ type StatusTagProps = {
   width?: string;
   changableStatus?: {
     loop?: boolean;
-    statusItems: string[];
-    initialStatus?: string;
+    statusItems: ItemType[];
+    initialStatus?: ItemType;
     swapIcon?: React.ReactNode;
   };
 };
@@ -37,19 +42,24 @@ const INITIAL_STATUS_INDEX = 0;
 const StatusTag: React.FC<StatusTagProps> = ({ title, icon, type, width, changableStatus }) => {
   const [currentStatus, setCurrentStatus] = useState<number>(INITIAL_STATUS_INDEX);
 
-  let checkStatusStyle = STATUS_STYLES.DEFAULT;
-  if (type && STATUS_STYLES.hasOwnProperty(type.toUpperCase())) {
-    checkStatusStyle = STATUS_STYLES[type.toUpperCase()];
-  }
+  const [checkStatusStyle, setCheckStatusStyle] = useState(STATUS_STYLES.DEFAULT);
 
   useEffect(() => {
     if (changableStatus?.initialStatus) {
-      const currentStatusIndex = changableStatus?.statusItems.indexOf(
-        changableStatus.initialStatus,
+      // const currentStatusIndex = changableStatus?.statusItems.indexOf(
+      //   changableStatus.initialStatus,
+      // );
+      const currentStatusIndex = changableStatus.statusItems.findIndex(
+        (item) => item.type === changableStatus.initialStatus?.type,
       );
+
       setCurrentStatus(currentStatusIndex);
+      console.log(currentStatusIndex);
+      setCheckStatusStyle(changableStatus?.initialStatus?.type);
+    } else if (type && STATUS_STYLES.hasOwnProperty(type.toUpperCase())) {
+      setCheckStatusStyle(STATUS_STYLES[type.toUpperCase()]);
     }
-  }, [changableStatus]);
+  }, [changableStatus, type]);
 
   const SwitchStatusIcon: React.FC<SwitchIconStatusProps> = ({
     switchIcon,
@@ -87,7 +97,10 @@ const StatusTag: React.FC<StatusTagProps> = ({ title, icon, type, width, changab
     return (
       <>
         {canSwitch && (
-          <Tooltip placement="bottom" title={changableStatus?.statusItems[tooltipIndexStatus]}>
+          <Tooltip
+            placement="bottom"
+            title={changableStatus?.statusItems[tooltipIndexStatus].title}
+          >
             <div
               onClick={() => {
                 handleIconClick();
@@ -104,12 +117,14 @@ const StatusTag: React.FC<StatusTagProps> = ({ title, icon, type, width, changab
 
   return (
     <Button
-      className={`${styles.myCustomStatusTag} ${styles[checkStatusStyle]}`}
+      className={`${styles.myCustomStatusTag} ${styles[STATUS_STYLES[checkStatusStyle]]}`}
       style={{ width: width ? width : '100%' }}
     >
       {changableStatus ? (
         <div className={styles.statusContent}>
-          <span className={styles.statusTitle}>{changableStatus.statusItems[currentStatus]}</span>
+          <span className={styles.statusTitle}>
+            {changableStatus.statusItems[currentStatus].title}
+          </span>
           <SwitchStatusIcon
             switchIcon={changableStatus.swapIcon}
             switchLoop={changableStatus?.loop || false}

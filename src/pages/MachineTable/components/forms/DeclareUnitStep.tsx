@@ -236,7 +236,7 @@ export default function DeclareUnitStep<T>({
               <Input disabled placeholder={form.getFieldValue('unitAddress')} />
             </Form.Item>
           </Col>
-          <Col span={24} style={{ marginBottom: 24 }}>
+          <Col span={24} style={{ marginTop: 24, marginBottom: 24 }}>
             <Form.Item
               name="userIds"
               label="Mã - Tên nhân viên quản lý"
