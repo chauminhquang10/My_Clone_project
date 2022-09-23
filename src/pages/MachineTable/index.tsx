@@ -2,7 +2,7 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 // import { message } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
@@ -17,26 +17,22 @@ import { openNotification } from '@/utils';
 
 const TableCustom = () => {
   //----------- get all machine ---------------------
-  const [listMachine, setListMachine] = useState<API.StmInfoResponse[]>();
   const { run: runGetAllMachine } = useRequest(
     (params: API.getListMachinesParams) => api.STMController.getListMachines(params),
     {
       manual: true,
+      cacheKey: 'listMachine',
       onSuccess: (res) => {
         if (!res) {
           openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
         }
-        setListMachine(res?.items);
+        return res;
       },
       onError: (error) => {
         console.log(error);
       },
     },
   );
-
-  useEffect(() => {
-    runGetAllMachine({});
-  }, []);
 
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
@@ -74,13 +70,13 @@ const TableCustom = () => {
         search={false}
         toolBarRender={() => [
           <AddNew
+            enableCreateNew={true}
             key="primary"
             onClick={() => {
               handleModalVisible(true);
             }}
           />,
         ]}
-        dataSource={listMachine}
         columns={columns}
         options={false}
         scroll={{ x: 'max-content' }}
@@ -97,12 +93,20 @@ const TableCustom = () => {
           hideOnSinglePage: true,
           showQuickJumper: true,
         }}
+        request={async () => {
+          const params: API.getListMachinesParams = {};
+          const res = await runGetAllMachine(params);
+          return {
+            data: res?.items || [],
+          };
+        }}
       />
 
       <MachineDrawer
         open={showDetail}
         handleClose={() => setShowDetail(false)}
         currentEntity={currentRow}
+        actionRef={actionRef}
       />
       <AddNewMachine handleModalVisible={handleModalVisible} visible={createModalVisible} />
     </PageContainer>

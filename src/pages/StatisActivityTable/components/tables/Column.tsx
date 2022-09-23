@@ -24,6 +24,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
         if (a.machine?.name && b.machine?.name) return a.machine.name.localeCompare(b.machine.name);
         else return 1;
       },
+      width: '200px',
     },
     {
       title: <HeadCell>Terminal ID</HeadCell>,

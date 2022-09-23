@@ -13,14 +13,21 @@ import DeclareMachineForm from './components/forms/DeclareMachineForm';
 import DeclareUnitForm from './components/forms/DeclareUnitForm';
 import styles from './machineDrawer.less';
 import api from '@/services/STM-APIs';
+import type { ActionType } from '@ant-design/pro-components';
 
 interface MachineDrawerProps {
   open: boolean;
   handleClose: () => void;
   currentEntity: API.StmInfoResponse | undefined;
+  actionRef: React.MutableRefObject<ActionType | undefined>;
 }
 
-export default function MachineDrawer({ handleClose, open, currentEntity }: MachineDrawerProps) {
+export default function MachineDrawer({
+  handleClose,
+  open,
+  currentEntity,
+  actionRef,
+}: MachineDrawerProps) {
   const [showEditMachineForm, setShowEditMachineForm] = useState(false);
   const [showEditUnitForm, setShowUnitForm] = useState(false);
   const [detailMachine, setDetailMachine] = useState<API.StmDetailResponse | undefined>();
@@ -105,11 +112,15 @@ export default function MachineDrawer({ handleClose, open, currentEntity }: Mach
         onCancel={handleCloseEditMachineForm}
         visible={showEditMachineForm}
         {...detailMachine}
+        handleClose={handleClose}
+        actionRef={actionRef}
       />
       <DeclareUnitForm
+        actionRef={actionRef}
         onVisibleChange={setShowUnitForm}
         onCancel={handleCloseEditUnitForm}
         visible={showEditUnitForm}
+        handleClose={handleClose}
         {...detailMachine}
       />
     </>
