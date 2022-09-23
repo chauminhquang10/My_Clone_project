@@ -16,7 +16,7 @@ import ExportFile from '@/components/TableProperties/ExportFile';
 
 const TableCustom = () => {
   //------------ pagination --------------------
-  const pageSizeRef = useRef<number>(20);
+  const pageSizeRef = useRef<number>(10);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
 
@@ -50,7 +50,6 @@ const TableCustom = () => {
     setShowDetail,
   });
 
-  const pageSize = useRef<number>(20);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -76,7 +75,6 @@ const TableCustom = () => {
         toolBarRender={() => [
           <ExportFile
             key="primary"
-            enableCreateNew={true}
             onClick={() => {
               handleModalVisible(true);
             }}
@@ -104,12 +102,13 @@ const TableCustom = () => {
           onChange(current) {
             setPage(current);
           },
+
           total: totalSize,
           current: page,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
-          pageSize: pageSize.current,
+          pageSize: pageSizeRef.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
           hideOnSinglePage: true,
           showQuickJumper: true,

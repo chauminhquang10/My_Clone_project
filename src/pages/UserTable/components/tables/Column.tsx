@@ -60,12 +60,6 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
     {
       title: <HeadCell>Mã - Tên đơn vị</HeadCell>,
       dataIndex: 'managementUnit',
-      //   sorter: (a, b) => {
-      //     const codeNameA = `${a.managementUnit?.code} - ${a.managementUnit?.name}`;
-      //     const codeNameB = `${b.managementUnit?.code} - ${b.managementUnit?.name}`;
-      //     return codeNameA.localeCompare(codeNameB);
-      //   },
-      // filter
       render: (dom, entity) => {
         return (
           <TextCell position="left">{`${entity.managementUnit?.code} - ${entity.managementUnit?.name}`}</TextCell>

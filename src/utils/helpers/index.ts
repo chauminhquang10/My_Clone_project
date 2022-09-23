@@ -1,3 +1,4 @@
+import { EMAIL_REGEX } from './../../constants/index';
 import { v4 as uuid } from 'uuid';
 
 export function isMinimumCharacter(str: string, num: number): boolean {
@@ -61,7 +62,7 @@ export const objectKeys = <T extends Object>(obj: T): (keyof T)[] =>
   Object.keys(obj) as (keyof T)[];
 
 export function validateEmail(mail: string) {
-  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) return true;
+  if (EMAIL_REGEX.test(mail)) return true;
   return false;
 }
 const R = 6371e3;
@@ -82,3 +83,6 @@ export const distanceBetweenLocations = (
 
   return R * c;
 };
+
+export const checkFormFieldsEmpty = (fields: Record<string, string | undefined>) =>
+  objectKeys(fields).some((key) => !fields[key]);

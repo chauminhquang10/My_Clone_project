@@ -2,6 +2,7 @@ import type { ProColumns } from '@ant-design/pro-components';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties//TableCell';
 import { DatePicker, Space } from 'antd';
+import { formatDate } from '@/utils';
 
 const { RangePicker } = DatePicker;
 
@@ -81,7 +82,7 @@ function Column({}: ColumnProps) {
       title: <HeadCell>Thời gian tải lên</HeadCell>,
       dataIndex: 'createdAt',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return <TextCell>{formatDate(dom as string)}</TextCell>;
       },
       filterDropdown: (
         <Space>

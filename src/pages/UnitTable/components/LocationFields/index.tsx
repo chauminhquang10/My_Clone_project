@@ -41,11 +41,7 @@ export default function LocationFields<T>({
   return (
     <>
       <Col span={12}>
-        <Form.Item
-          name="location"
-          label="Khu vực"
-          rules={[{ required: true, message: 'Khu vực không được để trống' }]}
-        >
+        <Form.Item name="location" label="Khu vực">
           <Select
             placeholder={detailMachine.location ?? 'Chọn khu vực'}
             onChange={(selectValue: string) => handleSelectChange('location', selectValue)}
@@ -57,11 +53,7 @@ export default function LocationFields<T>({
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item
-          name="provinceId"
-          label="Tỉnh/Thành phố"
-          rules={[{ required: true, message: 'Tỉnh/Thành phố không được để trống' }]}
-        >
+        <Form.Item name="provinceId" label="Tỉnh/Thành phố">
           <Select
             placeholder={detailMachine.province?.name ?? 'Chọn Tỉnh/Thành phố'}
             onChange={(selectValue) => handleSelectChange('province', selectValue)}
@@ -78,11 +70,7 @@ export default function LocationFields<T>({
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item
-          name="districtId"
-          label="Quận/Huyện"
-          rules={[{ required: true, message: 'Quận/Huyện không được để trống' }]}
-        >
+        <Form.Item name="districtId" label="Quận/Huyện">
           <Select
             placeholder={detailMachine.district?.name ?? 'Chọn Quận/Huyện'}
             onChange={(selectValue) => handleSelectChange('district', selectValue)}
@@ -99,11 +87,7 @@ export default function LocationFields<T>({
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item
-          name="wardId"
-          label="Phường/Xã"
-          rules={[{ required: true, message: 'Phường/Xã không được để trống' }]}
-        >
+        <Form.Item name="wardId" label="Phường/Xã">
           <Select
             placeholder={detailMachine.ward?.name ?? 'Chọn Phường/Xã'}
             onChange={(selectValue) => handleSelectChange('ward', selectValue)}

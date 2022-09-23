@@ -20,15 +20,16 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
     form,
     current: step,
     gotoStep: setStep,
-    formProps,
+    // formProps,
     submit,
   } = useStepsForm({
     async submit(values) {
       console.log(values);
       try {
-        const postMachineRes = await Api.STMController.createMachine(
-          values as API.CreateStmRequest,
-        );
+        const postMachineRes = await Api.STMController.createMachine({
+          ...values,
+          denominations: [50000, 100000, 200000, 500000],
+        } as API.CreateStmRequest);
 
         if (postMachineRes.code === 1) {
           openNotification(
@@ -36,6 +37,8 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
             `khai báo máy ${values.machineType} - ${values.machineName} thất bại`,
             postMachineRes.message,
           );
+
+          return false;
         }
 
         if (postMachineRes.code === 0) {
@@ -44,9 +47,9 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
             'Khai báo máy thành công',
             `Khai báo thành công cho máy ${postMachineRes.data?.machineType} - ${postMachineRes.data?.name}`,
           );
-        }
 
-        return true;
+          return true;
+        }
       } catch (e) {
         openNotification('error', 'Khai báo máy thất bại');
       }
@@ -75,8 +78,13 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
       if (result) {
         handleCancle();
       }
+
+      if (!result) {
+        handleResetForm();
+        setStep(0);
+      }
     });
-  }, [handleCancle, submit]);
+  }, [handleCancle, submit, handleResetForm, setStep]);
 
   const handleMachineSubmit = useCallback(
     () => setStep((prevStep: number) => prevStep + 1),
@@ -117,7 +125,8 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
 
   return (
     <ModalForm
-      {...formProps}
+      // {...formProps}
+      form={form}
       width="934px"
       visible={visible}
       onVisibleChange={handleModalVisible}

@@ -1,8 +1,7 @@
-import type { ProColumns } from '@ant-design/pro-components';
-import HeadCell from '@/components/TableProperties/HeadCell';
+import MachineStatusTag from '@/components/Common/MachineStatusTag';
 import { TextCell } from '@/components/TableProperties//TableCell';
-import StatusTag from '@/components/TableProperties/StatusTag';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import HeadCell from '@/components/TableProperties/HeadCell';
+import type { ProColumns } from '@ant-design/pro-components';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmInfoResponse) => void;
@@ -33,19 +32,6 @@ const filterLocationList: filterType = [
 
 const filterLocation = (value: string | number | boolean, record: API.StmInfoResponse) => {
   return record.location?.includes(value as string) ? true : false;
-};
-
-//------------ Filter Province --------------------------------
-
-const filterProvinceList: filterType = [
-  {
-    text: '',
-    value: '',
-  },
-];
-
-const filterProvince = (value: string | number | boolean, record: API.StmInfoResponse) => {
-  return record.province?.name?.includes(value as string) ? true : false;
 };
 
 //------------ Filter Province --------------------------------
@@ -118,7 +104,11 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
           setShowDetail(true);
           setCurrentRow(data);
         };
-        return <TextCell onClick={handleClick}>{dom}</TextCell>;
+        return (
+          <TextCell width="216px" onClick={handleClick}>
+            {dom}
+          </TextCell>
+        );
       },
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
@@ -142,8 +132,6 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       render: (_, entity) => {
         return <TextCell>{entity.province?.name}</TextCell>;
       },
-      filters: filterProvinceList,
-      onFilter: filterProvince,
       width: '216px',
     },
     {
@@ -167,40 +155,16 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       onFilter: filterStatus,
       valueEnum: {
         IN_SERVICE: {
-          text: <StatusTag title={'IN SERVICE'} type="ACTIVE" />,
+          text: <MachineStatusTag type="IN_SERVICE" />,
         },
         OUT_OF_SERVICE: {
-          text: <StatusTag title={'OUT OF SERVICE'} type="INACTIVE" />,
+          text: <MachineStatusTag type="OUT_OF_SERVICE" />,
         },
         UNKNOWN: {
-          text: (
-            <StatusTag
-              title={'UNKNOWN'}
-              type="DISABLE"
-              icon={
-                <ExclamationCircleFilled
-                  style={{
-                    color: '#A8071A',
-                  }}
-                />
-              }
-            />
-          ),
+          text: <MachineStatusTag type="UNKNOWN" />,
         },
         OFFLINE: {
-          text: (
-            <StatusTag
-              title={'OFFLINE'}
-              type="DISABLE"
-              icon={
-                <ExclamationCircleFilled
-                  style={{
-                    color: '#A8071A',
-                  }}
-                />
-              }
-            />
-          ),
+          text: <MachineStatusTag type="OFFLINE" />,
         },
       },
     },

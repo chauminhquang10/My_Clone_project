@@ -62,12 +62,24 @@ export async function updateMachine(
   });
 }
 
-/** Phần quyền quản trị máy cho user  - Tham số: User được phân quyền, mảng ID các máy được phân quyền. Lưu ý: Ở đây các máy này sẽ được cộng dồn vào các máy mà USER đã quản lý trước đó, không phải thay thế các máy trước đó POST /api/v1/machines/access */
+/** Phần quyền quản trị máy cho user  - Tham số: User được phân quyền, mảng ID các máy được phân quyền. Danh sách mới thay thế cho danh sách cũ (Update) POST /api/v1/machines/access/assign-machines */
 export async function assignMachine(
   body: API.AssignMachineRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBaseAssignMachineResponse>('/api/v1/machines/access', {
+  return request<API.ResponseBaseAssignMachineResponse>('/api/v1/machines/access/assign-machines', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** Gán user vào máy  - Tham số: ID máy được phân quyền, mảng ID các user được phân quyền. Danh sách mới thay thế cho danh sách cũ (Update) POST /api/v1/machines/access/assign-users */
+export async function assignUsers(body: API.AssignUserRequest, options?: { [key: string]: any }) {
+  return request<API.ResponseBaseAssignUserResponse>('/api/v1/machines/access/assign-users', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

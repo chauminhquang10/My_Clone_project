@@ -55,7 +55,7 @@ const routes = [
             path: '/machine/config',
             name: 'Cấu hình dòng máy',
             icon: 'machine-config',
-            component: 'MachineTable',
+            component: 'ConfigMachineTable',
           },
           {
             path: '/machine/update-firmware',
@@ -63,12 +63,12 @@ const routes = [
             icon: 'machine-update',
             component: 'UpdateVersionTable',
           },
-          {
-            path: '/machine/system-warning',
-            name: 'Cảnh báo hệ thống',
-            icon: 'machine-warning',
-            component: 'SystemWarningTable',
-          },
+          // {
+          //   path: '/machine/system-warning',
+          //   name: 'Cảnh báo hệ thống',
+          //   icon: 'machine-warning',
+          //   component: 'SystemWarningTable',
+          // },
         ],
       },
       {
@@ -82,12 +82,12 @@ const routes = [
             icon: 'camera-log',
             component: 'HistoryList',
           },
-          {
-            path: '/camera/transaction-list',
-            name: 'Danh sách hoạt động',
-            icon: 'transaction-list',
-            component: 'HistoryList',
-          },
+          // {
+          //   path: '/camera/transaction-list',
+          //   name: 'Danh sách hoạt động',
+          //   icon: 'transaction-list',
+          //   component: 'HistoryList',
+          // },
         ],
       },
       {
@@ -118,33 +118,37 @@ const routes = [
           },
         ],
       },
-      {
-        icon: 'display-management',
-        name: 'Quản lí hiển thị',
-        path: '/display',
-        routes: [
-          {
-            path: '/display/screen-display',
-            name: 'Màn hình hiển thị',
-            icon: 'screen-display',
-            component: 'HistoryList',
-          },
-          {
-            path: '/display/storage',
-            name: 'Kho lưu trữ',
-            icon: 'display-storage',
-            component: 'HistoryList',
-          },
-        ],
-      },
+      // {
+      //   icon: 'display-management',
+      //   name: 'Quản lí hiển thị',
+      //   path: '/display',
+      //   routes: [
+      //     {
+      //       path: '/display/screen-display',
+      //       name: 'Màn hình hiển thị',
+      //       icon: 'screen-display',
+      //       component: 'HistoryList',
+      //     },
+      //     {
+      //       path: '/display/storage',
+      //       name: 'Kho lưu trữ',
+      //       icon: 'display-storage',
+      //       component: 'HistoryList',
+      //     },
+      //   ],
+      // },
       {
         path: '/history',
         name: 'Lịch sử',
         icon: 'machine-history',
-        component: 'HistoryList',
-        menu: {
-          flatMenu: true,
-        },
+        routes: [
+          {
+            path: '/history/list',
+            name: 'Lịch sử',
+            icon: 'machine-history',
+            component: 'HistoryList',
+          },
+        ],
       },
     ],
   },

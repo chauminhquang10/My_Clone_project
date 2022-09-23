@@ -1,25 +1,33 @@
 import type { ProColumns } from '@ant-design/pro-components';
 import HeadCell from '@/components/TableProperties/HeadCell';
-import { TextCell, UserCellGroup } from '@/components/TableProperties//TableCell';
+import { TextCell } from '@/components/TableProperties//TableCell';
 import { formatDate } from '@/utils';
 
 type ColumnProps = {
-  setCurrentRow: (s: API.RoleGroupResponse) => void;
+  setCurrentRow: (s: API.StmModelResponse) => void;
   setShowDetail: (s: boolean) => void;
 };
 
-function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
-  const columns: ProColumns<API.RoleGroupResponse>[] = [
+function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
+  const columns: ProColumns<API.StmModelResponse>[] = [
     {
-      title: <HeadCell>STT</HeadCell>,
-      dataIndex: 'id',
-      render: (dom) => {
-        const stt = dom as number;
-        return <TextCell>{stt}</TextCell>;
+      title: <HeadCell>Loại máy</HeadCell>,
+      dataIndex: 'machineType',
+      render: (dom, entity) => {
+        return (
+          <TextCell
+            onClick={() => {
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
+          >
+            {dom}
+          </TextCell>
+        );
       },
     },
     {
-      title: <HeadCell>Tên nhóm quyền</HeadCell>,
+      title: <HeadCell>Dòng máy</HeadCell>,
       dataIndex: 'name',
       render: (dom, entity) => {
         return (
@@ -33,19 +41,6 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
           </TextCell>
         );
       },
-      sorter: (a, b) => {
-        if (a.name && b.name) {
-          return a.name?.localeCompare(b.name);
-        } else return 1;
-      },
-    },
-    {
-      title: <HeadCell>Nhân viên sở hữu nhóm quyền</HeadCell>,
-      dataIndex: 'users',
-      render: (_, entity) => {
-        return <UserCellGroup listUser={entity.users} />;
-      },
-      width: '454.67px',
     },
     {
       title: <HeadCell>Người tạo</HeadCell>,

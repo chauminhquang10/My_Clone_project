@@ -44,6 +44,7 @@ export default function UnitCard({
       });
     }
   });
+
   const cols: CardCol[] = [
     {
       props: { span: 8 },
@@ -61,20 +62,26 @@ export default function UnitCard({
     {
       props: { span: 8 },
       formItemProps: { label: 'Mã - Tên nhân viên quản lý', name: 'Mã - Tên nhân viên quản lý' },
-      inputProps: { disabled: true, placeholder: managementUsers ? managementUsers[0].name : '' },
+      inputProps: {
+        disabled: true,
+        placeholder: managementUsers?.at(0) ? managementUsers[0].name : '',
+      },
     },
     {
       props: { span: 8 },
       formItemProps: { label: 'Số điện thoại', name: 'Số điện thoại' },
       inputProps: {
         disabled: true,
-        placeholder: managementUsers ? managementUsers[0].phoneNumber : '',
+        placeholder: managementUsers?.at[0] ? managementUsers[0].phoneNumber : '',
       },
     },
     {
       props: { span: 8 },
       formItemProps: { label: 'Email', name: 'Email' },
-      inputProps: { disabled: true, placeholder: managementUsers ? managementUsers[0].email : '' },
+      inputProps: {
+        disabled: true,
+        placeholder: managementUsers?.at(0) ? managementUsers[0].email : '',
+      },
     },
     ...listInfor,
   ];
