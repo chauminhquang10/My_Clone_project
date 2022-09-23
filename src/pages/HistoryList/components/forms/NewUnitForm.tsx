@@ -8,7 +8,7 @@ import { getDistricts, getProvinces, getWards } from '@/services/STM-APIs/Locati
 
 const { Option } = Select;
 
-export type CreateFormProps = {
+type CreateFormProps = {
   title: string;
   width: string;
   visible: boolean;
@@ -16,53 +16,53 @@ export type CreateFormProps = {
   onFinish: (values: Partial<API.CreateManagementUnitRequest>) => Promise<void>;
 };
 
-export type ProvinceItem = {
+type ProvinceItem = {
   id: number;
   name: string;
   location: string;
 };
 
-export type ListProvincesResponse = {
+type ListProvincesResponse = {
   provinces?: ProvinceItem[];
 };
 
-export type ResponseGetProvinceListByLocation = {
+type ResponseGetProvinceListByLocation = {
   code?: number | undefined;
   message?: string | undefined;
   data?: ListProvincesResponse | undefined;
 };
 
-export type DistrictItem = {
+type DistrictItem = {
   id: number;
   name: string;
 };
 
-export type ListDistrictsResponse = {
+type ListDistrictsResponse = {
   districts?: DistrictItem[];
 };
 
-export type ResponseGetDistrictListByProvince = {
+type ResponseGetDistrictListByProvince = {
   code?: number | undefined;
   message?: string | undefined;
   data?: ListDistrictsResponse | undefined;
 };
 
-export type WardItem = {
+type WardItem = {
   id: number;
   name: string;
 };
 
-export type ListWardsResponse = {
+type ListWardsResponse = {
   wards?: WardItem[];
 };
 
-export type ResponseGetWardListByDistrict = {
+type ResponseGetWardListByDistrict = {
   code?: number | undefined;
   message?: string | undefined;
   data?: ListWardsResponse | undefined;
 };
 
-export const INITIAL_ENABLE_STATE = {
+const INITIAL_ENABLE_STATE = {
   provinceDisabled: true,
   districtDisabled: true,
   wardDisabled: true,
@@ -198,11 +198,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
 
       <Row gutter={[24, 24]}>
         <Col span={12}>
-          <Form.Item
-            name="code"
-            label="Mã đơn vị"
-            //rules={[{ required: true, message: 'Please enter service name!' }]}
-          >
+          <Form.Item name="code" label="Mã đơn vị">
             <Input placeholder={'Nhập mã đơn vị'} />
           </Form.Item>
         </Col>

@@ -2,144 +2,121 @@ import { ModalForm } from '@ant-design/pro-components';
 import React, { useState } from 'react';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
-import styles from './NewUnitForm.less';
+import styles from './UpdateUnitForm.less';
 import { useRequest } from 'umi';
 import { getDistricts, getProvinces, getWards } from '@/services/STM-APIs/LocationController';
 
 const { Option } = Select;
 
-export type CreateFormProps = {
-  title: string;
-  width: string;
-  visible: boolean;
-  onVisibleChange: (value: boolean) => void;
-  onFinish: (values: Partial<API.CreateManagementUnitRequest>) => Promise<void>;
-};
-
-export type ProvinceItem = {
+type ProvinceItem = {
   id: number;
   name: string;
   location: string;
 };
 
-export type ListProvincesResponse = {
+type ListProvincesResponse = {
   provinces?: ProvinceItem[];
 };
 
-export type ResponseGetProvinceListByLocation = {
+type ResponseGetProvinceListByLocation = {
   code?: number | undefined;
   message?: string | undefined;
   data?: ListProvincesResponse | undefined;
 };
 
-export type DistrictItem = {
+type DistrictItem = {
   id: number;
   name: string;
 };
 
-export type ListDistrictsResponse = {
+type ListDistrictsResponse = {
   districts?: DistrictItem[];
 };
 
-export type ResponseGetDistrictListByProvince = {
+type ResponseGetDistrictListByProvince = {
   code?: number | undefined;
   message?: string | undefined;
   data?: ListDistrictsResponse | undefined;
 };
 
-export type WardItem = {
+type WardItem = {
   id: number;
   name: string;
 };
 
-export type ListWardsResponse = {
+type ListWardsResponse = {
   wards?: WardItem[];
 };
 
-export type ResponseGetWardListByDistrict = {
+type ResponseGetWardListByDistrict = {
   code?: number | undefined;
   message?: string | undefined;
   data?: ListWardsResponse | undefined;
 };
 
-export const INITIAL_ENABLE_STATE = {
-  provinceDisabled: true,
-  districtDisabled: true,
-  wardDisabled: true,
+const INITIAL_ENABLE_STATE = {
+  provinceDisabled: false,
+  districtDisabled: false,
+  wardDisabled: false,
 };
 
-const NewUnitForm: React.FC<CreateFormProps> = ({
+type UpdateUnitFormProps = {
+  title: string;
+  width: string;
+  visible: boolean;
+  unitDetail: API.ManagementUnitDetailResponse;
+  onVisibleChange: (value: boolean) => void;
+  onFinish: (values: Partial<API.UpdateManagementUnitRequest>) => Promise<void>;
+};
+
+const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
   title,
   width,
   visible,
+  unitDetail,
   onVisibleChange,
   onFinish,
 }) => {
-  const [handleEnableDropdownList, setHandleEnableDropdownList] =
-    useState<Record<string, boolean>>(INITIAL_ENABLE_STATE);
-
   const [form] = Form.useForm();
-
-  const {
-    data: provincesData,
-    loading: provincesLoading,
-    cancel: cancelProvinces,
-  } = useRequest<ResponseGetProvinceListByLocation>(
-    () => {
-      if (form.getFieldValue('location'))
-        return getProvinces({ location: form.getFieldValue('location') });
-      return new Promise(() => {
-        cancelProvinces();
-      });
-    },
-    {
-      ready: form.getFieldValue('location') ? true : false,
-      refreshDeps: [form.getFieldValue('location')],
-    },
-  );
-
-  const {
-    data: districtsData,
-    loading: districtsLoading,
-    cancel: cancelDistricts,
-  } = useRequest<ResponseGetDistrictListByProvince>(
-    () => {
-      if (form.getFieldValue('provinceId'))
-        return getDistricts({ provinceId: form.getFieldValue('provinceId') });
-      return new Promise(() => {
-        cancelDistricts();
-      });
-    },
-    {
-      ready: form.getFieldValue('provinceId') ? true : false,
-      refreshDeps: [form.getFieldValue('provinceId')],
-    },
-  );
-
-  const {
-    data: wardsData,
-    loading: wardsLoading,
-    cancel: cancelWards,
-  } = useRequest<ResponseGetWardListByDistrict>(
-    () => {
-      if (form.getFieldValue('districtId'))
-        return getWards({ districtId: form.getFieldValue('districtId') });
-      return new Promise(() => {
-        cancelWards();
-      });
-    },
-    {
-      ready: form.getFieldValue('districtId') ? true : false,
-      refreshDeps: [form.getFieldValue('districtId')],
-    },
-  );
 
   const onReset = () => {
     form.resetFields();
     onVisibleChange(false);
   };
 
-  const handleSelectChange = (determineSelect: string, selectValue: string) => {
+  const [handleEnableDropdownList, setHandleEnableDropdownList] =
+    useState<Record<string, boolean>>(INITIAL_ENABLE_STATE);
+
+  const { data: provincesData, loading: provincesLoading } =
+    useRequest<ResponseGetProvinceListByLocation>(
+      () => {
+        return getProvinces({ location: form.getFieldValue('location') });
+      },
+      {
+        refreshDeps: [form.getFieldValue('location')],
+      },
+    );
+
+  const { data: districtsData, loading: districtsLoading } =
+    useRequest<ResponseGetDistrictListByProvince>(
+      () => {
+        return getDistricts({ provinceId: form.getFieldValue('provinceId') });
+      },
+      {
+        refreshDeps: [form.getFieldValue('provinceId')],
+      },
+    );
+
+  const { data: wardsData, loading: wardsLoading } = useRequest<ResponseGetWardListByDistrict>(
+    () => {
+      return getWards({ districtId: form.getFieldValue('districtId') });
+    },
+    {
+      refreshDeps: [form.getFieldValue('districtId')],
+    },
+  );
+
+  const handleSelectChange = (determineSelect: string, selectValue: string | number) => {
     switch (determineSelect) {
       case 'location':
         form.resetFields(['provinceId', 'districtId', 'wardId']);
@@ -151,6 +128,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         });
         break;
       case 'province':
+        console.log('a1 a2', typeof selectValue);
         form.resetFields(['districtId', 'wardId']);
         form.setFieldValue('provinceId', selectValue);
         setHandleEnableDropdownList({
@@ -184,6 +162,15 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         className: styles.myModalForm,
       }}
       submitTimeout={2000}
+      onInit={() => {
+        form.setFieldValue('code', unitDetail?.code);
+        form.setFieldValue('name', unitDetail?.name);
+        form.setFieldValue('location', unitDetail?.location);
+        form.setFieldValue('provinceId', unitDetail?.province?.id);
+        form.setFieldValue('districtId', unitDetail?.district?.id);
+        form.setFieldValue('wardId', unitDetail?.ward?.id);
+        form.setFieldValue('address', unitDetail?.address);
+      }}
     >
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
         <Col>
@@ -198,11 +185,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
 
       <Row gutter={[24, 24]}>
         <Col span={12}>
-          <Form.Item
-            name="code"
-            label="Mã đơn vị"
-            //rules={[{ required: true, message: 'Please enter service name!' }]}
-          >
+          <Form.Item name="code" label="Mã đơn vị">
             <Input placeholder={'Nhập mã đơn vị'} />
           </Form.Item>
         </Col>
@@ -283,11 +266,11 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
           Huỷ bỏ
         </Button>
         <Button className={styles.submitButton} size="large" htmlType="submit">
-          Hoàn tất
+          Lưu
         </Button>
       </Row>
     </ModalForm>
   );
 };
 
-export default NewUnitForm;
+export default UpdateUnitForm;
