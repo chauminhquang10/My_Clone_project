@@ -53,7 +53,6 @@ export default function DeclareMachineStep({
   const { data: models } = useRequest(getModels(MachineType.STM));
   const { data: denominations } = useRequest(getDenominations, {
     cacheKey: 'denominations',
-    ready: denominationsDetail === undefined,
   });
   const [terminalIdValue, setTerminalIdValue] = useState<string>('');
   const [ipVal, setIpVal] = useState<string>(form.getFieldValue(''));
@@ -140,6 +139,7 @@ export default function DeclareMachineStep({
     }
   }, [denominations, form]);
 
+  console.log('test:', denominations);
   return (
     <>
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
@@ -348,13 +348,20 @@ export default function DeclareMachineStep({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="denominations" label="Loại mệnh giá tiền" rules={[{ type: 'array' }]}>
+          <Form.Item
+            name="denominations"
+            label="Loại mệnh giá tiền"
+            rules={[{ type: 'array' }]}
+            initialValue={[50000, 100000, 200000, 500000]}
+          >
             <Row gutter={12}>
-              {denominations?.map((denomination) => (
-                <Col span={24 / denominations.length} key={denomination.id}>
-                  <Input disabled value={`${denomination.value}`} />
-                </Col>
-              ))}
+              {denominations?.map((denomination) => {
+                return (
+                  <Col span={24 / denominations.length} key={denomination.id}>
+                    <Input disabled value={`${denomination.value}`} />
+                  </Col>
+                );
+              })}
             </Row>
           </Form.Item>
         </Col>

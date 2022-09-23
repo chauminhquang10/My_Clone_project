@@ -26,9 +26,10 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
     async submit(values) {
       console.log(values);
       try {
-        const postMachineRes = await Api.STMController.createMachine(
-          values as API.CreateStmRequest,
-        );
+        const postMachineRes = await Api.STMController.createMachine({
+          ...values,
+          denominations: [50000, 100000, 200000, 500000],
+        } as API.CreateStmRequest);
 
         if (postMachineRes.code === 1) {
           openNotification(

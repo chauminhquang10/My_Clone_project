@@ -1,4 +1,5 @@
 import MachineStatusTag from '@/components/Common/MachineStatusTag';
+import { formatDate } from '@/utils';
 import { Card } from 'antd';
 import type { CardCol } from './CardInputBody';
 import CardInputBody from './CardInputBody';
@@ -63,7 +64,7 @@ export default function OveralCard({
     },
     {
       formItemProps: { name: 'Thời gian hoạt động', label: 'Thời gian hoạt động' },
-      inputProps: { disabled: true, placeholder: createdAt },
+      inputProps: { disabled: true, placeholder: formatDate(createdAt) as string },
       props: { span: 8 },
     },
     {
