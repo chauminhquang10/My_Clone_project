@@ -51,7 +51,10 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       title: <HeadCell>Người tạo</HeadCell>,
       dataIndex: 'createdBy',
       render: (_, entity) => {
-        return <TextCell>{entity.createdBy?.staffId + ' - ' + entity.createdBy?.name}</TextCell>;
+        const value = entity.createdBy?.staffId
+          ? `${entity.createdBy?.staffId} - ${entity.createdBy?.name}`
+          : entity.createdBy?.name;
+        return <TextCell>{value}</TextCell>;
       },
     },
     {
