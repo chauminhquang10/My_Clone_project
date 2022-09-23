@@ -55,7 +55,7 @@ const routes = [
             path: '/machine/config',
             name: 'Cấu hình dòng máy',
             icon: 'machine-config',
-            component: 'MachineTable',
+            component: 'ConfigMachineTable',
           },
           {
             path: '/machine/update-firmware',
