@@ -26,7 +26,13 @@ export function TextCell({ children, onClick, blue, position }: TextCellProps) {
         textAlign: position ? position : 'center',
       }}
     >
-      {children}
+      <Text
+        ellipsis={{
+          tooltip: children,
+        }}
+      >
+        {children}
+      </Text>
     </div>
   ) : (
     <div
@@ -35,7 +41,13 @@ export function TextCell({ children, onClick, blue, position }: TextCellProps) {
         textAlign: position ? position : 'center',
       }}
     >
-      {children}
+      <Text
+        ellipsis={{
+          tooltip: children,
+        }}
+      >
+        {children}
+      </Text>
     </div>
   );
 }
@@ -86,7 +98,14 @@ type MachineItemProps = {
 };
 
 function MachineItem({ machine }: MachineItemProps) {
-  return <span className={style['machine-item']}>{`(${machine.text})`}</span>;
+  return (
+    <Text
+      ellipsis={{
+        tooltip: machine.text,
+      }}
+      className={style['machine-item']}
+    >{`(${machine.text})`}</Text>
+  );
 }
 
 //--------------- RestItem of ManageCell ----------------
@@ -98,9 +117,9 @@ type RestItemProps = {
 
 function RestItem({ children, onClick }: RestItemProps) {
   return (
-    <span className={style['rest-item']} onClick={onClick}>
+    <Text className={style['rest-item']} onClick={onClick}>
       {children}
-    </span>
+    </Text>
   );
 }
 
@@ -114,10 +133,17 @@ type DropdownItemProps = {
 function DropdownItem({ machine, onClick }: DropdownItemProps) {
   return (
     <div className={style['dropdown-item']} onClick={onClick}>
-      <span className={style.text}>{machine.text}</span>
+      <Text
+        ellipsis={{
+          tooltip: machine.text,
+        }}
+        className={style.text}
+      >
+        {machine.text}
+      </Text>
       <button className={style['detail-btn']}>
         <img className="detail-icon" src={connectBoardIcon} alt="" />
-        <span className={style['detail-text']}>Chi tiết</span>
+        <Text className={style['detail-text']}>Chi tiết</Text>
       </button>
     </div>
   );
@@ -130,7 +156,6 @@ type UserItemTagProps = {
 };
 
 export function UserItemTag({ children }: UserItemTagProps) {
-  console.log(children);
   return (
     <div className={style['user-item-tag']}>
       <div className={style['img-box']}>
@@ -138,7 +163,7 @@ export function UserItemTag({ children }: UserItemTagProps) {
           <img className={style.avatar} src={children.avatar} alt="" />
         ) : (
           <div className={style['no-image']}>
-            <p className={style['image-name']}>{children.name?.toString()[0]}</p>
+            <Text className={style['image-name']}>{children.name?.toString()[0]}</Text>
           </div>
         )}
       </div>
@@ -169,10 +194,25 @@ export function UserDropdownItem({ user, onClick }: UserDropdownItemProps) {
         onClick();
       }}
     >
-      <div className={style['img-box']}>
-        <img src={user.avatar} className={style.avatar} alt="" />
-      </div>
-      <Text className={style['user-name']}>{user.name}</Text>
+      {user.avatar ? (
+        <div className={style['img-box']}>
+          <img src={user.avatar} className={style.avatar} alt="" />
+        </div>
+      ) : (
+        <div className={style['img-box']}>
+          <div className={style['no-image']}>
+            <Text className={style['image-name']}>{user.name?.toString()[0]}</Text>
+          </div>
+        </div>
+      )}
+      <Text
+        ellipsis={{
+          tooltip: user.name,
+        }}
+        className={style['user-name']}
+      >
+        {user.name}
+      </Text>
     </div>
   );
 }
@@ -322,7 +362,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     case 'UNKNOWN':
       return (
         <div className={`${style['machine-status']} ${style.unknown}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',
@@ -333,7 +373,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     case 'IN_SERVICE':
       return (
         <div className={`${style['machine-status']} ${style['in-service']}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',
@@ -344,7 +384,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     case 'OUT_OF_SERVICE':
       return (
         <div className={`${style['machine-status']} ${style['out-of-service']}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',
@@ -355,7 +395,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     case 'OFFLINE':
       return (
         <div className={`${style['machine-status-custom']} ${style.offline}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',
@@ -366,7 +406,7 @@ export const MachineStatusTag = ({ status }: MachineStatusTagProps) => {
     default:
       return (
         <div className={`${style['machine-status']} ${style.unknown}`}>
-          <p>{MachineStatusTagEnum[status]}</p>
+          <Text>{MachineStatusTagEnum[status]}</Text>
           <ExclamationCircleFilled
             style={{
               color: '#A8071A',

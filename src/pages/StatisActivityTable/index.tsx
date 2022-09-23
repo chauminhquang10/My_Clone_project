@@ -119,6 +119,7 @@ const TableCustom = () => {
         handleClose={() => setShowDetail(false)}
         open={showDetail}
         currentEntity={currentRow}
+        actionRef={actionRef}
       />
     </PageContainer>
   );

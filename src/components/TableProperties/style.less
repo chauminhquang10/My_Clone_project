@@ -7,6 +7,7 @@
   text-align: center;
 }
 .text-cell {
+  max-width: 200px;
   padding: 0 8px;
   color: rgba(0, 0, 0, 0.85);
   font-weight: 400;
@@ -15,6 +16,7 @@
   line-height: 22px;
 }
 .text-cell-click {
+  max-width: 200px;
   padding: 0 8px;
   color: rgba(0, 0, 0, 0.85);
   font-weight: 400;
@@ -341,21 +343,23 @@
   align-items: center;
   justify-content: center;
   width: 24px;
+  min-width: 24px;
   height: 24px;
+  min-height: 24px;
   padding: 0;
   overflow: hidden;
   border-radius: 200px;
-  .no-image {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    background-color: pink;
-    .image-name {
-      margin: 0;
-      color: white;
-    }
+}
+.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: pink;
+  .image-name {
+    margin: 0;
+    color: white;
   }
 }
 .avatar {
