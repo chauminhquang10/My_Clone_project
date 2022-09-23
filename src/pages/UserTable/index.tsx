@@ -195,6 +195,7 @@ const UserManagementTable: React.FC = () => {
         setCurrentRow={setCurrentRow}
         showDetail={showDetail}
         setShowDetail={setShowDetail}
+        actionRef={actionRef}
       />
     </PageContainer>
   );

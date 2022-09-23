@@ -1,6 +1,7 @@
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ActionType } from '@ant-design/pro-components';
 import { Button, Col, Drawer, Form, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
@@ -27,6 +28,7 @@ type UserDrawerProps = {
   setCurrentRow: (value: API.UserResponse | undefined) => void;
   roles?: UserRole[];
   children?: React.ReactNode;
+  actionRef: React.MutableRefObject<ActionType | undefined>;
 };
 
 const UserDetailDrawer: React.FC<UserDrawerProps> = ({
@@ -34,6 +36,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
   setShowDetail,
   currentRow,
   setCurrentRow,
+  actionRef,
 }) => {
   const [userInfo, setUserInfo] = useState<API.UserDetailResponse>({});
 
@@ -86,7 +89,12 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
         {currentRow?.name && (
           <Form layout="vertical" hideRequiredMark>
             {/* Header */}
-            <Header setOpenConfirmModal={setOpenConfirmModal} userInfo={userInfo} />
+            <Header
+              setOpenConfirmModal={setOpenConfirmModal}
+              userInfo={userInfo}
+              actionRef={actionRef}
+              onCloseDrawer={() => setShowDetail(false)}
+            />
             {/* Trang thai nguoi dung */}
             <UserStatusRow avatar={userInfo.avatar} status={userInfo.status} />
             <Row gutter={[0, 24]}>

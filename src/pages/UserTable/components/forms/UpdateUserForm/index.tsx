@@ -1,5 +1,6 @@
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
+import type { ActionType } from '@ant-design/pro-components';
 import { message } from 'antd';
 import React from 'react';
 import NewUserForm from '../NewUserForm';
@@ -54,12 +55,16 @@ interface UpdateUserFormProps {
   userInfo: API.UserDetailResponse;
   isVisibleUpdateUser: boolean;
   setIsVisibleUpdateUser: (isVisible: boolean) => void;
+  actionRef: React.MutableRefObject<ActionType | undefined>;
+  onCloseDrawer: () => void;
 }
 
 const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
   userInfo,
   isVisibleUpdateUser,
   setIsVisibleUpdateUser,
+  actionRef,
+  onCloseDrawer,
 }) => {
   return (
     <NewUserForm
@@ -73,6 +78,12 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
           { ...values },
           avatar,
         );
+
+        if (!!success) {
+          actionRef.current?.reload();
+          onCloseDrawer();
+        }
+
         return !!success;
       }}
       userInfo={userInfo}
