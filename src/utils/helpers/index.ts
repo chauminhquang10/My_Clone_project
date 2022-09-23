@@ -82,3 +82,6 @@ export const distanceBetweenLocations = (
 
   return R * c;
 };
+
+export const checkFormFieldsEmpty = (fields: Record<string, string | undefined>) =>
+  objectKeys(fields).some((key) => !fields[key]);
