@@ -127,6 +127,7 @@ const UserManagementTable: React.FC = () => {
         toolBarRender={() => [
           <AddNew
             key="primary"
+            enableCreateNew={true}
             onClick={() => {
               handleModalVisible(true);
             }}

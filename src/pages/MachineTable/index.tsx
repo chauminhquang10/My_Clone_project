@@ -70,6 +70,7 @@ const TableCustom = () => {
         search={false}
         toolBarRender={() => [
           <AddNew
+            enableCreateNew={true}
             key="primary"
             onClick={() => {
               handleModalVisible(true);

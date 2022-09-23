@@ -76,6 +76,7 @@ const TableCustom = () => {
         toolBarRender={() => [
           <ExportFile
             key="primary"
+            enableCreateNew={true}
             onClick={() => {
               handleModalVisible(true);
             }}

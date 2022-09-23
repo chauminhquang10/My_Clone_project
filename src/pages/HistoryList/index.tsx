@@ -107,7 +107,7 @@ const HistoryListTable = () => {
     <PageContainer
       className={style['table-container']}
       header={{
-        title: 'haha',
+        title: '',
       }}
       footer={undefined}
     >

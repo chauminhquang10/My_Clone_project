@@ -43,7 +43,8 @@ type ButtonType = {
 type UnitDrawerProps = {
   showDetail: boolean;
   setShowDetail: (value: boolean) => void;
-  currentUnit: API.ManagementUnitResponse;
+  currentUnit: API.ManagementUnitResponse | undefined;
+  setCurrentUnit: (value: API.ManagementUnitResponse | undefined) => void;
   detailActionRef: MutableRefObject<ActionType | undefined>;
   children?: React.ReactNode;
 };
@@ -68,12 +69,14 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
   showDetail,
   setShowDetail,
   currentUnit,
+  setCurrentUnit,
   detailActionRef,
 }) => {
   const unitListColumns: ColumnsType<Required<API.UserResponse>> = [
     {
       title: 'Tên nhân viên',
       dataIndex: 'name',
+      ellipsis: true,
       key: 'name',
       width: '22%',
       sorter: (a, b) => a.name.length - b.name.length,
@@ -134,7 +137,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       title: 'Terminal ID',
       dataIndex: 'terminalId',
       key: 'terminalId',
-      width: '15%',
+      width: '30%',
       align: 'center',
       render: (text) => <span>{text}</span>,
     },
@@ -142,7 +145,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       title: 'Địa chỉ IP',
       dataIndex: 'ipAddress',
       key: 'ipAddress',
-      width: '15%',
+      width: '30%',
       align: 'center',
       render: (text) => <span>{text}</span>,
     },
@@ -156,47 +159,33 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
         <StatusTag title={status} icon={<UnlockOutlined />} type={status} />
       ),
     },
-    {
-      title: 'Địa chỉ máy',
-      dataIndex: 'location',
-      key: 'location',
-      width: '15%',
-      align: 'center',
-      render: (text) => <span>{text}</span>,
-    },
-    {
-      title: 'Người quản lý',
-      dataIndex: 'location',
-      key: 'location',
-      width: '15%',
-      align: 'center',
-      render: (text) => <span>{text}</span>,
-    },
   ];
 
   // xử  lí trạng thái của form chỉnh sửa
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
 
+  // kiểm tra có thể xóa hay không
+  const [canRemoveUnit, setCanRemoveUnit] = useState<boolean>(true);
+
   const { data: unitDetail } = useRequest<API.ResponseBaseManagementUnitDetailResponse>(
     () => {
       return getManagementUnit({ unitId: currentUnit?.id?.toString() || '' });
     },
     {
+      onSuccess(data) {
+        if (data?.machines.length > 0 || data?.users.length > 0) {
+          setCanRemoveUnit(false);
+        }
+      },
       refreshDeps: [currentUnit],
     },
   );
 
-  //------------- Description List --------------------------------
-
-  const descriptionList: string[] = [
-    `Bạn có chắc chắn muốn xóa ${currentUnit?.code} - ${currentUnit?.name}?`,
-  ];
-
   const handleUpdateUnit = async (fields: API.UpdateManagementUnitRequest) => {
     const hide = message.loading('Configuring...');
     try {
-      await updateManagementUnit({ unitId: currentUnit?.id?.toString() || '' }, { ...fields });
+      await updateManagementUnit({ unitId: unitDetail?.id?.toString() || '' }, { ...fields });
       hide();
       message.success('Chỉnh sửa đơn vị thành công');
       handleUpdateModalVisible(false);
@@ -213,7 +202,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
   const handleRemoveUnit = async () => {
     const hide = message.loading('Loading...');
     try {
-      await deleteManagementUnit({ unitId: currentUnit?.id?.toString() || '' });
+      await deleteManagementUnit({ unitId: unitDetail?.id?.toString() || '' });
       setShowDetail(false);
       detailActionRef.current?.reloadAndRest?.();
       hide();
@@ -246,6 +235,11 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
     },
   ];
 
+  //------------- Description List --------------------------------
+  const descriptionList: string[] = [
+    `Bạn có chắc chắn muốn xóa ${currentUnit?.code} - ${currentUnit?.name}?`,
+  ];
+
   return (
     <>
       <Drawer
@@ -253,6 +247,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
         open={showDetail}
         onClose={() => {
           setShowDetail(false);
+          setCurrentUnit(undefined);
         }}
         className={styles.myDrawer}
         closable={true}
@@ -281,8 +276,19 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
                     </Button>
                   </Col>
                   <Col>
-                    <Tooltip placement="left" title="Prompt Text">
-                      <Button className={styles.btnItem} onClick={() => setOpenConfirmModal(true)}>
+                    <Tooltip
+                      placement="left"
+                      title={
+                        canRemoveUnit
+                          ? 'Xóa'
+                          : 'Chưa thể xoá. Người dùng hoặc máy chưa có đơn vị quản lý'
+                      }
+                    >
+                      <Button
+                        className={styles.btnItem}
+                        onClick={() => setOpenConfirmModal(true)}
+                        disabled={canRemoveUnit ? false : true}
+                      >
                         <DeleteOutlined />
                       </Button>
                     </Tooltip>
@@ -311,7 +317,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
               <Col span={24}>
                 <Table
-                  columns={unitListColumns}
+                  columns={unitListColumns as ColumnsType<API.UserResponse>}
                   dataSource={unitDetail?.users}
                   bordered
                   title={() => 'Danh sách người dùng'}
@@ -323,7 +329,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
               <Col span={24}>
                 <Table
-                  columns={machineListColumns}
+                  columns={machineListColumns as ColumnsType<API.StmInfoResponse>}
                   dataSource={unitDetail?.machines}
                   bordered
                   title={() => 'Danh sách máy quản lý'}

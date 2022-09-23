@@ -21,12 +21,8 @@ const TableCustom = () => {
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  // xử lí xem chi tiết của đơn vị
-  const [currentUnit, setCurrentUnit] = useState<API.ManagementUnitResponse>();
-
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.ManagementUnitResponse>();
-  console.log(currentRow);
 
   const columns: ProColumns<API.ManagementUnitResponse>[] = Column({
     setCurrentRow,
@@ -74,8 +70,12 @@ const TableCustom = () => {
     const hide = message.loading('Loading...');
 
     try {
-      await createManagementUnit({ ...record });
+      const res = await createManagementUnit({ ...record });
       hide();
+      if (res.code === 700) {
+        message.error(`${record.name} ${record.code} ${record.address} đã được sử dụng`);
+        return;
+      }
       message.success('Thêm đơn vị mới thành công');
       handleCreateModalVisible(false);
       actionRef.current?.reload();
@@ -101,6 +101,7 @@ const TableCustom = () => {
         toolBarRender={() => [
           <AddNew
             key="primary"
+            enableCreateNew={true}
             onClick={() => {
               handleCreateModalVisible(true);
             }}
@@ -138,26 +139,29 @@ const TableCustom = () => {
         }}
         onRow={(rowData) => ({
           onClick: () => {
-            setCurrentUnit(rowData);
+            setCurrentRow(rowData);
           },
         })}
       />
 
-      <NewUnitForm
-        title="Tạo đơn vị quản lý mới"
-        width="934px"
-        visible={createModalVisible}
-        onVisibleChange={handleCreateModalVisible}
-        onFinish={async (value) => {
-          await handleAddNewUnit(value as API.CreateManagementUnitRequest);
-        }}
-      />
+      {createModalVisible && (
+        <NewUnitForm
+          title="Tạo đơn vị quản lý mới"
+          width="934px"
+          visible={createModalVisible}
+          onVisibleChange={handleCreateModalVisible}
+          onFinish={async (value) => {
+            await handleAddNewUnit(value as API.CreateManagementUnitRequest);
+          }}
+        />
+      )}
 
       {showDetail && (
         <UnitDetailDrawer
           showDetail={showDetail}
           setShowDetail={setShowDetail}
-          currentUnit={currentUnit || {}}
+          currentUnit={currentRow || {}}
+          setCurrentUnit={setCurrentRow}
           detailActionRef={actionRef}
         />
       )}
