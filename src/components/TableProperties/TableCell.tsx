@@ -3,8 +3,8 @@ import activeIcon from '@/assets/images/svg/icon/active-icon.svg';
 import connectBoardIcon from '@/assets/images/svg/icon/connect-boards.svg';
 import inactiveIcon from '@/assets/images/svg/icon/lock-icon.svg';
 import style from './style.less';
-import StatusTag from './StatusTag';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import StatusTag from '../Common/StatusTag';
 
 //--------------- TextCell of Table ----------------
 
@@ -39,9 +39,9 @@ export function TextCell({ children, onClick, blue, position }: TextCellProps) {
 }
 
 export enum UserCellStatus {
-  ACTIVE,
-  INACTIVE,
-  UNKNOWN,
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  UNKNOWN = 'UNKNOWN',
 }
 
 type UserStatusCellProps = {
@@ -53,27 +53,21 @@ export function UserStatusCell({ status }: UserStatusCellProps) {
     case UserCellStatus.ACTIVE:
       return (
         <StatusTag
-          title="ĐANG HOẠT ĐỘNG"
+          title={UserCellStatus.ACTIVE}
           icon={<img src={activeIcon} alt="icon-active" />}
-          type="ACTIVE"
+          type="success"
         />
       );
     case UserCellStatus.INACTIVE:
       return (
         <StatusTag
-          title="TẠM KHÓA"
+          title={UserCellStatus.INACTIVE}
           icon={<img src={inactiveIcon} alt="icon-inactive" />}
-          type="INACTIVE"
+          type="error"
         />
       );
     default:
-      return (
-        <StatusTag
-          title="KHÔNG XÁC ĐỊNH"
-          // icon UNKNOWN
-          type="DEFAULT"
-        />
-      );
+      return <StatusTag title={UserCellStatus.UNKNOWN} type="default" />;
   }
 }
 
