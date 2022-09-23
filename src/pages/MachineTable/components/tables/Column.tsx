@@ -37,19 +37,6 @@ const filterLocation = (value: string | number | boolean, record: API.StmInfoRes
 
 //------------ Filter Province --------------------------------
 
-const filterProvinceList: filterType = [
-  {
-    text: '',
-    value: '',
-  },
-];
-
-const filterProvince = (value: string | number | boolean, record: API.StmInfoResponse) => {
-  return record.province?.name?.includes(value as string) ? true : false;
-};
-
-//------------ Filter Province --------------------------------
-
 const filterTypeMachineList: filterType = [
   {
     text: 'ATM',
@@ -118,7 +105,11 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
           setShowDetail(true);
           setCurrentRow(data);
         };
-        return <TextCell onClick={handleClick}>{dom}</TextCell>;
+        return (
+          <TextCell width="216px" onClick={handleClick}>
+            {dom}
+          </TextCell>
+        );
       },
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
@@ -142,8 +133,6 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       render: (_, entity) => {
         return <TextCell>{entity.province?.name}</TextCell>;
       },
-      filters: filterProvinceList,
-      onFilter: filterProvince,
       width: '216px',
     },
     {

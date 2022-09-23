@@ -15,15 +15,17 @@ type TextCellProps = {
   onClick?: () => void;
   blue?: boolean;
   position?: 'left' | 'right' | 'center';
+  width?: string;
 };
 
-export function TextCell({ children, onClick, blue, position }: TextCellProps) {
+export function TextCell({ children, onClick, blue, position, width }: TextCellProps) {
   return onClick ? (
     <div
       className={`${style['text-cell-click']} ${blue && style.blue}`}
       onClick={onClick}
       style={{
         textAlign: position ? position : 'center',
+        width: width,
       }}
     >
       <Text
@@ -39,6 +41,7 @@ export function TextCell({ children, onClick, blue, position }: TextCellProps) {
       className={`${style['text-cell']} ${blue && style.blue}`}
       style={{
         textAlign: position ? position : 'center',
+        width: width,
       }}
     >
       <Text

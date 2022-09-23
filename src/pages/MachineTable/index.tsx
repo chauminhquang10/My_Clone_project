@@ -16,6 +16,10 @@ import api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 
 const TableCustom = () => {
+  //------------ pagination --------------------
+  const pageSizeRef = useRef<number>(20);
+  const [totalSize, setTotalSize] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
   //----------- get all machine ---------------------
   const { run: runGetAllMachine } = useRequest(
     (params: API.getListMachinesParams) => api.STMController.getListMachines(params),
@@ -44,9 +48,6 @@ const TableCustom = () => {
     setCurrentRow,
     setShowDetail,
   });
-
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const pageSize = useRef<number>(20);
 
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
@@ -82,20 +83,25 @@ const TableCustom = () => {
         scroll={{ x: 'max-content' }}
         pagination={{
           onChange(current) {
-            setCurrentPage(current);
+            setPage(current);
           },
-          current: currentPage,
+          total: totalSize,
+          current: page,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
-          pageSize: pageSize.current,
+          pageSize: pageSizeRef.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
           hideOnSinglePage: true,
           showQuickJumper: true,
         }}
         request={async () => {
-          const params: API.getListMachinesParams = {};
+          const params: API.getListMachinesParams = {
+            pageNumber: page - 1,
+            pageSize: pageSizeRef.current,
+          };
           const res = await runGetAllMachine(params);
+          setTotalSize(res?.totalSize as number);
           return {
             data: res?.items || [],
           };

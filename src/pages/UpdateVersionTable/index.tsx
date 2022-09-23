@@ -1,36 +1,38 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { message } from 'antd';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+import api from '@/services/STM-APIs';
 import { useRef, useState } from 'react';
-import { FormattedMessage } from 'umi';
+// import { FormattedMessage } from 'umi';
 import { useRequest } from 'umi';
-import NewUserForm from './components/forms/NewUserForm';
+// import NewUserForm from './components/forms/NewUserForm';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-import api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
+import { UploadOutlined } from '@ant-design/icons';
+import NewVersionForm from './components/forms/NewVersionForm';
+import { message } from 'antd';
 /**
  * @en-US Add node
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.VersionResponse) => {
-  const hide = message.loading('正在添加');
-  try {
-    // await addRule({ ...fields });
-    console.log(fields);
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
+// const handleAdd = async (fields: API.VersionResponse) => {
+//   const hide = message.loading('正在添加');
+//   try {
+//     // await addRule({ ...fields });
+//     console.log(fields);
+//     hide();
+//     message.success('Added successfully');
+//     return true;
+//   } catch (error) {
+//     hide();
+//     message.error('Adding failed, please try again!');
+//     return false;
+//   }
+// };
 
 const TableCustom = () => {
   //---------------  handle getAllUser -------------------------------
@@ -66,21 +68,40 @@ const TableCustom = () => {
 
   console.log(showDetail, currentRow);
 
+  //------------ handle create new  --------------------
+  const handleAddNewVersion = async (record: API.CreateVersionRequest, file: File) => {
+    const hide = message.loading('Loading...');
+
+    try {
+      const res = await api.STMVersionController.uploadNewVersion({ ...record }, file);
+      hide();
+      if (res.code === 700) {
+        message.error(`${record.name} ${record.modelId}  đã được sử dụng`);
+        return;
+      }
+      message.success('Thêm đơn vị mới thành công');
+      handleModalVisible(false);
+      actionRef.current?.reload();
+    } catch (error) {
+      hide();
+      message.error('Adding failed, please try again!');
+    }
+  };
   /**
    * @en-US International configuration
    * @zh-CN 国际化配置
    * */
 
-  // const [page, setPage] = useState<number>();
-  // const [pageSize, setPageSize] = useState<number>();
-  // const pageSizeRef = useRef<number>(20);
+  //------------ pagination --------------------
+  // const [totalSize, setTotalSize] = useState<number>(0);
+  // const [page, setPage] = useState<number>(1);
+  const pageSize = useRef<number>(20);
   const columns: ProColumns<API.VersionResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
   });
 
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const pageSize = useRef<number>(20);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -99,7 +120,7 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Danh sách máy</TitleTable>}
+        headerTitle={<TitleTable>Danh sách phiên bản hệ thống</TitleTable>}
         actionRef={actionRef}
         rowKey="key"
         search={false}
@@ -110,6 +131,8 @@ const TableCustom = () => {
             onClick={() => {
               handleModalVisible(true);
             }}
+            text="Upload"
+            icon={<UploadOutlined style={{ color: 'white' }} />}
           />,
         ]}
         request={async (params = {}) => {
@@ -131,11 +154,6 @@ const TableCustom = () => {
         }}
         columns={columns}
         options={false}
-        // rowSelection={{
-        //     onChange: (_, selectedRows) => {
-        //         setSelectedRows(selectedRows);
-        //     },
-        // }}
         pagination={{
           onChange(current) {
             setCurrentPage(current);
@@ -150,41 +168,15 @@ const TableCustom = () => {
           showQuickJumper: true,
         }}
       />
-
-      <NewUserForm
-        title="Tạo người dùng mới"
+      <NewVersionForm
+        title="Upload phiên bản mới"
         width="934px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.VersionResponse);
-          if (success) {
-            handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-            return true;
-          }
-          return false;
+        onFinish={async (value, avatar) => {
+          await handleAddNewVersion(value as API.CreateVersionRequest, avatar);
         }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </NewUserForm>
+      />
     </PageContainer>
   );
 };
