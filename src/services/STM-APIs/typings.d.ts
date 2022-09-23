@@ -22,6 +22,16 @@ declare namespace API {
     machines?: StmInfoResponse[];
   };
 
+  type AssignUserRequest = {
+    machineId: string;
+    userIds: string[];
+  };
+
+  type AssignUserResponse = {
+    machine?: StmInfoResponse;
+    users?: UserResponse[];
+  };
+
   type blockUserParams = {
     userId: string;
   };
@@ -116,7 +126,7 @@ declare namespace API {
     staffId: string;
     name: string;
     email: string;
-    phoneNumber?: string;
+    phoneNumber: string;
     managementUnitId: number;
     roleGroupId: number;
   };
@@ -172,7 +182,7 @@ declare namespace API {
   };
 
   type getAllUsersParams = {
-    managementUnitCode?: string;
+    managementUnitId?: number;
     status?: 'UNKNOWN' | 'ACTIVE' | 'INACTIVE';
     query?: string;
     pageNumber?: number;
@@ -214,7 +224,14 @@ declare namespace API {
   };
 
   type getListModelsParams = {
-    machineType: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+    machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+    from?: string;
+    to?: string;
+    query?: string;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
   };
 
   type GetListProvinceResponse = {
@@ -331,10 +348,6 @@ declare namespace API {
     roles?: Role[];
   };
 
-  type ListStmModelResponse = {
-    models?: StmModelResponse[];
-  };
-
   type LoginRequest = {
     username: string;
     password: string;
@@ -380,6 +393,40 @@ declare namespace API {
     createdAt?: string;
   };
 
+  type markAsReadParams = {
+    notificationId: number;
+  };
+
+  type markAsUnReadParams = {
+    notificationId: number;
+  };
+
+  type Notification = {
+    id?: number;
+    notificationType?:
+      | 'NOTI_CREATE_MACHINE'
+      | 'NOTI_UPDATE_MACHINE'
+      | 'NOTI_CHANGE_MACHINE_STATUS'
+      | 'NOTI_UPDATE_MACHINE_VERSION'
+      | 'NOTI_MACHINE_WARNING'
+      | 'NOTI_CONNECT_MACHINE'
+      | 'NOTI_CREATE_USER'
+      | 'NOTI_UPDATE_USER'
+      | 'NOTI_BLOCK_USER'
+      | 'NOTI_UNBLOCK_USER'
+      | 'NOTI_CREATE_MODEL'
+      | 'NOTI_UPDATE_MODEL'
+      | 'NOTI_CREATE_VERSION'
+      | 'NOTI_UPDATE_VERSION'
+      | 'NOTI_CREATE_MANAGEMENT_UNIT'
+      | 'NOTI_UPDATE_MANAGEMENT_UNIT';
+    time?: string;
+    content?: string;
+    level?: 'INFORMATION' | 'WARNING' | 'FAILURE' | 'FATAL';
+    reference?: string;
+    read?: boolean;
+  };
+
   type PageResponseManagementUnitResponse = {
     pageNumber?: number;
     size?: number;
@@ -387,11 +434,11 @@ declare namespace API {
     items?: ManagementUnitResponse[];
   };
 
-  type PageResponseObject = {
+  type PageResponseNotification = {
     pageNumber?: number;
     size?: number;
     totalSize?: number;
-    items?: Record<string, any>[];
+    items?: Notification[];
   };
 
   type PageResponseStmInfoResponse = {
@@ -399,6 +446,13 @@ declare namespace API {
     size?: number;
     totalSize?: number;
     items?: StmInfoResponse[];
+  };
+
+  type PageResponseStmModelResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: StmModelResponse[];
   };
 
   type PageResponseSystemOperationResponse = {
@@ -478,7 +532,7 @@ declare namespace API {
 
   type previewPrivateFileParams = {
     bucketName: string;
-    type: 'version';
+    type: 'screen';
     objectName: string;
   };
 
@@ -492,6 +546,10 @@ declare namespace API {
     id?: number;
     name?: string;
     location?: string;
+  };
+
+  type ReadNotificationResponse = {
+    success?: boolean;
   };
 
   type RefreshTokenRequest = {
@@ -525,6 +583,12 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: AssignMachineResponse;
+  };
+
+  type ResponseBaseAssignUserResponse = {
+    code?: number;
+    message?: string;
+    data?: AssignUserResponse;
   };
 
   type ResponseBaseChangePasswordResponse = {
@@ -581,12 +645,6 @@ declare namespace API {
     data?: ListRolesResponse;
   };
 
-  type ResponseBaseListStmModelResponse = {
-    code?: number;
-    message?: string;
-    data?: ListStmModelResponse;
-  };
-
   type ResponseBaseLogoutResponse = {
     code?: number;
     message?: string;
@@ -617,16 +675,22 @@ declare namespace API {
     data?: PageResponseManagementUnitResponse;
   };
 
-  type ResponseBasePageResponseObject = {
+  type ResponseBasePageResponseNotification = {
     code?: number;
     message?: string;
-    data?: PageResponseObject;
+    data?: PageResponseNotification;
   };
 
   type ResponseBasePageResponseStmInfoResponse = {
     code?: number;
     message?: string;
     data?: PageResponseStmInfoResponse;
+  };
+
+  type ResponseBasePageResponseStmModelResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseStmModelResponse;
   };
 
   type ResponseBasePageResponseSystemOperationResponse = {
@@ -663,6 +727,12 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: PhysicalDevicesResponse;
+  };
+
+  type ResponseBaseReadNotificationResponse = {
+    code?: number;
+    message?: string;
+    data?: ReadNotificationResponse;
   };
 
   type ResponseBaseRequestResetPasswordResponse = {
@@ -1044,7 +1114,7 @@ declare namespace API {
 
   type uploadPrivateFileParams = {
     bucketName: string;
-    type: 'version';
+    type: 'screen';
   };
 
   type uploadPublicFileParams = {

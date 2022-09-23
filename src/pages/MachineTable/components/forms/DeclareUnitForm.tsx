@@ -8,7 +8,7 @@ import { openNotification } from '@/utils';
 
 interface DeclareUnitFormProps extends API.StmDetailResponse {
   visible: boolean;
-  onVisibleChange?: (value: boolean) => void;
+  onVisibleChange: (value: boolean) => void;
   onCancel: () => void;
 }
 
@@ -94,6 +94,10 @@ export default function DeclareUnitForm({
     [machineDetail],
   );
 
+  const handleReset = useCallback(() => {
+    form.resetFields();
+  }, [form]);
+
   return (
     <ModalForm
       form={form}
@@ -103,6 +107,7 @@ export default function DeclareUnitForm({
       onFinish={handleFinish}
       modalProps={modalProps}
       submitTimeout={2000}
+      onReset={handleReset}
     >
       <DeclareUnitStep form={form} onCancel={onCancel} {...machineDetail} />
     </ModalForm>

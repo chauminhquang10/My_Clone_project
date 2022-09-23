@@ -145,6 +145,9 @@ const responseInterceptor: ResponseInterceptor = async (response, options) => {
   }
 
   const body = await response.clone().json();
+  // if (body.code !== undefined && body.code !== 0) {
+  //   openNotification('error', ERROR_CODE[body.code]);
+  // }
 
   if (response.status >= 400 || body.status >= 400) {
     const error: ResponseError = {

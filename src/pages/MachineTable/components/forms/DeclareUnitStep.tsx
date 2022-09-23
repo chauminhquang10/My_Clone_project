@@ -1,21 +1,10 @@
 import { CloseIcon } from '@/assets';
 import LocationFields from '@/pages/UnitTable/components/LocationFields';
 import Api from '@/services/STM-APIs';
+import { checkFormFieldsEmpty, objectKeys } from '@/utils';
 import { useDebounce, useRequest } from 'ahooks';
 import type { FormInstance } from 'antd';
-import {
-  AutoComplete,
-  Button,
-  Card,
-  Col,
-  Dropdown,
-  Form,
-  Input,
-  Row,
-  Select,
-  Table,
-  Typography,
-} from 'antd';
+import { AutoComplete, Button, Card, Col, Dropdown, Form, Input, Row, Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { useCallback, useEffect, useState } from 'react';
 import Map from '../map/Map';
@@ -178,6 +167,31 @@ export default function DeclareUnitStep<T>({
     [form, unitDetail],
   );
 
+  const handlePrevious = () => {
+    const values = form.getFieldsValue();
+    objectKeys(values as Record<string, string>).forEach((key) =>
+      form.setFieldValue(key, undefined),
+    );
+    if (onPrevious) onPrevious();
+  };
+
+  const OkButton = useCallback(() => {
+    const fields = form.getFieldsValue();
+    const disableOkButton = checkFormFieldsEmpty(fields as Record<string, string | undefined>);
+
+    return (
+      <Button
+        className={styles.submitButton}
+        htmlType="submit"
+        size="large"
+        onClick={onSubmit}
+        disabled={disableOkButton}
+      >
+        {submitButtonLabel}
+      </Button>
+    );
+  }, [form, submitButtonLabel, onSubmit]);
+
   useEffect(() => {
     if (machineDetail) {
       Api.ManagementUnitController.getManagementUnit({
@@ -205,13 +219,9 @@ export default function DeclareUnitStep<T>({
         className={styles.myCard}
         style={{ borderRadius: 12 }}
       >
-        <Row gutter={24} align="bottom">
+        <Row gutter={24} align="bottom" style={{ marginBottom: 24 }}>
           <Col span={12}>
-            <Form.Item
-              name="managementUnitId"
-              label="Mã - Tên đơn vị"
-              rules={[{ required: true, message: 'Mã - Tên đơn vị không được để trống' }]}
-            >
+            <Form.Item name="managementUnitId" label="Mã - Tên đơn vị">
               <Select onChange={handleChangeUnitId} placeholder="Mã - Tên đơn vị">
                 {unitList?.map((unit) => (
                   <Select.Option key={unit.id} value={unit.id}>
@@ -226,8 +236,12 @@ export default function DeclareUnitStep<T>({
               <Input disabled placeholder={form.getFieldValue('unitAddress')} />
             </Form.Item>
           </Col>
-          <Col span={24}>
-            <Form.Item name="userIds" label="Mã - Tên nhân viên quản lý">
+          <Col span={24} style={{ marginBottom: 24 }}>
+            <Form.Item
+              name="userIds"
+              label="Mã - Tên nhân viên quản lý"
+              rules={[{ type: 'array', min: 0, len: 1 }]}
+            >
               <Dropdown
                 trigger={['click']}
                 disabled={disabledUserIds}
@@ -288,7 +302,8 @@ export default function DeclareUnitStep<T>({
             <Form.Item
               name="address"
               label="Tên đường, Số nhà"
-              rules={[{ required: true, message: 'Tên đường, Số nhà không được để trống' }]}
+              rules={[{ type: 'string', min: 0, max: 100 }]}
+              validateTrigger="onBlur"
             >
               <AutoComplete
                 placeholder={machineDetail.address ?? 'Tên đường, Số nhà'}
@@ -305,22 +320,23 @@ export default function DeclareUnitStep<T>({
             <Map setPosition={setCoordinate} coordinate={coordinate} />
           </Col>
           <Col span={24}>
-            <Form.Item name="machineName" label="Tên máy">
+            <Form.Item
+              name="machineName"
+              label="Tên máy"
+              rules={[{ type: 'string', min: 0, max: 50, pattern: /[^A-Za-z0-9]/g }]}
+              help="Tên máy là duy nhất, không chứa ký tự đặc biệt, tối đa 50 ký tự"
+              validateStatus="validating"
+            >
               <Input placeholder={machineDetail.name ?? 'Tên máy'} />
             </Form.Item>
-            <Typography.Text disabled>
-              Tên máy là duy nhất, không chứa ký tự đặc biệt, tối đa 50 ký tự
-            </Typography.Text>
           </Col>
         </Row>
       </Card>
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
-        <Button className={styles.cancelButton} size="large" onClick={onPrevious ?? onCancel}>
+        <Button className={styles.cancelButton} size="large" onClick={handlePrevious ?? onCancel}>
           {cancelButtonLabel}
         </Button>
-        <Button className={styles.submitButton} htmlType="submit" size="large" onClick={onSubmit}>
-          {submitButtonLabel}
-        </Button>
+        <Form.Item shouldUpdate>{OkButton}</Form.Item>
       </Row>
     </>
   );
