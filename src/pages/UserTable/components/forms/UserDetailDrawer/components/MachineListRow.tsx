@@ -1,32 +1,8 @@
-import { ReactComponent as InServiceIcon } from '@/assets/icons/in-service-icon.svg';
-import { ReactComponent as OutOfServiceIcon } from '@/assets/icons/out-of-service-icon.svg';
-import StatusTag from '@/components/TableProperties/StatusTag';
+import MachineStatusTag from '@/components/Common/MachineStatusTag';
 import { TextCell } from '@/components/TableProperties/TableCell';
 import { Col, Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import React from 'react';
 import styles from '../UserDetailDrawer.less';
-
-enum STATUS_TAG {
-  IN_SERVICE = 'ACTIVE',
-  OUT_OF_SERVICE = 'INACTIVE',
-  UNKNOWN = 'DEFAULT',
-  OFFLINE = 'DISABLE',
-}
-
-enum STATUS_TITLE {
-  IN_SERVICE = 'IN SERVICE',
-  OUT_OF_SERVICE = 'OUT OF SERVICE',
-  UNKNOWN = 'UNKNOWN',
-  OFFLINE = 'OFFLINE',
-}
-
-const STATUS_ICON = {
-  IN_SERVICE: <InServiceIcon />,
-  OUT_OF_SERVICE: <OutOfServiceIcon />,
-  UNKNOWN: undefined,
-  OFFLINE: undefined,
-};
 
 const machineListColumns: ColumnsType<API.StmInfoResponse> = [
   {
@@ -59,13 +35,7 @@ const machineListColumns: ColumnsType<API.StmInfoResponse> = [
     dataIndex: 'status',
     width: '180px',
     align: 'center',
-    render: (_, { status }) => (
-      <StatusTag
-        title={status && STATUS_TITLE[status]}
-        icon={status && STATUS_ICON[status]}
-        type={status && STATUS_TAG[status]}
-      />
-    ),
+    render: (_, { status }) => status && <MachineStatusTag type={status} />,
   },
 ];
 
