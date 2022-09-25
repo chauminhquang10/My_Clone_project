@@ -1,8 +1,7 @@
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
-import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import type { ActionType } from '@ant-design/pro-components';
-import { Button, Col, Drawer, Form, Modal, Row } from 'antd';
+import { Drawer, Form, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import {
@@ -61,16 +60,12 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
       if (currentRow?.id) {
         const res = await runDetailUser({ userId: currentRow.id });
 
-        console.log('user detail res: ', res);
-
         setUserInfo(res || {});
       }
     };
 
     getDetailUser();
   }, [currentRow, currentRow?.id, runDetailUser]);
-
-  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
 
   return (
     <>
@@ -89,7 +84,6 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
           <Form layout="vertical" hideRequiredMark>
             {/* Header */}
             <Header
-              setOpenConfirmModal={setOpenConfirmModal}
               userInfo={userInfo}
               actionRef={actionRef}
               onCloseDrawer={() => setShowDetail(false)}
@@ -120,59 +114,6 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
           </Form>
         )}
       </Drawer>
-
-      <Modal
-        footer={null}
-        centered
-        closable={false}
-        visible={openConfirmModal}
-        className={styles.myConfirmModal}
-      >
-        <Col span={24}>
-          <Row>
-            <Col span={2}>
-              <ExclamationCircleOutlined style={{ color: '#FFC53D', fontSize: '22px' }} />
-            </Col>
-            <Col span={22}>
-              <Row align="middle" justify="space-between">
-                <h3 className={styles.lockModalTitle}>Tạm khoá người dùng</h3>
-                <CloseOutlined
-                  style={{
-                    fontSize: '16px',
-                    color: 'rgba(0, 0, 0, 0.45)',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => setOpenConfirmModal(false)}
-                />
-              </Row>
-              <Row>
-                <span className={styles.lockModalDesc}>
-                  Bạn có chắc chắn muốn tạm khóa mã nhân viên - tên nhân viên?{' '}
-                </span>
-                <span className={styles.lockModalDesc}>
-                  Người dùng này sẽ không thể truy cập vào hệ thống.
-                </span>
-              </Row>
-            </Col>
-          </Row>
-          <Row align="middle" justify="end" style={{ gap: '8px', marginTop: '24px' }}>
-            <Button
-              className={styles.cancelLockModalButton}
-              size="large"
-              onClick={() => setOpenConfirmModal(false)}
-            >
-              Huỷ bỏ
-            </Button>
-            <Button
-              className={styles.submitLockModalButton}
-              size="large"
-              onClick={() => setOpenConfirmModal(false)}
-            >
-              Xác nhận
-            </Button>
-          </Row>
-        </Col>
-      </Modal>
     </>
   );
 };

@@ -1,6 +1,6 @@
 import { Avatar, Col, Row, Space } from 'antd';
 import React from 'react';
-import UserDetailStatus from '../../../UserDetailStatus';
+import UserDetailStatus from '../../UserDetailStatus';
 import styles from '../UserDetailDrawer.less';
 
 type UserStatusRowProps = Pick<API.UserDetailResponse, 'avatar' | 'status'>;

@@ -1,6 +1,6 @@
 import MachineStatusTag from '@/components/Common/MachineStatusTag';
 import { TextCell } from '@/components/TableProperties/TableCell';
-import { Col, Table } from 'antd';
+import { Badge, Col, Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import styles from '../UserDetailDrawer.less';
 
@@ -39,6 +39,17 @@ const machineListColumns: ColumnsType<API.StmInfoResponse> = [
   },
 ];
 
+const TableTitle: React.FC<{ title: string; quantity?: number }> = ({ title, quantity }) => {
+  return (
+    <div className={styles.tableTitle}>
+      <span>{title}</span>
+      {Boolean(quantity && quantity > 0) && (
+        <Badge count={quantity} style={{ backgroundColor: '#E6F7FF', color: '#1890FF' }} />
+      )}
+    </div>
+  );
+};
+
 const MachineListRow: React.FC<{ machines: API.UserDetailResponse['machines'] }> = ({
   machines,
 }) => {
@@ -48,7 +59,7 @@ const MachineListRow: React.FC<{ machines: API.UserDetailResponse['machines'] }>
         columns={machineListColumns}
         dataSource={machines}
         bordered
-        title={() => 'Danh sách máy quản lý'}
+        title={() => <TableTitle title="Danh sách máy quản lý" quantity={machines?.length} />}
         className={styles.myMachineListTable}
         pagination={false}
         scroll={{ y: 200 }}

@@ -1,41 +1,40 @@
-import {
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  ExclamationCircleOutlined,
-  UnlockOutlined,
-} from '@ant-design/icons';
-import {
-  Col,
-  Drawer,
-  Form,
-  Input,
-  Row,
-  Button,
-  Card,
-  Table,
-  Modal,
-  Tooltip,
-  Space,
-  Avatar,
-  Tag,
-  Badge,
-  message,
-} from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
-import type { MutableRefObject } from 'react';
-import React, { useState } from 'react';
-import StatusTag from './StatusTag';
-import styles from './RoleListDetailDrawer.less';
 import userDetailIcon from '@/assets/images/svg/icon/top-right-arrow.svg';
-import UpdateRoleListForm from './UpdateRoleListForm';
-import { useModel, useRequest } from 'umi';
+import { UserCellStatus, UserStatusCell } from '@/components/TableProperties/TableCell';
 import {
   deleteRoleGroup,
   getRoleDetail,
   updateRoleGroup,
 } from '@/services/STM-APIs/RoleController';
+import {
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+} from '@ant-design/icons';
 import type { ActionType } from '@ant-design/pro-components';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Drawer,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+} from 'antd';
+import type { ColumnsType } from 'antd/lib/table';
+import type { MutableRefObject } from 'react';
+import React, { useState } from 'react';
+import { useModel, useRequest } from 'umi';
+import styles from './RoleListDetailDrawer.less';
+import UpdateRoleListForm from './UpdateRoleListForm';
 
 type RoleListDetailDrawerProps = {
   showDetail: boolean;
@@ -125,9 +124,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
       dataIndex: 'status',
       width: '20%',
       align: 'center',
-      render: (_, { status }) => (
-        <StatusTag title={status} icon={<UnlockOutlined />} type={status} />
-      ),
+      render: (_, { status }) => <UserStatusCell status={UserCellStatus[status]} />,
     },
   ];
 

@@ -15,7 +15,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       render: (_, __, index) => {
         return <TextCell>{index + 1}</TextCell>;
       },
-      width: '80px',
+      width: '5%',
     },
     {
       title: <HeadCell>Mã nhân viên</HeadCell>,
@@ -32,7 +32,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
           </TextCell>
         );
       },
-      width: '140px',
+      width: '9%',
     },
     {
       title: <HeadCell>Tên nhân viên</HeadCell>,
@@ -55,7 +55,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
           </TextCell>
         );
       },
-      width: '328.67px',
+      width: '21%',
     },
     {
       title: <HeadCell>Mã - Tên đơn vị</HeadCell>,
@@ -65,7 +65,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
           <TextCell position="left">{`${entity.managementUnit?.code} - ${entity.managementUnit?.name}`}</TextCell>
         );
       },
-      width: '328.67px',
+      width: '21%',
     },
     {
       title: <HeadCell>Email</HeadCell>,
@@ -78,7 +78,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
           </TextCell>
         );
       },
-      width: '328.67px',
+      width: '21%',
     },
     {
       title: <HeadCell>Số điện thoại</HeadCell>,
@@ -87,7 +87,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       render: (dom) => {
         return <TextCell>{formatPhoneNumber(dom as string)}</TextCell>;
       },
-      width: '180px',
+      width: '12%',
     },
     {
       title: <HeadCell>Trạng thái hoạt động</HeadCell>,
@@ -106,7 +106,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
           text: <UserStatusCell status={UserCellStatus.UNKNOWN} />,
         },
       },
-      width: '200px',
+      width: '13%',
     },
   ];
   return columns;

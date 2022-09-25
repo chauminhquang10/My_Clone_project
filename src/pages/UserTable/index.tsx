@@ -9,7 +9,8 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
 import { useRequest } from 'umi';
-import { NewUserForm, UserDetailDrawer } from './components/forms';
+import { UserDetailDrawer } from './components';
+import { NewUserForm } from './components/forms';
 import Column from './components/tables/Column';
 
 const handleAdd = async (fields: API.CreateUserRequest, avatar?: File) => {
@@ -73,26 +74,10 @@ const UserManagementTable: React.FC = () => {
       },
     },
   );
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  /**
-   * @en-US The pop-up window of the distribution update window
-   * @zh-CN 分布更新窗口的弹窗
-   * */
-  // const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-
   const [showDetail, setShowDetail] = useState<boolean>(false);
-
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.UserResponse>();
-
-  /**
-   * @en-US International configuration
-   * @zh-CN 国际化配置
-   * */
 
   // const [page, setPage] = useState<number>();
   // const [pageSize, setPageSize] = useState<number>();
@@ -157,7 +142,7 @@ const UserManagementTable: React.FC = () => {
         }}
         columns={columns}
         options={false}
-        scroll={{ x: 'max-content', y: 'max-content' }}
+        scroll={{ y: 'max-content' }}
         pagination={{
           total: totalSize,
           onChange(current) {
@@ -174,6 +159,7 @@ const UserManagementTable: React.FC = () => {
         }}
       />
 
+      {/* Create New User Form */}
       <NewUserForm
         title="Tạo người dùng mới"
         width="934px"
@@ -191,6 +177,7 @@ const UserManagementTable: React.FC = () => {
           return false;
         }}
       />
+      {/* User Detail */}
       <UserDetailDrawer
         currentRow={currentRow}
         setCurrentRow={setCurrentRow}
