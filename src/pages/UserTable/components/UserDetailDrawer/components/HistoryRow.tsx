@@ -1,7 +1,7 @@
 import { Col, Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import React from 'react';
-import UserHistoryAction from '../../UserHistoryAction';
+import UserHistoryAction from '../../forms/UserHistoryAction';
 import styles from '../UserDetailDrawer.less';
 
 interface DataType {
@@ -10,10 +10,7 @@ interface DataType {
   createdTime: Date;
 }
 
-interface HistoryRowProps {}
-
-// history user
-const HistoryRow: React.FC<HistoryRowProps> = () => {
+const HistoryRow: React.FC = () => {
   const columns: ColumnsType<DataType> = [
     {
       title: 'Người thực hiện',
