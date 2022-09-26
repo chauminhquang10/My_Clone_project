@@ -245,7 +245,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
         headerStyle={{ border: 'none' }}
       >
         <Form layout="vertical" hideRequiredMark>
-          <Space size={12} direction={'vertical'}>
+          <Space size={12} direction={'vertical'} style={{ width: '100%' }}>
             <Row>
               <Col span={15}>
                 <h4 className={styles.drawerHeaderTitle}>Chi tiết đơn vị</h4>

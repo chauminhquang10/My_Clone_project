@@ -9,6 +9,7 @@ import minusIcon from '@/assets/images/svg/icon/minus-icon.svg';
 import styles from './NewRoleListForm.less';
 import { getListRoles } from '@/services/STM-APIs/RoleController';
 import { useRequest } from 'umi';
+import { MAP_ACTION_LIST, MAP_ROLE_LIST } from '@/constants';
 
 type CreateFormProps = {
   title: string;
@@ -48,7 +49,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
 
   const handleFormatTreeData = (data: API.Role[] | undefined) => {
     const newFormattedData = data?.map((role: API.Role) => ({
-      title: role?.name,
+      title: role?.name ? MAP_ROLE_LIST[role?.name] : '',
       key: role?.name,
       switcherIcon: (
         <>
@@ -60,7 +61,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         </>
       ),
       children: role.actions?.map((actionItem: API.RoleAction) => ({
-        title: actionItem?.action,
+        title: actionItem?.action ? MAP_ACTION_LIST[actionItem?.action] : '',
         key: actionItem?.id,
       })),
     }));

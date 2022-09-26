@@ -1,5 +1,6 @@
 import userDetailIcon from '@/assets/images/svg/icon/top-right-arrow.svg';
 import { UserCellStatus, UserStatusCell } from '@/components/TableProperties/TableCell';
+import { MAP_ACTION_LIST } from '@/constants';
 import {
   deleteRoleGroup,
   getRoleDetail,
@@ -288,7 +289,9 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
                   <Row gutter={[12, 12]}>
                     {roleGroupDetail?.actions?.map((eachAction: API.RoleAction) => (
                       <Col key={eachAction?.id}>
-                        <Tag key={eachAction?.id}>{eachAction?.action}</Tag>
+                        <Tag key={eachAction?.id}>
+                          {eachAction?.action ? MAP_ACTION_LIST[eachAction?.action] : ''}
+                        </Tag>
                       </Col>
                     ))}
                   </Row>

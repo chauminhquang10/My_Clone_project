@@ -9,6 +9,7 @@ import minusIcon from '@/assets/images/svg/icon/minus-icon.svg';
 import styles from './UpdateRoleListForm.less';
 import { useRequest } from 'umi';
 import { getListRoles } from '@/services/STM-APIs/RoleController';
+import { MAP_ACTION_LIST } from '@/constants';
 
 type UpdateRoleListFormProps = {
   title: string;
@@ -61,7 +62,7 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
         </>
       ),
       children: role.actions?.map((actionItem: API.RoleAction) => ({
-        title: actionItem?.action,
+        title: actionItem?.action ? MAP_ACTION_LIST[actionItem?.action] : '',
         key: actionItem?.id,
       })),
     }));

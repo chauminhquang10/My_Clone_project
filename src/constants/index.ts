@@ -91,3 +91,30 @@ export const EMAIL_REGEX =
   /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export const PHONE_REGEX = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+
+export const MAP_ROLE_LIST = {
+  machine: 'Machine management',
+  version: 'Version management',
+  model: 'Model management',
+  management_unit: 'Management unit management',
+};
+
+export const MAP_ACTION_LIST = {
+  create_machine: 'Create machine',
+  update_machine: 'Update machine',
+  assign_access: 'Assign access',
+  change_machine_status: 'Change machine status',
+  download_machine_log: 'Download machine log',
+  view_transaction: 'View transaction',
+  view_camera: 'View camrea',
+  create_version: 'Create version',
+  update_version: 'Update version',
+  update_machine_version: 'Update machine version',
+  delete_version: 'Delete version',
+  create_model: 'Create model',
+  update_model: 'Update model',
+  delete_model: 'Delete model',
+  create_management_unit: 'Create management unit',
+  update_management_unit: 'Update management unit',
+  delete_management_unit: 'Delete management unit',
+};

@@ -1,4 +1,5 @@
 import icon from '@/assets/icons/role-list-item-icon.svg';
+import { MAP_ACTION_LIST } from '@/constants';
 import { Card, Col, Row } from 'antd';
 import React from 'react';
 import styles from '../UserDetailDrawer.less';
@@ -15,7 +16,7 @@ const RoleGroupRow: React.FC<API.RoleGroupResponse> = ({ name, actions }) => {
                 actions.map((item) => (
                   <li className={styles.roleListItem} key={item.id}>
                     <img src={icon} alt="icon-item" />
-                    {item.action}
+                    {item.action && MAP_ACTION_LIST[item.action]}
                   </li>
                 ))}
             </ul>
