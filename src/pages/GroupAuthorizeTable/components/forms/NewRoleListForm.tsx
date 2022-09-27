@@ -149,7 +149,11 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
 
       <Row gutter={[0, 15]}>
         <Col span={24}>
-          <Form.Item name="roleGroupName" label="Tên nhóm quyền">
+          <Form.Item
+            name="roleGroupName"
+            label="Tên nhóm quyền"
+            rules={[{ required: true, message: 'Tên nhóm quyền là băt buộc' }]}
+          >
             <Input placeholder={'Quản trị máy & camera'} />
           </Form.Item>
         </Col>
@@ -200,9 +204,22 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
           Huỷ bỏ
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit">
-          Hoàn tất
-        </Button>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Button
+              className={styles.submitButton}
+              size="large"
+              htmlType="submit"
+              disabled={
+                !form.isFieldsTouched(true) ||
+                !checkAllKeys.length ||
+                !!form.getFieldsError().filter(({ errors }) => errors.length).length
+              }
+            >
+              Hoàn tất
+            </Button>
+          )}
+        </Form.Item>
       </Row>
     </ModalForm>
   );

@@ -201,18 +201,32 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
           <Form.Item
             name="code"
             label="Mã đơn vị"
-            //rules={[{ required: true, message: 'Please enter service name!' }]}
+            rules={[
+              { required: true, message: 'Vui lòng nhập mã đơn vị!' },
+              { max: 20, message: 'Tối đa 20 kí tự!' },
+            ]}
           >
             <Input placeholder={'Nhập mã đơn vị'} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="name" label="Tên đơn vị">
+          <Form.Item
+            name="name"
+            label="Tên đơn vị"
+            rules={[
+              { required: true, message: 'Vui lòng nhập tên đơn vị!' },
+              { max: 50, message: 'Tối đa 50 kí tự!' },
+            ]}
+          >
             <Input placeholder={'Nhập tên đơn vị'} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="location" label="Khu vực">
+          <Form.Item
+            name="location"
+            label="Khu vực"
+            rules={[{ required: true, message: 'Khu vực là băt buộc' }]}
+          >
             <Select
               placeholder="Chọn khu vực"
               onChange={(selectValue) => handleSelectChange('location', selectValue)}
@@ -224,7 +238,11 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="provinceId" label="Tỉnh/Thành phố">
+          <Form.Item
+            name="provinceId"
+            label="Tỉnh/Thành phố"
+            rules={[{ required: true, message: 'Tỉnh/Thành phố là băt buộc' }]}
+          >
             <Select
               placeholder="Chọn Tỉnh/Thành phố"
               onChange={(selectValue) => handleSelectChange('province', selectValue)}
@@ -240,7 +258,11 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="districtId" label="Quận/Huyện">
+          <Form.Item
+            name="districtId"
+            label="Quận/Huyện"
+            rules={[{ required: true, message: 'Quận/Huyện là băt buộc' }]}
+          >
             <Select
               placeholder="Chọn Quận/Huyện"
               onChange={(selectValue) => handleSelectChange('district', selectValue)}
@@ -256,7 +278,11 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="wardId" label="Phường/Xã">
+          <Form.Item
+            name="wardId"
+            label="Phường/Xã"
+            rules={[{ required: true, message: 'Phường/Xã là băt buộc' }]}
+          >
             <Select
               placeholder="Chọn Phường/Xã"
               onChange={(selectValue) => handleSelectChange('ward', selectValue)}
@@ -272,7 +298,14 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={24}>
-          <Form.Item name="address" label="Tên đường, số nhà">
+          <Form.Item
+            name="address"
+            label="Tên đường, số nhà"
+            rules={[
+              { required: true, message: 'Tên đường, số nhà là băt buộc' },
+              { max: 100, message: 'Tối đa 100 kí tự!' },
+            ]}
+          >
             <Input placeholder={'example'} />
           </Form.Item>
         </Col>
@@ -282,9 +315,21 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
           Huỷ bỏ
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit">
-          Hoàn tất
-        </Button>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Button
+              className={styles.submitButton}
+              size="large"
+              htmlType="submit"
+              disabled={
+                !form.isFieldsTouched(true) ||
+                !!form.getFieldsError().filter(({ errors }) => errors.length).length
+              }
+            >
+              Hoàn tất
+            </Button>
+          )}
+        </Form.Item>
       </Row>
     </ModalForm>
   );

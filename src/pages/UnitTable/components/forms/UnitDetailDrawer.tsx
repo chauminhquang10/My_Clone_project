@@ -185,8 +185,15 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
   const handleUpdateUnit = async (fields: API.UpdateManagementUnitRequest) => {
     const hide = message.loading('Configuring...');
     try {
-      await updateManagementUnit({ unitId: unitDetail?.id?.toString() || '' }, { ...fields });
+      const res = await updateManagementUnit(
+        { unitId: unitDetail?.id?.toString() || '' },
+        { ...fields },
+      );
       hide();
+      if (res.code === 700) {
+        message.error(`${fields.name} ${fields.code} ${fields.address} đã được sử dụng`);
+        return;
+      }
       message.success('Chỉnh sửa đơn vị thành công');
       handleUpdateModalVisible(false);
       setShowDetail(false);

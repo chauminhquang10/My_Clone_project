@@ -60,7 +60,7 @@ const TableCustom = () => {
       manual: true,
       onSuccess(data) {
         console.log(data);
-        if (!initialState?.currentUser?.admin) {
+        if (!initialState?.currentRoles?.create_model) {
           setEnableCreateNew(false);
         }
         // setResultResponse(data);

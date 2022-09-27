@@ -5,16 +5,21 @@ import pages from './en-US/pages';
 import pwa from './en-US/pwa';
 import settingDrawer from './en-US/settingDrawer';
 import settings from './en-US/settings';
+import common from './en-US/common';
+import unitTable from './en-US/UnitTable/table';
+import unitForm from './en-US/UnitTable/forms/form';
+import unitDetail from './en-US/UnitTable/forms/detailDrawer';
+import roleGroupTable from './en-US/GroupAuthorizeTable/table';
+import roleGroupForm from './en-US/GroupAuthorizeTable/forms/form';
+import roleGroupDetail from './en-US/GroupAuthorizeTable/forms/detailDrawer';
+import configMachineTable from './en-US/ConfigMachineTable/table';
+import configMachineForm from './en-US/ConfigMachineTable/forms/form';
+import configMachineDetail from './en-US/ConfigMachineTable/forms/detailDrawer';
 
 export default {
-  'navBar.lang': 'Languages',
-  'layout.user.link.help': 'Help',
-  'layout.user.link.privacy': 'Privacy',
-  'layout.user.link.terms': 'Terms',
-  'app.copyright.produced': 'Produced by Ant Financial Experience Department',
-  'app.preview.down.block': 'Download this page to your local project',
-  'app.welcome.link.fetch-blocks': 'Get all block',
-  'app.welcome.link.block-list': 'Quickly build standard, pages based on `block` development',
+  navBar_language: 'EN',
+  navBar_languageIcon: '🇺🇸',
+
   ...globalHeader,
   ...menu,
   ...settingDrawer,
@@ -22,4 +27,14 @@ export default {
   ...pwa,
   ...component,
   ...pages,
+  ...common,
+  ...unitTable,
+  ...unitForm,
+  ...unitDetail,
+  ...roleGroupTable,
+  ...roleGroupForm,
+  ...roleGroupDetail,
+  ...configMachineTable,
+  ...configMachineForm,
+  ...configMachineDetail,
 };

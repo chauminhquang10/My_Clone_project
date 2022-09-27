@@ -166,7 +166,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
         const allActionKeys = data?.actions?.map((eachAction) => eachAction.id);
         setCheckAllKeys(allActionKeys as number[]);
 
-        if (!initialState?.currentUser?.admin) {
+        if (initialState?.currentRoles && initialState?.currentRoles?.create_machine) {
           setValidateDeleteObj({
             enableDeleteBtn: false,
             tooltipMsg: 'Tài khoản chưa được cho phép truy cập chức năng này',

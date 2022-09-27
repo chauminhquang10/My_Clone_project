@@ -9,6 +9,27 @@ import { history, useModel } from 'umi';
 import { InputPassword, SetupPasswordForm } from '../components';
 import styles from './index.less';
 
+// xử lí check role
+const initialRoles = {
+  create_machine: false,
+  update_machine: false,
+  assign_access: false,
+  change_machine_status: false,
+  download_machine_log: false,
+  view_transaction: false,
+  view_camera: false,
+  create_version: false,
+  update_version: false,
+  update_machine_version: false,
+  delete_version: false,
+  create_model: false,
+  update_model: false,
+  delete_model: false,
+  create_management_unit: false,
+  update_management_unit: false,
+  delete_management_unit: false,
+};
+
 type DataResponseType = {
   loginTimes: number;
   blockedAt: string;
@@ -24,9 +45,16 @@ const Login: React.FC = () => {
     const userInfo = await initialState?.fetchUserInfo?.();
 
     if (userInfo) {
+      userInfo?.roleGroup?.actions?.forEach((eachAction) => {
+        if ((eachAction?.action as string) in initialRoles) {
+          initialRoles[eachAction?.action as string] = true;
+        }
+      });
+
       await setInitialState((s) => ({
         ...s,
         currentUser: userInfo,
+        currentRoles: initialRoles,
       }));
     }
   };
