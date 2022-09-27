@@ -110,7 +110,7 @@ const BasicLayout = ({ children, routes, ...props }: BasicLayoutProps) => {
         <MenuItem defaultDom={defaultDom} menuItemProps={menuItemProps} />
       )}
       headerRender={headerRender}
-      className={styles['l[ayout-container-custom']}
+      className={styles['layout-container-custom']}
       onPageChange={() => {
         const { location } = history;
 
