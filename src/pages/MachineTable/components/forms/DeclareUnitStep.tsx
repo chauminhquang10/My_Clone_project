@@ -192,6 +192,10 @@ export default function DeclareUnitStep<T>({
     );
   }, [form, submitButtonLabel, onSubmit]);
 
+  if (machineDetail.managementUnit && !form.isFieldTouched('managementUnitId')) {
+    form.setFieldValue('unitAddress', machineDetail.managementUnit.address);
+  }
+
   useEffect(() => {
     if (machineDetail) {
       Api.ManagementUnitController.getManagementUnit({
@@ -237,11 +241,7 @@ export default function DeclareUnitStep<T>({
             </Form.Item>
           </Col>
           <Col span={24} style={{ marginTop: 24, marginBottom: 24 }}>
-            <Form.Item
-              name="userIds"
-              label="Mã - Tên nhân viên quản lý"
-              rules={[{ type: 'array', min: 0, len: 1 }]}
-            >
+            <Form.Item name="userIds" label="Mã - Tên nhân viên quản lý">
               <Dropdown
                 trigger={['click']}
                 disabled={disabledUserIds}
@@ -323,9 +323,15 @@ export default function DeclareUnitStep<T>({
             <Form.Item
               name="machineName"
               label="Tên máy"
-              rules={[{ type: 'string', min: 0, max: 50, pattern: /[^A-Za-z0-9]/g }]}
-              help="Tên máy là duy nhất, không chứa ký tự đặc biệt, tối đa 50 ký tự"
-              validateStatus="validating"
+              rules={[
+                {
+                  type: 'string',
+                  min: 0,
+                  max: 50,
+                  pattern: /^[a-zA-Z0-9]*$/g,
+                  message: 'Tên máy là duy nhất, không chứa ký tự đặc biệt, tối đa 50 ký tự',
+                },
+              ]}
             >
               <Input placeholder={machineDetail.name ?? 'Tên máy'} />
             </Form.Item>
