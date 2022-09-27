@@ -55,7 +55,7 @@ interface UpdateUserFormProps {
   userInfo: API.UserDetailResponse;
   isVisibleUpdateUser: boolean;
   setIsVisibleUpdateUser: (isVisible: boolean) => void;
-  actionRef: React.MutableRefObject<ActionType | undefined>;
+  actionRef?: React.MutableRefObject<ActionType | undefined>;
   onCloseDrawer: () => void;
 }
 
@@ -80,7 +80,7 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
         );
 
         if (!!success) {
-          actionRef.current?.reload();
+          if (!!actionRef) actionRef.current?.reload();
           onCloseDrawer();
         }
 

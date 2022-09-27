@@ -4,19 +4,17 @@ import { Avatar, Menu, Spin } from 'antd';
 import type { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { stringify } from 'querystring';
 import type { MenuInfo } from 'rc-menu/lib/interface';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { history, useModel } from 'umi';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 import { openNotification } from '@/utils';
+import { UserDetailDrawer } from '@/pages/UserTable/components';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
 };
 
-/**
- * 退出登录，并且将当前的 url 保存
- */
 const loginOut = async () => {
   const refreshToken = localStorage.getItem('refreshToken') || '';
   const res = await Api.AuthController.logout({ refreshToken });
@@ -40,16 +38,24 @@ const loginOut = async () => {
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
+  const [openPersonalProfile, setOpenPersonalProfile] = useState<boolean>(false);
 
   const onMenuClick = useCallback(
     (event: MenuInfo) => {
       const { key } = event;
-      if (key === 'logout') {
-        setInitialState((s) => ({ ...s, currentUser: undefined }));
-        loginOut();
-        return;
+
+      switch (key) {
+        case 'personal-profile':
+          console.log('personal profile');
+          setOpenPersonalProfile(true);
+          break;
+        case 'logout':
+          setInitialState((s) => ({ ...s, currentUser: undefined }));
+          loginOut();
+          break;
+        default:
+          history.push(`/account/${key}`);
       }
-      history.push(`/account/${key}`);
     },
     [setInitialState],
   );
@@ -95,6 +101,10 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         ]
       : []),
     {
+      key: 'personal-profile',
+      label: 'Chi tiết cá nhân',
+    },
+    {
       key: 'logout',
       icon: <LogoutOutlined />,
       label: 'Đăng xuất',
@@ -106,11 +116,20 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   );
 
   return (
-    <HeaderDropdown overlay={menuHeaderDropdown}>
-      <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="default" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-      </span>
-    </HeaderDropdown>
+    <>
+      <HeaderDropdown overlay={menuHeaderDropdown}>
+        <span className={`${styles.action} ${styles.account}`}>
+          <Avatar size="default" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
+        </span>
+      </HeaderDropdown>
+
+      <UserDetailDrawer
+        currentRow={currentUser}
+        showDetail={openPersonalProfile}
+        setShowDetail={setOpenPersonalProfile}
+        isPersonalProfile={true}
+      />
+    </>
   );
 };
 

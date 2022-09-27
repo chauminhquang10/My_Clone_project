@@ -1,0 +1,171 @@
+/* stylelint-disable block-no-empty */
+/* stylelint-disable length-zero-no-unit */
+@import '../../../../assets/styles/variable.less';
+
+.setup-password-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+  width: 489px;
+  padding: 32px 56px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.1);
+
+  h1.title {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
+    font-size: 24px;
+    font-family: 'Roboto';
+    font-style: normal;
+    line-height: 32px;
+  }
+
+  .form {
+    width: 100%;
+
+    .section-validate {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin: 8px 0 20px;
+
+      .item-validate {
+        display: flex;
+        align-items: center;
+
+        img {
+          width: 14px;
+          height: 14px;
+          margin-right: 9px;
+        }
+
+        span {
+          color: rgba(0, 0, 0, 0.45);
+          font-weight: 400;
+          font-size: 14px;
+          font-family: 'Roboto';
+          font-style: normal;
+          line-height: 22px;
+        }
+      }
+    }
+
+    :global {
+      .ant-form-item {
+        margin-bottom: 12px;
+      }
+
+      .ant-form-item-label {
+        label {
+          color: rgba(0, 0, 0, 0.85);
+          font-weight: 400;
+          font-size: 14px;
+          font-family: 'Roboto';
+          font-style: normal;
+          line-height: 22px;
+        }
+      }
+
+      .ant-input-affix-wrapper {
+        height: 40px;
+        padding: 8px 12px;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+      }
+
+      .ant-input-affix-wrapper:focus,
+      .ant-input-affix-wrapper-focused {
+        border: 1px solid #40a9ff !important;
+        box-shadow: 0px 0px 0px 2px rgba(24, 144, 255, 0.2) !important;
+      }
+
+      .ant-input-affix-wrapper-status-error:not(.ant-input-affix-wrapper-disabled):not(.ant-input-affix-wrapper-borderless).ant-input-affix-wrapper,
+      .ant-input-affix-wrapper-status-error:not(.ant-input-affix-wrapper-disabled):not(.ant-input-affix-wrapper-borderless).ant-input-affix-wrapper:hover {
+        border: 1px solid #ff4d4f;
+        box-shadow: 0px 0px 0px 2px rgba(255, 77, 79, 0.2);
+      }
+
+      .ant-input-affix-wrapper-status-error .ant-input-prefix {
+        color: #000;
+      }
+
+      .ant-input-prefix {
+        margin-right: 8px;
+      }
+
+      .ant-form-item-label
+        > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+        display: none;
+      }
+
+      .ant-form-item-label
+        > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::after {
+        display: inline-block;
+        margin-left: 2px;
+        color: #ff4d4f;
+        font-weight: 500;
+        font-size: 14px;
+        font-family: 'Roboto';
+        font-style: normal;
+        line-height: 22px;
+        text-align: right;
+        content: '*';
+      }
+    }
+
+    .form-username {
+      margin-bottom: 28px;
+    }
+
+    .forgot-password {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  .btn-submit {
+    width: 100%;
+
+    button {
+      width: 100%;
+      height: 40px;
+      padding: 8px 13px;
+      background: @stm-primary-color;
+      border-color: @stm-primary-color;
+      border-radius: 8px;
+    }
+
+    span {
+      color: #fff;
+      font-weight: 500;
+      font-size: 16px;
+      font-family: 'Roboto';
+      font-style: normal;
+      line-height: 24px;
+    }
+
+    button[disabled],
+    button[disabled]:hover,
+    button[disabled]:focus,
+    button[disabled]:active {
+      background: #f6f8f8;
+      border: 1px solid #e2e7e9;
+
+      span {
+        color: rgba(0, 0, 0, 0.25);
+        font-weight: 500;
+        font-size: 16px;
+        font-family: 'Roboto';
+        font-style: normal;
+        line-height: 24px;
+        text-align: center;
+      }
+    }
+  }
+}

@@ -20,7 +20,7 @@ export type InputPasswordProps = {
 const InputPassword: React.FC<InputPasswordProps> = (props) => {
   const { patternPointGen, delayPointGen, onChange: onChangeUnmaskedPassword, ...rest } = props;
   const pattern = patternPointGen || '*';
-  const delay = delayPointGen || 800;
+  const delay = delayPointGen || 200;
 
   // state password is used for rendering mask effect
   const [password, setPassword] = React.useState<string>('');

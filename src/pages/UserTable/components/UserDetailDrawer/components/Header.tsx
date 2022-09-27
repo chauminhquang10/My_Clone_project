@@ -9,16 +9,23 @@ import {
 import type { ActionType } from '@ant-design/pro-components';
 import { Button, Col, message, Modal, Row, Tooltip } from 'antd';
 import { useState } from 'react';
+import { history } from 'umi';
 import UpdateUserForm from '../../forms/UpdateUserForm';
 import styles from '../UserDetailDrawer.less';
 
 interface HeaderProps {
   userInfo: API.UserDetailResponse;
-  actionRef: React.MutableRefObject<ActionType | undefined>;
+  actionRef?: React.MutableRefObject<ActionType | undefined>;
   onCloseDrawer: () => void;
+  isPersonalProfile: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ userInfo, actionRef, onCloseDrawer }) => {
+const Header: React.FC<HeaderProps> = ({
+  userInfo,
+  actionRef,
+  onCloseDrawer,
+  isPersonalProfile,
+}) => {
   const [openUpdateUserForm, setOpenUpdateUserForm] = useState<boolean>(false);
   const [openBlockUserConfirm, setOpenBlockUserConfirm] = useState<boolean>(false);
   const [isLoadingBlockUserButton, setIsLoadingBlockUserButton] = useState<boolean>(false);
@@ -33,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ userInfo, actionRef, onCloseDrawer }) =
     try {
       await blockUser({ userId: userInfo.id as string });
       message.success('Block user successfully');
-      actionRef.current?.reload();
+      if (!!actionRef) actionRef.current?.reload();
       onCloseDrawer();
     } catch (error) {
       console.log('error: ', error);
@@ -53,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ userInfo, actionRef, onCloseDrawer }) =
     try {
       await unBlockUser({ userId: userInfo.id as string });
       message.success('Unblock user successfully');
-      actionRef.current?.reload();
+      if (!!actionRef) actionRef.current?.reload();
       onCloseDrawer();
     } catch (error) {
       console.log('error: ', error);
@@ -70,39 +77,60 @@ const Header: React.FC<HeaderProps> = ({ userInfo, actionRef, onCloseDrawer }) =
     handleUnBlockUser();
   };
 
+  const handleChangePasswordClick = () => {
+    if (!history) return;
+    history.push('/user/change-password');
+  };
+
   return (
     <>
       <Row>
         <Col span={15}>
-          <h4 className={styles.drawerHeaderTitle}>Chi tiết người dùng</h4>
+          <h4 className={styles.drawerHeaderTitle}>
+            {isPersonalProfile ? 'Chi tiết cá nhân' : 'Chi tiết người dùng'}
+          </h4>
         </Col>
         <Col span={9}>
           <Row justify="end" align="middle" gutter={8} className={styles.myDrawerHeaderBtnGroup}>
-            <Col>
-              <Button
-                icon={<EditOutlined color="#434343" />}
-                className={styles.btnItem}
-                onClick={() => {
-                  setOpenUpdateUserForm(true);
-                }}
-              >
-                <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
-              </Button>
-            </Col>
-            <Col>
-              <Tooltip
-                placement="left"
-                title={userInfo.status === 'INACTIVE' ? 'Unblock user' : 'Block user'}
-              >
+            {isPersonalProfile ? (
+              <Col>
                 <Button
                   className={styles.btnItem}
-                  onClick={handleBlockUserClick}
-                  loading={isLoadingBlockUserButton}
+                  onClick={handleChangePasswordClick}
+                  disabled={userInfo.status !== 'ACTIVE'}
                 >
-                  {userInfo.status === 'INACTIVE' ? <UnlockOutlined /> : <LockOutlined />}
+                  Thay đổi mật khẩu <LockOutlined />
                 </Button>
-              </Tooltip>
-            </Col>
+              </Col>
+            ) : (
+              <>
+                <Col>
+                  <Button
+                    icon={<EditOutlined color="#434343" />}
+                    className={styles.btnItem}
+                    onClick={() => {
+                      setOpenUpdateUserForm(true);
+                    }}
+                  >
+                    <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
+                  </Button>
+                </Col>
+                <Col>
+                  <Tooltip
+                    placement="left"
+                    title={userInfo.status === 'INACTIVE' ? 'Unblock user' : 'Block user'}
+                  >
+                    <Button
+                      className={styles.btnItem}
+                      onClick={handleBlockUserClick}
+                      loading={isLoadingBlockUserButton}
+                    >
+                      {userInfo.status === 'INACTIVE' ? <UnlockOutlined /> : <LockOutlined />}
+                    </Button>
+                  </Tooltip>
+                </Col>
+              </>
+            )}
           </Row>
         </Col>
       </Row>

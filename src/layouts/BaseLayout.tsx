@@ -6,7 +6,6 @@ import type {
   Settings,
 } from '@ant-design/pro-layout';
 import ProLayout from '@ant-design/pro-layout';
-import 'antd/dist/antd.css';
 import cx from 'classnames';
 import { useCallback } from 'react';
 import { history, Link, useIntl, useModel } from 'umi';
