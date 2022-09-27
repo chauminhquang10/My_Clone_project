@@ -19,6 +19,11 @@ const routes = [
         component: './user/ResetPassword',
       },
       {
+        name: 'change-password',
+        path: '/user/change-password',
+        component: './user/ChangePassword',
+      },
+      {
         component: './404',
       },
     ],
