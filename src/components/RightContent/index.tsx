@@ -1,28 +1,27 @@
+/* eslint-disable react/no-children-prop */
+import { ReactComponent as ENIcon } from '@/assets/icon/en-language-icon.svg';
+import { ReactComponent as VIIcon } from '@/assets/icon/vi-language-icon.svg';
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, Space } from 'antd';
-import React from 'react';
-import { FormattedMessage, SelectLang, useModel } from 'umi';
+import { FormattedMessage, getLocale, SelectLang, useModel } from 'umi';
 import AvatarDropdown from './AvatarDropdown';
 import styles from './index.less';
 
 export type SiderTheme = 'light' | 'dark';
 
+const LANGUAGE_ICON = {
+  'en-US': <ENIcon />,
+  'vi-VN': <VIIcon />,
+};
+
 const SelectedLanguage: React.FC = () => {
-  // const handleChangeLanguage = () => {
-  //   const locale = getLocale();
-  //   if (!locale || locale === 'vi-VN') {
-  //     setLocale('en-US');
-  //   } else {
-  //     setLocale('vi-VN');
-  //   }
-  // };
   return (
-    <>
-      <span role="img" aria-label="China">
-        {<FormattedMessage id="navBar_languageIcon" />}
+    <div className={styles.selectLanguage}>
+      <span>
+        <FormattedMessage id="navBar_language" />
       </span>
-      <FormattedMessage id="navBar_language" />
-    </>
+      {LANGUAGE_ICON[getLocale()]}
+    </div>
   );
 };
 
@@ -41,12 +40,12 @@ const GlobalHeaderRight: React.FC = () => {
   }
 
   return (
-    <Space align="start" className={className}>
+    <Space align="center" className={className}>
       <Badge count={5} style={{ borderColor: 'transparent' }} offset={[-3, 5]}>
         <BellOutlined style={{ fontSize: 32, color: '#eee' }} />
       </Badge>
       <AvatarDropdown />
-      <SelectLang className={styles.action} icon={<SelectedLanguage />} />
+      <SelectLang className={styles.language} icon={<SelectedLanguage />} />
     </Space>
   );
 };

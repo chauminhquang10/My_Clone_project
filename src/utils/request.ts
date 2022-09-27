@@ -1,5 +1,6 @@
 import Api from '@/services/STM-APIs';
 import jwtDecode from 'jwt-decode';
+import { history } from 'umi';
 import type { RequestInterceptor, ResponseError, ResponseInterceptor } from 'umi-request';
 import Reqs, { extend } from 'umi-request';
 import { openNotification } from './helpers/openNotification';
@@ -42,6 +43,8 @@ const { cancel } = Reqs.CancelToken.source();
 const errorHandler = async (error: ResponseError) => {
   if (Reqs.isCancel(error)) return;
 
+  console.log('error: ', error);
+
   const { response, data } = error;
   const status: keyof typeof codeMessage = data?.status >= 400 ? data?.status : response?.status;
   if (status >= 400) {
@@ -55,13 +58,16 @@ const errorHandler = async (error: ResponseError) => {
     );
   }
 
+  if (error.name === 'Session is invalid') {
+    history.push('/user/login');
+  }
+
   throw error;
 };
 
 export const request = extend({
   prefix: `${API_ENDPOINT}`,
   requestType: 'json',
-  // timeout: 3000,
   timeoutMessage: 'Server không phản hồi trong khoảng thời gian dài',
   errorHandler,
 });

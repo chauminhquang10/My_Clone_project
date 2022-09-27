@@ -6,7 +6,6 @@ import type {
   Settings,
 } from '@ant-design/pro-layout';
 import ProLayout from '@ant-design/pro-layout';
-import 'antd/dist/antd.css';
 import cx from 'classnames';
 import { useCallback } from 'react';
 import { history, Link, useIntl, useModel } from 'umi';
@@ -111,7 +110,7 @@ const BasicLayout = ({ children, routes, ...props }: BasicLayoutProps) => {
         <MenuItem defaultDom={defaultDom} menuItemProps={menuItemProps} />
       )}
       headerRender={headerRender}
-      className={styles['l[ayout-container-custom']}
+      className={styles['layout-container-custom']}
       onPageChange={() => {
         const { location } = history;
 

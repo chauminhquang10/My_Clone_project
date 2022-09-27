@@ -23,10 +23,11 @@ type UserDrawerProps = {
   showDetail: boolean;
   setShowDetail: (value: boolean) => void;
   currentRow: API.UserResponse | undefined;
-  setCurrentRow: (value: API.UserResponse | undefined) => void;
+  setCurrentRow?: (value: API.UserResponse | undefined) => void;
   roles?: UserRole[];
   children?: React.ReactNode;
-  actionRef: React.MutableRefObject<ActionType | undefined>;
+  actionRef?: React.MutableRefObject<ActionType | undefined>;
+  isPersonalProfile?: boolean;
 };
 
 const UserDetailDrawer: React.FC<UserDrawerProps> = ({
@@ -35,6 +36,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
   currentRow,
   setCurrentRow,
   actionRef,
+  isPersonalProfile = false,
 }) => {
   const [userInfo, setUserInfo] = useState<API.UserDetailResponse>({});
 
@@ -73,7 +75,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
         width={880}
         open={showDetail}
         onClose={() => {
-          setCurrentRow(undefined);
+          if (!!setCurrentRow) setCurrentRow(undefined);
           setShowDetail(false);
         }}
         className={styles.myDrawer}
@@ -87,6 +89,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
               userInfo={userInfo}
               actionRef={actionRef}
               onCloseDrawer={() => setShowDetail(false)}
+              isPersonalProfile={isPersonalProfile}
             />
             {/* Trang thai nguoi dung */}
             <UserStatusRow avatar={userInfo.avatar} status={userInfo.status} />
