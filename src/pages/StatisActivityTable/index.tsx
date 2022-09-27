@@ -80,9 +80,7 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        request={async (params = {}) => {
-          console.log(params);
-
+        request={async () => {
           const pageRequestParams = {
             pageNumber: page - 1,
             pageSize: pageSizeRef.current,
