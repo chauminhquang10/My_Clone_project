@@ -14,6 +14,7 @@ import { openNotification } from '@/utils';
 import { UploadOutlined } from '@ant-design/icons';
 import NewVersionForm from './components/forms/NewVersionForm';
 import { message } from 'antd';
+import VersionDetailDrawer from './components/forms/VersionDetailDrawer';
 /**
  * @en-US Add node
  * @zh-CN 添加节点
@@ -79,7 +80,7 @@ const TableCustom = () => {
         message.error(`${record.name} ${record.modelId}  đã được sử dụng`);
         return;
       }
-      message.success('Thêm đơn vị mới thành công');
+      message.success('Thêm version mới thành công');
       handleModalVisible(false);
       actionRef.current?.reload();
     } catch (error) {
@@ -176,6 +177,13 @@ const TableCustom = () => {
         onFinish={async (value, avatar) => {
           await handleAddNewVersion(value as API.CreateVersionRequest, avatar);
         }}
+      />
+      <VersionDetailDrawer
+        currentRow={currentRow}
+        setCurrentRow={setCurrentRow}
+        showDetail={showDetail}
+        setShowDetail={setShowDetail}
+        actionRef={actionRef}
       />
     </PageContainer>
   );

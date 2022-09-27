@@ -6,8 +6,7 @@ type MachineHealthCardProps = {
   health: number | undefined;
 };
 
-export default function MachineHealthCard({ health }: MachineHealthCardProps) {
-  console.log(health);
+export default function MachineHealthCard({}: MachineHealthCardProps) {
   return (
     <Card size="small" style={{ borderRadius: 12 }} className={styles.myCard} title="Sức khoẻ máy">
       <div className={styles.statusBar}>

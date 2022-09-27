@@ -176,8 +176,15 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
   const handleUpdateUnit = async (fields: API.UpdateManagementUnitRequest) => {
     const hide = message.loading('Configuring...');
     try {
-      await updateManagementUnit({ unitId: unitDetail?.id?.toString() || '' }, { ...fields });
+      const res = await updateManagementUnit(
+        { unitId: unitDetail?.id?.toString() || '' },
+        { ...fields },
+      );
       hide();
+      if (res.code === 700) {
+        message.error(`${fields.name} ${fields.code} ${fields.address} đã được sử dụng`);
+        return;
+      }
       message.success('Chỉnh sửa đơn vị thành công');
       handleUpdateModalVisible(false);
       setShowDetail(false);
@@ -245,7 +252,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
         headerStyle={{ border: 'none' }}
       >
         <Form layout="vertical" hideRequiredMark>
-          <Space size={12} direction={'vertical'}>
+          <Space size={12} direction={'vertical'} style={{ width: '100%' }}>
             <Row>
               <Col span={15}>
                 <h4 className={styles.drawerHeaderTitle}>Chi tiết đơn vị</h4>

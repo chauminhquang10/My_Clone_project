@@ -1,6 +1,6 @@
 import { ModalForm } from '@ant-design/pro-components';
 import React, { useState } from 'react';
-import { Button, Col, Form, Input, Row, Select, Tooltip, Upload } from 'antd';
+import { Button, Col, Form, Input, message, Row, Select, Tooltip, Upload } from 'antd';
 import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
@@ -8,6 +8,7 @@ import type { UploadProps } from 'antd';
 import { useRequest } from 'umi';
 import api from '@/services/STM-APIs';
 import styles from './NewVersionForm.less';
+import type { UploadChangeParam } from 'antd/lib/upload';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -90,7 +91,6 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
       manual: true,
     },
   );
-  console.log(listCondition);
 
   const handleUploadChange: UploadProps['onChange'] = (info) => {
     let newFileList = [...info.fileList];
@@ -125,6 +125,31 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
     setTextAreaValue(e.target.value);
   };
 
+  const [disableButton, setDisableButton] = useState<boolean>(true);
+
+  const checkSubmit = () => {
+    const listField = ['machineCategory', 'modelId', 'conditionId', 'name', 'files'];
+    setDisableButton(false);
+    listField.forEach((item) => {
+      if (!form.getFieldsValue()[item]) {
+        setDisableButton(true);
+      }
+    });
+  };
+
+  const uploadfile = (e: UploadChangeParam<UploadFile<any>>) => {
+    if (e.file.type === 'application/x-zip-compressed' && Number(e.file.size) < 1024 * 1024 * 5) {
+      checkSubmit();
+      setFile(e.file.originFileObj);
+      return e.file;
+    } else {
+      form.setFieldValue('files', undefined);
+      checkSubmit();
+      message.error(`File không đúng yêu cầu`);
+      return undefined;
+    }
+  };
+
   return (
     <ModalForm
       form={form}
@@ -157,6 +182,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
             <Select
               placeholder="Chọn loại máy"
               onChange={() => {
+                checkSubmit();
                 getAllModel();
               }}
             >
@@ -172,6 +198,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
               placeholder="Chọn dòng máy"
               loading={modelsLoading}
               onChange={() => {
+                checkSubmit();
                 getVersion();
               }}
             >
@@ -187,7 +214,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
         </Col>
         <Col span={12}>
           <Form.Item name="conditionId" label="Điều kiện">
-            <Select placeholder="Chọn điều kiện" loading={conditionsLoading}>
+            <Select placeholder="Chọn điều kiện" loading={conditionsLoading} onChange={checkSubmit}>
               {listCondition?.items?.map((item) => {
                 return (
                   <Option key={item.id} value={item.id}>
@@ -200,7 +227,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
         </Col>
         <Col span={12}>
           <Form.Item name="name" label="Tên phiên bản">
-            <Input placeholder={'Tên đề xuất'} />
+            <Input placeholder={'Tên đề xuất'} onChange={checkSubmit} />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -223,7 +250,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
               fileList={fileList}
               className={styles.myUploadFile}
               onChange={(e) => {
-                setFile(e.file.originFileObj);
+                uploadfile(e);
               }}
             >
               <Button icon={<UploadOutlined />} className={styles.myUploadBtn}>
@@ -238,7 +265,12 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
           Huỷ bỏ
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit">
+        <Button
+          className={styles.submitButton}
+          size="large"
+          htmlType="submit"
+          disabled={disableButton}
+        >
           Hoàn tất
         </Button>
       </Row>

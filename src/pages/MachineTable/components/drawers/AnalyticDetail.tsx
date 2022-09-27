@@ -134,7 +134,6 @@ export default function AnaylyticDetail({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEntity, fromDate, toDate]);
 
-  console.log(detailTransaction);
   //-------------------- detail Machine --------------------------------
   const [detailMachine, setDetailMachine] = useState<API.StmDetailResponse | undefined>();
 

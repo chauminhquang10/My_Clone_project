@@ -58,6 +58,7 @@ export default function DeclareMachineStep({
   const [ipVal, setIpVal] = useState<string>(form.getFieldValue(''));
   const [macVal, setMacVal] = useState<string>(form.getFieldValue(''));
   const [serialVal, setSerialVal] = useState<string>(form.getFieldValue(''));
+  const [disabledModel, setDisabledModel] = useState(true);
   const { run: validateTerminalId, data: terminalErr } = useRequest(
     validateMachine({ key: 'terminal', value: terminalIdValue || '' }),
     {
@@ -128,7 +129,6 @@ export default function DeclareMachineStep({
       </Button>
     );
   }, [form, onSubmit, submitButtonLabel, serialErr, terminalErr, ipErr, macErr]);
-  console.log({ models });
 
   useEffect(() => {
     if (denominations) {
@@ -138,8 +138,8 @@ export default function DeclareMachineStep({
       );
     }
   }, [denominations, form]);
+  console.log(disabledModel);
 
-  console.log('test:', denominations);
   return (
     <>
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
@@ -161,7 +161,11 @@ export default function DeclareMachineStep({
             label="Loại máy"
             rules={[{ enum: ['UNKNOWN', 'STM', 'CDM', 'ATM'], max: 6, type: 'string' }]}
           >
-            <Select defaultValue={machineDetail.machineType} placeholder={'Loại máy'}>
+            <Select
+              defaultValue={machineDetail.machineType}
+              onSelect={() => setDisabledModel(false)}
+              placeholder={'Loại máy'}
+            >
               {objectKeys(MachineType).map((type) => (
                 <Select.Option value={type} key={type}>
                   {type}
@@ -172,7 +176,11 @@ export default function DeclareMachineStep({
         </Col>
         <Col span={12}>
           <Form.Item name="modelId" label="Dòng máy" rules={[{ type: 'number' }]}>
-            <Select defaultValue={machineDetail.model?.id} placeholder={'Dòng máy'}>
+            <Select
+              defaultValue={machineDetail.model?.id}
+              placeholder={'Dòng máy'}
+              disabled={disabledModel}
+            >
               {models?.map((modelItem) => (
                 <Select.Option value={modelItem.id} key={modelItem.id}>
                   {modelItem.name}

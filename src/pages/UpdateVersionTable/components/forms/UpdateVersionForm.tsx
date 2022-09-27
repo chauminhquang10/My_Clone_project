@@ -1,22 +1,31 @@
 import { ModalForm } from '@ant-design/pro-components';
+import type { ActionType } from '@ant-design/pro-components';
 import React, { useState } from 'react';
-import { Button, Col, Form, Input, Row, Select, Tooltip, Upload } from 'antd';
+import { Button, Col, Form, Input, message, Row, Select, Tooltip, Upload } from 'antd';
 import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { UploadProps } from 'antd';
 import styles from './UpdateVersionForm.less';
+import { useRequest } from 'umi';
+import api from '@/services/STM-APIs';
+import type { UploadChangeParam } from 'antd/lib/upload';
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-type UpdateVersionFormProps = {
+interface UpdateVersionFormProps extends API.VersionResponse {
   title: string;
   width: string;
   visible: boolean;
   onVisibleChange: (value: boolean) => void;
-  onFinish: (values: Partial<API.RuleListItem>) => Promise<boolean>;
-};
+  onFinish: (
+    params: API.updateVersionParams,
+    record: API.UpdateVersionRequest,
+    file?: File,
+  ) => Promise<void>;
+  actionRef: React.MutableRefObject<ActionType | undefined>;
+}
 
 const RemoveFileIcon = () => {
   return (
@@ -34,6 +43,13 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
   visible,
   onVisibleChange,
   onFinish,
+  machineType,
+  model,
+  conditionId,
+  name,
+  content,
+  filePath,
+  id,
 }) => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
@@ -74,13 +90,77 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
     setTextAreaValue(e.target.value);
   };
 
+  const {
+    run: getModelList,
+    loading: modelsLoading,
+    data: listModels,
+    cancel: cancelModel,
+  } = useRequest<API.ResponseBasePageResponseStmModelResponse>(
+    () => {
+      form.resetFields(['modelId', 'conditionId']);
+      if (form.getFieldValue('machineCategory'))
+        return api.STMModelController.getListModels({
+          machineType: form.getFieldValue('machineCategory'),
+        });
+      return new Promise(() => {
+        cancelModel();
+      });
+    },
+    {
+      manual: true,
+    },
+  );
+  const {
+    run: getConditionList,
+    loading: conditionsLoading,
+    data: listCondition,
+    cancel: cancelCondition,
+  } = useRequest<API.ResponseBasePageResponseStmModelResponse>(
+    (modelId?: number) => {
+      form.resetFields(['conditionId']);
+      if (form.getFieldValue('modelId'))
+        return api.STMVersionController.getAllVersion({
+          modelId: modelId ? modelId : form.getFieldValue('modelId'),
+        });
+      return new Promise(() => {
+        cancelCondition();
+      });
+    },
+    {
+      manual: true,
+    },
+  );
+  const [file, setFile] = useState<File>();
+  const uploadfile = (e: UploadChangeParam<UploadFile<any>>) => {
+    if (e.file.type === 'application/x-zip-compressed' && Number(e.file.size) < 1024 * 1024 * 5) {
+      // checkSubmit();
+      setFile(e.file.originFileObj);
+      return e.file;
+    } else {
+      form.setFieldValue('files', filePath);
+      // checkSubmit();
+      message.error(`File không đúng yêu cầu`);
+      return undefined;
+    }
+  };
+
   return (
     <ModalForm
       form={form}
       width={width}
       visible={visible}
       onVisibleChange={onVisibleChange}
-      onFinish={onFinish}
+      onFinish={async () => {
+        try {
+          const success = await onFinish(
+            { versionId: `${id}` },
+            form.getFieldsValue() as API.UpdateVersionRequest,
+            file,
+          );
+          onVisibleChange(false);
+          return success;
+        } catch (error) {}
+      }}
       modalProps={{
         centered: true,
         closable: false,
@@ -88,6 +168,19 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
         className: styles.myModalForm,
       }}
       submitTimeout={2000}
+      onInit={() => {
+        form.setFieldValue('machineCategory', machineType);
+        getModelList();
+        form.setFieldValue('modelId', model?.id);
+        getConditionList(model?.id);
+        form.setFieldValue('conditionId', conditionId);
+        form.setFieldValue('name', name);
+        form.setFieldValue('content', content);
+        form.setFieldValue('files', filePath);
+      }}
+      onChange={() => {
+        console.log(form.getFieldValue('modelId'));
+      }}
     >
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
         <Col>
@@ -103,30 +196,56 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
       <Row gutter={[24, 24]}>
         <Col span={12}>
           <Form.Item name="machineCategory" label="Loại máy">
-            <Select placeholder="Chọn loại máy">
-              <Option value="private">Private</Option>
-              <Option value="public">Public</Option>
+            <Select
+              placeholder="Chọn loại máy"
+              onChange={() => {
+                getModelList();
+              }}
+            >
+              <Option value="STM">STM</Option>
+              <Option value="CDM">CDM</Option>
+              <Option value="ATM">ATM</Option>
             </Select>
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="machineType" label="Dòng máy">
-            <Select placeholder="Chọn dòng máy">
-              <Option value="private">Private</Option>
-              <Option value="public">Public</Option>
+          <Form.Item name="modelId" label="Dòng máy">
+            <Select
+              placeholder="Chọn dòng máy"
+              loading={modelsLoading}
+              onChange={() => {
+                getConditionList();
+              }}
+            >
+              {listModels?.items?.map((item) => {
+                return (
+                  <Option value={item.id} key={item.id}>
+                    {item.name}
+                  </Option>
+                );
+              })}
             </Select>
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="condition" label="Điều kiện">
-            <Select placeholder="Chọn điều kiện">
-              <Option value="private">Private</Option>
-              <Option value="public">Public</Option>
+          <Form.Item name="conditionId" label="Điều kiện">
+            <Select
+              placeholder="Chọn điều kiện"
+              loading={conditionsLoading}
+              // onChange={checkSubmit}
+            >
+              {listCondition?.items?.map((item) => {
+                return (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                );
+              })}
             </Select>
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="versionName" label="Tên phiên bản">
+          <Form.Item name="name" label="Tên phiên bản">
             <Input placeholder={'Tên đề xuất'} />
           </Form.Item>
         </Col>
@@ -144,8 +263,15 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="fileUpload" label="File tải">
-            <Upload {...props} fileList={fileList} className={styles.myUploadFile}>
+          <Form.Item name="files" label="File tải">
+            <Upload
+              {...props}
+              fileList={fileList}
+              className={styles.myUploadFile}
+              onChange={(e) => {
+                uploadfile(e);
+              }}
+            >
               <Button icon={<UploadOutlined />} className={styles.myUploadBtn}>
                 Upload File
               </Button>

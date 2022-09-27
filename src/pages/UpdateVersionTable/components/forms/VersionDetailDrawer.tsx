@@ -5,24 +5,15 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 
-import { Col, Drawer, Form, Input, Row, Card, Table, Tooltip, Badge } from 'antd';
+import { Col, Drawer, Form, Input, Row, Card, Table, Tooltip, Badge, message } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import styles from './VersionDetailDrawer.less';
 import UpdateVersionForm from './UpdateVersionForm';
 import ModalCustom from '@/components/FormCustom/ModalCustom';
-
-// xử lí phần key này bằng cách format lại data trả về từ API
-// thêm trường key này vào với giá trị bằng machineId
-// extend cái interface MachineDataType với trường mới là key
-interface MachineDataType {
-  key: React.Key;
-  machineName: string;
-  machineId: string;
-  IPAddress: string;
-  version: string;
-}
+import type { ActionType } from '@ant-design/pro-components';
+import api from '@/services/STM-APIs';
 
 interface UpdatedMachineListTableTitleProps {
   title: string;
@@ -38,9 +29,10 @@ type ButtonType = {
 type VersionDetailDrawerProps = {
   showDetail: boolean;
   setShowDetail: (value: boolean) => void;
-  currentRow: API.ManagementUnitResponse | undefined;
-  setCurrentRow: (value: API.ManagementUnitResponse | undefined) => void;
+  currentRow: API.VersionResponse | undefined;
+  setCurrentRow: (value: API.VersionResponse | undefined) => void;
   children?: React.ReactNode;
+  actionRef: React.MutableRefObject<ActionType | undefined>;
 };
 
 const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
@@ -48,26 +40,50 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
   setShowDetail,
   currentRow,
   setCurrentRow,
+  actionRef,
 }) => {
-  const updatedMachineListColumns: ColumnsType<MachineDataType> = [
+  const updateModelRef = useRef();
+  //------------ handle create new  --------------------
+  const handleUpdateVersion = async (
+    params: API.updateVersionParams,
+    record: API.UpdateVersionRequest,
+    file?: File,
+  ) => {
+    const hide = message.loading('Loading...');
+    try {
+      const res = await api.STMVersionController.updateVersion(params, { ...record }, file);
+      hide();
+      if (res.code === 700) {
+        message.error(`Lỗi`);
+        return;
+      }
+      message.success('Chỉnh sửa version thành công');
+      setShowDetail(false);
+      actionRef.current?.reload();
+    } catch (error) {
+      hide();
+      message.error('Adding failed, please try again!');
+    }
+  };
+  const updatedMachineListColumns: ColumnsType<API.StmInfoResponse> = [
     {
       title: 'Tên máy',
-      dataIndex: 'machineName',
-      key: 'machineName',
+      dataIndex: 'name',
+      key: 'name',
       align: 'left',
       render: (text) => <span>{text}</span>,
     },
     {
       title: 'Terminal ID',
-      dataIndex: 'machineId',
-      key: 'machineId',
+      dataIndex: 'terminalId',
+      key: 'terminalId',
       align: 'center',
       render: (text) => <span>{text}</span>,
     },
     {
       title: 'Địa chỉ IP',
-      dataIndex: 'IPAddress',
-      key: 'IPAddress',
+      dataIndex: 'ipAddress',
+      key: 'ipAddress',
       align: 'center',
       render: (text) => <span>{text}</span>,
     },
@@ -76,54 +92,10 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
       dataIndex: 'version',
       key: 'version',
       align: 'center',
-      render: (text) => <span>{text}</span>,
+      render: (_, entity) => <span>{entity?.version?.name}</span>,
     },
   ];
 
-  const updatedMachineListData: MachineDataType[] = [
-    {
-      key: '1',
-      machineName: 'Test Machine',
-      machineId: '1',
-      IPAddress: 'Test IP',
-      version: 'quangdeptrai',
-    },
-    {
-      key: '2',
-      machineName: 'Test Machine',
-      machineId: '2',
-      IPAddress: 'Test IP',
-      version: 'quangdeptrai',
-    },
-    {
-      key: '3',
-      machineName: 'Test Machine',
-      machineId: '3',
-      IPAddress: 'Test IP',
-      version: 'quangdeptrai',
-    },
-    {
-      key: '4',
-      machineName: 'Test Machine',
-      machineId: '4',
-      IPAddress: 'Test IP',
-      version: 'quangdeptrai',
-    },
-    {
-      key: '5',
-      machineName: 'Test Machine',
-      machineId: '5',
-      IPAddress: 'Test IP',
-      version: 'quangdeptrai',
-    },
-    {
-      key: '6',
-      machineName: 'Test Machine',
-      machineId: '6',
-      IPAddress: 'Test IP',
-      version: 'quangdeptrai',
-    },
-  ];
   // xử  lí trạng thái của form chỉnh sửa
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
@@ -260,35 +232,32 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                   <Row gutter={[24, 12]}>
                     <Col span={8}>
                       <Form.Item name="machineCategory" label="Loại máy">
-                        <Input disabled placeholder={'Smart Teller Machine'} />
+                        <Input disabled placeholder={currentRow?.machineType} />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
                       <Form.Item name="machineType" label="Dòng máy">
-                        <Input disabled placeholder={'example'} />
+                        <Input disabled placeholder={currentRow?.model?.name} />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
                       <Form.Item name="versionName" label="Tên phiên bản">
-                        <Input disabled placeholder={'example'} />
+                        <Input disabled placeholder={currentRow?.name} />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
                       <Form.Item name="condition" label="Điều kiện">
-                        <Input disabled placeholder={'example'} />
+                        <Input disabled placeholder={currentRow?.condition} />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
                       <Form.Item name="content" label="Nội dung">
-                        <Tooltip
-                          placement="bottom"
-                          title={'Lorem ipsum dolor sit , consectetur adipiscing elit.'}
-                        >
+                        <Tooltip placement="bottom" title={currentRow?.content}>
                           <div>
                             <Input
                               disabled
-                              value={'Lorem ipsum dolor sit , consectetur adipiscing elit.'}
-                              placeholder={'Lorem ipsum dolor sit , consectetur adipiscing elit.'}
+                              value={currentRow?.condition}
+                              placeholder={currentRow?.condition}
                               style={{ cursor: 'pointer' }}
                             />
                           </div>
@@ -299,7 +268,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                       <Form.Item name="fileUpload" label="File tải">
                         <div className={styles.detailFileUpload}>
                           <PaperClipOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />
-                          <span className={styles.fileNameDetail}>File name</span>
+                          <span className={styles.fileNameDetail}>{currentRow?.filePath}</span>
                         </div>
                       </Form.Item>
                     </Col>
@@ -311,9 +280,14 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                 <Table
                   bordered
                   columns={updatedMachineListColumns}
-                  dataSource={updatedMachineListData}
+                  dataSource={currentRow?.updatedMachines}
                   title={() => (
-                    <UpdatedMachineListTableTitle title="Máy đã cập nhật" quantity={99} />
+                    <UpdatedMachineListTableTitle
+                      title="Máy đã cập nhật"
+                      quantity={
+                        currentRow.updatedMachines?.length ? currentRow.updatedMachines?.length : 0
+                      }
+                    />
                   )}
                   className={styles.myTable}
                   pagination={false}
@@ -325,9 +299,16 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                 <Table
                   bordered
                   columns={updatedMachineListColumns}
-                  dataSource={updatedMachineListData}
+                  dataSource={currentRow?.notUpdatedMachines}
                   title={() => (
-                    <NotUpdatedMachineListTableTitle title="Máy chưa cập nhật" quantity={99} />
+                    <NotUpdatedMachineListTableTitle
+                      title="Máy chưa cập nhật"
+                      quantity={
+                        currentRow.notUpdatedMachines?.length
+                          ? currentRow.notUpdatedMachines?.length
+                          : 0
+                      }
+                    />
                   )}
                   className={styles.myTable}
                   pagination={false}
@@ -352,18 +333,9 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
         width="934px"
         visible={updateModalVisible}
         onVisibleChange={handleUpdateModalVisible}
-        onFinish={async () => {
-          // const success = await handleAdd(value as API.RuleListItem);
-          // if (success) {
-          //   handleUpdateModalVisible(false);
-          //   if (actionRef.current) {
-          //     actionRef.current.reload();
-          //   }
-          //   return true;
-          // }
-          handleUpdateModalVisible(false);
-          return false;
-        }}
+        onFinish={handleUpdateVersion}
+        {...currentRow}
+        actionRef={updateModelRef}
       />
 
       <ModalCustom

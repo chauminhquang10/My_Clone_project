@@ -54,7 +54,6 @@ const StatusTag: React.FC<StatusTagProps> = ({ title, icon, type, width, changab
       );
 
       setCurrentStatus(currentStatusIndex);
-      console.log(currentStatusIndex);
       setCheckStatusStyle(changableStatus?.initialStatus?.type);
     } else if (type && STATUS_STYLES.hasOwnProperty(type.toUpperCase())) {
       setCheckStatusStyle(STATUS_STYLES[type.toUpperCase()]);
@@ -104,7 +103,6 @@ const StatusTag: React.FC<StatusTagProps> = ({ title, icon, type, width, changab
             <div
               onClick={() => {
                 handleIconClick();
-                console.log('abc');
               }}
             >
               {switchIcon ? switchIcon : <DefaultIcon style={{ width: '18px', height: '18px' }} />}
