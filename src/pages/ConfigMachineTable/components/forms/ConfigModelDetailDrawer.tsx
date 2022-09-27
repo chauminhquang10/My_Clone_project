@@ -24,7 +24,7 @@ import type { MutableRefObject } from 'react';
 import React, { useState } from 'react';
 import styles from './ConfigModelDetailDrawer.less';
 // import userDetailIcon from '@/assets/images/svg/icon/top-right-arrow.svg';
-import { useRequest } from 'umi';
+import { useModel, useRequest } from 'umi';
 import type { ActionType } from '@ant-design/pro-components';
 import { getModelDetail, updateModel } from '@/services/STM-APIs/STMModelController';
 import UpdateConfigModelForm from './UpdateConfigModel';
@@ -96,6 +96,12 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
     );
   };
 
+  // get current user info
+  const { initialState } = useModel('@@initialState');
+
+  // xử lí cho phép chỉnh sửa
+  const [enableUpdate, setEnableUpdate] = useState<boolean>(true);
+
   // xử  lí trạng thái của form chỉnh sửa
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
@@ -111,6 +117,12 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
       return getModelDetail({ modelId: currentModel?.id?.toString() || '' });
     },
     {
+      onSuccess(data) {
+        console.log(data);
+        if (!initialState?.currentRoles?.update_model) {
+          setEnableUpdate(false);
+        }
+      },
       refreshDeps: [currentModel],
     },
   );
@@ -189,13 +201,21 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                   className={styles.myDrawerHeaderBtnGroup}
                 >
                   <Col>
-                    <Button
-                      icon={<EditOutlined color="#434343" />}
-                      className={styles.btnItem}
-                      onClick={() => handleUpdateModalVisible(true)}
+                    <Tooltip
+                      placement="left"
+                      title={
+                        enableUpdate ? '' : 'Tài khoản chưa được cho phép truy cập chức năng này'
+                      }
                     >
-                      <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
-                    </Button>
+                      <Button
+                        icon={<EditOutlined color="#434343" />}
+                        className={styles.btnItem}
+                        onClick={() => handleUpdateModalVisible(true)}
+                        disabled={!enableUpdate}
+                      >
+                        <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
+                      </Button>
+                    </Tooltip>
                   </Col>
                   <Col>
                     <Tooltip

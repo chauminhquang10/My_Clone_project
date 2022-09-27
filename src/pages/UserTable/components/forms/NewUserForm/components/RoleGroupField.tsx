@@ -1,3 +1,4 @@
+import { MAP_ACTION_LIST } from '@/constants';
 import { Col, Form, Select, Tag } from 'antd';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import styles from '../NewUserForm.less';
@@ -12,7 +13,7 @@ export function getActionsByRoleGroupId(id?: number, list?: API.RoleGroupRespons
   if (!foundUnit) return [];
   return foundUnit.actions
     ? foundUnit.actions.map((item) => ({
-        value: item.action,
+        value: item.action ? MAP_ACTION_LIST[item.action] : '',
       }))
     : [];
 }

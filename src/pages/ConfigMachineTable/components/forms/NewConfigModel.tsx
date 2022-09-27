@@ -98,10 +98,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
         style={{ margin: 0 }}
         name={dataIndex}
         rules={[
-          {
-            required: true,
-            message: `Vui lòng nhập giá trị`,
-          },
+          { required: true, message: 'Sức chứa tối thiểu là băt buộc' },
+          { min: 0, max: 1000000, type: 'number', message: 'Tối đa 1.000.000' },
         ]}
       >
         <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} />
@@ -139,8 +137,8 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
   //  xử lí update action cho table
   const [showUpdateActions, setShowUpdateActions] = useState<boolean>(false);
 
-  // get all selected key tu data ban dau tra ve
-  const [initialSelectedRowKeys, setInitialSelectedRowKeys] = useState<React.Key[]>([]);
+  // những key để show trong select list
+  const [showSelectedRowKeys, setShowSelectedRowKeys] = useState<React.Key[]>([]);
 
   const [newForm] = Form.useForm();
 
@@ -156,7 +154,7 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
         setDataSource(formattedData as CustomPhysicalDevice[]);
         const getAllSelectedRowKeys = data?.devices && data?.devices.map((item) => item?.id);
         setSelectedRowKeys(getAllSelectedRowKeys as React.Key[]);
-        setInitialSelectedRowKeys(getAllSelectedRowKeys as React.Key[]);
+        setShowSelectedRowKeys(getAllSelectedRowKeys as React.Key[]);
       },
     },
   );
@@ -247,8 +245,8 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
         <span
           className={`${styles.updateActionTitle} ${styles.cancelUpdateAction}`}
           onClick={() => {
-            setSelectedRowKeys(initialSelectedRowKeys);
             setShowUpdateActions(false);
+            setShowSelectedRowKeys(selectedRowKeys);
           }}
         >
           Huỷ bỏ
@@ -257,6 +255,7 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
           className={`${styles.updateActionTitle} ${styles.confirmUpdateAction}`}
           onClick={() => {
             setShowUpdateActions(false);
+            setSelectedRowKeys(showSelectedRowKeys);
           }}
         >
           Cập nhật
@@ -289,9 +288,9 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
   };
 
   const rowSelection = {
-    selectedRowKeys,
+    selectedRowKeys: showSelectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[]) => {
-      setSelectedRowKeys(newSelectedRowKeys);
+      setShowSelectedRowKeys(newSelectedRowKeys);
     },
   };
 
@@ -323,7 +322,11 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
 
       <Row gutter={[24, 24]}>
         <Col span={12}>
-          <Form.Item name="machineType" label="Loại máy">
+          <Form.Item
+            name="machineType"
+            label="Loại máy"
+            rules={[{ required: true, message: 'Loại máy là băt buộc' }]}
+          >
             <Select placeholder="Chọn loại máy">
               <Option value="STM">STM</Option>
               <Option value="CDM">CDM</Option>
@@ -332,7 +335,14 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="name" label="Tên dòng máy">
+          <Form.Item
+            name="name"
+            label="Tên dòng máy"
+            rules={[
+              { required: true, message: 'Tên dòng máy là băt buộc' },
+              { max: 100, message: 'Tối đa 100 kí tự' },
+            ]}
+          >
             <Input placeholder={'Nhập tên dòng máy'} />
           </Form.Item>
         </Col>
@@ -369,9 +379,22 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
           Huỷ bỏ
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit">
-          Hoàn tất
-        </Button>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Button
+              className={styles.submitButton}
+              size="large"
+              htmlType="submit"
+              disabled={
+                !newForm.isFieldsTouched(true) ||
+                !selectedRowKeys.length ||
+                !!newForm.getFieldsError().filter(({ errors }) => errors.length).length
+              }
+            >
+              Hoàn tất
+            </Button>
+          )}
+        </Form.Item>
       </Row>
     </ModalForm>
   );

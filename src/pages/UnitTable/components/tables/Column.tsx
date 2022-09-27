@@ -12,13 +12,8 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
   const columns: ProColumns<API.ManagementUnitResponse>[] = [
     {
       title: <HeadCell>STT</HeadCell>,
-      sorter: (a, b) => {
-        return (a.id as number) - (b.id as number);
-      },
-      dataIndex: 'id',
-      render: (dom) => {
-        const stt = dom as number;
-        return <TextCell>{stt}</TextCell>;
+      render: (_, __, index) => {
+        return <TextCell>{index + 1}</TextCell>;
       },
     },
     {

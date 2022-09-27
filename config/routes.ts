@@ -80,7 +80,7 @@ const routes = [
             path: '/camera/log',
             name: 'Log hoạt động',
             icon: 'camera-log',
-            component: 'HistoryList',
+            component: 'CameraMonitor/ActivityLog',
           },
           // {
           //   path: '/camera/transaction-list',

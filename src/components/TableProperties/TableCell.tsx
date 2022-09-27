@@ -230,7 +230,6 @@ export function UserCellGroup({ listUser }: UserCellGroupProps) {
   };
   //------------ function open dropdown --------------------
   const openDropdown = () => {
-    console.log(boxHoverRef.current);
     setActive(true);
   };
   //------------ handle close dropdown ----------------
@@ -299,7 +298,6 @@ export function ManageCell({ listMachine }: ManageCellProps) {
   };
   //------------ function open dropdown --------------------
   const openDropdown = () => {
-    console.log(boxHoverRef.current);
     setActive(true);
   };
   //------------ handle close dropdown ----------------

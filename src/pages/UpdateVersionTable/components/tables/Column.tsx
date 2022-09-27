@@ -30,14 +30,23 @@ const filterModel = (value: string | number | boolean, record: API.VersionRespon
   return record.name?.includes(value as string) as boolean;
 };
 
-function Column({}: ColumnProps) {
+function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
   const columns: ProColumns<API.VersionResponse>[] = [
     {
       title: <HeadCell>Tên phiên bản</HeadCell>,
       dataIndex: 'name',
-      render: (dom) => {
+      render: (dom, entity) => {
         const stt = dom as number;
-        return <TextCell>{stt}</TextCell>;
+        return (
+          <TextCell
+            onClick={() => {
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
+          >
+            {stt}
+          </TextCell>
+        );
       },
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);

@@ -99,10 +99,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
         style={{ margin: 0 }}
         name={dataIndex}
         rules={[
-          {
-            required: true,
-            message: `Vui lòng nhập giá trị`,
-          },
+          { required: true, message: 'Sức chứa tối thiểu là băt buộc' },
+          { min: 0, max: 1000000, type: 'number', message: 'Tối đa 1.000.000' },
         ]}
       >
         <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: '100%' }} />
@@ -140,9 +138,8 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
 }) => {
   //  xử lí update action cho table
   const [showUpdateActions, setShowUpdateActions] = useState<boolean>(false);
-
-  // get all selected key tu data ban dau tra ve
-  const [initialSelectedRowKeys, setInitialSelectedRowKeys] = useState<React.Key[]>([]);
+  // những key để show trong select list
+  const [showSelectedRowKeys, setShowSelectedRowKeys] = useState<React.Key[]>([]);
 
   const [newForm] = Form.useForm();
 
@@ -154,14 +151,27 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
     {
       onSuccess(data) {
         const formattedData =
-          data?.devices && data?.devices.map((item) => ({ ...item, key: item?.id, myMinCap: 0 }));
-        setDataSource(formattedData as CustomPhysicalDevice[]);
-        const getAllSelectedRowKeys = data?.devices && data?.devices.map((item) => item?.id);
-        setInitialSelectedRowKeys(getAllSelectedRowKeys as React.Key[]);
+          data?.devices &&
+          data?.devices.map((item) => {
+            const index = modelDetail?.storages?.findIndex((storage) => {
+              return storage?.deviceType?.id === item?.id;
+            });
 
+            return {
+              ...item,
+              key: item?.id,
+              myMinCap:
+                modelDetail?.storages && index !== -1
+                  ? modelDetail?.storages[index as number]?.minCapacity
+                  : 0,
+            };
+          });
+
+        setDataSource(formattedData as CustomPhysicalDevice[]);
         // set nhung key trong chi tiet dong may thoi
         const editSelectedRowKeys = modelDetail?.storages?.map((item) => item?.deviceType?.id);
         setSelectedRowKeys(editSelectedRowKeys as React.Key[]);
+        setShowSelectedRowKeys(editSelectedRowKeys as React.Key[]);
       },
     },
   );
@@ -252,7 +262,7 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
         <span
           className={`${styles.updateActionTitle} ${styles.cancelUpdateAction}`}
           onClick={() => {
-            setSelectedRowKeys(initialSelectedRowKeys);
+            setShowSelectedRowKeys(selectedRowKeys);
             setShowUpdateActions(false);
           }}
         >
@@ -262,6 +272,7 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
           className={`${styles.updateActionTitle} ${styles.confirmUpdateAction}`}
           onClick={() => {
             setShowUpdateActions(false);
+            setSelectedRowKeys(showSelectedRowKeys);
           }}
         >
           Cập nhật
@@ -294,9 +305,9 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
   };
 
   const rowSelection = {
-    selectedRowKeys,
+    selectedRowKeys: showSelectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[]) => {
-      setSelectedRowKeys(newSelectedRowKeys);
+      setShowSelectedRowKeys(newSelectedRowKeys);
     },
   };
 
@@ -332,7 +343,11 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
 
       <Row gutter={[24, 24]}>
         <Col span={12}>
-          <Form.Item name="machineType" label="Loại máy">
+          <Form.Item
+            name="machineType"
+            label="Loại máy"
+            rules={[{ required: true, message: 'Loại máy là băt buộc' }]}
+          >
             <Select placeholder="Chọn loại máy">
               <Option value="STM">STM</Option>
               <Option value="CDM">CDM</Option>
@@ -341,7 +356,14 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="name" label="Tên dòng máy">
+          <Form.Item
+            name="name"
+            label="Tên dòng máy"
+            rules={[
+              { required: true, message: 'Tên dòng máy là băt buộc' },
+              { max: 100, message: 'Tối đa 100 kí tự' },
+            ]}
+          >
             <Input placeholder={'Nhập tên dòng máy'} />
           </Form.Item>
         </Col>
@@ -378,9 +400,21 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
           Huỷ bỏ
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit">
-          Hoàn tất
-        </Button>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Button
+              className={styles.submitButton}
+              size="large"
+              htmlType="submit"
+              disabled={
+                !selectedRowKeys.length ||
+                !!newForm.getFieldsError().filter(({ errors }) => errors.length).length
+              }
+            >
+              Hoàn tất
+            </Button>
+          )}
+        </Form.Item>
       </Row>
     </ModalForm>
   );
