@@ -18,32 +18,13 @@ export async function getAllUsers(
 }
 
 /** Create User API  - Create new user with staffId, name, email, phone number, management unit ID POST /api/v1/users */
-export async function createUser(
-  body: API.CreateUserRequest,
-  avatar?: File,
-  options?: { [key: string]: any },
-) {
-  const formData = new FormData();
-
-  if (avatar) {
-    formData.append('avatar', avatar);
-  }
-
-  Object.keys(body).forEach((ele) => {
-    const item = (body as any)[ele];
-
-    if (item !== undefined && item !== null) {
-      formData.append(
-        ele,
-        typeof item === 'object' && !(item instanceof File) ? JSON.stringify(item) : item,
-      );
-    }
-  });
-
+export async function createUser(body: API.CreateUserRequest, options?: { [key: string]: any }) {
   return request<API.ResponseBaseUserResponse>('/api/v1/users', {
     method: 'POST',
-    data: formData,
-    requestType: 'form',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
     ...(options || {}),
   });
 }
@@ -67,32 +48,16 @@ export async function updateUser(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.updateUserParams,
   body: API.UpdateUserRequest,
-  avatar?: File,
   options?: { [key: string]: any },
 ) {
   const { userId: param0, ...queryParams } = params;
-  const formData = new FormData();
-
-  if (avatar) {
-    formData.append('avatar', avatar);
-  }
-
-  Object.keys(body).forEach((ele) => {
-    const item = (body as any)[ele];
-
-    if (item !== undefined && item !== null) {
-      formData.append(
-        ele,
-        typeof item === 'object' && !(item instanceof File) ? JSON.stringify(item) : item,
-      );
-    }
-  });
-
   return request<API.ResponseBaseUserResponse>(`/api/v1/users/${param0}`, {
     method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     params: { ...queryParams },
-    data: formData,
-    requestType: 'form',
+    data: body,
     ...(options || {}),
   });
 }

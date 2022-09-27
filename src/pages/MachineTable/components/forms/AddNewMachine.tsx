@@ -31,21 +31,13 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
         } as API.CreateStmRequest);
 
         if (postMachineRes.code === 1) {
-          openNotification(
-            'error',
-            `khai báo máy ${values.machineType} - ${values.machineName} thất bại`,
-            postMachineRes.message,
-          );
+          openNotification('error', `Thêm mới máy thất bại`, postMachineRes.message);
 
           return false;
         }
 
         if (postMachineRes.code === 0) {
-          openNotification(
-            'success',
-            'Khai báo máy thành công',
-            `Khai báo thành công cho máy ${postMachineRes.data?.machineType} - ${postMachineRes.data?.name}`,
-          );
+          openNotification('success', 'Thêm máy mới thành công!');
 
           return true;
         }

@@ -2,6 +2,7 @@
 /* eslint-disable */
 // API 更新时间：
 // API 唯一标识：
+import * as WarningController from './WarningController';
 import * as STMVersionController from './STMVersionController';
 import * as UserController from './UserController';
 import * as RoleController from './RoleController';
@@ -18,6 +19,7 @@ import * as LocationController from './LocationController';
 import * as PhysicalDevicesController from './PhysicalDevicesController';
 import * as DenominationsController from './DenominationsController';
 export default {
+  WarningController,
   STMVersionController,
   UserController,
   RoleController,

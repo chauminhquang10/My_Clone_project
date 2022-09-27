@@ -251,6 +251,19 @@ declare namespace API {
     id: string;
   };
 
+  type getMachineWarningsParams = {
+    machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+    deviceId?: number;
+    solved?: boolean;
+    from?: string;
+    to?: string;
+    query?: string;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
+  };
+
   type getManagementUnitParams = {
     unitId: string;
   };
@@ -367,6 +380,38 @@ declare namespace API {
     url?: string;
   };
 
+  type MachineWarningResponse = {
+    id?: number;
+    machine?: StmInfoResponse;
+    device?: PhysicalDevice;
+    physicalStatus?:
+      | 'OK'
+      | 'OFFLINE'
+      | 'POWER_OFF'
+      | 'NO_DEVICE'
+      | 'HARDWARE_ERROR'
+      | 'USER_ERROR'
+      | 'BUSY'
+      | 'FRAUD_ATTEMPT'
+      | 'UNKNOWN';
+    storageStatus?:
+      | 'OK'
+      | 'FULL'
+      | 'HIGHT'
+      | 'LOW'
+      | 'EMPTY'
+      | 'INOP'
+      | 'MISSING'
+      | 'NOVAL'
+      | 'NOREF'
+      | 'MANIP'
+      | 'JAMMED'
+      | 'UNKNOWN';
+    time?: string;
+    errorCode?: string;
+    solved?: boolean;
+  };
+
   type ManagementUnitDetailResponse = {
     id?: number;
     code?: string;
@@ -397,6 +442,10 @@ declare namespace API {
     notificationId: number;
   };
 
+  type markAsSolvedWarningParams = {
+    id: string;
+  };
+
   type markAsUnReadParams = {
     notificationId: number;
   };
@@ -425,6 +474,13 @@ declare namespace API {
     level?: 'INFORMATION' | 'WARNING' | 'FAILURE' | 'FATAL';
     reference?: string;
     read?: boolean;
+  };
+
+  type PageResponseMachineWarningResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: MachineWarningResponse[];
   };
 
   type PageResponseManagementUnitResponse = {
@@ -498,10 +554,10 @@ declare namespace API {
   };
 
   type PhysicalDeviceInfo = {
-    count?: number;
-    deviceType?: PhysicalDevice;
+    device?: PhysicalDevice;
+    deviceOrder?: number;
     physicalStatus?:
-      | 'ONLINE'
+      | 'OK'
       | 'OFFLINE'
       | 'POWER_OFF'
       | 'NO_DEVICE'
@@ -513,16 +569,15 @@ declare namespace API {
     storageStatus?:
       | 'OK'
       | 'FULL'
-      | 'HIGH'
+      | 'HIGHT'
       | 'LOW'
       | 'EMPTY'
       | 'INOP'
+      | 'MISSING'
       | 'NOVAL'
       | 'NOREF'
       | 'MANIP'
-      | 'OUT'
       | 'JAMMED'
-      | 'NOTSUPP'
       | 'UNKNOWN';
   };
 
@@ -669,6 +724,12 @@ declare namespace API {
     data?: ManagementUnitResponse;
   };
 
+  type ResponseBasePageResponseMachineWarningResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseMachineWarningResponse;
+  };
+
   type ResponseBasePageResponseManagementUnitResponse = {
     code?: number;
     message?: string;
@@ -753,6 +814,12 @@ declare namespace API {
     data?: RoleGroupResponse;
   };
 
+  type ResponseBaseSolveWarningResponse = {
+    code?: number;
+    message?: string;
+    data?: SolveWarningResponse;
+  };
+
   type ResponseBaseStmDetailResponse = {
     code?: number;
     message?: string;
@@ -835,6 +902,10 @@ declare namespace API {
     users?: UserResponse[];
   };
 
+  type SolveWarningResponse = {
+    success?: boolean;
+  };
+
   type StmDetailResponse = {
     id?: string;
     machineOrder?: number;
@@ -875,6 +946,10 @@ declare namespace API {
     status?: 'UNKNOWN' | 'IN_SERVICE' | 'OUT_OF_SERVICE' | 'OFFLINE';
     lastUptime?: string;
     driveHealth?: number;
+    devices?: StmDevices;
+  };
+
+  type StmDevices = {
     devices?: PhysicalDeviceInfo[];
   };
 
@@ -890,6 +965,7 @@ declare namespace API {
     status?: 'UNKNOWN' | 'IN_SERVICE' | 'OUT_OF_SERVICE' | 'OFFLINE';
     activity?: 'UNKNOWN' | 'MAINTAINING' | 'UPGRADE' | 'DISCONNECTED';
     ipAddress?: string;
+    version?: VersionResponse;
   };
 
   type StmModelDetailResponse = {
