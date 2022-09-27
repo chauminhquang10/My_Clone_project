@@ -28,8 +28,6 @@ const SelectedLanguage: React.FC = () => {
 const GlobalHeaderRight: React.FC = () => {
   const { initialState } = useModel('@@initialState');
 
-  console.log('initialState: ', initialState);
-
   if (!initialState || !initialState.settings) {
     return null;
   }
