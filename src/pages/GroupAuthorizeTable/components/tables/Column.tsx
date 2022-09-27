@@ -1,6 +1,7 @@
 import type { ProColumns } from '@ant-design/pro-components';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell, UserCellGroup } from '@/components/TableProperties//TableCell';
+import { formatDate } from '@/utils';
 
 type ColumnProps = {
   setCurrentRow: (s: API.RoleGroupResponse) => void;
@@ -50,14 +51,17 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       title: <HeadCell>Người tạo</HeadCell>,
       dataIndex: 'createdBy',
       render: (_, entity) => {
-        return <TextCell>{entity.createdBy?.id + ' - ' + entity.createdBy?.name}</TextCell>;
+        const value = entity.createdBy?.staffId
+          ? `${entity.createdBy?.staffId} - ${entity.createdBy?.name}`
+          : entity.createdBy?.name;
+        return <TextCell>{value}</TextCell>;
       },
     },
     {
       title: <HeadCell>Ngày tạo</HeadCell>,
       dataIndex: 'createdAt',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return <TextCell>{formatDate(dom as string)}</TextCell>;
       },
     },
   ];

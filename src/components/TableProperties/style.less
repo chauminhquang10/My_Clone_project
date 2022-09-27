@@ -39,11 +39,11 @@
   }
   :global(.ant-pro-page-container-children-content) {
     margin: 0;
-    overflow: hidden;
+    // overflow: hidden;
     border-radius: 20px 0 0 0;
   }
   :global(.ant-table-container) {
-    overflow: hidden;
+    // overflow: hidden;
     border: 1px solid #e2e7e9;
     border-radius: 8px;
   }
@@ -94,13 +94,14 @@
     font-family: 'Roboto';
     font-style: normal;
     line-height: 22px;
+    text-transform: uppercase;
   }
   .icon {
     width: 18px;
     height: 18px;
   }
 }
-.user-lock-cell {
+.user-inactive-cell {
   display: flex;
   flex-direction: row;
   gap: 10;
@@ -121,6 +122,7 @@
     font-family: 'Roboto';
     font-style: normal;
     line-height: 22px;
+    text-transform: uppercase;
   }
   .icon {
     width: 18px;
@@ -128,6 +130,10 @@
   }
 }
 .manage-cell {
+  .no-data {
+    margin: 0;
+  }
+
   position: relative;
   display: flex;
   align-items: center;
@@ -173,13 +179,14 @@
   color: #1890ff;
 }
 .scroll {
+  overflow-x: hidden;
   overflow-y: scroll;
 }
 .box-hover {
   position: absolute;
   top: 37px;
   right: -2px;
-  z-index: 3;
+  z-index: 40;
   display: none;
   flex-direction: column;
   align-items: center;
@@ -260,6 +267,7 @@
   width: 95px;
   height: 32px;
   padding: 5px 9px;
+  white-space: nowrap;
   background: #f26122;
   border: 1px solid #f26122;
   border-radius: 4px;
@@ -333,25 +341,41 @@
   align-items: center;
   justify-content: center;
   width: 24px;
+  min-width: 24px;
   height: 24px;
+  min-height: 24px;
   padding: 0;
   overflow: hidden;
   border-radius: 200px;
 }
+.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: pink;
+  .image-name {
+    margin: 0;
+    color: white;
+  }
+}
 .avatar {
-  width: 24px;
-  height: 24px;
+  width: 100%;
+  object-fit: contain;
 }
 .user-name {
   display: flex;
   align-items: center;
   margin: 0;
+  margin-left: 8px;
   color: rgba(0, 0, 0, 0.85);
   font-weight: 400;
   font-size: 12px;
   font-family: 'Roboto';
   font-style: normal;
   line-height: 20px;
+  // white-space: nowrap;
 }
 .user-item-dropdown {
   display: flex;
@@ -364,4 +388,24 @@
   &:hover {
     background-color: #fde3d8;
   }
+}
+
+.machine-status-custom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  :global {
+    p {
+      margin: 0;
+    }
+  }
+}
+.out-of-service {
+  background: #fff1b8;
+}
+.offline {
+  background: #ffccc7;
 }

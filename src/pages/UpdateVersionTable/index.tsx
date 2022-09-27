@@ -1,88 +1,56 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-// import { getAllUsers } from "@/services/STM-APIs/UserController";
-import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { message } from 'antd';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+import api from '@/services/STM-APIs';
 import { useRef, useState } from 'react';
-import { FormattedMessage } from 'umi';
-// import {useRequest} from "umi";
-import NewUserForm from './components/forms/NewUserForm';
+// import { FormattedMessage } from 'umi';
+import { useRequest } from 'umi';
+// import NewUserForm from './components/forms/NewUserForm';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
-// import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-
-const Status: ('WAITING' | 'PASSED' | 'EXECUTED')[] = ['WAITING', 'PASSED', 'EXECUTED'];
-
-const MachineType: ('UNKNOWN' | 'STM' | 'CDM' | 'ATM')[] = ['UNKNOWN', 'STM', 'CDM', 'ATM'];
-
-const genListMachine = (current: number, pageSize: number) => {
-  const tableListDataSource: API.VersionResponse[] = [];
-
-  for (let i = 0; i < pageSize; i += 1) {
-    const index = (current - 1) * 10 + i;
-    tableListDataSource.push({
-      id: index,
-      machineType: MachineType[Math.floor(Math.random() * MachineType.length)],
-      name: `name-${index}`,
-      status: Status[Math.floor(Math.random() * Status.length)],
-      model: {
-        id: 1,
-        name: `name-${index}`,
-      },
-
-      content: 'content',
-      condition: 'condition',
-      createdAt: Math.floor(Math.random() * 2)
-        ? new Date('Fri Sep 15 2022').toDateString()
-        : new Date('Fri Sep 16 2021').toDateString(),
-    });
-  }
-  return tableListDataSource;
-};
-
-const listMachine = genListMachine(1, 100);
-
+import { openNotification } from '@/utils';
+import { UploadOutlined } from '@ant-design/icons';
+import NewVersionForm from './components/forms/NewVersionForm';
+import { message } from 'antd';
+import VersionDetailDrawer from './components/forms/VersionDetailDrawer';
 /**
  * @en-US Add node
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.VersionResponse) => {
-  const hide = message.loading('正在添加');
-  try {
-    // await addRule({ ...fields });
-    console.log(fields);
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
+// const handleAdd = async (fields: API.VersionResponse) => {
+//   const hide = message.loading('正在添加');
+//   try {
+//     // await addRule({ ...fields });
+//     console.log(fields);
+//     hide();
+//     message.success('Added successfully');
+//     return true;
+//   } catch (error) {
+//     hide();
+//     message.error('Adding failed, please try again!');
+//     return false;
+//   }
+// };
 
 const TableCustom = () => {
-  //--------------- listUSer -----------------------------------
-  // const [listUser, setListUser] = useState<API.VersionResponse[] | undefined>();
   //---------------  handle getAllUser -------------------------------
 
-  // const { run: runGetAllUser } = useRequest(
-  //     (params: API.getAllUsersParams) => getAllUsers(params),
-  //     {
-  //         manual: true,
-  //         onSuccess: (res) => {
-  //             const data = res as API.ResponseBasePageResponseObject;
-  //             const listUserRespone = data.data?.items;
-  //             setListUser(listUserRespone);
-  //         },
-  //         onError: (error) => {
-  //             console.log(error);
-  //         },
-  //     }
-  // );
+  const { run: runGetAllUpdateVersion } = useRequest(
+    (params: API.getAllVersionParams) => api.STMVersionController.getAllVersion(params),
+    {
+      manual: true,
+      onSuccess: (res) => {
+        if (!res) openNotification('error', 'Có lỗi xảy ra');
+        return res?.items;
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    },
+  );
   /**
    * @en-US Pop-up window of new window
    * @zh-CN 新建窗口的弹窗
@@ -101,21 +69,40 @@ const TableCustom = () => {
 
   console.log(showDetail, currentRow);
 
+  //------------ handle create new  --------------------
+  const handleAddNewVersion = async (record: API.CreateVersionRequest, file: File) => {
+    const hide = message.loading('Loading...');
+
+    try {
+      const res = await api.STMVersionController.uploadNewVersion({ ...record }, file);
+      hide();
+      if (res.code === 700) {
+        message.error(`${record.name} ${record.modelId}  đã được sử dụng`);
+        return;
+      }
+      message.success('Thêm version mới thành công');
+      handleModalVisible(false);
+      actionRef.current?.reload();
+    } catch (error) {
+      hide();
+      message.error('Adding failed, please try again!');
+    }
+  };
   /**
    * @en-US International configuration
    * @zh-CN 国际化配置
    * */
 
-  // const [page, setPage] = useState<number>();
-  // const [pageSize, setPageSize] = useState<number>();
-  // const pageSizeRef = useRef<number>(20);
+  //------------ pagination --------------------
+  // const [totalSize, setTotalSize] = useState<number>(0);
+  // const [page, setPage] = useState<number>(1);
+  const pageSize = useRef<number>(20);
   const columns: ProColumns<API.VersionResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
   });
 
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const pageSize = useRef<number>(20);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -134,7 +121,7 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Danh sách máy</TitleTable>}
+        headerTitle={<TitleTable>Danh sách phiên bản hệ thống</TitleTable>}
         actionRef={actionRef}
         rowKey="key"
         search={false}
@@ -145,37 +132,29 @@ const TableCustom = () => {
             onClick={() => {
               handleModalVisible(true);
             }}
+            text="Upload"
+            icon={<UploadOutlined style={{ color: 'white' }} />}
           />,
         ]}
-        // request={machineList}
-        dataSource={listMachine}
-        // request={async (params = {}) => {
-        //     const filterParams: API.UserFilter = {
-        //         managementUnit: "",
-        //         staffId: "",
-        //     };
+        request={async (params = {}) => {
+          console.log(params);
 
-        //     const pageRequestParams: API.PageReq = {
-        //         pageNumber: params.current,
-        //         pageSize: params.pageSize,
-        //         sortDirection: "",
-        //         sortBy: "",
-        //     };
-        //     await runGetAllUser({
-        //         filter: filterParams,
-        //         pageRequest: pageRequestParams,
-        //     });
-        //     return {
-        //         data: listUser,
-        //     };
-        // }}
+          const pageRequestParams: API.getAllVersionParams = {
+            // pageNumber: params.current,
+            // pageSize: params.pageSize,
+            // sortDirection: '',
+            // sortBy: '',
+          };
+          const res = await runGetAllUpdateVersion({
+            ...pageRequestParams,
+          });
+
+          return {
+            data: res?.items || [],
+          };
+        }}
         columns={columns}
         options={false}
-        // rowSelection={{
-        //     onChange: (_, selectedRows) => {
-        //         setSelectedRows(selectedRows);
-        //     },
-        // }}
         pagination={{
           onChange(current) {
             setCurrentPage(current);
@@ -190,41 +169,22 @@ const TableCustom = () => {
           showQuickJumper: true,
         }}
       />
-
-      <NewUserForm
-        title="Tạo người dùng mới"
+      <NewVersionForm
+        title="Upload phiên bản mới"
         width="934px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.VersionResponse);
-          if (success) {
-            handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-            return true;
-          }
-          return false;
+        onFinish={async (value, avatar) => {
+          await handleAddNewVersion(value as API.CreateVersionRequest, avatar);
         }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </NewUserForm>
+      />
+      <VersionDetailDrawer
+        currentRow={currentRow}
+        setCurrentRow={setCurrentRow}
+        showDetail={showDetail}
+        setShowDetail={setShowDetail}
+        actionRef={actionRef}
+      />
     </PageContainer>
   );
 };

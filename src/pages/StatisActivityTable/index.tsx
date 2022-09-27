@@ -1,117 +1,55 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 // import { getAllUsers } from "@/services/STM-APIs/UserController";
-import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { message } from 'antd';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+// import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { FormattedMessage } from 'umi';
-// import {useRequest} from "umi";
-import NewUserForm from './components/forms/NewUserForm';
-import AddNew from '@/components/TableProperties/AddNew';
+import { useRequest } from 'umi';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.StmInfoResponse) => {
-  const hide = message.loading('正在添加');
-  try {
-    // await addRule({ ...fields });
-    console.log(fields);
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
-
-type TransactionConfiguration = {
-  machine: API.StmInfoResponse;
-  total: number;
-  success: number;
-  failure: number;
-};
-
-const genListMachine = (current: number, pageSize: number) => {
-  const tableListDataSource: TransactionConfiguration[] = [];
-
-  for (let i = 0; i < pageSize; i += 1) {
-    tableListDataSource.push({
-      total: Math.floor(Math.random() * 100),
-      success: Math.floor(Math.random() * 100),
-      failure: Math.floor(Math.random() * 100),
-      machine: {
-        name: 'STM',
-        terminalId: `${Math.floor(Math.random() * 100)}-terminal`,
-        ipAddress: `${Math.floor(Math.random() * 100)}-ipAddress`,
-      },
-    });
-  }
-  return tableListDataSource;
-};
-
-const listMachine = genListMachine(1, 100);
+import AnaylyticDetail from '../MachineTable/components/drawers/AnalyticDetail';
+import api from '@/services/STM-APIs';
+import { openNotification } from '@/utils';
+import ExportFile from '@/components/TableProperties/ExportFile';
 
 const TableCustom = () => {
-  //--------------- listUSer -----------------------------------
-  // const [listUser, setListUser] = useState<API.StmInfoResponse[] | undefined>();
-  //---------------  handle getAllUser -------------------------------
+  //------------ pagination --------------------
+  const pageSizeRef = useRef<number>(10);
+  const [totalSize, setTotalSize] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
 
-  // const { run: runGetAllUser } = useRequest(
-  //     (params: API.getAllUsersParams) => getAllUsers(params),
-  //     {
-  //         manual: true,
-  //         onSuccess: (res) => {
-  //             const data = res as API.ResponseBasePageResponseObject;
-  //             const listUserRespone = data.data?.items;
-  //             setListUser(listUserRespone);
-  //         },
-  //         onError: (error) => {
-  //             console.log(error);
-  //         },
-  //     }
-  // );
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
+  const { run: getAllTransaction } = useRequest(
+    (params: API.getTransactionConfigurationParams) =>
+      api.TransactionController.getTransactionConfiguration(params),
+    {
+      manual: true,
+      onSuccess: (res) => {
+        if (!res) {
+          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+        }
+        // setListTransaction(res?.items);
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    },
+  );
+
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  /**
-   * @en-US The pop-up window of the distribution update window
-   * @zh-CN 分布更新窗口的弹窗
-   * */
-  // const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
+  console.log(createModalVisible);
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.StmInfoResponse>();
 
-  console.log(showDetail, currentRow);
-
-  /**
-   * @en-US International configuration
-   * @zh-CN 国际化配置
-   * */
-
-  // const [page, setPage] = useState<number>();
-  // const [pageSize, setPageSize] = useState<number>();
-  // const pageSizeRef = useRef<number>(20);
-  const columns: ProColumns<TransactionConfiguration>[] = Column({
+  const columns: ProColumns<API.TransactionConfigurationResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
   });
 
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const pageSize = useRef<number>(20);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -135,91 +73,52 @@ const TableCustom = () => {
         rowKey="key"
         search={false}
         toolBarRender={() => [
-          <AddNew
+          <ExportFile
             key="primary"
-            enableCreateNew={true}
             onClick={() => {
               handleModalVisible(true);
             }}
           />,
         ]}
-        dataSource={listMachine}
-        // request={async (params = {}) => {
-        //     const filterParams: API.UserFilter = {
-        //         managementUnit: "",
-        //         staffId: "",
-        //     };
-
-        //     const pageRequestParams: API.PageReq = {
-        //         pageNumber: params.current,
-        //         pageSize: params.pageSize,
-        //         sortDirection: "",
-        //         sortBy: "",
-        //     };
-        //     await runGetAllUser({
-        //         filter: filterParams,
-        //         pageRequest: pageRequestParams,
-        //     });
-        //     return {
-        //         data: listUser,
-        //     };
-        // }}
+        request={async () => {
+          const pageRequestParams = {
+            pageNumber: page - 1,
+            pageSize: pageSizeRef.current,
+            sortBy: '',
+          };
+          const res = await getAllTransaction({
+            ...pageRequestParams,
+          });
+          setTotalSize(res?.totalSize as number);
+          return {
+            data: res?.items || [],
+          };
+        }}
         columns={columns}
         options={false}
-        // rowSelection={{
-        //     onChange: (_, selectedRows) => {
-        //         setSelectedRows(selectedRows);
-        //     },
-        // }}
         pagination={{
           onChange(current) {
-            setCurrentPage(current);
+            setPage(current);
           },
-          current: currentPage,
+
+          total: totalSize,
+          current: page,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
-          pageSize: pageSize.current,
+          pageSize: pageSizeRef.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
           hideOnSinglePage: true,
           showQuickJumper: true,
         }}
       />
 
-      <NewUserForm
-        title="Tạo người dùng mới"
-        width="934px"
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.StmInfoResponse);
-          if (success) {
-            handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-            return true;
-          }
-          return false;
-        }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </NewUserForm>
+      <AnaylyticDetail
+        handleClose={() => setShowDetail(false)}
+        open={showDetail}
+        currentEntity={currentRow}
+        actionRef={actionRef}
+      />
     </PageContainer>
   );
 };

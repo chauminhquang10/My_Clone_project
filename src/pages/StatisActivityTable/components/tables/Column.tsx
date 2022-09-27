@@ -7,38 +7,37 @@ type ColumnProps = {
   setShowDetail: (s: boolean) => void;
 };
 
-type TransactionConfiguration = {
-  machine: API.StmInfoResponse;
-  total: number;
-  success: number;
-  failure: number;
-};
-
-function Column({}: ColumnProps) {
-  const columns: ProColumns<TransactionConfiguration>[] = [
+function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
+  const columns: ProColumns<API.TransactionConfigurationResponse>[] = [
     {
       title: <HeadCell>Tên máy</HeadCell>,
       dataIndex: 'machine',
       render: (_, entity) => {
-        return <TextCell>{entity.machine.name}</TextCell>;
+        const handleClick = () => {
+          setShowDetail(true);
+          setCurrentRow(entity.machine as API.StmInfoResponse);
+        };
+
+        return <TextCell onClick={handleClick}>{entity.machine?.name}</TextCell>;
       },
       sorter: (a, b) => {
-        if (a.machine.name && b.machine.name) return a.machine.name.localeCompare(b.machine.name);
+        if (a.machine?.name && b.machine?.name) return a.machine.name.localeCompare(b.machine.name);
         else return 1;
       },
+      width: '200px',
     },
     {
       title: <HeadCell>Terminal ID</HeadCell>,
       dataIndex: 'machine',
       render: (_, entity) => {
-        return <TextCell>{entity.machine.terminalId}</TextCell>;
+        return <TextCell>{entity.machine?.terminalId}</TextCell>;
       },
     },
     {
       title: <HeadCell>IP Address</HeadCell>,
       dataIndex: 'machine',
       render: (_, entity) => {
-        return <TextCell>{entity.machine.ipAddress}</TextCell>;
+        return <TextCell>{entity.machine?.ipAddress}</TextCell>;
       },
     },
     {
@@ -48,7 +47,8 @@ function Column({}: ColumnProps) {
         return <TextCell>{dom}</TextCell>;
       },
       sorter: (a, b) => {
-        return a.total - b.total;
+        if (a.total && b.total) return a.total - b.total;
+        return 1;
       },
     },
     {
@@ -58,7 +58,8 @@ function Column({}: ColumnProps) {
         return <TextCell>{dom}</TextCell>;
       },
       sorter: (a, b) => {
-        return a.success - b.success;
+        if (a.success && b.success) return a.success - b.success;
+        return 1;
       },
     },
     {
@@ -68,7 +69,8 @@ function Column({}: ColumnProps) {
         return <TextCell>{dom}</TextCell>;
       },
       sorter: (a, b) => {
-        return a.success - b.success;
+        if (a.failure && b.failure) return a.failure - b.failure;
+        return 1;
       },
     },
   ];

@@ -1,5 +1,3 @@
-import route from 'mock/route';
-
 const routes = [
   {
     path: '/user',
@@ -9,6 +7,16 @@ const routes = [
         name: 'login',
         path: '/user/login',
         component: './user/Login',
+      },
+      {
+        name: 'forgot-password',
+        path: '/user/forgot-password',
+        component: './user/ForgotPassword',
+      },
+      {
+        name: 'reset-password',
+        path: '/user/reset-password',
+        component: './user/ResetPassword',
       },
       {
         component: './404',
@@ -55,18 +63,12 @@ const routes = [
             icon: 'machine-update',
             component: 'UpdateVersionTable',
           },
-          {
-            path: '/machine/system-warning',
-            name: 'Cảnh báo hệ thống',
-            icon: 'machine-warning',
-            component: 'SystemWarningTable',
-          },
-          {
-            path: '/machine/history',
-            name: 'Lịch sử',
-            icon: 'machine-history',
-            component: 'HistoryList',
-          },
+          // {
+          //   path: '/machine/system-warning',
+          //   name: 'Cảnh báo hệ thống',
+          //   icon: 'machine-warning',
+          //   component: 'SystemWarningTable',
+          // },
         ],
       },
       {
@@ -78,14 +80,14 @@ const routes = [
             path: '/camera/log',
             name: 'Log hoạt động',
             icon: 'camera-log',
-            component: 'HistoryList',
+            component: 'CameraMonitor/ActivityLog',
           },
-          {
-            path: '/camera/transaction-list',
-            name: 'Danh sách hoạt động',
-            icon: 'transaction-list',
-            component: 'HistoryList',
-          },
+          // {
+          //   path: '/camera/transaction-list',
+          //   name: 'Danh sách hoạt động',
+          //   icon: 'transaction-list',
+          //   component: 'HistoryList',
+          // },
         ],
       },
       {
@@ -116,21 +118,34 @@ const routes = [
           },
         ],
       },
+      // {
+      //   icon: 'display-management',
+      //   name: 'Quản lí hiển thị',
+      //   path: '/display',
+      //   routes: [
+      //     {
+      //       path: '/display/screen-display',
+      //       name: 'Màn hình hiển thị',
+      //       icon: 'screen-display',
+      //       component: 'HistoryList',
+      //     },
+      //     {
+      //       path: '/display/storage',
+      //       name: 'Kho lưu trữ',
+      //       icon: 'display-storage',
+      //       component: 'HistoryList',
+      //     },
+      //   ],
+      // },
       {
-        icon: 'display-management',
-        name: 'Quản lí hiển thị',
-        path: '/display',
+        path: '/history',
+        name: 'Lịch sử',
+        icon: 'machine-history',
         routes: [
           {
-            path: '/display/screen-display',
-            name: 'Màn hình hiển thị',
-            icon: 'screen-display',
-            component: 'HistoryList',
-          },
-          {
-            path: '/display/storage',
-            name: 'Kho lưu trữ',
-            icon: 'display-storage',
+            path: '/history/list',
+            name: 'Lịch sử',
+            icon: 'machine-history',
             component: 'HistoryList',
           },
         ],

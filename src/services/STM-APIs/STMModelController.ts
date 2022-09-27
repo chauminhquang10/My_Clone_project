@@ -8,9 +8,12 @@ export async function getListModels(
   params: API.getListModelsParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseBaseListStmModelResponse>('/api/v1/models', {
+  return request<API.ResponseBasePageResponseStmModelResponse>('/api/v1/models', {
     method: 'GET',
     params: {
+      // pageSize has a default value: 10
+      pageSize: '10',
+
       ...params,
     },
     ...(options || {}),
@@ -61,6 +64,20 @@ export async function updateModel(
     },
     params: { ...queryParams },
     data: body,
+    ...(options || {}),
+  });
+}
+
+/** Delete model  - Delete model when there is no machine in this model DELETE /api/v1/models/${param0} */
+export async function deleteModel(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.deleteModelParams,
+  options?: { [key: string]: any },
+) {
+  const { modelId: param0, ...queryParams } = params;
+  return request<API.ResponseBaseStmModelResponse>(`/api/v1/models/${param0}`, {
+    method: 'DELETE',
+    params: { ...queryParams },
     ...(options || {}),
   });
 }

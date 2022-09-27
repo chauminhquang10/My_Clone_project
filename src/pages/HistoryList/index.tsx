@@ -115,7 +115,6 @@ const HistoryListTable = () => {
         headerTitle={<TitleTable>Danh sách lịch sử</TitleTable>}
         rowKey="key"
         search={false}
-        toolBarRender={false}
         request={async () => {
           const res = await runGetAllSystemOperations();
           return {

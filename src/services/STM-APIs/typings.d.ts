@@ -22,6 +22,16 @@ declare namespace API {
     machines?: StmInfoResponse[];
   };
 
+  type AssignUserRequest = {
+    machineId: string;
+    userIds: string[];
+  };
+
+  type AssignUserResponse = {
+    machine?: StmInfoResponse;
+    users?: UserResponse[];
+  };
+
   type blockUserParams = {
     userId: string;
   };
@@ -75,35 +85,32 @@ declare namespace API {
 
   type CreateStmModelRequest = {
     name: string;
-    /** Values: STM | ATM | CDM */
     machineType: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     storages: StorageItemRequest[];
   };
 
   type CreateStmRequest = {
-    /** Values: STM | ATM | CDM */
     machineType: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     machineName: string;
     terminalId: string;
     masterKey: string;
     modelId: number;
     serialNumber: string;
-    privateKey: string;
-    accountingAccountVND?: string;
+    accountingAccountVND: string;
     accountingAccountUSD?: string;
     /** Values: MINIMUM_NOTES | EQUAL_EMPTYING | MAXIMUM_NOTES */
-    denominationRule?: 'MINIMUM_NOTES' | 'EQUAL_EMPTYING' | 'MAXIMUM_NOTES';
+    denominationRule: 'MINIMUM_NOTES' | 'EQUAL_EMPTYING' | 'MAXIMUM_NOTES';
     denominations: number[];
-    gate?: number;
+    port: number;
     ipAddress: string;
-    acquirerId?: string;
+    acquirerId: string;
     /** Values: KEY_3DES */
-    keyType?: 'KEY_3DES';
+    keyType: 'KEY_3DES';
     /** Values: NDC */
-    protocol?: 'NDC';
-    mac?: string;
+    protocol: 'NDC';
+    mac: string;
     managementUnitId: number;
-    userIds?: string[];
+    userIds: string[];
     location: string;
     provinceId: number;
     districtId: number;
@@ -129,7 +136,23 @@ declare namespace API {
     name: string;
     file: string;
     content: string;
-    condition?: string;
+    conditionId?: number;
+  };
+
+  type deleteManagementUnitParams = {
+    unitId: string;
+  };
+
+  type deleteModelParams = {
+    modelId: string;
+  };
+
+  type deleteRoleGroupParams = {
+    groupId: string;
+  };
+
+  type deleteVersionParams = {
+    versionId: string;
   };
 
   type Denomination = {
@@ -144,9 +167,24 @@ declare namespace API {
     name?: string;
   };
 
+  type getAllManagementUnitsParams = {
+    location?: string;
+    provinceId?: number;
+    districtId?: number;
+    wardId?: number;
+    from?: string;
+    to?: string;
+    query?: string;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
+  };
+
   type getAllUsersParams = {
-    managementUnit?: string;
-    staffId?: string;
+    managementUnitId?: number;
+    status?: 'UNKNOWN' | 'ACTIVE' | 'INACTIVE';
+    query?: string;
     pageNumber?: number;
     pageSize?: number;
     sortDirection?: 'ASC' | 'DESC';
@@ -156,6 +194,9 @@ declare namespace API {
   type getAllVersionParams = {
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     modelId?: number;
+    from?: string;
+    to?: string;
+    query?: string;
     pageNumber?: number;
     pageSize?: number;
     sortDirection?: 'ASC' | 'DESC';
@@ -183,7 +224,14 @@ declare namespace API {
   };
 
   type getListModelsParams = {
-    machineType: string;
+    machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+    from?: string;
+    to?: string;
+    query?: string;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
   };
 
   type GetListProvinceResponse = {
@@ -221,7 +269,14 @@ declare namespace API {
 
   type getSystemOperationParams = {
     module?: 'MACHINE' | 'USER' | 'MODEL' | 'MANAGEMENT_UNIT' | 'VERSION';
-    action?: 'CREATE' | 'UPDATE' | 'CHANGE_STATUS' | 'BLOCK' | 'UNBLOCK' | 'ASSIGN_ACCESS';
+    action?:
+      | 'CREATE'
+      | 'UPDATE'
+      | 'CHANGE_STATUS'
+      | 'BLOCK'
+      | 'UNBLOCK'
+      | 'ASSIGN_ACCESS'
+      | 'DELETE';
     from?: string;
     to?: string;
     query?: string;
@@ -241,8 +296,32 @@ declare namespace API {
 
   type getTransactionsParams = {
     machineId: string;
+    type?:
+      | 'UNKNOWN'
+      | 'CARD_WITHDRAW'
+      | 'QR_WITHDRAW'
+      | 'FINGER_WITHDRAW'
+      | 'CARD_DEPOSIT'
+      | 'PIN_CHANGE'
+      | 'CARD_SHOW_BALANCE'
+      | 'TRANSFER'
+      | 'REGISTER'
+      | 'OPERATION'
+      | 'CARD_LOGIN'
+      | 'QR_OPEN_CARD';
+    status?: 'UNKNOWN' | 'SUCCESS' | 'FAIL' | 'PROCESSING' | 'NEXT';
     from?: string;
     to?: string;
+    query?: string;
+    pageNumber?: number;
+    pageSize?: number;
+    sortDirection?: 'ASC' | 'DESC';
+    sortBy?: string;
+  };
+
+  type getUserNotificationParams = {
+    pageNumber?: number;
+    pageSize?: number;
   };
 
   type getUserParams = {
@@ -261,24 +340,12 @@ declare namespace API {
     denominations?: Denomination[];
   };
 
-  type ListManagementUnitResponse = {
-    managementUnits?: ManagementUnitResponse[];
-  };
-
   type ListRoleGroupResponse = {
     roleGroups?: RoleGroupResponse[];
   };
 
   type ListRolesResponse = {
     roles?: Role[];
-  };
-
-  type ListStmModelResponse = {
-    models?: StmModelResponse[];
-  };
-
-  type ListTransactionsResponse = {
-    transactions?: TransactionResponse[];
   };
 
   type LoginRequest = {
@@ -326,11 +393,101 @@ declare namespace API {
     createdAt?: string;
   };
 
-  type PageResponseObject = {
+  type markAsReadParams = {
+    notificationId: number;
+  };
+
+  type markAsUnReadParams = {
+    notificationId: number;
+  };
+
+  type Notification = {
+    id?: number;
+    notificationType?:
+      | 'NOTI_CREATE_MACHINE'
+      | 'NOTI_UPDATE_MACHINE'
+      | 'NOTI_CHANGE_MACHINE_STATUS'
+      | 'NOTI_UPDATE_MACHINE_VERSION'
+      | 'NOTI_MACHINE_WARNING'
+      | 'NOTI_CONNECT_MACHINE'
+      | 'NOTI_CREATE_USER'
+      | 'NOTI_UPDATE_USER'
+      | 'NOTI_BLOCK_USER'
+      | 'NOTI_UNBLOCK_USER'
+      | 'NOTI_CREATE_MODEL'
+      | 'NOTI_UPDATE_MODEL'
+      | 'NOTI_CREATE_VERSION'
+      | 'NOTI_UPDATE_VERSION'
+      | 'NOTI_CREATE_MANAGEMENT_UNIT'
+      | 'NOTI_UPDATE_MANAGEMENT_UNIT';
+    time?: string;
+    content?: string;
+    level?: 'INFORMATION' | 'WARNING' | 'FAILURE' | 'FATAL';
+    reference?: string;
+    read?: boolean;
+  };
+
+  type PageResponseManagementUnitResponse = {
     pageNumber?: number;
     size?: number;
     totalSize?: number;
-    items?: Record<string, any>[];
+    items?: ManagementUnitResponse[];
+  };
+
+  type PageResponseNotification = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: Notification[];
+  };
+
+  type PageResponseStmInfoResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: StmInfoResponse[];
+  };
+
+  type PageResponseStmModelResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: StmModelResponse[];
+  };
+
+  type PageResponseSystemOperationResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: SystemOperationResponse[];
+  };
+
+  type PageResponseTransactionConfigurationResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: TransactionConfigurationResponse[];
+  };
+
+  type PageResponseTransactionResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: TransactionResponse[];
+  };
+
+  type PageResponseUserResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: UserResponse[];
+  };
+
+  type PageResponseVersionResponse = {
+    pageNumber?: number;
+    size?: number;
+    totalSize?: number;
+    items?: VersionResponse[];
   };
 
   type PhysicalDevice = {
@@ -373,14 +530,38 @@ declare namespace API {
     devices?: PhysicalDevice[];
   };
 
+  type previewPrivateFileParams = {
+    bucketName: string;
+    type: 'screen';
+    objectName: string;
+  };
+
+  type previewPublicFileParams = {
+    bucketName: string;
+    type: 'avatar';
+    objectName: string;
+  };
+
   type Province = {
     id?: number;
     name?: string;
     location?: string;
   };
 
+  type ReadNotificationResponse = {
+    success?: boolean;
+  };
+
   type RefreshTokenRequest = {
     refreshToken: string;
+  };
+
+  type RequestResetPasswordRequest = {
+    email: string;
+  };
+
+  type RequestResetPasswordResponse = {
+    success?: boolean;
   };
 
   type ResetPasswordRequest = {
@@ -402,6 +583,12 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: AssignMachineResponse;
+  };
+
+  type ResponseBaseAssignUserResponse = {
+    code?: number;
+    message?: string;
+    data?: AssignUserResponse;
   };
 
   type ResponseBaseChangePasswordResponse = {
@@ -446,12 +633,6 @@ declare namespace API {
     data?: ListDenominationsResponse;
   };
 
-  type ResponseBaseListManagementUnitResponse = {
-    code?: number;
-    message?: string;
-    data?: ListManagementUnitResponse;
-  };
-
   type ResponseBaseListRoleGroupResponse = {
     code?: number;
     message?: string;
@@ -462,18 +643,6 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: ListRolesResponse;
-  };
-
-  type ResponseBaseListStmModelResponse = {
-    code?: number;
-    message?: string;
-    data?: ListStmModelResponse;
-  };
-
-  type ResponseBaseListTransactionsResponse = {
-    code?: number;
-    message?: string;
-    data?: ListTransactionsResponse;
   };
 
   type ResponseBaseLogoutResponse = {
@@ -500,16 +669,76 @@ declare namespace API {
     data?: ManagementUnitResponse;
   };
 
-  type ResponseBasePageResponseObject = {
+  type ResponseBasePageResponseManagementUnitResponse = {
     code?: number;
     message?: string;
-    data?: PageResponseObject;
+    data?: PageResponseManagementUnitResponse;
+  };
+
+  type ResponseBasePageResponseNotification = {
+    code?: number;
+    message?: string;
+    data?: PageResponseNotification;
+  };
+
+  type ResponseBasePageResponseStmInfoResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseStmInfoResponse;
+  };
+
+  type ResponseBasePageResponseStmModelResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseStmModelResponse;
+  };
+
+  type ResponseBasePageResponseSystemOperationResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseSystemOperationResponse;
+  };
+
+  type ResponseBasePageResponseTransactionConfigurationResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseTransactionConfigurationResponse;
+  };
+
+  type ResponseBasePageResponseTransactionResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseTransactionResponse;
+  };
+
+  type ResponseBasePageResponseUserResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseUserResponse;
+  };
+
+  type ResponseBasePageResponseVersionResponse = {
+    code?: number;
+    message?: string;
+    data?: PageResponseVersionResponse;
   };
 
   type ResponseBasePhysicalDevicesResponse = {
     code?: number;
     message?: string;
     data?: PhysicalDevicesResponse;
+  };
+
+  type ResponseBaseReadNotificationResponse = {
+    code?: number;
+    message?: string;
+    data?: ReadNotificationResponse;
+  };
+
+  type ResponseBaseRequestResetPasswordResponse = {
+    code?: number;
+    message?: string;
+    data?: RequestResetPasswordResponse;
   };
 
   type ResponseBaseResetPasswordResponse = {
@@ -542,10 +771,22 @@ declare namespace API {
     data?: StmModelDetailResponse;
   };
 
+  type ResponseBaseStmModelResponse = {
+    code?: number;
+    message?: string;
+    data?: StmModelResponse;
+  };
+
   type ResponseBaseUpdateMachineResponse = {
     code?: number;
     message?: string;
     data?: UpdateMachineResponse;
+  };
+
+  type ResponseBaseUploadMediaResponse = {
+    code?: number;
+    message?: string;
+    data?: UploadMediaResponse;
   };
 
   type ResponseBaseUserDetailResponse = {
@@ -597,14 +838,13 @@ declare namespace API {
   type StmDetailResponse = {
     id?: string;
     machineOrder?: number;
-    /** Values: STM | ATM | CDM */
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     model?: StmModelResponse;
     name?: string;
     terminalId?: string;
     serialNumber?: string;
     privateKey?: string;
-    gate?: number;
+    port?: number;
     ipAddress?: string;
     acquirerId?: string;
     /** Values: KEY_3DES */
@@ -643,7 +883,6 @@ declare namespace API {
     machineOrder?: number;
     location?: string;
     province?: Province;
-    /** Values: STM | ATM | CDM */
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     name?: string;
     terminalId?: string;
@@ -656,12 +895,18 @@ declare namespace API {
   type StmModelDetailResponse = {
     id?: number;
     name?: string;
+    machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+    createdBy?: UserResponse;
+    createdAt?: string;
     storages?: StorageItem[];
   };
 
   type StmModelResponse = {
     id?: number;
     name?: string;
+    machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+    createdBy?: UserResponse;
+    createdAt?: string;
   };
 
   type StorageItem = {
@@ -672,6 +917,29 @@ declare namespace API {
   type StorageItemRequest = {
     deviceTypeId: number;
     minCapacity?: number;
+  };
+
+  type SystemOperationResponse = {
+    id?: number;
+    time?: string;
+    action?:
+      | 'CREATE'
+      | 'UPDATE'
+      | 'CHANGE_STATUS'
+      | 'BLOCK'
+      | 'UNBLOCK'
+      | 'ASSIGN_ACCESS'
+      | 'DELETE';
+    module?: 'MACHINE' | 'USER' | 'MODEL' | 'MANAGEMENT_UNIT' | 'VERSION';
+    content?: string;
+    createdBy?: UserResponse;
+  };
+
+  type TransactionConfigurationResponse = {
+    machine?: StmInfoResponse;
+    total?: number;
+    success?: number;
+    failure?: number;
   };
 
   type TransactionResponse = {
@@ -774,28 +1042,35 @@ declare namespace API {
     storages: StorageItemRequest[];
   };
 
+  type updateRoleGroupParams = {
+    groupId: string;
+  };
+
+  type UpdateRoleGroupRequest = {
+    name?: string;
+    actionIds?: number[];
+  };
+
   type UpdateStmRequest = {
-    /** Values: STM | ATM | CDM */
     machineType: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     machineName: string;
     terminalId: string;
     masterKey: string;
     modelId: number;
-    serialNumber?: string;
-    privateKey?: string;
-    accountingAccountVND?: string;
+    serialNumber: string;
+    accountingAccountVND: string;
     accountingAccountUSD?: string;
     /** Values: MINIMUM_NOTES | EQUAL_EMPTYING | MAXIMUM_NOTES */
-    denominationRule?: 'MINIMUM_NOTES' | 'EQUAL_EMPTYING' | 'MAXIMUM_NOTES';
+    denominationRule: 'MINIMUM_NOTES' | 'EQUAL_EMPTYING' | 'MAXIMUM_NOTES';
     denominations?: number[];
-    gate?: number;
+    port: number;
     ipAddress: string;
-    acquirerId?: string;
+    acquirerId: string;
     /** Values: KEY_3DES */
     keyType: 'KEY_3DES';
     /** Values: NDC */
     protocol: 'NDC';
-    mac?: string;
+    mac: string;
     managementUnitId?: number;
     userIds?: string[];
     location: string;
@@ -826,11 +1101,25 @@ declare namespace API {
   };
 
   type UpdateVersionRequest = {
-    modelId: number;
-    name: string;
-    file: string;
+    modelId?: number;
+    name?: string;
+    file?: string;
     content?: string;
-    condition?: string;
+    conditionId?: number;
+  };
+
+  type UploadMediaResponse = {
+    previewPath?: string;
+  };
+
+  type uploadPrivateFileParams = {
+    bucketName: string;
+    type: 'screen';
+  };
+
+  type uploadPublicFileParams = {
+    bucketName: string;
+    type: 'avatar';
   };
 
   type UserDetailResponse = {
@@ -844,6 +1133,7 @@ declare namespace API {
     machines?: StmInfoResponse[];
     roleGroup?: RoleGroupResponse;
     managementUnit?: ManagementUnitResponse;
+    admin?: boolean;
   };
 
   type UserResponse = {
@@ -855,21 +1145,23 @@ declare namespace API {
     phoneNumber?: string;
     status?: 'UNKNOWN' | 'ACTIVE' | 'INACTIVE';
     managementUnit?: ManagementUnitResponse;
+    admin?: boolean;
   };
 
   type VersionResponse = {
     id?: number;
     name?: string;
-    /** Values: STM | ATM | CDM */
     machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
     model?: StmModelResponse;
     content?: string;
     filePath?: string;
     condition?: string;
     conditionId?: number;
-    status?: 'WAITING' | 'PASSED' | 'EXECUTED';
+    status?: 'WAITING' | 'EXECUTING' | 'EXECUTED';
     createdBy?: UserResponse;
     createdAt?: string;
+    updatedMachines?: StmInfoResponse[];
+    notUpdatedMachines?: StmInfoResponse[];
   };
 
   type Ward = {

@@ -29,7 +29,6 @@ const TableCustom = () => {
     setShowDetail,
   });
 
-  const [currentPage, setCurrentPage] = useState<number>(0);
   const pageSize = useRef<number>(10);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
@@ -39,6 +38,11 @@ const TableCustom = () => {
     jump_to: 'Trang',
     page: '',
   };
+
+  //------------ pagination --------------------
+  const pageSizeRef = useRef<number>(20);
+  const [totalSize, setTotalSize] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
 
   const { run: runGetAllManagementUnits } =
     useRequest<API.ResponseBasePageResponseManagementUnitResponse>(
@@ -104,7 +108,13 @@ const TableCustom = () => {
           />,
         ]}
         request={async () => {
-          const res = await runGetAllManagementUnits();
+          const params: API.getAllManagementUnitsParams = {
+            pageNumber: page - 1,
+            pageSize: pageSizeRef.current,
+          };
+
+          const res = await runGetAllManagementUnits(params);
+          setTotalSize(res?.totalSize as number);
           return {
             data: res?.items,
             total: res?.items ? res.items.length : 0,
@@ -115,9 +125,10 @@ const TableCustom = () => {
         options={false}
         pagination={{
           onChange(current) {
-            setCurrentPage(current);
+            setPage(current);
           },
-          current: currentPage,
+          total: totalSize,
+          current: page,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,

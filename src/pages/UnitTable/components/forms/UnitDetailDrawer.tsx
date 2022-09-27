@@ -1,38 +1,33 @@
-import type { MutableRefObject } from 'react';
-import type { ActionType } from '@ant-design/pro-components';
-import React, { useState } from 'react';
-import { useRequest } from 'umi';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  ExclamationCircleOutlined,
-  UnlockOutlined,
-} from '@ant-design/icons';
-import {
-  Col,
-  Drawer,
-  Form,
-  Input,
-  Row,
-  Button,
-  Card,
-  Table,
-  Tooltip,
-  Space,
-  Avatar,
-  message,
-} from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
-import StatusTag from '@/components/TableProperties/StatusTag';
-import styles from './UnitDetailDrawer.less';
-import UpdateUnitForm from './UpdateUnitForm';
+import MachineStatusTag from '@/components/Common/MachineStatusTag';
 import ModalCustom from '@/components/FormCustom/ModalCustom';
-import { TextCell } from '@/components/TableProperties/TableCell';
+import { TextCell, UserCellStatus, UserStatusCell } from '@/components/TableProperties/TableCell';
 import {
   deleteManagementUnit,
   getManagementUnit,
   updateManagementUnit,
 } from '@/services/STM-APIs/ManagementUnitController';
+import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import type { ActionType } from '@ant-design/pro-components';
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Drawer,
+  Form,
+  Input,
+  message,
+  Row,
+  Space,
+  Table,
+  Tooltip,
+} from 'antd';
+import type { ColumnsType } from 'antd/lib/table';
+import type { MutableRefObject } from 'react';
+import React, { useState } from 'react';
+import { useRequest } from 'umi';
+import styles from './UnitDetailDrawer.less';
+import UpdateUnitForm from './UpdateUnitForm';
 
 type ButtonType = {
   title: string;
@@ -114,9 +109,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       dataIndex: 'status',
       width: '22%',
       align: 'center',
-      render: (_, { status }) => (
-        <StatusTag title={status} icon={<UnlockOutlined />} type={status} />
-      ),
+      render: (_, { status }) => <UserStatusCell status={UserCellStatus[status]} />,
     },
   ];
 
@@ -155,9 +148,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       dataIndex: 'status',
       width: '22%',
       align: 'center',
-      render: (_, { status }) => (
-        <StatusTag title={status} icon={<UnlockOutlined />} type={status} />
-      ),
+      render: (_, { status }) => <MachineStatusTag type={status} />,
     },
   ];
 
@@ -261,7 +252,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
         headerStyle={{ border: 'none' }}
       >
         <Form layout="vertical" hideRequiredMark>
-          <Space size={12} direction={'vertical'}>
+          <Space size={12} direction={'vertical'} style={{ width: '100%' }}>
             <Row>
               <Col span={15}>
                 <h4 className={styles.drawerHeaderTitle}>Chi tiết đơn vị</h4>
