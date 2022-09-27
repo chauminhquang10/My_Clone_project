@@ -97,19 +97,34 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
       },
     );
 
-  const { data: districtsData, loading: districtsLoading } =
-    useRequest<ResponseGetDistrictListByProvince>(
-      () => {
-        return getDistricts({ provinceId: form.getFieldValue('provinceId') });
-      },
-      {
-        refreshDeps: [form.getFieldValue('provinceId')],
-      },
-    );
-
-  const { data: wardsData, loading: wardsLoading } = useRequest<ResponseGetWardListByDistrict>(
+  const {
+    data: districtsData,
+    loading: districtsLoading,
+    cancel: cancelDistricts,
+  } = useRequest<ResponseGetDistrictListByProvince>(
     () => {
-      return getWards({ districtId: form.getFieldValue('districtId') });
+      if (form.getFieldValue('provinceId'))
+        return getDistricts({ provinceId: form.getFieldValue('provinceId') });
+      return new Promise(() => {
+        cancelDistricts();
+      });
+    },
+    {
+      refreshDeps: [form.getFieldValue('provinceId')],
+    },
+  );
+
+  const {
+    data: wardsData,
+    loading: wardsLoading,
+    cancel: cancelWards,
+  } = useRequest<ResponseGetWardListByDistrict>(
+    () => {
+      if (form.getFieldValue('districtId'))
+        return getWards({ districtId: form.getFieldValue('districtId') });
+      return new Promise(() => {
+        cancelWards();
+      });
     },
     {
       refreshDeps: [form.getFieldValue('districtId')],
@@ -128,7 +143,6 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
         });
         break;
       case 'province':
-        console.log('a1 a2', typeof selectValue);
         form.resetFields(['districtId', 'wardId']);
         form.setFieldValue('provinceId', selectValue);
         setHandleEnableDropdownList({
@@ -185,17 +199,35 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
 
       <Row gutter={[24, 24]}>
         <Col span={12}>
-          <Form.Item name="code" label="Mã đơn vị">
+          <Form.Item
+            name="code"
+            label="Mã đơn vị"
+            rules={[
+              { required: true, message: 'Vui lòng nhập mã đơn vị!' },
+              { max: 20, message: 'Tối đa 20 kí tự!' },
+            ]}
+          >
             <Input placeholder={'Nhập mã đơn vị'} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="name" label="Tên đơn vị">
+          <Form.Item
+            name="name"
+            label="Tên đơn vị"
+            rules={[
+              { required: true, message: 'Vui lòng nhập tên đơn vị!' },
+              { max: 50, message: 'Tối đa 50 kí tự!' },
+            ]}
+          >
             <Input placeholder={'Nhập tên đơn vị'} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="location" label="Khu vực">
+          <Form.Item
+            name="location"
+            label="Khu vực"
+            rules={[{ required: true, message: 'Khu vực là băt buộc' }]}
+          >
             <Select
               placeholder="Chọn khu vực"
               onChange={(selectValue) => handleSelectChange('location', selectValue)}
@@ -207,7 +239,11 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="provinceId" label="Tỉnh/Thành phố">
+          <Form.Item
+            name="provinceId"
+            label="Tỉnh/Thành phố"
+            rules={[{ required: true, message: 'Tỉnh/Thành phố là băt buộc' }]}
+          >
             <Select
               placeholder="Chọn Tỉnh/Thành phố"
               onChange={(selectValue) => handleSelectChange('province', selectValue)}
@@ -223,7 +259,11 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="districtId" label="Quận/Huyện">
+          <Form.Item
+            name="districtId"
+            label="Quận/Huyện"
+            rules={[{ required: true, message: 'Quận/Huyện là băt buộc' }]}
+          >
             <Select
               placeholder="Chọn Quận/Huyện"
               onChange={(selectValue) => handleSelectChange('district', selectValue)}
@@ -239,7 +279,11 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="wardId" label="Phường/Xã">
+          <Form.Item
+            name="wardId"
+            label="Phường/Xã"
+            rules={[{ required: true, message: 'Phường/Xã là băt buộc' }]}
+          >
             <Select
               placeholder="Chọn Phường/Xã"
               onChange={(selectValue) => handleSelectChange('ward', selectValue)}
@@ -255,7 +299,14 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={24}>
-          <Form.Item name="address" label="Tên đường, số nhà">
+          <Form.Item
+            name="address"
+            label="Tên đường, số nhà"
+            rules={[
+              { required: true, message: 'Tên đường, số nhà là băt buộc' },
+              { max: 100, message: 'Tối đa 100 kí tự!' },
+            ]}
+          >
             <Input placeholder={'example'} />
           </Form.Item>
         </Col>
@@ -265,9 +316,18 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
           Huỷ bỏ
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit">
-          Lưu
-        </Button>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Button
+              className={styles.submitButton}
+              size="large"
+              htmlType="submit"
+              disabled={!!form.getFieldsError().filter(({ errors }) => errors.length).length}
+            >
+              Lưu
+            </Button>
+          )}
+        </Form.Item>
       </Row>
     </ModalForm>
   );
