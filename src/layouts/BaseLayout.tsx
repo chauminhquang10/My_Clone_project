@@ -47,8 +47,6 @@ const BasicLayout = ({ children, routes, ...props }: BasicLayoutProps) => {
 
   const { initialState } = useModel('@@initialState');
 
-  console.log('initialState: ', initialState);
-
   const menuRender = useCallback(
     (menuProps, dom) => {
       return (

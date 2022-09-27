@@ -128,7 +128,6 @@ export default function DeclareMachineStep({
       </Button>
     );
   }, [form, onSubmit, submitButtonLabel, serialErr, terminalErr, ipErr, macErr]);
-  console.log({ models });
 
   useEffect(() => {
     if (denominations) {
@@ -139,7 +138,6 @@ export default function DeclareMachineStep({
     }
   }, [denominations, form]);
 
-  console.log('test:', denominations);
   return (
     <>
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>

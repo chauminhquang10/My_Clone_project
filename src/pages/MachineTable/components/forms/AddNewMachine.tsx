@@ -24,7 +24,6 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
     submit,
   } = useStepsForm({
     async submit(values) {
-      console.log(values);
       try {
         const postMachineRes = await Api.STMController.createMachine({
           ...values,
