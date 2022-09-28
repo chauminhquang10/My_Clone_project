@@ -1,6 +1,5 @@
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
-import type { ActionType } from '@ant-design/pro-components';
 import { Drawer, Form, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
@@ -26,7 +25,7 @@ type UserDrawerProps = {
   setCurrentRow?: (value: API.UserResponse | undefined) => void;
   roles?: UserRole[];
   children?: React.ReactNode;
-  actionRef?: React.MutableRefObject<ActionType | undefined>;
+  runGetAllUser: () => void;
   isPersonalProfile?: boolean;
 };
 
@@ -35,8 +34,8 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
   setShowDetail,
   currentRow,
   setCurrentRow,
-  actionRef,
   isPersonalProfile = false,
+  runGetAllUser,
 }) => {
   const [userInfo, setUserInfo] = useState<API.UserDetailResponse>({});
 
@@ -87,7 +86,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
             {/* Header */}
             <Header
               userInfo={userInfo}
-              actionRef={actionRef}
+              runGetAllUser={runGetAllUser}
               onCloseDrawer={() => setShowDetail(false)}
               isPersonalProfile={isPersonalProfile}
             />

@@ -33,6 +33,8 @@ const filterTypeMachine = (value: string | number | boolean, record: API.StmInfo
 interface ColumnProps {
   setOpenLogForm: (open: boolean) => void;
   setCurrentRow: (r: API.StmInfoResponse) => void;
+  setParamFilter: React.Dispatch<React.SetStateAction<API.getListModelsParams | undefined>>;
+  paramFilter: API.getListModelsParams | undefined;
 }
 
 function Column({ setOpenLogForm, setCurrentRow }: ColumnProps) {

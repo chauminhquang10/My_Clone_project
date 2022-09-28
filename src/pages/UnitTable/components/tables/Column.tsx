@@ -6,6 +6,8 @@ import { formatDate } from '@/utils';
 type ColumnProps = {
   setCurrentRow: (s: API.ManagementUnitResponse) => void;
   setShowDetail: (s: boolean) => void;
+  setParamFilter: React.Dispatch<React.SetStateAction<API.getAllManagementUnitsParams | undefined>>;
+  paramFilter: API.getAllManagementUnitsParams | undefined;
 };
 
 function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
