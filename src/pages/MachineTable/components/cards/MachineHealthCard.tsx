@@ -2,7 +2,7 @@ import { genKey } from '@/utils';
 import { Card } from 'antd';
 import type { CSSProperties } from 'react';
 import { useMemo } from 'react';
-import { useIntl } from 'umi';
+import { FormattedMessage, useIntl } from 'umi';
 import styles from '../../machineDrawer.less';
 
 type MachineHealthCardProps = {
@@ -11,13 +11,19 @@ type MachineHealthCardProps = {
 
 export default function MachineHealthCard({ health }: MachineHealthCardProps) {
   const intl = useIntl();
+  const offset = useMemo(() => (intl.locale === 'vi-VN' ? 4 : 2), [intl]);
+
   const statusPosition: CSSProperties = useMemo(
-    () => ({ left: `calc(${health || 50 - 4}% + 1px)` }),
-    [health],
+    () => ({ left: `calc(${health || 50 - offset}% + 1px)` }),
+    [health, offset],
   );
 
   return (
-    <Card size="small" className={styles.myCard} title="Sức khoẻ máy">
+    <Card
+      size="small"
+      className={styles.myCard}
+      title={<FormattedMessage id="machine-drawer.drive-health" />}
+    >
       <div className={styles.statusBar}>
         {Array.from(Array(5)).map((_, i) => (
           <div className={`${styles[`status-${i + 1}`]} ${i === styles.active}`} key={genKey()} />
@@ -28,7 +34,7 @@ export default function MachineHealthCard({ health }: MachineHealthCardProps) {
         <div className={styles.statusText}>
           {intl.formatMessage({
             defaultMessage: 'Tình trạng',
-            id: 'machine.detail.machineHealth',
+            id: 'status',
           })}
         </div>
       </div>

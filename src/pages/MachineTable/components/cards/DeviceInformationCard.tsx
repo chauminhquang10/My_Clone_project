@@ -1,5 +1,6 @@
 import { EditOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Input, Row } from 'antd';
+import { FormattedMessage } from 'umi';
 import type { UnitCardProps } from './UnitCard';
 
 export default function DeviceInformationCard({
@@ -19,10 +20,12 @@ export default function DeviceInformationCard({
 }: UnitCardProps & API.StmDetailResponse) {
   return (
     <Card
-      title="Thông tin thiết bị"
+      title={<FormattedMessage id="machine-drawer.device-information" />}
       extra={
         <Button type="link" icon={<EditOutlined />} onClick={onExtraClick}>
-          Chỉnh sửa
+          <span>
+            <FormattedMessage id="edit" />
+          </span>
         </Button>
       }
       size="small"
@@ -31,22 +34,22 @@ export default function DeviceInformationCard({
     >
       <Row gutter={24} align="bottom">
         <Col span={6}>
-          <Form.Item name="Dòng máy" label="Dòng máy">
+          <Form.Item name="Dòng máy" label={<FormattedMessage id="machineType" />}>
             <Input disabled placeholder={model?.name} />
           </Form.Item>
         </Col>
         <Col span={6}>
-          <Form.Item name="Seri máy" label="Seri máy">
+          <Form.Item name="Seri máy" label={<FormattedMessage id="declare-machine.series" />}>
             <Input disabled placeholder={serialNumber} />
           </Form.Item>
         </Col>
         <Col span={6}>
-          <Form.Item name="Loại khoá" label="Loại khoá">
+          <Form.Item name="Loại khoá" label={<FormattedMessage id="declare-machine.keyType" />}>
             <Input disabled placeholder={keyType} />
           </Form.Item>
         </Col>
         <Col span={6}>
-          <Form.Item name="Cổng" label="Cổng">
+          <Form.Item name="Cổng" label={<FormattedMessage id="declare-machine.port" />}>
             <Input disabled placeholder={port?.toString()} />
           </Form.Item>
         </Col>
@@ -66,22 +69,34 @@ export default function DeviceInformationCard({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="Tài khoản hạch toán USD" label="Tài khoản hạch toán USD">
+          <Form.Item
+            name="Tài khoản hạch toán USD"
+            label={<FormattedMessage id="declare-machine.accountingUSD" />}
+          >
             <Input disabled placeholder={accountingAccountUSD} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="Tài khoản hạch toán VNĐ" label="Tài khoản hạch toán VNĐ">
+          <Form.Item
+            name="Tài khoản hạch toán VNĐ"
+            label={<FormattedMessage id="declare-machine.accountingVND" />}
+          >
             <Input disabled placeholder={accountingAccountVND} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="Quy tắc chi tiền" label="Quy tắc chi tiền">
+          <Form.Item
+            name="Quy tắc chi tiền"
+            label={<FormattedMessage id="declare-machine.denominationRule" />}
+          >
             <Input disabled placeholder={denominationRule} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="Loại mệnh giá tiền" label="Loại mệnh giá tiền">
+          <Form.Item
+            name="Loại mệnh giá tiền"
+            label={<FormattedMessage id="declare-machine.denominations" />}
+          >
             <Row gutter={12}>
               {denominations?.map((item, index) => {
                 const key = index + item.toString();

@@ -7,6 +7,8 @@ import { FormattedMessage } from 'umi';
 type ColumnProps = {
   setCurrentRow: (s: API.UserResponse) => void;
   setShowDetail: (s: boolean) => void;
+  setParamFilter: React.Dispatch<React.SetStateAction<API.getAllUsersParams | undefined>>;
+  paramFilter: API.getAllUsersParams | undefined;
 };
 
 function Column({ setCurrentRow, setShowDetail }: ColumnProps) {

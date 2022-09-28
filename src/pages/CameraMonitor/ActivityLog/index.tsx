@@ -17,27 +17,38 @@ const TableCustom = () => {
   const [page, setPage] = useState<number>(1);
   const [openLogForm, setOpenLogForm] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<API.StmInfoResponse>();
+  const [paramFilter, setParamFilter] = useState<API.getListModelsParams | undefined>();
   //----------- get all machine ---------------------
-  const { run: runGetAllMachine } = useRequest(
-    (params: API.getListMachinesParams) => api.STMController.getListMachines(params),
+  const { data: listActivity } = useRequest(
+    () => {
+      const params: API.getListMachinesParams = {
+        ...paramFilter,
+        pageNumber: page - 1,
+        pageSize: pageSizeRef.current,
+      };
+      return api.STMController.getListMachines(params);
+    },
     {
-      manual: true,
       cacheKey: 'listMachine',
       onSuccess: (res) => {
         if (!res) {
           openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
         }
+        setTotalSize(res?.totalSize as number);
         return res;
       },
       onError: (error) => {
         console.log(error);
       },
+      refreshDeps: [paramFilter, page],
     },
   );
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<API.StmInfoResponse>[] = Column({
     setOpenLogForm,
     setCurrentRow,
+    setParamFilter,
+    paramFilter,
   });
 
   //-------------- Pagination props --------------------------------
@@ -77,17 +88,7 @@ const TableCustom = () => {
             hideOnSinglePage: true,
             showQuickJumper: true,
           }}
-          request={async () => {
-            const params: API.getListMachinesParams = {
-              pageNumber: page - 1,
-              pageSize: pageSizeRef.current,
-            };
-            const res = await runGetAllMachine(params);
-            setTotalSize(res?.totalSize as number);
-            return {
-              data: res?.items || [],
-            };
-          }}
+          dataSource={listActivity?.items}
         />
       </PageContainer>
 

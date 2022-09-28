@@ -8,10 +8,10 @@ import { FormattedMessage, useRequest } from 'umi';
 import Column from './components/tables/Column';
 
 const HistoryListTable = () => {
-  // const [resultResponse, setResultResponse] = useState<API.PageResponseManagementUnitResponse>();
-
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const pageSize = useRef<number>(10);
+  const pageSizeRef = useRef<number>(20);
+  const [totalSize, setTotalSize] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+  const [paramFilter, setParamFilter] = useState<API.getListMachinesParams | undefined>();
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -21,29 +21,27 @@ const HistoryListTable = () => {
     page: '',
   };
 
-  const { run: runGetAllSystemOperations } =
-    useRequest<API.ResponseBasePageResponseSystemOperationResponse>(
-      (params: API.getSystemOperationParams) => getSystemOperation(params),
-      {
-        onSuccess(data) {
-          console.log(data);
-          // setResultResponse(data);
-          // const dataNew = data as API.BaseResponseListLanguageSupport;
-          // if (dataNew?.success && dataNew.data) {
-          //   setListSupportLanguages(dataNew.data);
-          // }
-        },
-        onError(error) {
-          console.log('error', error);
-          // notification.error({
-          //   message: messageErrorData,
-          //   description: e?.data?.code,
-          // });
-        },
+  const { data: listHistory } = useRequest<API.ResponseBasePageResponseSystemOperationResponse>(
+    () => {
+      const params: API.getSystemOperationParams = {
+        ...paramFilter,
+        pageNumber: page - 1,
+        pageSize: pageSizeRef.current,
+      };
+      return getSystemOperation(params);
+    },
+    {
+      onSuccess(data) {
+        setTotalSize(data?.totalSize as number);
       },
-    );
+      onError(error) {
+        console.log('error', error);
+      },
+      refreshDeps: [paramFilter, page],
+    },
+  );
 
-  const columns = Column();
+  const columns = Column({ paramFilter, setParamFilter });
 
   return (
     <PageContainer
@@ -61,25 +59,19 @@ const HistoryListTable = () => {
         }
         rowKey="key"
         search={false}
-        request={async () => {
-          const res = await runGetAllSystemOperations();
-          return {
-            data: res?.items,
-            total: res?.items ? res.items.length : 0,
-            success: true,
-          };
-        }}
+        dataSource={listHistory?.items}
         columns={columns}
         options={false}
         pagination={{
           onChange(current) {
-            setCurrentPage(current);
+            setPage(current);
           },
-          current: currentPage,
+          current: page,
+          total: totalSize,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
-          pageSize: pageSize.current,
+          pageSize: pageSizeRef.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
           hideOnSinglePage: true,
           showQuickJumper: true,

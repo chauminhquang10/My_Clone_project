@@ -10,6 +10,7 @@ export default {
   searchBar_placeholder: 'Tìm kiếm',
 
   tableColumn_indexTitle: 'STT',
+  fullName: 'Họ và tên',
   tableColumn_createdDate: 'Ngày tạo',
   south: 'Miền Nam',
   middle: 'Miền Trung',
@@ -38,11 +39,14 @@ export default {
   delete: 'Xóa',
   continue: 'Tiếp tục',
   mac: 'MAC',
-  noAccess: "Your account can't access this feature",
   'userDetailStatus.active': 'ĐANG HOẠT ĐỘNG',
   'userDetailStatus.inActive': 'TẠM KHÓA',
   'userDetailStatus.unknown': 'KHÔNG XÁC ĐỊNH',
   'userCellStatus.ACTIVE': 'ĐANG HOẠT ĐỘNG',
   'userCellStatus.INACTIVE': 'TẠM KHÓA',
   'userCellStatus.UNKNOWN': 'KHÔNG XÁC ĐỊNH',
+  noAccess: 'Tài khoản chưa được cho phép truy cập chức năng này',
+  phoneNumber: 'Số điện thoại',
+  address: 'Địa chỉ đơn vị',
+  model: 'Dòng máy',
 };

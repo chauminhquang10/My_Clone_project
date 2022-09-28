@@ -5,7 +5,12 @@ import { Tooltip } from 'antd';
 import { FormattedMessage } from 'umi';
 import { formatDate, formatStaffName } from '@/utils';
 
-function Column() {
+type ColumnProps = {
+  paramFilter: API.getListMachinesParams | undefined;
+  setParamFilter: React.Dispatch<React.SetStateAction<API.getListMachinesParams | undefined>>;
+};
+
+function Column({}: ColumnProps) {
   const columns: ProColumns<API.SystemOperationResponse>[] = [
     {
       title: 'Id',
