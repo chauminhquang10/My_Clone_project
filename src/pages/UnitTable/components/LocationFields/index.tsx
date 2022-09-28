@@ -1,6 +1,7 @@
 import { useLocationFields } from '@/hooks/useLocationFields';
 import type { FormInstance } from 'antd';
 import { Col, Form, Select } from 'antd';
+import { FormattedMessage } from 'umi';
 import type { DistrictItem, ProvinceItem, WardItem } from '../forms/NewUnitForm';
 
 interface SelectOption {
@@ -41,21 +42,33 @@ export default function LocationFields<T>({
   return (
     <>
       <Col span={12}>
-        <Form.Item name="location" label="Khu vực">
+        <Form.Item name="location" label={<FormattedMessage id="location" />}>
           <Select
-            placeholder={detailMachine.location ?? 'Chọn khu vực'}
+            placeholder={
+              detailMachine.location ?? <FormattedMessage id="declare-unit.selectLocation" />
+            }
             onChange={(selectValue: string) => handleSelectChange('location', selectValue)}
           >
-            <Select.Option value="north">Miền Bắc</Select.Option>
-            <Select.Option value="middle">Miền Trung</Select.Option>
-            <Select.Option value="south">Miền Nam</Select.Option>
+            <Select.Option value="north">
+              <FormattedMessage id="north" />
+            </Select.Option>
+            <Select.Option value="middle">
+              <FormattedMessage id="middle" />
+            </Select.Option>
+            <Select.Option value="south">
+              <FormattedMessage id="south" />
+            </Select.Option>
           </Select>
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item name="provinceId" label="Tỉnh/Thành phố">
+        <Form.Item name="provinceId" label={<FormattedMessage id="machine-table.province/city" />}>
           <Select
-            placeholder={detailMachine.province?.name ?? 'Chọn Tỉnh/Thành phố'}
+            placeholder={
+              detailMachine.province?.name ?? (
+                <FormattedMessage id="machine-table.pickProvince/city" />
+              )
+            }
             onChange={(selectValue) => handleSelectChange('province', selectValue)}
             disabled={handleEnableDropdownList?.provinceDisabled ? true : false}
             loading={provincesLoading}
@@ -70,9 +83,11 @@ export default function LocationFields<T>({
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item name="districtId" label="Quận/Huyện">
+        <Form.Item name="districtId" label={<FormattedMessage id="machine-table.district" />}>
           <Select
-            placeholder={detailMachine.district?.name ?? 'Chọn Quận/Huyện'}
+            placeholder={
+              detailMachine.district?.name ?? <FormattedMessage id="machine-table.pickDistrict" />
+            }
             onChange={(selectValue) => handleSelectChange('district', selectValue)}
             disabled={handleEnableDropdownList.districtDisabled ? true : false}
             loading={districtsLoading}
@@ -87,9 +102,11 @@ export default function LocationFields<T>({
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item name="wardId" label="Phường/Xã">
+        <Form.Item name="wardId" label={<FormattedMessage id="machine-table.ward" />}>
           <Select
-            placeholder={detailMachine.ward?.name ?? 'Chọn Phường/Xã'}
+            placeholder={
+              detailMachine.ward?.name ?? <FormattedMessage id="machine-table.pickWard" />
+            }
             onChange={(selectValue) => handleSelectChange('ward', selectValue)}
             disabled={handleEnableDropdownList.wardDisabled ? true : false}
             loading={wardsLoading}

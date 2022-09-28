@@ -9,6 +9,7 @@ export default {
   searchBar_placeholder: 'Search',
 
   tableColumn_indexTitle: 'Index',
+  fullName: 'Full name',
   tableColumn_createdDate: 'Created Date',
   south: 'South',
   middle: 'Middle',
@@ -37,5 +38,8 @@ export default {
   delete: 'Delete',
   continue: 'Continue',
   mac: 'MAC',
-  noAccess: 'Tài khoản chưa được cho phép truy cập chức năng này',
+  noAccess: "Your account can't access this feature",
+  phoneNumber: 'Phone number',
+  address: 'Address',
+  model: 'Model',
 };

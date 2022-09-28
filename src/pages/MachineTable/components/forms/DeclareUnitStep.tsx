@@ -7,6 +7,7 @@ import type { FormInstance } from 'antd';
 import { AutoComplete, Button, Card, Col, Form, Input, Row, Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { useCallback, useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from 'umi';
 import Map from '../map/Map';
 import DropdownOverlay from './DropdownOverlay';
 import styles from './editMachine.less';
@@ -26,13 +27,17 @@ interface UserData extends API.UserResponse {
 
 const userColumns: ColumnsType<Pick<UserData, 'name' | 'email' | 'phoneNumber'>> = [
   {
-    title: 'STT',
+    title: <FormattedMessage id="tableColumn_indexTitle" />,
     align: 'center',
     dataIndex: 'index',
     width: '80px',
   },
   {
-    title: <div style={{ textAlign: 'center' }}>Họ và tên</div>,
+    title: (
+      <div style={{ textAlign: 'center' }}>
+        <FormattedMessage id="fullName" />
+      </div>
+    ),
     dataIndex: 'name',
     width: '307px',
   },
@@ -42,7 +47,7 @@ const userColumns: ColumnsType<Pick<UserData, 'name' | 'email' | 'phoneNumber'>>
     width: '307px',
   },
   {
-    title: 'Số điện thoại',
+    title: <FormattedMessage id="phoneNumber" />,
     dataIndex: 'phoneNumber',
     width: '140px',
   },
@@ -88,6 +93,7 @@ export default function DeclareUnitStep<T>({
   cancelButtonLabel = 'Huỷ bỏ',
   ...machineDetail
 }: DeclareUnitStepProps<T>) {
+  const intl = useIntl();
   const { data: unitList, loading: unitListLoading } = useRequest(getAllUnit);
   const [uId, setUId] = useState<string>(`${machineDetail.managementUnit?.id}` ?? '');
   const { data: uDetails } = useRequest(getUnit(uId), {
@@ -190,13 +196,13 @@ export default function DeclareUnitStep<T>({
     [uDetails, form],
   );
 
-  console.log({ userDataSource });
-
   return (
     <>
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
         <Col>
-          <p className={styles.modalTitle}>Khai báo đơn vị quản lý</p>
+          <p className={styles.modalTitle}>
+            <FormattedMessage id="declare-unit.title" />
+          </p>
         </Col>
         <Col>
           <span className={styles.closeIcon} onClick={onCancel}>
@@ -206,17 +212,20 @@ export default function DeclareUnitStep<T>({
       </Row>
 
       <Card
-        title="Đơn vị quản lý"
+        title={<FormattedMessage id="menu.user-management.management-unit" />}
         size="small"
         className={styles.myCard}
         style={{ borderRadius: 12 }}
       >
         <Row gutter={24} align="bottom" style={{ marginBottom: 24 }}>
           <Col span={12}>
-            <Form.Item name="managementUnitId" label="Mã - Tên đơn vị" required>
+            <Form.Item
+              name="managementUnitId"
+              label={<FormattedMessage id="machine-drawer.code-unitName" />}
+            >
               <Select
                 onChange={handleChangeUnitId}
-                placeholder="Mã - Tên đơn vị"
+                placeholder={<FormattedMessage id="machine-drawer.code-unitName" />}
                 loading={unitListLoading}
               >
                 {unitList?.map((unit) => (
@@ -228,12 +237,15 @@ export default function DeclareUnitStep<T>({
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="unitAddress" label="Địa chỉ đơn vị">
+            <Form.Item name="unitAddress" label={<FormattedMessage id="address" />}>
               <Input disabled placeholder={form.getFieldValue('unitAddress')} />
             </Form.Item>
           </Col>
           <Col span={24} style={{ marginTop: 24, marginBottom: 24 }}>
-            <Form.Item name="userIds" label="Mã - Tên nhân viên quản lý" required>
+            <Form.Item
+              name="userIds"
+              label={<FormattedMessage id="machine-drawer.code-staffName" />}
+            >
               <Select
                 loading={unitListLoading}
                 onClear={handleClearUser}
@@ -259,7 +271,7 @@ export default function DeclareUnitStep<T>({
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Form.Item label="Danh sách nhân viên quản lý" shouldUpdate>
+            <Form.Item label={<FormattedMessage id="declare-unit.tableTitle" />} shouldUpdate>
               {() => (
                 <Table
                   columns={userColumns}
@@ -287,7 +299,11 @@ export default function DeclareUnitStep<T>({
           </Col>
         </Row>
       </Card>
-      <Card title="Địa chỉ máy" size="small" style={{ borderRadius: 12, marginTop: 24 }}>
+      <Card
+        title={<FormattedMessage id="address" />}
+        size="small"
+        style={{ borderRadius: 12, marginTop: 24 }}
+      >
         <Row gutter={[24, 24]} align="bottom">
           <LocationFields
             onSelectProvince={(_, options) => setProvince(options.children)}
@@ -299,13 +315,12 @@ export default function DeclareUnitStep<T>({
           <Col span={24}>
             <Form.Item
               name="address"
-              label="Tên đường, Số nhà"
+              label={<FormattedMessage id="Street name" />}
               rules={[{ type: 'string', min: 0, max: 100 }]}
               validateTrigger="onBlur"
-              required
             >
               <AutoComplete
-                placeholder={machineDetail.address ?? 'Tên đường, Số nhà'}
+                placeholder={machineDetail.address ?? <FormattedMessage id="Street name" />}
                 options={addressData?.map((addr) => ({
                   value: addr.attributes.ShortLabel,
                 }))}
@@ -321,18 +336,20 @@ export default function DeclareUnitStep<T>({
           <Col span={24}>
             <Form.Item
               name="machineName"
-              label="Tên máy"
+              label={<FormattedMessage id="machineName" />}
               rules={[
                 {
                   type: 'string',
                   min: 0,
                   max: 50,
-                  pattern: /^[a-zA-Z0-9]*$/g,
-                  message: 'Tên máy là duy nhất, không chứa ký tự đặc biệt, tối đa 50 ký tự',
+                  pattern: /^[a-zA-Z0-9\s]*$/g,
+                  message: <FormattedMessage id="declare-machine.invalid-machineName" />,
                 },
               ]}
             >
-              <Input placeholder={machineDetail.name ?? 'Tên máy'} />
+              <Input
+                placeholder={machineDetail.name ?? intl.formatMessage({ id: 'machineName' })}
+              />
             </Form.Item>
           </Col>
         </Row>
