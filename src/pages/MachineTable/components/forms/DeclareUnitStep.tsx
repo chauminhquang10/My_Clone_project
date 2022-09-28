@@ -6,7 +6,7 @@ import { useDebounce, useRequest } from 'ahooks';
 import type { FormInstance } from 'antd';
 import { AutoComplete, Button, Card, Col, Form, Input, Row, Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Map from '../map/Map';
 import DropdownOverlay from './DropdownOverlay';
 import styles from './editMachine.less';
@@ -53,6 +53,9 @@ const getAllUnit = () =>
     (res: API.ResponseBasePageResponseManagementUnitResponse) => res.data?.items,
   );
 
+const getUnit = (unitId: string) => () =>
+  Api.ManagementUnitController.getManagementUnit({ unitId }).then((res) => res.data);
+
 const getAddressData = (address?: string, city?: string, district?: string, ward?: string) => () =>
   fetch(
     `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&outFields=ShortLabel&forStorage=false&Address=${address}, ${ward}, ${district}&City=${city}&CountryCode=VN`,
@@ -86,11 +89,18 @@ export default function DeclareUnitStep<T>({
   ...machineDetail
 }: DeclareUnitStepProps<T>) {
   const { data: unitList, loading: unitListLoading } = useRequest(getAllUnit);
+  const [uId, setUId] = useState<string>(`${machineDetail.managementUnit?.id}` ?? '');
+  const { data: uDetails } = useRequest(getUnit(uId), {
+    cacheKey: `${uId}`,
+    refreshDeps: [uId],
+    ready: uId !== '',
+  });
   const [address, setAddress] = useState<string>();
   const debounceAddress = useDebounce(address, { wait: 500 });
   const [province, setProvince] = useState<string>();
   const [district, setDistrict] = useState<string>();
   const [ward, setWard] = useState<string>();
+  const [users, setUsers] = useState<API.UserResponse[]>();
   const [coordinate, setCoordinate] = useState<[number, number]>(() =>
     machineDetail
       ? [machineDetail.latitude || 14.058324, machineDetail.longitude || 108.277199]
@@ -103,7 +113,6 @@ export default function DeclareUnitStep<T>({
       refreshDeps: [debounceAddress, province, district, ward],
     },
   );
-  const [unitDetail, setUnitDetail] = useState<API.ManagementUnitDetailResponse>();
   const disabledAddress =
     !form.getFieldValue('provinceId') ||
     !form.getFieldValue('districtId') ||
@@ -129,17 +138,7 @@ export default function DeclareUnitStep<T>({
       if (unitList) {
         form.setFieldValue('managementUnitId', id);
         form.setFieldValue('unitAddress', unitList.find((el) => el.id === id)?.address);
-
-        try {
-          const uDetail = (
-            await Api.ManagementUnitController.getManagementUnit({
-              unitId: form.getFieldValue('managementUnitId'),
-            })
-          ).data;
-          setUnitDetail(uDetail);
-        } catch (e) {
-          console.error(e);
-        }
+        setUId(`${id}`);
       }
     },
     [unitList, form],
@@ -178,17 +177,9 @@ export default function DeclareUnitStep<T>({
     form.setFieldValue('unitAddress', machineDetail.managementUnit.address);
   }
 
-  useEffect(() => {
-    if (machineDetail) {
-      Api.ManagementUnitController.getManagementUnit({
-        unitId: `${machineDetail.managementUnit?.id}`,
-      }).then((res) => setUnitDetail(res.data));
-    }
-  }, []);
-
   const userDataSource = useMemo(
     () =>
-      unitDetail?.users
+      uDetails?.users
         ?.filter((user) => form.getFieldValue('userIds')?.includes(user.id!))
         .map((user, index) => ({
           index: index + 1,
@@ -196,8 +187,10 @@ export default function DeclareUnitStep<T>({
           phoneNumber: user.phoneNumber,
           name: user.name,
         })),
-    [unitDetail, form],
+    [uDetails, form],
   );
+
+  console.log({ userDataSource });
 
   return (
     <>
@@ -248,13 +241,16 @@ export default function DeclareUnitStep<T>({
                 mode="multiple"
                 maxTagCount={4}
                 maxTagTextLength={20}
-                dropdownRender={(menu) => <DropdownOverlay menu={menu} users={unitDetail?.users} />}
+                dropdownRender={(menu) => <DropdownOverlay menu={menu} users={uDetails?.users} />}
                 allowClear
-                onSelect={(value: unknown, option: unknown) => {
-                  console.log({ value, option });
+                onSelect={(value: string) => {
+                  setUsers((prevUsers) => [
+                    ...(prevUsers || []),
+                    ...(uDetails?.users?.filter((user) => user.id === value) || []),
+                  ]);
                 }}
               >
-                {unitDetail?.users?.map((user) => (
+                {uDetails?.users?.map((user) => (
                   <Select.Option value={user.id} key={user.id}>
                     {`${user.staffId} - ${user.name}`}
                   </Select.Option>
@@ -267,7 +263,22 @@ export default function DeclareUnitStep<T>({
               {() => (
                 <Table
                   columns={userColumns}
-                  dataSource={userDataSource}
+                  dataSource={userDataSource
+                    ?.concat(
+                      users?.map((user, i) => ({
+                        index: i + 1,
+                        email: user.email,
+                        name: user.name,
+                        phoneNumber: user.phoneNumber,
+                      })) || [],
+                    )
+                    .map((user, i) => ({
+                      index: i + 1,
+                      email: user.email,
+                      phoneNumber: user.phoneNumber,
+                      name: user.name,
+                    }))}
+                  // dataSource={userDataSource}
                   pagination={false}
                   bordered
                 />
