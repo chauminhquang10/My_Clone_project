@@ -4,6 +4,7 @@ import FilterComponent from '@/components/TableProperties/FilterComponent';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import type { ProColumns } from '@ant-design/pro-components';
 import type { Dispatch, SetStateAction } from 'react';
+import { FormattedMessage } from 'umi';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmInfoResponse) => void;
@@ -85,7 +86,11 @@ const filterStatusList: filterType = [
 function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: ColumnProps) {
   const columns: ProColumns<API.StmInfoResponse>[] = [
     {
-      title: <HeadCell>STT</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="machine-table.numberof" />
+        </HeadCell>
+      ),
       dataIndex: 'id',
       render: (_, data, index) => {
         const stt = index + 1;
@@ -95,7 +100,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       width: '80px',
     },
     {
-      title: <HeadCell>Tên máy</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="machineName" />
+        </HeadCell>
+      ),
       dataIndex: 'name',
       render: (dom, data) => {
         const handleClick = () => {
@@ -115,7 +124,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       width: '216px',
     },
     {
-      title: <HeadCell>Khu vực</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="location" />
+        </HeadCell>
+      ),
       dataIndex: 'location',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
@@ -136,7 +149,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       width: '140px',
     },
     {
-      title: <HeadCell>Tỉnh/ Thành phố</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="machine-table.province/city" />
+        </HeadCell>
+      ),
       dataIndex: 'province',
       render: (_, entity) => {
         return <TextCell>{entity.province?.name}</TextCell>;
@@ -144,7 +161,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       width: '216px',
     },
     {
-      title: <HeadCell>Loại máy</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="machineType" />
+        </HeadCell>
+      ),
       dataIndex: 'machineType',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
@@ -168,7 +189,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       width: '140px',
     },
     {
-      title: <HeadCell>Tình trạng</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="status" />
+        </HeadCell>
+      ),
       dataIndex: 'status',
       render: (_, entity) => {
         return (
@@ -201,7 +226,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       },
     },
     {
-      title: <HeadCell>Ghi chú tình trạng</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="machine-table.status-notes" />
+        </HeadCell>
+      ),
       dataIndex: 'activity',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
@@ -209,7 +238,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       width: '216px',
     },
     {
-      title: <HeadCell>Terminal ID</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="terminalId" />
+        </HeadCell>
+      ),
       dataIndex: 'terminalId',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
@@ -217,7 +250,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       width: '200px',
     },
     {
-      title: <HeadCell>Địa chỉ IP</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="ipAddress" />
+        </HeadCell>
+      ),
       dataIndex: 'ipAddress',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;

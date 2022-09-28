@@ -112,6 +112,9 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
   // xử lí cho phép chỉnh sửa
   const [enableUpdate, setEnableUpdate] = useState<boolean>(true);
 
+  // xử lí cho phép xóa
+  const [enableDelete, setEnableDelete] = useState<boolean>(true);
+
   // xử  lí trạng thái của form chỉnh sửa
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
@@ -127,10 +130,13 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
       return getModelDetail({ modelId: currentModel?.id?.toString() || '' });
     },
     {
-      onSuccess(data) {
-        console.log(data);
+      onSuccess() {
         if (!initialState?.currentRoles?.update_model) {
           setEnableUpdate(false);
+        }
+
+        if (!initialState?.currentRoles?.delete_model) {
+          setEnableDelete(false);
         }
       },
       refreshDeps: [currentModel],
@@ -141,7 +147,6 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
     const hide = message.loading('Configuring...');
 
     try {
-      // format data before create
       const newDataSource = [...dataSource];
       const newSelectedDataSource = newDataSource?.filter((item) =>
         selectedRowKeys?.includes(item?.id as number),
@@ -231,16 +236,13 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                     <Tooltip
                       placement="left"
                       title={
-                        // canRemoveUnit
-                        //   ? 'Xóa'
-                        //   : 'Chưa thể xoá. Người dùng hoặc máy chưa có đơn vị quản lý'
-                        'Xoá'
+                        enableDelete ? 'Xóa' : 'Tài khoản chưa được cho phép truy cập chức năng này'
                       }
                     >
                       <Button
                         className={styles.btnItem}
                         onClick={() => setOpenConfirmModal(true)}
-                        // disabled={canRemoveUnit ? false : true}
+                        disabled={!enableDelete}
                       >
                         <DeleteOutlined />
                       </Button>

@@ -205,6 +205,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
               { required: true, message: 'Vui lòng nhập mã đơn vị!' },
               { max: 20, message: 'Tối đa 20 kí tự!' },
             ]}
+            normalize={(value) => value.trim()}
           >
             <Input placeholder={'Nhập mã đơn vị'} />
           </Form.Item>
@@ -217,6 +218,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
               { required: true, message: 'Vui lòng nhập tên đơn vị!' },
               { max: 50, message: 'Tối đa 50 kí tự!' },
             ]}
+            normalize={(value) => value.trim()}
           >
             <Input placeholder={'Nhập tên đơn vị'} />
           </Form.Item>
@@ -305,6 +307,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
               { required: true, message: 'Tên đường, số nhà là băt buộc' },
               { max: 100, message: 'Tối đa 100 kí tự!' },
             ]}
+            normalize={(value) => value.trim()}
           >
             <Input placeholder={'example'} />
           </Form.Item>

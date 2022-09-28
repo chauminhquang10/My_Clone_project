@@ -33,7 +33,7 @@ import {
 import type { ColumnsType } from 'antd/lib/table';
 import type { MutableRefObject } from 'react';
 import React, { useState } from 'react';
-import { useModel, useRequest } from 'umi';
+import { useRequest } from 'umi';
 import styles from './RoleListDetailDrawer.less';
 import UpdateRoleListForm from './UpdateRoleListForm';
 
@@ -152,9 +152,6 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
   // xử lí dữ liệu check all để send api
   const [checkAllKeys, setCheckAllKeys] = useState<(number | string)[]>([]);
 
-  // get current user info
-  const { initialState } = useModel('@@initialState');
-
   const { data: roleGroupDetail } = useRequest<API.ResponseBaseRoleGroupResponse>(
     () => {
       return getRoleDetail({ groupId: currentRoleGroup?.id?.toString() || '' });
@@ -163,14 +160,6 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
       onSuccess(data) {
         const allActionKeys = data?.actions?.map((eachAction) => eachAction.id);
         setCheckAllKeys(allActionKeys as number[]);
-
-        if (initialState?.currentRoles && initialState?.currentRoles?.create_machine) {
-          setValidateDeleteObj({
-            enableDeleteBtn: false,
-            tooltipMsg: 'Tài khoản chưa được cho phép truy cập chức năng này',
-          });
-          return;
-        }
 
         if (data?.users && data?.users.length > 0) {
           setValidateDeleteObj({

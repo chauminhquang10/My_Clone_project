@@ -2,7 +2,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { useModel, useRequest } from 'umi';
+import { useRequest } from 'umi';
 import NewRoleListForm from './components/forms/NewRoleListForm';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
@@ -13,12 +13,6 @@ import RoleListDetailDrawer from './components/forms/RoleListDetailDrawer';
 import { createRoleGroup, getAllRoleGroup } from '@/services/STM-APIs/RoleController';
 
 const TableCustom = () => {
-  // get current user info
-  const { initialState } = useModel('@@initialState');
-
-  // xử lí cho phép tạo mới
-  const [enableCreateNew, setEnableCreateNew] = useState<boolean>(true);
-
   // xử lí dữ liệu check all để send api
   const [checkAllKeys, setCheckAllKeys] = useState<(number | string)[]>([]);
 
@@ -50,11 +44,7 @@ const TableCustom = () => {
   const { run: runGetAllRolesGroup } = useRequest<API.ResponseBaseListRoleGroupResponse>(
     () => getAllRoleGroup(),
     {
-      onSuccess() {
-        if (!initialState?.currentUser?.admin) {
-          setEnableCreateNew(false);
-        }
-      },
+      onSuccess() {},
 
       onError(error) {
         console.log('error', error);
@@ -100,7 +90,7 @@ const TableCustom = () => {
         toolBarRender={() => [
           <AddNew
             key="primary"
-            enableCreateNew={enableCreateNew}
+            enableCreateNew={true}
             onClick={() => {
               handleModalVisible(true);
             }}

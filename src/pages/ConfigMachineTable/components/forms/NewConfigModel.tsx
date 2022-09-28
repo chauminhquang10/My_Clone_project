@@ -345,6 +345,7 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
               { required: true, message: 'Tên dòng máy là băt buộc' },
               { max: 100, message: 'Tối đa 100 kí tự' },
             ]}
+            normalize={(value) => value.trim()}
           >
             <Input placeholder={'Nhập tên dòng máy'} />
           </Form.Item>

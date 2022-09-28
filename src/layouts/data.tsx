@@ -50,32 +50,32 @@ export interface MenuData {
 export const menuData = [
   {
     icon: <StmIcon src="machine-management" />,
-    id: 'Tổng quan',
-    path: '/machine/test',
+    id: 'dashboard',
+    path: '/dashboard',
   },
   {
     icon: <StmIcon src="machine-management" />,
-    id: 'Quản trị máy',
+    id: 'machine-management',
     path: '/machine',
     children: [
       {
         icon: <StmIcon src="machine-list" />,
-        id: 'Danh sách máy',
+        id: 'list',
         path: '/machine/list',
       },
       {
         icon: <img src={icons['machine-stats']} />,
-        id: 'Thống kê hoạt động',
+        id: 'analytics',
         path: '/machine/analytics',
       },
       {
         icon: <img src={icons['machine-config']} />,
-        id: 'Cấu hình dòng máy',
+        id: 'config',
         path: '/machine/config',
       },
       {
         icon: <img src={icons['machine-update']} />,
-        id: 'Cập nhật phần mềm',
+        id: 'update-firmware',
         path: '/machine/update-firmware',
       },
       // {
@@ -87,41 +87,41 @@ export const menuData = [
   },
   {
     icon: <StmIcon src="camera-management" />,
-    id: 'Giám sát Camera',
+    id: 'camera-management',
     path: '/camera',
     children: [
       {
         icon: <img src={icons['camera-log']} />,
-        id: 'Log hoạt động',
+        id: 'log',
         path: '/camera/log',
       },
     ],
   },
   {
     icon: <StmIcon src="user-management" />,
-    id: 'Quản trị người dùng',
+    id: 'user-management',
     path: '/users',
     children: [
       {
         icon: <StmIcon src="user-list" />,
-        id: 'Danh sách người dùng',
+        id: 'user-list',
         path: '/users/list',
       },
       {
         icon: <img src={icons['group-policy']} />,
-        id: 'Nhóm quyền',
+        id: 'group-authorize',
         path: '/users/group-authorize',
       },
       {
         icon: <img src={icons['management-unit']} />,
-        id: 'Đơn vị quản lý',
+        id: 'management-unit',
         path: '/users/management-unit',
       },
     ],
   },
   {
     icon: <StmIcon src="machine-history" />,
-    id: 'Lịch sử',
+    id: 'history',
     path: '/history',
   },
 ];

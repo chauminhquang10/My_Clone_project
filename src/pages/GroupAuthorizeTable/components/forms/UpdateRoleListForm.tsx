@@ -156,6 +156,7 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
             name="roleGroupName"
             label="Tên nhóm quyền"
             rules={[{ required: true, message: 'Tên nhóm quyền là băt buộc' }]}
+            normalize={(value) => value.trim()}
           >
             <Input placeholder={'Quản trị máy & camera'} />
           </Form.Item>

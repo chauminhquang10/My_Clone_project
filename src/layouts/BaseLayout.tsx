@@ -8,7 +8,7 @@ import type {
 import ProLayout from '@ant-design/pro-layout';
 import { useCallback } from 'react';
 import { history, Link, useIntl, useModel } from 'umi';
-import logo from '../assets/logo/Logo.svg';
+import logo from '../assets/images/utmc-logo.png';
 import RightContent from '../components/RightContent';
 import { icons } from './data';
 import styles from './layouts.less';
@@ -72,7 +72,7 @@ const BasicLayout = ({ children, routes, ...props }: BasicLayoutProps) => {
       <div className={styles.stmHeader}>
         <img src={Icon} onClick={handleCollapsed} />
         <Link to="/">
-          <img src={logo} alt="KLB Logo" />
+          <img src={logo} width={132} style={{ objectFit: 'cover' }} alt="KLB Logo" />
         </Link>
         <RightContent />
       </div>

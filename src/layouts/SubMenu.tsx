@@ -76,9 +76,11 @@ export default function SubMenu({
           {!collapsed && (
             <Typography.Text
               className={styles.title}
-              ellipsis={{ tooltip: { children: <FormattedMessage id={id} />, placement: 'right' } }}
+              ellipsis={{
+                tooltip: { children: <FormattedMessage id={`menu.${id}`} />, placement: 'right' },
+              }}
             >
-              <FormattedMessage id={id} />
+              <FormattedMessage id={`menu.${id}`} />
             </Typography.Text>
           )}
         </>
@@ -88,6 +90,7 @@ export default function SubMenu({
           {children?.map((child) => (
             <SubMenu
               {...child}
+              id={`${id}.${child.id}`}
               collapsed={collapsed}
               key={genKey()}
               currentRoute={currentRoute}

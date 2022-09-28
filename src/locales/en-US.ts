@@ -16,6 +16,7 @@ import configMachineTable from './en-US/ConfigMachineTable/table';
 import configMachineForm from './en-US/ConfigMachineTable/forms/form';
 import configMachineDetail from './en-US/ConfigMachineTable/forms/detailDrawer';
 import stmError from './en-US/stmError';
+import MachineTable from './en-US/MachineTable';
 
 export default {
   navBar_language: 'EN',
@@ -39,4 +40,5 @@ export default {
   ...configMachineForm,
   ...configMachineDetail,
   ...stmError,
+  ...MachineTable,
 };
