@@ -1,14 +1,19 @@
 import MachineStatusTag from '@/components/Common/MachineStatusTag';
 import { TextCell } from '@/components/TableProperties//TableCell';
+import FilterComponent from '@/components/TableProperties/FilterComponent';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import type { ProColumns } from '@ant-design/pro-components';
+import type { Dispatch, SetStateAction } from 'react';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmInfoResponse) => void;
   setShowDetail: (s: boolean) => void;
+  setParamFilter: Dispatch<SetStateAction<API.getListMachinesParams | undefined>>;
+  paramFilter: API.getListMachinesParams | undefined;
 };
 
 type filterType = {
+  id: number;
   text: string;
   value: string;
 }[];
@@ -17,74 +22,67 @@ type filterType = {
 
 const filterLocationList: filterType = [
   {
+    id: 1,
     text: 'Miền Bắc',
-    value: 'Miền Bắc',
+    value: 'north',
   },
   {
+    id: 2,
     text: 'Miền Trung',
-    value: 'Miền Trung',
+    value: 'middle',
   },
   {
+    id: 3,
     text: 'Miền Nam',
-    value: 'Miền Nam',
+    value: 'south',
   },
 ];
 
-const filterLocation = (value: string | number | boolean, record: API.StmInfoResponse) => {
-  return record.location?.includes(value as string) ? true : false;
-};
+// const filterLocation = (value: string | number | boolean, record: API.StmInfoResponse) => {
+//   return record.location?.includes(value as string) ? true : false;
+// };
 
 //------------ Filter Province --------------------------------
 
 const filterTypeMachineList: filterType = [
   {
+    id: 1,
     text: 'ATM',
     value: 'ATM',
   },
   {
+    id: 2,
     text: 'CDM',
     value: 'CDM',
   },
   {
-    text: 'UNKNOWN',
-    value: 'UNKNOWN',
-  },
-  {
+    id: 3,
     text: 'STM',
     value: 'STM',
   },
 ];
 
-const filterTypeMachine = (value: string | number | boolean, record: API.StmInfoResponse) => {
-  return record.machineType?.includes(value as string) ? true : false;
-};
-
 //------------ Filter Status Machine --------------------------------
 
 const filterStatusList: filterType = [
   {
+    id: 1,
     text: 'IN SERVICE',
-    value: 'IN SERVICE',
+    value: 'IN_SERVICE',
   },
   {
+    id: 2,
     text: 'OUT OF SERVICE',
-    value: 'OUT OF SERVICE',
+    value: 'OUT_OF_SERVICE',
   },
   {
-    text: 'UNKNOWN',
-    value: 'UNKNOWN',
-  },
-  {
+    id: 3,
     text: 'OFFLINE',
     value: 'OFFLINE',
   },
 ];
 
-const filterStatus = (value: string | number | boolean, record: API.StmInfoResponse) => {
-  return record.status?.includes(value as string) as boolean;
-};
-
-function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
+function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: ColumnProps) {
   const columns: ProColumns<API.StmInfoResponse>[] = [
     {
       title: <HeadCell>STT</HeadCell>,
@@ -122,8 +120,19 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
-      filters: filterLocationList,
-      onFilter: filterLocation,
+      filterMultiple: false,
+      filters: true,
+      filterDropdown: (e) => {
+        return (
+          <FilterComponent
+            listFilter={filterLocationList}
+            {...e}
+            setParamFilter={(value) => {
+              setParamFilter({ ...paramFilter, location: value as string });
+            }}
+          />
+        );
+      },
       width: '140px',
     },
     {
@@ -140,32 +149,55 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
-      filters: filterTypeMachineList,
-      onFilter: filterTypeMachine,
+      filterMultiple: false,
+      filters: true,
+      filterDropdown: (e) => {
+        return (
+          <FilterComponent
+            listFilter={filterTypeMachineList}
+            {...e}
+            setParamFilter={(value) => {
+              setParamFilter({
+                ...paramFilter,
+                machineType: value as 'UNKNOWN' | 'ATM' | 'CDM' | 'STM' | undefined,
+              });
+            }}
+          />
+        );
+      },
       width: '140px',
     },
     {
       title: <HeadCell>Tình trạng</HeadCell>,
       dataIndex: 'status',
-      render: (dom) => {
-        return dom;
+      render: (_, entity) => {
+        return (
+          <MachineStatusTag
+            type={entity?.status as 'UNKNOWN' | 'IN_SERVICE' | 'OUT_OF_SERVICE' | 'OFFLINE'}
+          />
+        );
       },
       width: '180px',
-      filters: filterStatusList,
-      onFilter: filterStatus,
-      valueEnum: {
-        IN_SERVICE: {
-          text: <MachineStatusTag type="IN_SERVICE" />,
-        },
-        OUT_OF_SERVICE: {
-          text: <MachineStatusTag type="OUT_OF_SERVICE" />,
-        },
-        UNKNOWN: {
-          text: <MachineStatusTag type="UNKNOWN" />,
-        },
-        OFFLINE: {
-          text: <MachineStatusTag type="OFFLINE" />,
-        },
+      filterMultiple: false,
+      filters: true,
+      filterDropdown: (e) => {
+        return (
+          <FilterComponent
+            listFilter={filterStatusList}
+            {...e}
+            setParamFilter={(value) => {
+              setParamFilter({
+                ...paramFilter,
+                status: value as
+                  | 'UNKNOWN'
+                  | 'IN_SERVICE'
+                  | 'OUT_OF_SERVICE'
+                  | 'OFFLINE'
+                  | undefined,
+              });
+            }}
+          />
+        );
       },
     },
     {

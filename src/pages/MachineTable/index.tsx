@@ -13,30 +13,12 @@ import TotalPagination from '@/components/TableProperties/TotalPagination';
 import AddNewMachine from './components/forms/AddNewMachine';
 import MachineDrawer from './MachineDrawer';
 import api from '@/services/STM-APIs';
-import { openNotification } from '@/utils';
 
 const TableCustom = () => {
   //------------ pagination --------------------
   const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
-  //----------- get all machine ---------------------
-  const { run: runGetAllMachine } = useRequest(
-    (params: API.getListMachinesParams) => api.STMController.getListMachines(params),
-    {
-      manual: true,
-      cacheKey: 'listMachine',
-      onSuccess: (res) => {
-        if (!res) {
-          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
-        }
-        return res;
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    },
-  );
 
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
@@ -44,9 +26,33 @@ const TableCustom = () => {
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.StmInfoResponse>();
 
+  const [paramFilter, setParamFilter] = useState<API.getListMachinesParams | undefined>();
+
+  const { data: listMachine } = useRequest<API.ResponseBasePageResponseStmInfoResponse>(
+    () => {
+      const params: API.getListMachinesParams = {
+        pageNumber: page - 1,
+        pageSize: pageSizeRef.current,
+        location: paramFilter?.location,
+        provinceId: paramFilter?.provinceId,
+        machineType: paramFilter?.machineType,
+        status: paramFilter?.status,
+      };
+      return api.STMController.getListMachines(params);
+    },
+    {
+      onSuccess: (res) => {
+        setTotalSize(res?.totalSize as number);
+      },
+      refreshDeps: [paramFilter],
+    },
+  );
+
   const columns: ProColumns<API.StmInfoResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
+    setParamFilter,
+    paramFilter,
   });
 
   //-------------- Pagination props --------------------------------
@@ -95,17 +101,7 @@ const TableCustom = () => {
           hideOnSinglePage: true,
           showQuickJumper: true,
         }}
-        request={async () => {
-          const params: API.getListMachinesParams = {
-            pageNumber: page - 1,
-            pageSize: pageSizeRef.current,
-          };
-          const res = await runGetAllMachine(params);
-          setTotalSize(res?.totalSize as number);
-          return {
-            data: res?.items || [],
-          };
-        }}
+        dataSource={listMachine?.items}
       />
 
       <MachineDrawer

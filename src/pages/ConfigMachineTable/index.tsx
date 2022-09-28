@@ -38,13 +38,20 @@ const TableCustom = () => {
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.StmModelResponse>();
 
+  const [paramFilter, setParamFilter] = useState<API.getListModelsParams | undefined>();
+
+  //------------ pagination --------------------
+  const pageSizeRef = useRef<number>(20);
+  const [totalSize, setTotalSize] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+
   const columns: ProColumns<API.StmModelResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
+    setParamFilter,
+    paramFilter,
   });
 
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const pageSize = useRef<number>(10);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -54,20 +61,21 @@ const TableCustom = () => {
     page: '',
   };
 
-  const { run: runGetAllConfigModels } = useRequest<API.ResponseBasePageResponseStmModelResponse>(
-    (params: API.getListModelsParams) => getListModels(params),
+  const { data: listConFigMachine } = useRequest<API.ResponseBasePageResponseStmModelResponse>(
+    () => {
+      const params: API.getListModelsParams = {
+        ...paramFilter,
+        pageSize: pageSizeRef.current,
+        pageNumber: page - 1,
+      };
+      return getListModels(params);
+    },
     {
-      manual: true,
       onSuccess(data) {
-        console.log(data);
+        setTotalSize(data?.totalSize as number);
         if (!initialState?.currentRoles?.create_model) {
           setEnableCreateNew(false);
         }
-        // setResultResponse(data);
-        // const dataNew = data as API.BaseResponseListLanguageSupport;
-        // if (dataNew?.success && dataNew.data) {
-        //   setListSupportLanguages(dataNew.data);
-        // }
       },
       onError(error) {
         console.log('error', error);
@@ -76,6 +84,7 @@ const TableCustom = () => {
         //   description: e?.data?.code,
         // });
       },
+      refreshDeps: [paramFilter, page],
     },
   );
 
@@ -130,25 +139,19 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        request={async () => {
-          const res = await runGetAllConfigModels({ machineType: 'STM' });
-          return {
-            data: res?.items,
-            total: res?.items ? res.items.length : 0,
-            success: true,
-          };
-        }}
+        dataSource={listConFigMachine?.items}
         columns={columns}
         options={false}
         pagination={{
           onChange(current) {
-            setCurrentPage(current);
+            setPage(current);
           },
-          current: currentPage,
+          total: totalSize,
+          current: page,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
-          pageSize: pageSize.current,
+          pageSize: pageSizeRef.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
           hideOnSinglePage: true,
           showQuickJumper: true,
