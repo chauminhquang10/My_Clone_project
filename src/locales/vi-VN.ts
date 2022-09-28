@@ -15,10 +15,15 @@ import roleGroupDetail from './vi-VN/GroupAuthorizeTable/forms/detailDrawer';
 import configMachineTable from './vi-VN/ConfigMachineTable/table';
 import configMachineForm from './vi-VN/ConfigMachineTable/forms/form';
 import configMachineDetail from './vi-VN/ConfigMachineTable/forms/detailDrawer';
-import historyListTable from './vi-VN/HistoryList/tables';
-import historyList from './vi-VN/HistoryList';
+import historyListTable from './vi-VN/HistoryList/tables/index';
+import historyList from './vi-VN/HistoryList/index';
 import stmError from './vi-VN/stmError';
 import MachineTable from './vi-VN/MachineTable';
+import userTable from './vi-VN/UserTable';
+import userTableColumn from './vi-VN/UserTable/tables';
+import userTableDetailHeader from './vi-VN/UserTable/Detail/Header';
+import userTableDetailUserInfo from './vi-VN/UserTable/Detail/UserInfoRow';
+import userTableForm from './vi-VN/UserTable/forms/index';
 
 export default {
   navBar_language: 'VI',
@@ -43,6 +48,11 @@ export default {
   ...configMachineDetail,
   ...historyListTable,
   ...historyList,
+  ...userTable,
+  ...userTableColumn,
+  ...userTableDetailHeader,
+  ...userTableDetailUserInfo,
+  ...userTableForm,
   ...stmError,
   ...MachineTable,
 };

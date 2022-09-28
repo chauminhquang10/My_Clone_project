@@ -3,6 +3,7 @@ export default {
   buttonGroup_edit: 'Chỉnh sửa',
 
   form_buttonGroup_submitButton_title: 'Hoàn tất',
+  form_buttonGroup_confirmButton_title: 'Xác nhận',
   form_buttonGroup_cancelButton_title: 'Huỷ bỏ ',
   form_buttonGroup_saveButton_title: 'Lưu',
 
@@ -38,6 +39,12 @@ export default {
   delete: 'Xóa',
   continue: 'Tiếp tục',
   mac: 'MAC',
+  'userDetailStatus.active': 'ĐANG HOẠT ĐỘNG',
+  'userDetailStatus.inActive': 'TẠM KHÓA',
+  'userDetailStatus.unknown': 'KHÔNG XÁC ĐỊNH',
+  'userCellStatus.ACTIVE': 'ĐANG HOẠT ĐỘNG',
+  'userCellStatus.INACTIVE': 'TẠM KHÓA',
+  'userCellStatus.UNKNOWN': 'KHÔNG XÁC ĐỊNH',
   noAccess: 'Tài khoản chưa được cho phép truy cập chức năng này',
   phoneNumber: 'Số điện thoại',
   address: 'Địa chỉ đơn vị',

@@ -3,6 +3,7 @@ export default {
   buttonGroup_edit: 'Edit',
 
   form_buttonGroup_submitButton_title: 'Completed',
+  form_buttonGroup_confirmButton_title: 'Confirm',
   form_buttonGroup_cancelButton_title: 'Cancel',
   form_buttonGroup_saveButton_title: 'Save',
 
@@ -38,6 +39,12 @@ export default {
   delete: 'Delete',
   continue: 'Continue',
   mac: 'MAC',
+  'userDetailStatus.active': 'ACTIVE',
+  'userDetailStatus.inActive': 'INACTIVE',
+  'userDetailStatus.unknown': 'UNKNOWN',
+  'userCellStatus.ACTIVE': 'ACTIVE',
+  'userCellStatus.INACTIVE': 'INACTIVE',
+  'userCellStatus.UNKNOWN': 'UNKNOWN',
   noAccess: "Your account can't access this feature",
   phoneNumber: 'Phone number',
   address: 'Address',

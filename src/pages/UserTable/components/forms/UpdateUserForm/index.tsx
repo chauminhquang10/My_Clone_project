@@ -2,6 +2,7 @@ import { updateUser } from '@/services/STM-APIs/UserController';
 import { openNotification } from '@/utils';
 import { message } from 'antd';
 import React from 'react';
+import { useIntl } from 'umi';
 import NewUserForm from '../NewUserForm';
 
 const handleUpdate = async (params: API.updateUserParams, body: API.UpdateUserRequest) => {
@@ -61,7 +62,7 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
 }) => {
   return (
     <NewUserForm
-      title="Chỉnh sửa người dùng"
+      title={useIntl().formatMessage({ id: 'userTable.form.title.updateUser' })}
       width="934px"
       visible={isVisibleUpdateUser}
       onVisibleChange={setIsVisibleUpdateUser}

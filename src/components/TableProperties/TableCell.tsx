@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useRef, useState } from 'react';
 import { Typography } from 'antd';
 import activeIcon from '@/assets/images/svg/icon/active-icon.svg';
@@ -6,6 +7,7 @@ import inactiveIcon from '@/assets/images/svg/icon/lock-icon.svg';
 import style from './style.less';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import StatusTag from '../Common/StatusTag';
+import { useIntl } from 'umi';
 const { Text } = Typography;
 
 //--------------- TextCell of Table ----------------
@@ -70,7 +72,7 @@ export function UserStatusCell({ status }: UserStatusCellProps) {
     case UserCellStatus.ACTIVE:
       return (
         <StatusTag
-          title={UserCellStatus.ACTIVE}
+          title={useIntl().formatMessage({ id: `userCellStatus.${UserCellStatus.ACTIVE}` })}
           icon={<img src={activeIcon} alt="icon-active" />}
           type="success"
         />
@@ -78,13 +80,18 @@ export function UserStatusCell({ status }: UserStatusCellProps) {
     case UserCellStatus.INACTIVE:
       return (
         <StatusTag
-          title={UserCellStatus.INACTIVE}
+          title={useIntl().formatMessage({ id: `userCellStatus.${UserCellStatus.INACTIVE}` })}
           icon={<img src={inactiveIcon} alt="icon-inactive" />}
           type="error"
         />
       );
     default:
-      return <StatusTag title={UserCellStatus.UNKNOWN} type="default" />;
+      return (
+        <StatusTag
+          title={useIntl().formatMessage({ id: `userCellStatus.${UserCellStatus.UNKNOWN}` })}
+          type="default"
+        />
+      );
   }
 }
 

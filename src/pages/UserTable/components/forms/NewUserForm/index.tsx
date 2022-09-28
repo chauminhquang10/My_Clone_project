@@ -9,7 +9,7 @@ import { Avatar, Button, Col, Form, Input, message, Row, Skeleton, Upload } from
 import type { UploadChangeParam } from 'antd/es/upload';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useRequest } from 'umi';
+import { FormattedMessage, useIntl, useRequest } from 'umi';
 import { ManagementUnitField, RoleGroupField } from './components';
 import { getAddressByManagementUnitId } from './components/ManagementUnitField';
 import { getActionsByRoleGroupId } from './components/RoleGroupField';
@@ -201,7 +201,9 @@ const NewUserForm: React.FC<CreateFormProps> = ({
         </Col>
       </Row>
       {/* Avatar */}
-      <p className={styles.avatarTitle}>Ảnh đại diện</p>
+      <p className={styles.avatarTitle}>
+        <FormattedMessage id="userTable.form.avatar" />
+      </p>
       <Row align="middle" justify="start" style={{ gap: '16px' }}>
         <Col>
           {!loadingImage ? (
@@ -224,7 +226,7 @@ const NewUserForm: React.FC<CreateFormProps> = ({
                 maxCount={1}
               >
                 <Button icon={<UploadOutlined />} className={styles.uploadButton}>
-                  Tải ảnh lên
+                  <FormattedMessage id="userTable.form.button.uploadImage" />
                 </Button>
               </Upload>
             </Col>
@@ -234,7 +236,9 @@ const NewUserForm: React.FC<CreateFormProps> = ({
                 className={styles.deleteButton}
                 onClick={() => setImageUrl('')}
               >
-                <span>Xóa ảnh</span>
+                <span>
+                  <FormattedMessage id="userTable.form.button.removeImage" />
+                </span>
               </Button>
             </Col>
           </Row>
@@ -244,21 +248,33 @@ const NewUserForm: React.FC<CreateFormProps> = ({
       <Row gutter={[24, 24]} style={{ marginTop: '24px' }}>
         {/* Staff ID */}
         <Col span={12}>
-          <Form.Item name="staffId" label="Mã nhân viên">
-            <Input placeholder={'Nhập mã nhân viên'} />
+          <Form.Item
+            name="staffId"
+            label={useIntl().formatMessage({ id: 'detailDrawer_userCard_columnGroup_staffCode' })}
+          >
+            <Input
+              placeholder={useIntl().formatMessage({ id: 'userTable.form.placeholder.staffCode' })}
+            />
           </Form.Item>
         </Col>
         {/* Name */}
         <Col span={12}>
-          <Form.Item name="name" label="Tên nhân viên">
-            <Input placeholder={'Nhập tên nhân viên'} />
+          <Form.Item
+            name="name"
+            label={useIntl().formatMessage({ id: 'detailDrawer_userCard_columnGroup_staffName' })}
+          >
+            <Input
+              placeholder={useIntl().formatMessage({ id: 'userTable.form.placeholder.staffName' })}
+            />
           </Form.Item>
         </Col>
         {/* Phone number */}
         <Col span={12}>
           <Form.Item
             name="phoneNumber"
-            label="Số điện thoại"
+            label={useIntl().formatMessage({
+              id: 'detailDrawer_roleGroup_ownerCard_columnGroup_staffPhoneNumber',
+            })}
             validateTrigger="onSubmit"
             rules={[
               {
@@ -267,14 +283,21 @@ const NewUserForm: React.FC<CreateFormProps> = ({
               },
             ]}
           >
-            <Input placeholder={'Nhập số điện thoại'} disabled={!!userInfo} />
+            <Input
+              placeholder={useIntl().formatMessage({
+                id: 'userTable.form.placeholder.phoneNumber',
+              })}
+              disabled={!!userInfo}
+            />
           </Form.Item>
         </Col>
         {/* Email */}
         <Col span={12}>
           <Form.Item
             name="email"
-            label="Email"
+            label={useIntl().formatMessage({
+              id: 'email',
+            })}
             validateTrigger="onSubmit"
             rules={[
               {
@@ -283,7 +306,9 @@ const NewUserForm: React.FC<CreateFormProps> = ({
               },
             ]}
           >
-            <Input placeholder={'Nhập email'} />
+            <Input
+              placeholder={useIntl().formatMessage({ id: 'userTable.form.placeholder.email' })}
+            />
           </Form.Item>
         </Col>
         {/* Don vi quan ly */}
@@ -299,7 +324,9 @@ const NewUserForm: React.FC<CreateFormProps> = ({
       </Row>
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          Huỷ bỏ
+          {useIntl().formatMessage({
+            id: 'form_buttonGroup_cancelButton_title',
+          })}
         </Button>
         <Button
           className={styles.submitButton}
@@ -307,7 +334,9 @@ const NewUserForm: React.FC<CreateFormProps> = ({
           htmlType="submit"
           disabled={!isAllowedSubmit}
         >
-          Hoàn tất
+          {useIntl().formatMessage({
+            id: 'form_buttonGroup_submitButton_title',
+          })}
         </Button>
       </Row>
     </ModalForm>
