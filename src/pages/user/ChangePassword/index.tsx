@@ -1,4 +1,4 @@
-import logoKSBank from '@/assets/images/ksbank-logo.svg';
+import StmcLogo from '@/assets/images/utmc-logo.png';
 import React from 'react';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import styles from './index.less';
@@ -8,7 +8,7 @@ const ChangePassword: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.logo}>
-          <img src={logoKSBank} alt="logo-ksbank" />
+          <img src={StmcLogo} alt="logo-ksbank" />
         </div>
         <ChangePasswordForm />
       </div>

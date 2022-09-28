@@ -1,5 +1,5 @@
-import logoKSBank from '@/assets/images/ksbank-logo.svg';
-import { BLOCK_TIME, INITIAL_ROLES, MAX_LOGIN_TIMES, USER_MESSAGE_ERROR } from '@/constants';
+import logoKSBank from '@/assets/images/utmc-logo.png';
+import { BLOCK_TIME, MAX_LOGIN_TIMES, USER_MESSAGE_ERROR } from '@/constants';
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
@@ -130,7 +130,7 @@ const Login: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.logo}>
-          <img src={logoKSBank} alt="logo-ksbank" />
+          <img src={logoKSBank} width="70%" alt="logo-ksbank" style={{ objectFit: 'cover' }} />
         </div>
         <div className={styles['form-wrapper']}>
           <h1 className={styles.title}>Đăng nhập</h1>

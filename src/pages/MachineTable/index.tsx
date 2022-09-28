@@ -2,17 +2,17 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 // import { message } from 'antd';
-import { useRef, useState } from 'react';
-import { useIntl, useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
+import { useRef, useState } from 'react';
+import { FormattedMessage, useIntl, useRequest } from 'umi';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
-import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
+import api from '@/services/STM-APIs';
+import { Typography } from 'antd';
 import AddNewMachine from './components/forms/AddNewMachine';
 import MachineDrawer from './MachineDrawer';
-import api from '@/services/STM-APIs';
 
 const TableCustom = () => {
   const intl = useIntl();
@@ -72,7 +72,11 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Danh sách máy</TitleTable>}
+        headerTitle={
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            <FormattedMessage id="machine-table.title" />
+          </Typography.Title>
+        }
         actionRef={actionRef}
         rowKey="key"
         search={false}
