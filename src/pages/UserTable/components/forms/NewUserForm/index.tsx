@@ -72,7 +72,7 @@ const NewUserForm: React.FC<CreateFormProps> = ({
       setLoadingImage(true);
       return;
     }
-    if (info.file.status === 'done') {
+    if (info.file.status === 'done' || info.file.status === 'error') {
       console.log('done');
       try {
         const res = await uploadPublicFile(
