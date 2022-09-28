@@ -20,7 +20,7 @@ const loginOut = async () => {
   const res = await Api.AuthController.logout({ refreshToken });
 
   if (res.code === 0) {
-    openNotification('success', 'Đăng xuất thành công!');
+    openNotification('success', 'Log out successfully!');
   }
 
   const { query = {}, search, pathname } = history.location;
@@ -101,12 +101,12 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       : []),
     {
       key: 'personal-profile',
-      label: 'Chi tiết cá nhân',
+      label: 'Personal profile',
     },
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: 'Đăng xuất',
+      label: 'Log out',
     },
   ];
 
@@ -128,6 +128,9 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         showDetail={openPersonalProfile}
         setShowDetail={setOpenPersonalProfile}
         isPersonalProfile={true}
+        runGetAllUser={function (): void {
+          throw new Error('Function not implemented.');
+        }}
       />
     </>
   );

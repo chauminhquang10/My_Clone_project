@@ -24,7 +24,7 @@ const ForgotPassword: React.FC = () => {
         return;
       }
 
-      openNotification('success', 'Vui lòng kiểm tra email để đặt lại mật khẩu');
+      openNotification('success', 'Please check your email to reset your password');
     } catch (error) {
       console.log('error: ', error);
       openNotification('error', 'Có lỗi đã xảy ra');
@@ -57,7 +57,7 @@ const ForgotPassword: React.FC = () => {
         </div>
         {isForgotPassword ? (
           <div className={styles['form-wrapper']}>
-            <h1 className={styles.title}>Nhập địa chỉ email</h1>
+            <h1 className={styles.title}>Enter your email</h1>
             <Form
               form={form}
               name="forgot-password-form"
@@ -86,7 +86,7 @@ const ForgotPassword: React.FC = () => {
                 loading={isSubmitting}
                 disabled={!isAllowSubmit}
               >
-                Hoàn tất
+                Submit
               </Button>
             </div>
           </div>

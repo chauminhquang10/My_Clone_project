@@ -53,7 +53,7 @@ const Login: React.FC = () => {
 
       // login thanh cong
       if (res.code === 0) {
-        const message = 'Đăng nhập thành công!';
+        const message = 'Login successfully!';
         openNotification('success', message);
 
         await fetchUserInfo();
@@ -72,12 +72,12 @@ const Login: React.FC = () => {
           const today = new Date();
           const diffTimes = today.getTime() - Date.parse(data?.blockedAt);
           const diffMins = Math.floor((((diffTimes + BLOCK_TIME) % 86400000) % 3600000) / 60000);
-          const desc = `Tài khoản bị tạm khóa. Vui lòng quay lại sau ${diffMins} phút.`;
+          const desc = `Account is temporarily locked. Please come back after ${diffMins} minutes.`;
           openNotification('error', USER_MESSAGE_ERROR[res.code], desc);
         } else {
-          const desc = `Tài khoản sẽ tạm khóa trong 30 phút nếu nhập sai 3 lần. Bạn còn ${
+          const desc = `Account will be temporarily locked for 30 minutes if entered incorrectly 3 times. You still ${
             MAX_LOGIN_TIMES - data?.loginTimes
-          } lần thử lại.`;
+          } times.`;
           openNotification('warning', USER_MESSAGE_ERROR[res.code], desc);
         }
         return;
@@ -102,7 +102,7 @@ const Login: React.FC = () => {
         const today = new Date();
         const diffTimes = today.getTime() - Date.parse(data?.blockedAt);
         const diffMins = Math.floor((((diffTimes + BLOCK_TIME) % 86400000) % 3600000) / 60000);
-        const desc = `Tài khoản bị tạm khóa. Vui lòng quay lại sau ${diffMins} phút.`;
+        const desc = `Account is temporarily locked. Please come back after ${diffMins} minutes.`;
         openNotification('error', USER_MESSAGE_ERROR[res.code], desc);
         return;
       }
@@ -111,7 +111,7 @@ const Login: React.FC = () => {
       if (res.code) openNotification('error', USER_MESSAGE_ERROR[res.code], 'Vui lòng thử lại sau');
     } catch (error) {
       console.log('error login: ', error);
-      const message = 'Đăng nhập không thành công!';
+      const message = 'Log in failure!';
       openNotification('error', message, error as string);
     }
   };
@@ -133,7 +133,7 @@ const Login: React.FC = () => {
           <img src={logoKSBank} width="70%" alt="logo-ksbank" style={{ objectFit: 'cover' }} />
         </div>
         <div className={styles['form-wrapper']}>
-          <h1 className={styles.title}>Đăng nhập</h1>
+          <h1 className={styles.title}>Login</h1>
           <Form
             form={form}
             name="login-form"
@@ -143,30 +143,30 @@ const Login: React.FC = () => {
           >
             <Form.Item
               name="username"
-              label="Tên đăng nhập"
+              label="Username"
               className={styles['form-username']}
-              rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập' }]}
+              rules={[{ required: true, message: 'Please enter your username' }]}
             >
               <Input placeholder="Admin" prefix={<UserOutlined />} />
             </Form.Item>
             <Form.Item
               name="password"
-              label="Mật khẩu"
-              rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
+              label="Password"
+              rules={[{ required: true, message: 'Please enter your password' }]}
             >
               <InputPassword
                 onChange={handlePasswordChange}
-                placeholder="Nhập mật khẩu"
+                placeholder="Password"
                 prefix={<LockOutlined />}
               />
             </Form.Item>
             <div className={styles['forgot-password']}>
-              <a href="/user/forgot-password">Quên mật khẩu?</a>
+              <a href="/user/forgot-password">Forgot password?</a>
             </div>
           </Form>
           <div className={styles['btn-submit']}>
             <Button type="primary" htmlType="submit" form="login-form" loading={isSubmitting}>
-              Đăng nhập
+              Submit
             </Button>
           </div>
         </div>
