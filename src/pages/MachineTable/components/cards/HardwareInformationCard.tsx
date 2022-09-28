@@ -4,6 +4,7 @@ import { TextCell } from '@/components/TableProperties/TableCell';
 import { Table, Card } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import React from 'react';
+import { FormattedMessage } from 'umi';
 
 interface HardwareInformationCardType extends API.StmDetailResponse {
   children?: React.ReactNode;
@@ -11,19 +12,31 @@ interface HardwareInformationCardType extends API.StmDetailResponse {
 
 const columns: ColumnsType<API.PhysicalDeviceInfo> = [
   {
-    title: <HeadCell>Loại thiết bị</HeadCell>,
+    title: (
+      <HeadCell>
+        <FormattedMessage id="hardware-information.deviceType" />
+      </HeadCell>
+    ),
     render: (_, entity) => {
       return <TextCell>{entity.device?.name}</TextCell>;
     },
   },
   {
-    title: <HeadCell>Tình trạng vật lý</HeadCell>,
+    title: (
+      <HeadCell>
+        <FormattedMessage id="hardware-information.physicalCondition" />
+      </HeadCell>
+    ),
     render: (_, entity) => {
       return <TextCell>{entity.physicalStatus}</TextCell>;
     },
   },
   {
-    title: <HeadCell>Dự trữ</HeadCell>,
+    title: (
+      <HeadCell>
+        <FormattedMessage id="hardware-information.stored" />
+      </HeadCell>
+    ),
     align: 'center',
     render: (_, entity) => {
       return <StorageStatus type={entity.storageStatus} />;
@@ -72,7 +85,7 @@ const columns: ColumnsType<API.PhysicalDeviceInfo> = [
 const HardwareInformationCard = ({ devices }: HardwareInformationCardType) => {
   return (
     <Card
-      title="Thông tin phần cứng"
+      title={<FormattedMessage id="hardware-information.title" />}
       size="small"
       style={{ borderRadius: 12 }}
       bodyStyle={{ padding: 0 }}

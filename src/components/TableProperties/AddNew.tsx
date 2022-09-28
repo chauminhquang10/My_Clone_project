@@ -13,10 +13,7 @@ type AddNewProps = {
 
 function AddNew({ onClick, enableCreateNew, text, icon }: AddNewProps) {
   return (
-    <Tooltip
-      placement="left"
-      title={enableCreateNew ? '' : 'Tài khoản chưa được cho phép truy cập chức năng này'}
-    >
+    <Tooltip placement="left" title={enableCreateNew ? '' : <FormattedMessage id="noAccess" />}>
       <Button
         className={enableCreateNew && style['btn-add']}
         onClick={onClick}

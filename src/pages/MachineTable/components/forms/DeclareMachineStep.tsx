@@ -9,6 +9,7 @@ import { Button, Col, Form, Input, Row, Select } from 'antd';
 import type { ChangeEventHandler } from 'react';
 import { useMemo } from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'umi';
 import styles from './declareMachineForm.less';
 
 interface DeclareMachineStepProps extends API.StmDetailResponse {
@@ -53,6 +54,7 @@ export default function DeclareMachineStep({
   denominationRule,
   denominations: denominationsDetail,
 }: DeclareMachineStepProps) {
+  const intl = useIntl();
   const [mType, setMType] = useState<MachineType>(() => {
     const result = (machineType as MachineType) ?? MachineType.STM;
     form.setFieldValue('machineType', result);
@@ -166,7 +168,9 @@ export default function DeclareMachineStep({
     <>
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
         <Col>
-          <p className={styles.modalTitle}>Khai báo thiết bị</p>
+          <p className={styles.modalTitle}>
+            <FormattedMessage id="declare-machine.title" />
+          </p>
         </Col>
         <Col>
           <span className={styles.closeIcon} onClick={handleCancel}>
@@ -180,13 +184,13 @@ export default function DeclareMachineStep({
           <Form.Item
             validateTrigger="onBlur"
             name="machineType"
-            label="Loại máy"
+            label={<FormattedMessage id="machineType" />}
             rules={[{ enum: ['UNKNOWN', 'STM', 'CDM', 'ATM'], max: 6, type: 'string' }]}
           >
             <Select
               defaultValue={mType}
               onSelect={handleSelectMachineType}
-              placeholder={'Loại máy'}
+              placeholder={<FormattedMessage id="machineType" />}
               defaultActiveFirstOption
             >
               {objectKeys(MachineType).map((type) => (
@@ -198,8 +202,15 @@ export default function DeclareMachineStep({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="modelId" label="Dòng máy" rules={[{ type: 'number' }]}>
-            <Select defaultValue={machineDetail.model?.id} placeholder={'Dòng máy'}>
+          <Form.Item
+            name="modelId"
+            label={<FormattedMessage id="model" />}
+            rules={[{ type: 'number' }]}
+          >
+            <Select
+              defaultValue={machineDetail.model?.id}
+              placeholder={<FormattedMessage id="model" />}
+            >
               {models?.map((modelItem) => (
                 <Select.Option value={modelItem.id} key={modelItem.id}>
                   {modelItem.name}
@@ -212,8 +223,10 @@ export default function DeclareMachineStep({
           <Form.Item
             validateTrigger="onBlur"
             name="serialNumber"
-            label="Series máy"
-            help={serialErr ? 'Series máy đã tồn tại. Vui lòng kiểm tra lại' : undefined}
+            label={<FormattedMessage id="declare-machine.series" />}
+            help={
+              serialErr ? intl.formatMessage({ id: 'declare-machine.invalid-series' }) : undefined
+            }
             validateStatus={serialErr ? 'error' : undefined}
             rules={[{ min: 0, max: 100, type: 'string' }]}
           >
@@ -221,13 +234,20 @@ export default function DeclareMachineStep({
               onChange={handleSerialChange}
               onBlur={serialVal === machineDetail.serialNumber ? undefined : validateSerial}
               defaultValue={machineDetail.serialNumber}
-              placeholder={'Series máy'}
+              placeholder={intl.formatMessage({ id: 'declare-machine.series' })}
             />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="keyType" label="Loại khoá" rules={[{ type: 'string', max: 10 }]}>
-            <Select defaultValue={machineDetail.keyType} placeholder={'Loại khoá'}>
+          <Form.Item
+            name="keyType"
+            label={<FormattedMessage id="declare-machine.keyType" />}
+            rules={[{ type: 'string', max: 10 }]}
+          >
+            <Select
+              defaultValue={machineDetail.keyType}
+              placeholder={<FormattedMessage id="declare-machine.keyType" />}
+            >
               {objectKeys(KeyType).map((keyTypeItem) => (
                 <Select.Option key={keyTypeItem}>{keyTypeItem}</Select.Option>
               ))}
@@ -238,8 +258,12 @@ export default function DeclareMachineStep({
           <Form.Item
             validateTrigger="onBlur"
             name="terminalId"
-            label="Terminal ID"
-            help={terminalErr ? 'Series máy đã tồn tại. Vui lòng kiểm tra lại' : undefined}
+            label={<FormattedMessage id="terminalId" />}
+            help={
+              terminalErr
+                ? intl.formatMessage({ id: 'declare-machine.invalid-terminal' })
+                : undefined
+            }
             validateStatus={terminalErr ? 'error' : undefined}
             rules={[{ type: 'string', min: 0, max: 100 }]}
           >
@@ -256,16 +280,16 @@ export default function DeclareMachineStep({
           <Form.Item
             validateTrigger="onBlur"
             name="ipAddress"
-            label="Địa chỉ IP"
-            help={ipErr ? 'Địa chỉ IP đã tồn tại. Vui lòng kiểm tra lại' : undefined}
+            label={<FormattedMessage id="ipAddress" />}
+            help={ipErr ? intl.formatMessage({ id: 'declare-machine.invalid-ip' }) : undefined}
             validateStatus={ipErr ? 'error' : undefined}
-            rules={[{ type: 'string', min: 1, max: 100, required: true }]}
+            rules={[{ type: 'string', min: 1, max: 100 }]}
           >
             <Input
               onChange={handleIpChange}
               onBlur={ipVal !== machineDetail.ipAddress ? validateIp : undefined}
               defaultValue={machineDetail.ipAddress}
-              placeholder={'Địa chỉ IP'}
+              placeholder={intl.formatMessage({ id: 'ipAddress' })}
             />
           </Form.Item>
         </Col>
@@ -283,13 +307,13 @@ export default function DeclareMachineStep({
           <Form.Item
             validateTrigger="onBlur"
             name="port"
-            label="Cổng"
+            label={<FormattedMessage id="declare-machine.port" />}
             rules={[{ type: 'number', min: 1, max: 65535 }]}
           >
             <InputNumber
               controls={false}
               defaultValue={machineDetail.port}
-              placeholder={'Cổng'}
+              placeholder={intl.formatMessage({ id: 'declare-machine.port' })}
               style={{ width: '100%' }}
             />
           </Form.Item>
@@ -306,7 +330,7 @@ export default function DeclareMachineStep({
         </Col>
         <Col span={8}>
           <Form.Item name="protocol" label="Protocol" rules={[{ type: 'string', max: 10 }]}>
-            <Select defaultValue={machineDetail.protocol} placeholder={'Loại khoá'}>
+            <Select defaultValue={machineDetail.protocol} placeholder={'Protocol'}>
               {objectKeys(Protocol).map((item) => (
                 <Select.Option value={item} key={item}>
                   {item}
@@ -320,7 +344,7 @@ export default function DeclareMachineStep({
             validateTrigger="onBlur"
             name="mac"
             label="MAC"
-            help={macErr ? 'Địa chỉ MAC đã tồn tại. Vui lòng kiểm tra lại' : undefined}
+            help={macErr ? intl.formatMessage({ id: 'declare-machine.invalid-mac' }) : undefined}
             validateStatus={macErr ? 'error' : undefined}
             rules={[{ type: 'string', min: 0, max: 100 }]}
           >
@@ -336,12 +360,12 @@ export default function DeclareMachineStep({
           <Form.Item
             validateTrigger="onBlur"
             name="accountingAccountUSD"
-            label="Tài khoản hạch toán - USD"
+            label={<FormattedMessage id="declare-machine.accountingUSD" />}
             rules={[{ type: 'string', min: 0, max: 100 }]}
           >
             <Input
               defaultValue={machineDetail.accountingAccountUSD}
-              placeholder={'Tài khoản hạch toán - USD'}
+              placeholder={intl.formatMessage({ id: 'declare-machine.accountingUSD' })}
             />
           </Form.Item>
         </Col>
@@ -349,12 +373,12 @@ export default function DeclareMachineStep({
           <Form.Item
             validateTrigger="onBlur"
             name="accountingAccountVND"
-            label="Tài khoản hạch toán - VNĐ"
+            label={<FormattedMessage id="declare-machine.accountingVND" />}
             rules={[{ type: 'string', min: 0, max: 100 }]}
           >
             <Input
               defaultValue={machineDetail.accountingAccountVND}
-              placeholder={'Tài khoản hạch toán - VNĐ'}
+              placeholder={intl.formatMessage({ id: 'declare-machine.accountingVND' })}
             />
           </Form.Item>
         </Col>
@@ -362,10 +386,13 @@ export default function DeclareMachineStep({
           <Form.Item
             validateTrigger="onBlur"
             name="denominationRule"
-            label="Quy tắc chi tiền"
+            label={<FormattedMessage id="declare-machine.denominationRule" />}
             rules={[{ type: 'string', max: 20 }]}
           >
-            <Select defaultValue={machineDetail.denominationRule} placeholder={'Quy tắc chi tiền'}>
+            <Select
+              defaultValue={machineDetail.denominationRule}
+              placeholder={intl.formatMessage({ id: 'declare-machine.denominationRule' })}
+            >
               {objectKeys(DenominationRule).map((rule) => (
                 <Select.Option key={rule} value={DenominationRule[rule]}>
                   {rule}
@@ -377,7 +404,7 @@ export default function DeclareMachineStep({
         <Col span={12}>
           <Form.Item
             name="denominations"
-            label="Loại mệnh giá tiền"
+            label={<FormattedMessage id="declare-machine.denominations" />}
             rules={[{ type: 'array' }]}
             initialValue={[50000, 100000, 200000, 500000]}
           >
