@@ -66,9 +66,14 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   };
 
   const handleChange: UploadProps['onChange'] = async (info: UploadChangeParam<UploadFile>) => {
-    // call api 3 times ???
-    if (!loadingImage) setLoadingImage(true);
-    if (!info.file.url && !info.file.preview) {
+    console.log('file info: ', info);
+    if (info.file.status === 'uploading') {
+      console.log('uploading');
+      setLoadingImage(true);
+      return;
+    }
+    if (info.file.status === 'done') {
+      console.log('done');
       try {
         const res = await uploadPublicFile(
           { bucketName: 'user', type: 'avatar' },
@@ -76,13 +81,22 @@ const NewUserForm: React.FC<CreateFormProps> = ({
           info.file.originFileObj as RcFile,
         );
 
-        setImageUrl(res.data?.previewPath);
+        const data = res.data?.previewPath?.split('/');
+
+        setImageUrl(
+          data &&
+            `https://api-stmc-ca-dev.hcm.unicloud.ai/api/v1/storage/preview/public/avatar/user/${
+              data[(data?.length - 1) as number]
+            }`,
+        );
       } catch (error) {
         console.log('error: ', error);
       }
     }
-    if (loadingImage) setLoadingImage(false);
+    setLoadingImage(false);
   };
+
+  console.log('image url: ', imageUrl);
 
   const onReset = () => {
     form.resetFields();
