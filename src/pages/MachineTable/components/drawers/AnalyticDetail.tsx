@@ -17,13 +17,13 @@ import DeclareMachineForm from '../forms/DeclareMachineForm';
 import FilterOverlay from './FilterOverlay';
 import styles from './analyticDetail.less';
 import TransactionTable from '../tables/TransactionTable';
-import StatusTag from '@/components/TableProperties/StatusTag';
 import type { ColumnsType } from 'antd/lib/table';
 import { openNotification } from '@/utils';
 import { useRequest } from 'umi';
 import { blue, green } from '@ant-design/colors';
 import api from '@/services/STM-APIs';
 import type { ActionType } from '@ant-design/pro-components';
+import MachineStatusTag from '@/components/Common/MachineStatusTag';
 
 interface AnaylyticDetailProps {
   open: boolean;
@@ -136,6 +136,7 @@ export default function AnaylyticDetail({
 
   //-------------------- detail Machine --------------------------------
   const [detailMachine, setDetailMachine] = useState<API.StmDetailResponse | undefined>();
+  console.log(detailMachine);
 
   const { run: getDetailMachine } = useRequest(
     (params: API.getMachineDetailParams) => api.STMController.getMachineDetail(params),
@@ -266,7 +267,16 @@ export default function AnaylyticDetail({
                   </Col>
                   <Col span={12}>
                     <Form.Item name="Tình trạng máy" label="Tình trạng máy">
-                      <StatusTag type={currentEntity?.status} />
+                      {/* <StatusTag type={currentEntity?.status} /> */}
+                      <MachineStatusTag
+                        type={
+                          currentEntity?.status as
+                            | 'UNKNOWN'
+                            | 'IN_SERVICE'
+                            | 'OUT_OF_SERVICE'
+                            | 'OFFLINE'
+                        }
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={24}>

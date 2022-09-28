@@ -1,10 +1,13 @@
 import type { ProColumns } from '@ant-design/pro-components';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties//TableCell';
+import type { Dispatch, SetStateAction } from 'react';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmInfoResponse) => void;
   setShowDetail: (s: boolean) => void;
+  setParamFilter: Dispatch<SetStateAction<API.getListMachinesParams | undefined>>;
+  paramFilter: API.getListMachinesParams | undefined;
 };
 
 function Column({ setCurrentRow, setShowDetail }: ColumnProps) {

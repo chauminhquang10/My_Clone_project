@@ -9,6 +9,7 @@ import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties/TableCell';
 import { getSystemOperation } from '@/services/STM-APIs/STMController';
 import { Tooltip } from 'antd';
+import { formatDate } from '@/utils';
 
 const HistoryListTable = () => {
   // const [resultResponse, setResultResponse] = useState<API.PageResponseManagementUnitResponse>();
@@ -68,7 +69,10 @@ const HistoryListTable = () => {
       key: 'createdBy',
       width: '20%',
       render: (_, entity) => {
-        return <TextCell>{entity.createdBy?.id + ' - ' + entity.createdBy?.name}</TextCell>;
+        const value = entity?.createdBy?.staffId
+          ? `${entity.createdBy?.staffId + ' - ' + entity.createdBy?.name}`
+          : entity.createdBy?.name;
+        return <TextCell>{value}</TextCell>;
       },
     },
     {
@@ -84,7 +88,7 @@ const HistoryListTable = () => {
       dataIndex: 'time',
       key: 'time',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return <TextCell>{formatDate(dom as string)}</TextCell>;
       },
     },
     {

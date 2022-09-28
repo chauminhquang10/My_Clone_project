@@ -1,5 +1,6 @@
 import { SyncOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Input, Row } from 'antd';
+import { history } from 'umi';
 
 export interface DeviceVersionCardProps extends API.StmDetailResponse {
   className?: string;
@@ -21,7 +22,7 @@ export default function DeviceVersionCard({
     >
       <Row gutter={24} align="bottom">
         <Col span={8}>
-          <Form.Item name="Tên phiên bản" label="Tên phiên bản">
+          <Form.Item name="Phiên bản hiện tại" label="Phiên bản hiện tại">
             <Input disabled placeholder={currentVersion?.name} />
           </Form.Item>
         </Col>
@@ -36,7 +37,13 @@ export default function DeviceVersionCard({
         </Col>
         <Col span={8}>
           <Form.Item name="phoneNumber" label="">
-            <Button className={btnClassName} block>
+            <Button
+              className={btnClassName}
+              block
+              onClick={() => {
+                history.push('/machine/update-firmware');
+              }}
+            >
               Xem danh sách phần mềm
             </Button>
           </Form.Item>
