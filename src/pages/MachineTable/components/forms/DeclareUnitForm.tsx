@@ -1,11 +1,11 @@
-import { ModalForm } from '@ant-design/pro-components';
+import Api from '@/services/STM-APIs';
+import { openNotification } from '@/utils';
 import type { ActionType } from '@ant-design/pro-components';
+import { ModalForm } from '@ant-design/pro-components';
 import { Form } from 'antd';
 import { useCallback, useMemo } from 'react';
 import DeclareUnitStep from './DeclareUnitStep';
 import styles from './editMachine.less';
-import Api from '@/services/STM-APIs';
-import { openNotification } from '@/utils';
 
 interface DeclareUnitFormProps extends API.StmDetailResponse {
   visible: boolean;
@@ -34,35 +34,19 @@ export default function DeclareUnitForm({
     [],
   );
   if (machineDetail) {
-    const defaultUpdateBody: API.UpdateStmRequest = {
-      accountingAccountVND: machineDetail.accountingAccountVND!,
-      acquirerId: machineDetail.acquirerId!,
+    const defaultUpdateValues: Partial<API.UpdateStmRequest> = {
       address: machineDetail.address!,
-      denominationRule: machineDetail.denominationRule!,
       districtId: machineDetail.district?.id || 0,
-      ipAddress: machineDetail.ipAddress!,
-      keyType: machineDetail.keyType!,
       location: machineDetail.location!,
-      mac: machineDetail.mac!,
       machineName: machineDetail.name!,
-      machineType: machineDetail.machineType!,
-      masterKey: machineDetail.masterKey!,
-      modelId: machineDetail.model?.id || 0,
-      port: machineDetail.port!,
-      protocol: machineDetail.protocol!,
       provinceId: machineDetail.province?.id || 0,
-      serialNumber: machineDetail.serialNumber!,
-      terminalId: machineDetail.terminalId!,
       wardId: machineDetail.ward?.id || 0,
-      accountingAccountUSD: machineDetail.accountingAccountUSD,
-      denominations: machineDetail.denominations,
       latitude: machineDetail.latitude,
       longitude: machineDetail.longitude,
       managementUnitId: machineDetail.managementUnit?.id,
-      note: '',
       userIds: machineDetail.managementUsers?.map((user) => user.id!),
     };
-    form.setFieldsValue(defaultUpdateBody);
+    form.setFieldsValue(defaultUpdateValues);
   }
   const handleFinish = useCallback(
     async (values) => {
@@ -87,9 +71,10 @@ export default function DeclareUnitForm({
 
         if (res.code === 0) {
           openNotification('success', 'Cập nhật thông tin thiết bị thành công');
+          actionRef.current?.reloadAndRest?.();
         }
 
-        actionRef.current?.reloadAndRest?.();
+        onVisibleChange(false);
         handleClose();
         return true;
       } catch (e) {
@@ -98,8 +83,7 @@ export default function DeclareUnitForm({
 
       return false;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [machineDetail],
+    [machineDetail, handleClose, actionRef, onVisibleChange],
   );
 
   const handleReset = useCallback(() => {
@@ -111,7 +95,6 @@ export default function DeclareUnitForm({
       form={form}
       width="934px"
       visible={visible}
-      onVisibleChange={onVisibleChange}
       onFinish={handleFinish}
       modalProps={modalProps}
       submitTimeout={2000}

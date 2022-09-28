@@ -3,9 +3,11 @@ import { DenominationRule, KeyType, MachineType, Protocol } from '@/common';
 import Api from '@/services/STM-APIs';
 import { checkFormFieldsEmpty, objectKeys } from '@/utils';
 import { useRequest } from 'ahooks';
-import { FormInstance, InputNumber } from 'antd';
+import type { FormInstance } from 'antd';
+import { InputNumber } from 'antd';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 import type { ChangeEventHandler } from 'react';
+import { useMemo } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './declareMachineForm.less';
 
@@ -23,9 +25,10 @@ const validateMachine = (params: API.checkMachineExistedParams) => () =>
 const getModels = (machineType: MachineType) => () =>
   Api.STMModelController.getListModels({ machineType }).then((res) => res.data?.items);
 
-const getDenominations: () => Promise<API.Denomination[] | undefined> = () =>
+const getDenominations = () =>
   Api.DenominationsController.getListDenominations().then(
-    (res: API.ResponseBaseListDenominationsResponse) => res.data?.denominations,
+    (res: API.ResponseBaseListDenominationsResponse) =>
+      res.data?.denominations?.map((denomination) => denomination.value),
   );
 
 export default function DeclareMachineStep({
@@ -51,13 +54,18 @@ export default function DeclareMachineStep({
   denominations: denominationsDetail,
 }: DeclareMachineStepProps) {
   const { data: models } = useRequest(getModels(MachineType.STM));
-  const { data: denominations } = useRequest(getDenominations, {
+  const { data: denominationsData } = useRequest(getDenominations, {
     cacheKey: 'denominations',
+    ready: !denominationsDetail,
   });
+  const denominations = useMemo(
+    () => denominationsDetail ?? denominationsData,
+    [denominationsDetail, denominationsData],
+  );
   const [terminalIdValue, setTerminalIdValue] = useState<string>('');
-  const [ipVal, setIpVal] = useState<string>(form.getFieldValue(''));
-  const [macVal, setMacVal] = useState<string>(form.getFieldValue(''));
-  const [serialVal, setSerialVal] = useState<string>(form.getFieldValue(''));
+  const [ipVal, setIpVal] = useState<string>('');
+  const [macVal, setMacVal] = useState<string>('');
+  const [serialVal, setSerialVal] = useState<string>('');
   const [disabledModel, setDisabledModel] = useState(true);
   const { run: validateTerminalId, data: terminalErr } = useRequest(
     validateMachine({ key: 'terminal', value: terminalIdValue || '' }),
@@ -111,6 +119,8 @@ export default function DeclareMachineStep({
     [],
   );
 
+  const handleSelectMachineType = useCallback(() => setDisabledModel(false), []);
+
   const OkButton = useCallback(() => {
     const fields = form.getFieldsValue();
 
@@ -134,7 +144,7 @@ export default function DeclareMachineStep({
     if (denominations) {
       form.setFieldValue(
         'denominations',
-        denominations.map((denomination) => denomination.value),
+        denominations.map((denomination) => denomination),
       );
     }
   }, [denominations, form]);
@@ -163,7 +173,7 @@ export default function DeclareMachineStep({
           >
             <Select
               defaultValue={machineDetail.machineType}
-              onSelect={() => setDisabledModel(false)}
+              onSelect={handleSelectMachineType}
               placeholder={'Loại máy'}
             >
               {objectKeys(MachineType).map((type) => (
@@ -200,7 +210,7 @@ export default function DeclareMachineStep({
           >
             <Input
               onChange={handleSerialChange}
-              onBlur={validateSerial}
+              onBlur={serialVal === machineDetail.serialNumber ? undefined : validateSerial}
               defaultValue={machineDetail.serialNumber}
               placeholder={'Series máy'}
             />
@@ -227,7 +237,7 @@ export default function DeclareMachineStep({
             <Input
               value={terminalIdValue}
               onChange={handleTerminalIdChange}
-              onBlur={validateTerminalId}
+              onBlur={terminalIdValue === machineDetail.terminalId ? undefined : validateTerminalId}
               defaultValue={machineDetail.terminalId}
               placeholder={'Terminal ID'}
             />
@@ -244,7 +254,7 @@ export default function DeclareMachineStep({
           >
             <Input
               onChange={handleIpChange}
-              onBlur={validateIp}
+              onBlur={ipVal !== machineDetail.ipAddress ? validateIp : undefined}
               defaultValue={machineDetail.ipAddress}
               placeholder={'Địa chỉ IP'}
             />
@@ -307,7 +317,7 @@ export default function DeclareMachineStep({
           >
             <Input
               onChange={handleMACChange}
-              onBlur={validateMAC}
+              onBlur={macVal === machineDetail.mac ? undefined : validateMAC}
               defaultValue={machineDetail.mac}
               placeholder={'MAC'}
             />
@@ -365,8 +375,8 @@ export default function DeclareMachineStep({
             <Row gutter={12}>
               {denominations?.map((denomination) => {
                 return (
-                  <Col span={24 / denominations.length} key={denomination.id}>
-                    <Input disabled value={`${denomination.value}`} />
+                  <Col span={24 / denominations.length} key={denomination}>
+                    <Input disabled value={`${denomination}`} />
                   </Col>
                 );
               })}

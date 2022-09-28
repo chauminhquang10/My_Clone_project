@@ -3,6 +3,7 @@ import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
 import Api from '@/services/STM-APIs';
+import { createUser } from '@/services/STM-APIs/UserController';
 import { openNotification } from '@/utils';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
@@ -13,11 +14,11 @@ import { UserDetailDrawer } from './components';
 import { NewUserForm } from './components/forms';
 import Column from './components/tables/Column';
 
-const handleAdd = async (fields: API.CreateUserRequest, avatar?: File) => {
+const handleAdd = async (fields: API.CreateUserRequest) => {
   const hide = message.loading('Loading...');
   hide();
   try {
-    const res = await Api.UserController.createUser({ ...fields }, avatar);
+    const res = await createUser({ ...fields });
     if (!res) return false;
 
     if (res.code === 0) {
@@ -165,8 +166,8 @@ const UserManagementTable: React.FC = () => {
         width="934px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
-        onFinish={async (values, avatar) => {
-          const success = await handleAdd(values as API.CreateUserRequest, avatar);
+        onFinish={async (values) => {
+          const success = await handleAdd(values as API.CreateUserRequest);
           if (success) {
             handleModalVisible(false);
             if (actionRef.current) {

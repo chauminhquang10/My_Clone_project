@@ -146,14 +146,7 @@ const routes = [
         path: '/history',
         name: 'Lịch sử',
         icon: 'machine-history',
-        routes: [
-          {
-            path: '/history/list',
-            name: 'Lịch sử',
-            icon: 'machine-history',
-            component: 'HistoryList',
-          },
-        ],
+        component: 'HistoryList',
       },
     ],
   },
