@@ -13,9 +13,14 @@ import type { ModalProps } from 'antd';
 interface AddNewMachineProps {
   visible: boolean;
   handleModalVisible: Dispatch<SetStateAction<boolean>>;
+  getAllMachine: () => void;
 }
 
-export default function AddNewMachine({ handleModalVisible, visible }: AddNewMachineProps) {
+export default function AddNewMachine({
+  handleModalVisible,
+  visible,
+  getAllMachine,
+}: AddNewMachineProps) {
   const {
     form,
     current: step,
@@ -38,7 +43,7 @@ export default function AddNewMachine({ handleModalVisible, visible }: AddNewMac
 
         if (postMachineRes.code === 0) {
           openNotification('success', 'Thêm máy mới thành công!');
-
+          getAllMachine();
           return true;
         }
       } catch (e) {

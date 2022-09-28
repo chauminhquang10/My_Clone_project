@@ -20,12 +20,10 @@ import {
   message,
 } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import type { MutableRefObject } from 'react';
 import React, { useState } from 'react';
 import styles from './ConfigModelDetailDrawer.less';
 // import userDetailIcon from '@/assets/images/svg/icon/top-right-arrow.svg';
 import { useModel, useRequest } from 'umi';
-import type { ActionType } from '@ant-design/pro-components';
 import { getModelDetail, updateModel } from '@/services/STM-APIs/STMModelController';
 import UpdateConfigModelForm from './UpdateConfigModel';
 
@@ -39,7 +37,8 @@ type ConfigModelDetailDrawerProps = {
   setShowDetail: (value: boolean) => void;
   currentModel: API.StmModelDetailResponse | undefined;
   setCurrentModel: (value: API.StmModelDetailResponse | undefined) => void;
-  detailActionRef: MutableRefObject<ActionType | undefined>;
+
+  getAllConfigMachine: () => void;
   children?: React.ReactNode;
 };
 
@@ -53,14 +52,18 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
   setShowDetail,
   currentModel,
   setCurrentModel,
-  detailActionRef,
+  getAllConfigMachine,
 }) => {
   const configModelColumns: ColumnsType<API.StorageItem> = [
     {
       title: 'Loại thiết bị',
       dataIndex: ['deviceType', 'name'],
       width: '33%',
-      sorter: (a, b) => a.deviceType?.name.length - b.deviceType?.name.length,
+      sorter: (a, b) => {
+        if (a.deviceType?.name && b.deviceType?.name)
+          return a.deviceType?.name?.localeCompare(b.deviceType?.name as string);
+        return 0;
+      },
       align: 'center',
       render: (text) => <span>{text}</span>,
     },
@@ -68,7 +71,11 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
       title: 'Đơn vị tính',
       dataIndex: ['deviceType', 'unit'],
       width: '33%',
-      sorter: (a, b) => a?.deviceType?.unit.length - b?.deviceType?.unit.length,
+      sorter: (a, b) => {
+        if (a?.deviceType?.unit && b?.deviceType?.unit)
+          return a?.deviceType?.unit?.localeCompare(b?.deviceType?.unit as string);
+        return 0;
+      },
       align: 'left',
       render: (text) => <span>{text}</span>,
     },
@@ -78,7 +85,10 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
       dataIndex: 'minCapacity',
       key: 'minCapacity',
       width: '33%',
-      sorter: (a, b) => a?.minCapacity.length - b?.minCapacity.length,
+      sorter: (a, b) => {
+        if (a?.minCapacity && b?.minCapacity) return a?.minCapacity - b?.minCapacity;
+        return 0;
+      },
       align: 'center',
       render: (text) => <span>{text}</span>,
     },
@@ -149,7 +159,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
       message.success('Chỉnh sửa nhóm quyền thành công');
       handleUpdateModalVisible(false);
       setShowDetail(false);
-      detailActionRef.current?.reload();
+      getAllConfigMachine();
       return true;
     } catch (error) {
       hide();

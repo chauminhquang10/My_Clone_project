@@ -193,7 +193,9 @@ const TableCustom = () => {
           setShowDetail={setShowDetail}
           currentModel={currentRow || {}}
           setCurrentModel={setCurrentRow}
-          detailActionRef={actionRef}
+          getAllConfigMachine={() => {
+            getAllConfigMachine();
+          }}
         />
       )}
     </PageContainer>
