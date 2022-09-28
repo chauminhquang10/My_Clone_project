@@ -88,7 +88,7 @@ export default function DeclareUnitForm({
 
       return false;
     },
-    [machineDetail, handleClose, actionRef, onVisibleChange],
+    [machineDetail, handleClose, actionRef, onVisibleChange, intl],
   );
 
   const handleReset = useCallback(() => {
@@ -104,6 +104,7 @@ export default function DeclareUnitForm({
       modalProps={modalProps}
       submitTimeout={2000}
       onReset={handleReset}
+      onVisibleChange={onVisibleChange}
     >
       <DeclareUnitStep form={form} onCancel={onCancel} {...machineDetail} />
     </ModalForm>

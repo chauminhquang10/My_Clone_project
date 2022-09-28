@@ -53,7 +53,11 @@ export default function DeclareMachineStep({
   denominationRule,
   denominations: denominationsDetail,
 }: DeclareMachineStepProps) {
-  const [mType, setMType] = useState<MachineType>((machineType as MachineType) ?? MachineType.STM);
+  const [mType, setMType] = useState<MachineType>(() => {
+    const result = (machineType as MachineType) ?? MachineType.STM;
+    form.setFieldValue('machineType', result);
+    return result;
+  });
   const { data: models } = useRequest(getModels(mType), {
     cacheKey: `models-${mType}`,
     refreshDeps: [mType],
@@ -183,6 +187,7 @@ export default function DeclareMachineStep({
               defaultValue={mType}
               onSelect={handleSelectMachineType}
               placeholder={'Loại máy'}
+              defaultActiveFirstOption
             >
               {objectKeys(MachineType).map((type) => (
                 <Select.Option value={type} key={type}>
