@@ -1,15 +1,11 @@
-import type { ProColumns } from '@ant-design/pro-components';
-import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { useRef, useState } from 'react';
-import { useRequest } from 'umi';
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-import HeadCell from '@/components/TableProperties/HeadCell';
-import { TextCell } from '@/components/TableProperties/TableCell';
 import { getSystemOperation } from '@/services/STM-APIs/STMController';
-import { Tooltip } from 'antd';
-import { formatDate } from '@/utils';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+import { useRef, useState } from 'react';
+import { FormattedMessage, useRequest } from 'umi';
+import Column from './components/tables/Column';
 
 const HistoryListTable = () => {
   // const [resultResponse, setResultResponse] = useState<API.PageResponseManagementUnitResponse>();
@@ -47,65 +43,7 @@ const HistoryListTable = () => {
       },
     );
 
-  const columns: ProColumns<API.SystemOperationResponse>[] = [
-    {
-      title: 'Id',
-      key: 'id',
-      dataIndex: 'id',
-      hideInTable: true,
-    },
-    {
-      title: <HeadCell>Thao tác</HeadCell>,
-      key: 'action',
-      width: '20%',
-      dataIndex: 'action',
-      render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
-      },
-    },
-    {
-      title: <HeadCell>Thực hiện bởi</HeadCell>,
-      dataIndex: 'createdBy',
-      key: 'createdBy',
-      width: '20%',
-      render: (_, entity) => {
-        const value = entity?.createdBy?.staffId
-          ? `${entity.createdBy?.staffId + ' - ' + entity.createdBy?.name}`
-          : entity.createdBy?.name;
-        return <TextCell>{value}</TextCell>;
-      },
-    },
-    {
-      title: <HeadCell>Chức năng</HeadCell>,
-      key: 'module',
-      dataIndex: 'module',
-      render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
-      },
-    },
-    {
-      title: <HeadCell>Thời gian thực hiện</HeadCell>,
-      dataIndex: 'time',
-      key: 'time',
-      render: (dom) => {
-        return <TextCell>{formatDate(dom as string)}</TextCell>;
-      },
-    },
-    {
-      title: <HeadCell>Mô tả</HeadCell>,
-      dataIndex: 'content',
-      key: 'content',
-      render: (dom) => {
-        return (
-          <Tooltip placement="bottom" title={dom}>
-            <div>
-              <TextCell>{dom}</TextCell>
-            </div>
-          </Tooltip>
-        );
-      },
-    },
-  ];
+  const columns = Column();
 
   return (
     <PageContainer
@@ -116,7 +54,11 @@ const HistoryListTable = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Danh sách lịch sử</TitleTable>}
+        headerTitle={
+          <TitleTable>
+            <FormattedMessage id="historyList.header.title" />
+          </TitleTable>
+        }
         rowKey="key"
         search={false}
         request={async () => {

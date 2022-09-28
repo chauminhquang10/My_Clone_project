@@ -15,6 +15,8 @@ import roleGroupDetail from './en-US/GroupAuthorizeTable/forms/detailDrawer';
 import configMachineTable from './en-US/ConfigMachineTable/table';
 import configMachineForm from './en-US/ConfigMachineTable/forms/form';
 import configMachineDetail from './en-US/ConfigMachineTable/forms/detailDrawer';
+import historyListTable from './en-US/HistoryList/tables';
+import historyList from './en-US/HistoryList';
 import stmError from './en-US/stmError';
 import MachineTable from './en-US/MachineTable';
 
@@ -39,6 +41,8 @@ export default {
   ...configMachineTable,
   ...configMachineForm,
   ...configMachineDetail,
+  ...historyListTable,
+  ...historyList,
   ...stmError,
   ...MachineTable,
 };
