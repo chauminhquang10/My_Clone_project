@@ -4,10 +4,11 @@ import Api from '@/services/STM-APIs';
 import { checkFormFieldsEmpty, objectKeys } from '@/utils';
 import { useDebounce, useRequest } from 'ahooks';
 import type { FormInstance } from 'antd';
-import { AutoComplete, Button, Card, Col, Dropdown, Form, Input, Row, Select, Table } from 'antd';
+import { AutoComplete, Button, Card, Col, Form, Input, Row, Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Map from '../map/Map';
+import DropdownOverlay from './DropdownOverlay';
 import styles from './editMachine.less';
 
 interface DeclareUnitStepProps<T> extends API.StmDetailResponse {
@@ -84,7 +85,7 @@ export default function DeclareUnitStep<T>({
   cancelButtonLabel = 'Huỷ bỏ',
   ...machineDetail
 }: DeclareUnitStepProps<T>) {
-  const { data: unitList } = useRequest(getAllUnit);
+  const { data: unitList, loading: unitListLoading } = useRequest(getAllUnit);
   const [address, setAddress] = useState<string>();
   const debounceAddress = useDebounce(address, { wait: 500 });
   const [province, setProvince] = useState<string>();
@@ -95,13 +96,6 @@ export default function DeclareUnitStep<T>({
       ? [machineDetail.latitude || 14.058324, machineDetail.longitude || 108.277199]
       : [14.058324, 108.277199],
   );
-  const disabledAddress =
-    !form.getFieldValue('provinceId') ||
-    !form.getFieldValue('districtId') ||
-    !form.getFieldValue('wardId');
-
-  const disabledUserIds = !form.getFieldValue('managementUnitId');
-
   const { data: addressData } = useRequest(
     getAddressData(debounceAddress, province, district, ward),
     {
@@ -110,12 +104,11 @@ export default function DeclareUnitStep<T>({
     },
   );
   const [unitDetail, setUnitDetail] = useState<API.ManagementUnitDetailResponse>();
-  const [userIds, setUserIds] = useState<string[]>(() =>
-    machineDetail
-      ? machineDetail.managementUsers?.map((user) => `${user.staffId} - ${user.name}`) || []
-      : [],
-  );
-
+  const disabledAddress =
+    !form.getFieldValue('provinceId') ||
+    !form.getFieldValue('districtId') ||
+    !form.getFieldValue('wardId');
+  const disabledUserIds = !form.getFieldValue('managementUnitId');
   const onSearch = useCallback((searchText: string) => {
     setAddress(searchText);
   }, []);
@@ -136,8 +129,6 @@ export default function DeclareUnitStep<T>({
       if (unitList) {
         form.setFieldValue('managementUnitId', id);
         form.setFieldValue('unitAddress', unitList.find((el) => el.id === id)?.address);
-        form.setFieldValue('userIds', []);
-        setUserIds([]);
 
         try {
           const uDetail = (
@@ -154,26 +145,17 @@ export default function DeclareUnitStep<T>({
     [unitList, form],
   );
 
-  const handleUserChange = useCallback(
-    (ids: string[]) => {
-      const staffIdName = unitDetail?.users
-        ?.filter((user) => ids.includes(user.id!))
-        .map((user) => `${user.staffId} - ${user.name}`);
-      if (!staffIdName) throw Error(`staffIdName should not be ${staffIdName}!`);
-
-      setUserIds(staffIdName);
-      form.setFieldValue('userIds', ids);
-    },
-    [form, unitDetail],
-  );
-
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     const values = form.getFieldsValue();
     objectKeys(values as Record<string, string>).forEach((key) =>
       form.setFieldValue(key, undefined),
     );
     if (onPrevious) onPrevious();
-  };
+  }, [onPrevious, form]);
+
+  const handleClearUser = useCallback(() => {
+    form.setFieldValue('userIds', []);
+  }, [form]);
 
   const OkButton = useCallback(() => {
     const fields = form.getFieldsValue();
@@ -204,6 +186,19 @@ export default function DeclareUnitStep<T>({
     }
   }, []);
 
+  const userDataSource = useMemo(
+    () =>
+      unitDetail?.users
+        ?.filter((user) => form.getFieldValue('userIds')?.includes(user.id!))
+        .map((user, index) => ({
+          index: index + 1,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          name: user.name,
+        })),
+    [unitDetail, form],
+  );
+
   return (
     <>
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
@@ -225,8 +220,12 @@ export default function DeclareUnitStep<T>({
       >
         <Row gutter={24} align="bottom" style={{ marginBottom: 24 }}>
           <Col span={12}>
-            <Form.Item name="managementUnitId" label="Mã - Tên đơn vị">
-              <Select onChange={handleChangeUnitId} placeholder="Mã - Tên đơn vị">
+            <Form.Item name="managementUnitId" label="Mã - Tên đơn vị" required>
+              <Select
+                onChange={handleChangeUnitId}
+                placeholder="Mã - Tên đơn vị"
+                loading={unitListLoading}
+              >
                 {unitList?.map((unit) => (
                   <Select.Option key={unit.id} value={unit.id}>
                     {`${unit.id} - ${unit.name}`}
@@ -241,50 +240,38 @@ export default function DeclareUnitStep<T>({
             </Form.Item>
           </Col>
           <Col span={24} style={{ marginTop: 24, marginBottom: 24 }}>
-            <Form.Item name="userIds" label="Mã - Tên nhân viên quản lý">
-              <Dropdown
-                trigger={['click']}
+            <Form.Item name="userIds" label="Mã - Tên nhân viên quản lý" required>
+              <Select
+                loading={unitListLoading}
+                onClear={handleClearUser}
                 disabled={disabledUserIds}
-                overlay={
-                  <Select
-                    value={form.getFieldValue('userIds')}
-                    showSearch
-                    onChange={handleUserChange}
-                    mode="multiple"
-                  >
-                    {unitDetail?.users?.map((user) => (
-                      <Select.Option value={user.id} key={user.id}>
-                        {`${user.staffId} - ${user.name}`}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                }
+                mode="multiple"
+                maxTagCount={4}
+                maxTagTextLength={20}
+                dropdownRender={(menu) => <DropdownOverlay menu={menu} users={unitDetail?.users} />}
+                allowClear
+                onSelect={(value, option) => {
+                  console.log({ value, option });
+                }}
               >
-                <Select
-                  mode="multiple"
-                  placeholder="Mã - Tên nhân viên quản lý"
-                  filterOption={false}
-                  open={false}
-                  value={userIds}
-                />
-              </Dropdown>
+                {unitDetail?.users?.map((user) => (
+                  <Select.Option value={user.id} key={user.id}>
+                    {`${user.staffId} - ${user.name}`}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Form.Item label="Danh sách nhân viên quản lý">
-              <Table
-                columns={userColumns}
-                dataSource={unitDetail?.users
-                  ?.filter((user) => form.getFieldValue('userIds')?.includes(user.id!))
-                  .map((user, index) => ({
-                    index: index + 1,
-                    email: user.email,
-                    phoneNumber: user.phoneNumber,
-                    name: user.name,
-                  }))}
-                pagination={false}
-                bordered
-              />
+            <Form.Item label="Danh sách nhân viên quản lý" shouldUpdate>
+              {() => (
+                <Table
+                  columns={userColumns}
+                  dataSource={userDataSource}
+                  pagination={false}
+                  bordered
+                />
+              )}
             </Form.Item>
           </Col>
         </Row>
@@ -304,6 +291,7 @@ export default function DeclareUnitStep<T>({
               label="Tên đường, Số nhà"
               rules={[{ type: 'string', min: 0, max: 100 }]}
               validateTrigger="onBlur"
+              required
             >
               <AutoComplete
                 placeholder={machineDetail.address ?? 'Tên đường, Số nhà'}
@@ -339,7 +327,11 @@ export default function DeclareUnitStep<T>({
         </Row>
       </Card>
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
-        <Button className={styles.cancelButton} size="large" onClick={handlePrevious ?? onCancel}>
+        <Button
+          className={styles.cancelButton}
+          size="large"
+          onClick={onPrevious ? handlePrevious : onCancel}
+        >
           {cancelButtonLabel}
         </Button>
         <Form.Item shouldUpdate>{OkButton}</Form.Item>

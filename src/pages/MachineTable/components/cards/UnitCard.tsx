@@ -17,32 +17,30 @@ export default function UnitCard({
 }: UnitCardProps) {
   const listInfor: CardCol[] = [];
   managementUsers?.forEach((item, index) => {
-    if (index > 0) {
-      listInfor.push({
-        props: { span: 8 },
-        formItemProps: { label: '', name: '' },
-        inputProps: {
-          disabled: true,
-          placeholder: managementUsers ? item.name : '',
-        },
-      });
-      listInfor.push({
-        props: { span: 8 },
-        formItemProps: { label: '', name: '' },
-        inputProps: {
-          disabled: true,
-          placeholder: managementUsers ? item.phoneNumber : '',
-        },
-      });
-      listInfor.push({
-        props: { span: 8 },
-        formItemProps: { label: '', name: '' },
-        inputProps: {
-          disabled: true,
-          placeholder: managementUsers ? item.email : '',
-        },
-      });
-    }
+    listInfor.push({
+      props: { span: 8 },
+      formItemProps: { label: index === 0 ? 'Mã - Tên nhân viên quản lý' : '' },
+      inputProps: {
+        disabled: true,
+        placeholder: managementUsers ? item.name : '',
+      },
+    });
+    listInfor.push({
+      props: { span: 8 },
+      formItemProps: { label: index === 0 ? 'Số điện thoại' : '' },
+      inputProps: {
+        disabled: true,
+        placeholder: managementUsers ? item.phoneNumber : '',
+      },
+    });
+    listInfor.push({
+      props: { span: 8 },
+      formItemProps: { label: index === 0 ? 'Email' : '' },
+      inputProps: {
+        disabled: true,
+        placeholder: managementUsers ? item.email : '',
+      },
+    });
   });
 
   const cols: CardCol[] = [
@@ -58,30 +56,6 @@ export default function UnitCard({
       props: { span: 16 },
       formItemProps: { label: 'Địa chỉ đơn vị', name: 'Địa chỉ đơn vị' },
       inputProps: { disabled: true, placeholder: managementUnit?.address },
-    },
-    {
-      props: { span: 8 },
-      formItemProps: { label: 'Mã - Tên nhân viên quản lý', name: 'Mã - Tên nhân viên quản lý' },
-      inputProps: {
-        disabled: true,
-        placeholder: managementUsers?.at(0) ? managementUsers[0].name : '',
-      },
-    },
-    {
-      props: { span: 8 },
-      formItemProps: { label: 'Số điện thoại', name: 'Số điện thoại' },
-      inputProps: {
-        disabled: true,
-        placeholder: managementUsers?.at[0] ? managementUsers[0].phoneNumber : '',
-      },
-    },
-    {
-      props: { span: 8 },
-      formItemProps: { label: 'Email', name: 'Email' },
-      inputProps: {
-        disabled: true,
-        placeholder: managementUsers?.at(0) ? managementUsers[0].email : '',
-      },
     },
     ...listInfor,
   ];
