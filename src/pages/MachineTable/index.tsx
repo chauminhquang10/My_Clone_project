@@ -3,7 +3,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 // import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { useRequest } from 'umi';
+import { useIntl, useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
@@ -15,6 +15,7 @@ import MachineDrawer from './MachineDrawer';
 import api from '@/services/STM-APIs';
 
 const TableCustom = () => {
+  const intl = useIntl();
   //------------ pagination --------------------
   const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
@@ -101,7 +102,10 @@ const TableCustom = () => {
           hideOnSinglePage: true,
           showQuickJumper: true,
         }}
-        dataSource={listMachine?.items}
+        dataSource={listMachine?.items?.map((item) => ({
+          ...item,
+          location: intl.formatMessage({ defaultMessage: item.location, id: item.location }),
+        }))}
       />
 
       <MachineDrawer

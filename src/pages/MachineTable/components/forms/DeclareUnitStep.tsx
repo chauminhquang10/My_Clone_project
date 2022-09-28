@@ -250,7 +250,7 @@ export default function DeclareUnitStep<T>({
                 maxTagTextLength={20}
                 dropdownRender={(menu) => <DropdownOverlay menu={menu} users={unitDetail?.users} />}
                 allowClear
-                onSelect={(value, option) => {
+                onSelect={(value: unknown, option: unknown) => {
                   console.log({ value, option });
                 }}
               >

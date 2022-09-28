@@ -15,6 +15,7 @@ import roleGroupDetail from './vi-VN/GroupAuthorizeTable/forms/detailDrawer';
 import configMachineTable from './vi-VN/ConfigMachineTable/table';
 import configMachineForm from './vi-VN/ConfigMachineTable/forms/form';
 import configMachineDetail from './vi-VN/ConfigMachineTable/forms/detailDrawer';
+import stmError from './vi-VN/stmError';
 
 export default {
   navBar_language: 'VI',
@@ -37,4 +38,5 @@ export default {
   ...configMachineTable,
   ...configMachineForm,
   ...configMachineDetail,
+  ...stmError,
 };

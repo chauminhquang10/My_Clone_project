@@ -1,22 +1,19 @@
 import { CollapseIcon, UnCollapseIcon } from '@/assets';
 import { useControllState } from '@/hooks';
-import { genKey } from '@/utils';
 import type {
   BasicLayoutProps as ProLayoutProps,
   MenuDataItem,
   Settings,
 } from '@ant-design/pro-layout';
 import ProLayout from '@ant-design/pro-layout';
-import { Layout } from 'antd';
-import cx from 'classnames';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { history, Link, useIntl, useModel } from 'umi';
 import logo from '../assets/logo/Logo.svg';
 import RightContent from '../components/RightContent';
-import { icons, menuData } from './data';
+import { icons } from './data';
 import styles from './layouts.less';
 import MenuItem from './MenuItem';
-import SubMenu from './SubMenu';
+import StmMenu from './StmMenu';
 
 const loginPath = '/user/login';
 
@@ -45,44 +42,14 @@ const BasicLayout = ({ children, routes, ...props }: BasicLayoutProps) => {
   const [collapsed, setCollapsed] = useControllState(false);
   const handleCollapsed = useCallback(() => {
     setCollapsed((prev: boolean) => !prev);
-  }, []);
+  }, [setCollapsed]);
 
   const { initialState } = useModel('@@initialState');
 
   const menuRender = useCallback(
     (menuProps, dom) => {
       console.log({ menuProps, dom });
-
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [showSubNav, setShowSubNav] = useState<string>('/machine');
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [currentRoute, setCurrentRoute] = useState<string>('/machine/list');
-      const handleClick = (path: string) => () => {
-        setShowSubNav(path);
-      };
-
-      return (
-        <Layout.Sider collapsed={collapsed} width={240} id="sider">
-          <div
-            className={cx(styles.stmMenuWrapper, {
-              [styles.collapsed]: collapsed,
-            })}
-          />
-          <div className={cx(styles.stmMenu, { [styles.collapsed]: collapsed })}>
-            {menuData.map((menu) => (
-              <SubMenu
-                {...menu}
-                collapsed={collapsed}
-                showSubNav={showSubNav}
-                onClick={handleClick}
-                currentRoute={currentRoute}
-                setCurrentRoute={setCurrentRoute}
-                key={genKey()}
-              />
-            ))}
-          </div>
-        </Layout.Sider>
-      );
+      return <StmMenu collapsed={collapsed} />;
     },
     [collapsed],
   );

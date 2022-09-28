@@ -3,6 +3,7 @@ import { CaretDownFilled, CaretUpFilled } from '@ant-design/icons';
 import { Typography } from 'antd';
 import cx from 'classnames';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FormattedMessage, history } from 'umi';
 import styles from './layouts.less';
 
@@ -16,7 +17,7 @@ interface BaseMenu {
 interface SubMenuProps extends BaseMenu {
   children?: BaseMenu[];
   isChildren?: boolean;
-  showSubNav?: string;
+  showSubNav?: string[];
   onClick?: (path: string) => () => void;
   currentRoute: string | undefined;
   setCurrentRoute: Dispatch<SetStateAction<string>>;
@@ -34,31 +35,37 @@ export default function SubMenu({
   currentRoute,
   setCurrentRoute,
 }: SubMenuProps) {
-  const handleNavigate = () => {
+  const showSubnav = useMemo(() => showSubNav?.includes(path), [showSubNav, path]);
+  const handleNavigate = useCallback(() => {
     history.push(path);
     setCurrentRoute(path);
-  };
+  }, [setCurrentRoute, path]);
+
+  const handleClick = useMemo(
+    () => (!children ? handleNavigate : onClick?.(path)),
+    [children, handleNavigate, onClick, path],
+  );
 
   return (
     <div
       className={cx({
         [styles.menuContainer]: !isChildren,
         [styles.collapsed]: collapsed,
-        [styles.current]: currentRoute === path,
       })}
-      onClick={!children ? handleNavigate : onClick?.(path)}
     >
       <div
         className={cx(styles.menuItem, {
           [styles.child]: isChildren,
           [styles.collapsed]: collapsed,
           [styles.single]: !children && !isChildren,
+          [styles.current]: currentRoute === path,
         })}
+        onClick={handleClick}
       >
         <>
           {!isChildren && !collapsed && (
             <div style={{ opacity: children ? 1 : 0 }}>
-              {showSubNav === path ? (
+              {showSubnav ? (
                 <CaretUpFilled className={styles.arrow} />
               ) : (
                 <CaretDownFilled className={styles.arrow} />
@@ -67,13 +74,16 @@ export default function SubMenu({
           )}
           {icon}
           {!collapsed && (
-            <Typography.Text className={styles.title} ellipsis>
+            <Typography.Text
+              className={styles.title}
+              ellipsis={{ tooltip: { children: <FormattedMessage id={id} />, placement: 'right' } }}
+            >
               <FormattedMessage id={id} />
             </Typography.Text>
           )}
         </>
       </div>
-      {showSubNav === path && (
+      {showSubnav && (
         <>
           {children?.map((child) => (
             <SubMenu

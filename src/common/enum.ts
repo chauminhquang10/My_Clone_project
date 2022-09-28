@@ -2,6 +2,7 @@ export enum MachineType {
   STM = 'STM',
   ATM = 'ATM',
   CDM = 'CDM',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum KeyType {

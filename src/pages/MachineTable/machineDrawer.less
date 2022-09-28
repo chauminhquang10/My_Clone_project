@@ -106,3 +106,30 @@
       opacity: 0.2;
   }
 });
+
+.status {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  width: fit-content;
+  margin-top: -12px;
+}
+
+.needle {
+  width: 12px;
+  height: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='27' viewBox='0 0 12 27' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M11.7803 19.8878L6.48783 0.741829C6.35268 0.252904 5.65942 0.252743 5.52404 0.741605L0.245605 19.8021C0.231445 19.8531 0.254883 19.751 0.245605 19.8021C0.0859375 20.3065 0 20.8428 0 21.3956C0 24.4906 2.68652 27 6 27C9.31348 27 12 24.4906 12 21.3956C12 20.8729 11.9233 20.3676 11.7803 19.8878C11.8027 19.9681 11.7695 19.8084 11.7803 19.8878Z' fill='%23434343'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+}
+
+.myCard {
+  border-radius: 12px;
+
+  :global {
+    .ant-card-body {
+      position: relative;
+    }
+  }
+}
