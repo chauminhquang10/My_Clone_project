@@ -6,7 +6,6 @@ import {
   LockOutlined,
   UnlockOutlined,
 } from '@ant-design/icons';
-import type { ActionType } from '@ant-design/pro-components';
 import { Button, Col, message, Modal, Row, Tooltip } from 'antd';
 import { useState } from 'react';
 import { history } from 'umi';
@@ -15,14 +14,14 @@ import styles from '../UserDetailDrawer.less';
 
 interface HeaderProps {
   userInfo: API.UserDetailResponse;
-  actionRef?: React.MutableRefObject<ActionType | undefined>;
+  runGetAllUser: () => void;
   onCloseDrawer: () => void;
   isPersonalProfile: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
   userInfo,
-  actionRef,
+  runGetAllUser,
   onCloseDrawer,
   isPersonalProfile,
 }) => {
@@ -40,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({
     try {
       await blockUser({ userId: userInfo.id as string });
       message.success('Block user successfully');
-      if (!!actionRef) actionRef.current?.reload();
+      runGetAllUser();
       onCloseDrawer();
     } catch (error) {
       console.log('error: ', error);
@@ -60,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({
     try {
       await unBlockUser({ userId: userInfo.id as string });
       message.success('Unblock user successfully');
-      if (!!actionRef) actionRef.current?.reload();
+      runGetAllUser();
       onCloseDrawer();
     } catch (error) {
       console.log('error: ', error);
@@ -139,7 +138,7 @@ const Header: React.FC<HeaderProps> = ({
         userInfo={userInfo}
         isVisibleUpdateUser={openUpdateUserForm}
         setIsVisibleUpdateUser={setOpenUpdateUserForm}
-        actionRef={actionRef}
+        runGetAllUser={runGetAllUser}
         onCloseDrawer={onCloseDrawer}
       />
       {/* Modal Confirm Block User */}

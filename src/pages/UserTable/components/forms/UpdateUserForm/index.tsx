@@ -1,6 +1,5 @@
 import { updateUser } from '@/services/STM-APIs/UserController';
 import { openNotification } from '@/utils';
-import type { ActionType } from '@ant-design/pro-components';
 import { message } from 'antd';
 import React from 'react';
 import NewUserForm from '../NewUserForm';
@@ -49,7 +48,7 @@ interface UpdateUserFormProps {
   userInfo: API.UserDetailResponse;
   isVisibleUpdateUser: boolean;
   setIsVisibleUpdateUser: (isVisible: boolean) => void;
-  actionRef?: React.MutableRefObject<ActionType | undefined>;
+  runGetAllUser: () => void;
   onCloseDrawer: () => void;
 }
 
@@ -57,7 +56,7 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
   userInfo,
   isVisibleUpdateUser,
   setIsVisibleUpdateUser,
-  actionRef,
+  runGetAllUser,
   onCloseDrawer,
 }) => {
   return (
@@ -70,7 +69,7 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
         const success = await handleUpdate({ userId: userInfo.id as string }, { ...values });
 
         if (!!success) {
-          if (!!actionRef) actionRef.current?.reload();
+          runGetAllUser();
           onCloseDrawer();
         }
 

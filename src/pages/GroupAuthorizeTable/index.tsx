@@ -1,4 +1,4 @@
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
@@ -19,7 +19,6 @@ const TableCustom = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.RoleGroupResponse>();
 
   // const [page, setPage] = useState<number>();
@@ -67,7 +66,7 @@ const TableCustom = () => {
       hide();
       message.success('Thêm nhóm quyền mới thành công');
       handleModalVisible(false);
-      actionRef.current?.reload();
+      runGetAllRolesGroup();
     } catch (error) {
       hide();
       message.error('Adding failed, please try again!');
@@ -84,7 +83,6 @@ const TableCustom = () => {
     >
       <ProTable
         headerTitle={<TitleTable>Danh sách nhóm quyền</TitleTable>}
-        actionRef={actionRef}
         rowKey="key"
         search={false}
         toolBarRender={() => [
@@ -145,7 +143,9 @@ const TableCustom = () => {
           setCurrentRoleGroup={setCurrentRow}
           showDetail={showDetail}
           setShowDetail={setShowDetail}
-          detailActionRef={actionRef}
+          runGetAllRolesGroup={() => {
+            runGetAllRolesGroup();
+          }}
         />
       )}
     </PageContainer>

@@ -1,4 +1,4 @@
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import UnitDetailDrawer from './components/forms/UnitDetailDrawer';
 import { useRef, useState } from 'react';
@@ -19,15 +19,8 @@ const TableCustom = () => {
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.ManagementUnitResponse>();
 
-  const columns: ProColumns<API.ManagementUnitResponse>[] = Column({
-    setCurrentRow,
-    setShowDetail,
-  });
-
-  const pageSize = useRef<number>(10);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -38,22 +31,36 @@ const TableCustom = () => {
   };
 
   //------------ pagination --------------------
-  const pageSizeRef = useRef<number>(20);
+  const pageSizeRef = useRef<number>(2);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
+  const [paramFilter, setParamFilter] = useState<API.getAllManagementUnitsParams | undefined>();
 
-  const { run: runGetAllManagementUnits } =
+  const columns: ProColumns<API.ManagementUnitResponse>[] = Column({
+    setCurrentRow,
+    setShowDetail,
+    setParamFilter,
+    paramFilter,
+  });
+
+  const { run: runGetAllManagementUnits, data: listUnit } =
     useRequest<API.ResponseBasePageResponseManagementUnitResponse>(
-      (params: API.getAllManagementUnitsParams) => getAllManagementUnits(params),
+      () => {
+        const params: API.getAllManagementUnitsParams = {
+          ...paramFilter,
+          pageNumber: page - 1,
+          pageSize: pageSizeRef.current,
+        };
+        return getAllManagementUnits(params);
+      },
       {
-        onSuccess() {},
+        onSuccess(res) {
+          setTotalSize(res?.totalSize as number);
+        },
         onError(error) {
           console.log('error', error);
-          // notification.error({
-          //   message: messageErrorData,
-          //   description: e?.data?.code,
-          // });
         },
+        refreshDeps: [paramFilter, page],
       },
     );
 
@@ -69,7 +76,7 @@ const TableCustom = () => {
       }
       message.success('Thêm đơn vị mới thành công');
       handleCreateModalVisible(false);
-      actionRef.current?.reload();
+      runGetAllManagementUnits();
     } catch (error) {
       hide();
       message.error('Adding failed, please try again!');
@@ -86,7 +93,6 @@ const TableCustom = () => {
     >
       <ProTable
         headerTitle={<TitleTable>Đơn vị quản lý</TitleTable>}
-        actionRef={actionRef}
         rowKey="key"
         search={false}
         toolBarRender={() => [
@@ -98,20 +104,7 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        request={async () => {
-          const params: API.getAllManagementUnitsParams = {
-            pageNumber: page - 1,
-            pageSize: pageSizeRef.current,
-          };
-
-          const res = await runGetAllManagementUnits(params);
-          setTotalSize(res?.totalSize as number);
-          return {
-            data: res?.items,
-            total: res?.items ? res.items.length : 0,
-            success: true,
-          };
-        }}
+        dataSource={listUnit?.items}
         columns={columns}
         options={false}
         pagination={{
@@ -123,7 +116,7 @@ const TableCustom = () => {
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
-          pageSize: pageSize.current,
+          pageSize: pageSizeRef.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
           hideOnSinglePage: true,
           showQuickJumper: true,
@@ -153,7 +146,9 @@ const TableCustom = () => {
           setShowDetail={setShowDetail}
           currentUnit={currentRow || {}}
           setCurrentUnit={setCurrentRow}
-          detailActionRef={actionRef}
+          runGetAllManagementUnits={() => {
+            runGetAllManagementUnits();
+          }}
         />
       )}
     </PageContainer>

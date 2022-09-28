@@ -5,7 +5,7 @@ import TotalPagination from '@/components/TableProperties/TotalPagination';
 import Api from '@/services/STM-APIs';
 import { createUser } from '@/services/STM-APIs/UserController';
 import { openNotification } from '@/utils';
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
@@ -58,26 +58,34 @@ const UserManagementTable: React.FC = () => {
   const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
+  const [paramFilter, setParamFilter] = useState<API.getAllUsersParams | undefined>();
 
-  const { run: runGetAllUser } = useRequest(
-    (params: API.getAllUsersParams) => Api.UserController.getAllUsers(params),
+  const { run: runGetAllUser, data: listUser } = useRequest(
+    () => {
+      const params: API.getAllUsersParams = {
+        ...paramFilter,
+        pageNumber: page - 1,
+        pageSize: pageSizeRef.current,
+      };
+      return Api.UserController.getAllUsers(params);
+    },
     {
-      manual: true,
       onSuccess: (res) => {
         if (!res) {
           openNotification('error', 'Đã xảy ra lỗi', 'Vui lòng thử lại sau');
           return;
         }
+        setTotalSize(res?.totalSize as number);
         return res;
       },
       onError: (error) => {
         console.log(error);
       },
+      refreshDeps: [paramFilter, page],
     },
   );
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
-  const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.UserResponse>();
 
   // const [page, setPage] = useState<number>();
@@ -85,9 +93,10 @@ const UserManagementTable: React.FC = () => {
   const columns: ProColumns<API.UserResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
+    setParamFilter,
+    paramFilter,
   });
 
-  const pageSize = useRef<number>(20);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -107,7 +116,6 @@ const UserManagementTable: React.FC = () => {
     >
       <ProTable
         headerTitle={<TitleTable>Danh sách người dùng</TitleTable>}
-        actionRef={actionRef}
         rowKey="key"
         search={false}
         toolBarRender={() => [
@@ -119,28 +127,7 @@ const UserManagementTable: React.FC = () => {
             }}
           />,
         ]}
-        request={async () => {
-          const filterParams = {
-            // managementUnit: '',
-            // staffId: '',
-          };
-
-          const pageRequestParams = {
-            pageNumber: page - 1,
-            pageSize: pageSizeRef.current,
-            // sortBy: '',
-          };
-          const res = await runGetAllUser({
-            ...filterParams,
-            ...pageRequestParams,
-          });
-
-          setTotalSize(res?.totalSize as number);
-          console.log(res);
-          return {
-            data: res?.items || [],
-          };
-        }}
+        dataSource={listUser?.items}
         columns={columns}
         options={false}
         scroll={{ y: 'max-content' }}
@@ -153,7 +140,7 @@ const UserManagementTable: React.FC = () => {
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
-          pageSize: pageSize.current,
+          pageSize: pageSizeRef.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
           hideOnSinglePage: false,
           showQuickJumper: true,
@@ -170,9 +157,7 @@ const UserManagementTable: React.FC = () => {
           const success = await handleAdd(values as API.CreateUserRequest);
           if (success) {
             handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
+            runGetAllUser();
             return true;
           }
           return false;
@@ -184,7 +169,9 @@ const UserManagementTable: React.FC = () => {
         setCurrentRow={setCurrentRow}
         showDetail={showDetail}
         setShowDetail={setShowDetail}
-        actionRef={actionRef}
+        runGetAllUser={() => {
+          runGetAllUser();
+        }}
       />
     </PageContainer>
   );

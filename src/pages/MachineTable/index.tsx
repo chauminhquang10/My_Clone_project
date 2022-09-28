@@ -17,16 +17,15 @@ import MachineDrawer from './MachineDrawer';
 const TableCustom = () => {
   const intl = useIntl();
   //------------ pagination --------------------
-  const pageSizeRef = useRef<number>(2);
+  const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
+  const [paramFilter, setParamFilter] = useState<API.getListMachinesParams | undefined>();
 
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const [currentRow, setCurrentRow] = useState<API.StmInfoResponse>();
-
-  const [paramFilter, setParamFilter] = useState<API.getListMachinesParams | undefined>();
 
   const { data: listMachine, run: getAllMachine } =
     useRequest<API.ResponseBasePageResponseStmInfoResponse>(

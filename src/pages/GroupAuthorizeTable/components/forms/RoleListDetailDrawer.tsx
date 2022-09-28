@@ -12,7 +12,6 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import type { ActionType } from '@ant-design/pro-components';
 import {
   Avatar,
   Badge,
@@ -31,7 +30,6 @@ import {
   Tooltip,
 } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import type { MutableRefObject } from 'react';
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
 import styles from './RoleListDetailDrawer.less';
@@ -42,7 +40,7 @@ type RoleListDetailDrawerProps = {
   setShowDetail: (value: boolean) => void;
   currentRoleGroup: API.RoleGroupResponse | undefined;
   setCurrentRoleGroup: (value: API.RoleGroupResponse | undefined) => void;
-  detailActionRef: MutableRefObject<ActionType | undefined>;
+  runGetAllRolesGroup: () => void;
   children?: React.ReactNode;
 };
 
@@ -82,7 +80,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
   setShowDetail,
   currentRoleGroup,
   setCurrentRoleGroup,
-  detailActionRef,
+  runGetAllRolesGroup,
 }) => {
   const userRoleGroupColumns: ColumnsType<Required<API.UserResponse>> = [
     {
@@ -187,7 +185,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
       message.success('Chỉnh sửa nhóm quyền thành công');
       handleUpdateModalVisible(false);
       setShowDetail(false);
-      detailActionRef.current?.reload();
+      runGetAllRolesGroup();
       return true;
     } catch (error) {
       hide();
@@ -201,7 +199,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
     try {
       await deleteRoleGroup({ groupId: roleGroupDetail?.id?.toString() || '' });
       setShowDetail(false);
-      detailActionRef.current?.reloadAndRest?.();
+      runGetAllRolesGroup();
       hide();
       message.success('Xoá đơn vị thành công');
       return true;

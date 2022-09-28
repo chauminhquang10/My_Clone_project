@@ -13,9 +13,8 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
     {
       title: <HeadCell>STT</HeadCell>,
       dataIndex: 'id',
-      render: (dom) => {
-        const stt = dom as number;
-        return <TextCell>{stt}</TextCell>;
+      render: (_, __, index) => {
+        return <TextCell>{index + 1}</TextCell>;
       },
     },
     {

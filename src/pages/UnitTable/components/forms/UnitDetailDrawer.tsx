@@ -7,7 +7,6 @@ import {
   updateManagementUnit,
 } from '@/services/STM-APIs/ManagementUnitController';
 import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import type { ActionType } from '@ant-design/pro-components';
 import {
   Avatar,
   Button,
@@ -23,7 +22,6 @@ import {
   Tooltip,
 } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import type { MutableRefObject } from 'react';
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
 import styles from './UnitDetailDrawer.less';
@@ -45,8 +43,8 @@ type UnitDrawerProps = {
   setShowDetail: (value: boolean) => void;
   currentUnit: API.ManagementUnitResponse | undefined;
   setCurrentUnit: (value: API.ManagementUnitResponse | undefined) => void;
-  detailActionRef: MutableRefObject<ActionType | undefined>;
   children?: React.ReactNode;
+  runGetAllManagementUnits: () => void;
 };
 
 type StaffNameProps = {
@@ -70,7 +68,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
   setShowDetail,
   currentUnit,
   setCurrentUnit,
-  detailActionRef,
+  runGetAllManagementUnits,
 }) => {
   const unitListColumns: ColumnsType<Required<API.UserResponse>> = [
     {
@@ -170,7 +168,11 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
     },
     {
       onSuccess(data) {
-        if (data?.machines.length > 0 || data?.users.length > 0) {
+        if (
+          data?.machines &&
+          data?.users &&
+          (data?.machines?.length > 0 || data?.users?.length > 0)
+        ) {
           setValidateDeleteObj({
             enableDeleteBtn: false,
             tooltipMsg: 'Chưa thể xoá. Người dùng hoặc máy chưa có đơn vị quản lý',
@@ -196,7 +198,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       message.success('Chỉnh sửa đơn vị thành công');
       handleUpdateModalVisible(false);
       setShowDetail(false);
-      detailActionRef.current?.reload();
+      runGetAllManagementUnits();
       return true;
     } catch (error) {
       hide();
@@ -210,7 +212,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
     try {
       await deleteManagementUnit({ unitId: unitDetail?.id?.toString() || '' });
       setShowDetail(false);
-      detailActionRef.current?.reloadAndRest?.();
+      runGetAllManagementUnits();
       hide();
       message.success('Xoá đơn vị thành công');
       return true;
