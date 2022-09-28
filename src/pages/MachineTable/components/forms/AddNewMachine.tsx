@@ -9,6 +9,7 @@ import DeclareUnitStep from './DeclareUnitStep';
 import Api from '@/services/STM-APIs';
 import { genKey, openNotification } from '@/utils';
 import type { ModalProps } from 'antd';
+import { FormattedMessage } from 'umi';
 
 interface AddNewMachineProps {
   visible: boolean;
@@ -104,15 +105,15 @@ export default function AddNewMachine({
         onCancel={handleCancle}
         onSubmit={handleMachineSubmit}
         key={genKey()}
-        submitButtonLabel="Tiếp tục"
+        submitButtonLabel={<FormattedMessage id="continue" />}
       />,
       <DeclareUnitStep
         form={form}
         onPrevious={handlePrevious}
         onCancel={handleCancle}
         onSubmit={handleSubmit}
-        submitButtonLabel="Hoàn tất"
-        cancelButtonLabel="Quay lại"
+        submitButtonLabel={<FormattedMessage id="submit" />}
+        cancelButtonLabel={<FormattedMessage id="back" />}
         key={genKey()}
       />,
     ],

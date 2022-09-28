@@ -3,16 +3,16 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 // import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { useRequest } from 'umi';
+import { FormattedMessage, useRequest } from 'umi';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
+import ExportFile from '@/components/TableProperties/ExportFile';
 import style from '@/components/TableProperties/style.less';
-import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-import AnaylyticDetail from '../MachineTable/components/drawers/AnalyticDetail';
 import api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
-import ExportFile from '@/components/TableProperties/ExportFile';
+import { Typography } from 'antd';
+import AnaylyticDetail from '../MachineTable/components/drawers/AnalyticDetail';
 
 const TableCustom = () => {
   //------------ pagination --------------------
@@ -72,7 +72,11 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Thống kê hoạt động</TitleTable>}
+        headerTitle={
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            <FormattedMessage id="menu.machine-management.analytics" />
+          </Typography.Title>
+        }
         actionRef={actionRef}
         rowKey="key"
         search={false}

@@ -87,7 +87,7 @@ export default function DeclareUnitForm({
 
       return false;
     },
-    [machineDetail, handleClose, onVisibleChange, intl],
+    [machineDetail, handleClose, onVisibleChange, intl, getAllMachine],
   );
 
   const handleReset = useCallback(() => {

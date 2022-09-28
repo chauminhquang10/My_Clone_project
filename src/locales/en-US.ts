@@ -19,6 +19,7 @@ import historyListTable from './en-US/HistoryList/tables';
 import historyList from './en-US/HistoryList';
 import stmError from './en-US/stmError';
 import MachineTable from './en-US/MachineTable';
+import UpdateVersionTable from './en-US/UpdateVersionTable/table';
 
 export default {
   navBar_language: 'EN',
@@ -45,4 +46,5 @@ export default {
   ...historyList,
   ...stmError,
   ...MachineTable,
+  ...UpdateVersionTable,
 };

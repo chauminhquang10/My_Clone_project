@@ -10,7 +10,11 @@ export default {
 
   tableColumn_indexTitle: 'Index',
   fullName: 'Full name',
+  success: 'Success',
+  fail: 'Fail',
   tableColumn_createdDate: 'Created Date',
+  export: 'Export',
+  return: 'Return',
   south: 'South',
   middle: 'Middle',
   north: 'North',
