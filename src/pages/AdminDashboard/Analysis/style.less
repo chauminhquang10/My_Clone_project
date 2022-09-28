@@ -165,36 +165,74 @@
     overflow: hidden;
     border-radius: 20px 0 0 0;
   }
-  // :global(.ant-table-container) {
-  //   overflow: hidden;
-  //   border: 1px solid #e2e7e9;
-  //   border-radius: 8px;
-  // }
-  // :global(td) {
-  //   height: 40px;
-  //   padding: 0 3.5px !important;
-  // }
-  // :global(td:not(:last-child)) {
-  //   border-right: 1px solid rgba(0, 0, 0, 0.06);
-  // }
-  // :global(th:not(:last-child)) {
-  //   &::before {
-  //     display: none;
-  //   }
+}
 
-  //   border-right: 1px solid rgba(0, 0, 0, 0.06);
-  // }
-  // :global(th) {
-  //   background-color: #fafafa;
-  // }
-  // :global(.ant-table-tbody tr) {
-  //   &:hover td {
-  //     background: #fde3d8;
-  //   }
-  // }
-  // :global(.ant-pro-card-body) {
-  //   padding: 20px 40px !important;
-  // }
+.myAdminCard {
+  margin-top: 24px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.myAdminCard_titleContainer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pieChart_container {
+  margin-top: 24px;
+}
+
+.pieChart_cardTitle {
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 500;
+  font-size: 20px;
+  font-family: 'Roboto';
+  font-style: normal;
+  line-height: 28px;
+}
+
+.pieChart_legendContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.pieChart_legendItem {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.pieChart_legendShape {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.pieChart_legendTitle {
+  color: #000;
+  font-weight: 400;
+  font-size: 14px;
+  font-family: 'Roboto';
+  font-style: normal;
+  line-height: 22px;
+}
+
+.barChart_container {
+  margin-top: 24px;
+}
+
+.barChart_cardTitle {
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 500;
+  font-size: 20px;
+  font-family: 'Roboto';
+  font-style: normal;
+  line-height: 28px;
 }
 
 @media screen and (max-width: @screen-lg) {
