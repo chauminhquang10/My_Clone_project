@@ -8,7 +8,6 @@ import type {
 } from '@ant-design/pro-layout';
 import ProLayout from '@ant-design/pro-layout';
 import { Layout } from 'antd';
-import 'antd/dist/antd.css';
 import cx from 'classnames';
 import { useCallback, useState } from 'react';
 import { history, Link, useIntl, useModel } from 'umi';

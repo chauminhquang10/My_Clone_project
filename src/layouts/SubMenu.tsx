@@ -74,18 +74,6 @@ export default function SubMenu({
         </>
       </div>
       {showSubNav === path && (
-        // <div className={cx(styles.subMenuContainer, { [styles.collapsed]: collapsed })}>
-        //   {children?.map((child) => (
-        //     <SubMenu
-        //       {...child}
-        //       collapsed={collapsed}
-        //       key={genKey()}
-        //       currentRoute={currentRoute}
-        //       setCurrentRoute={setCurrentRoute}
-        //       isChildren
-        //     />
-        //   ))}
-        // </div>
         <>
           {children?.map((child) => (
             <SubMenu
