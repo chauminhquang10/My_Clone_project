@@ -67,7 +67,7 @@ const TableCustom = () => {
         footer={undefined}
       >
         <ProTable
-          headerTitle={<TitleTable>Danh sách máy</TitleTable>}
+          headerTitle={<TitleTable>Activity Logs</TitleTable>}
           rowKey="key"
           search={false}
           columns={columns}
@@ -92,7 +92,7 @@ const TableCustom = () => {
       </PageContainer>
 
       <DownloadLogForm
-        title="Tải log hoạt động"
+        title="Download activity log"
         width="934px"
         machine={currentRow}
         visible={openLogForm}
