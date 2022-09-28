@@ -66,7 +66,8 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   };
 
   const handleChange: UploadProps['onChange'] = async (info: UploadChangeParam<UploadFile>) => {
-    setLoadingImage(true);
+    // call api 3 times ???
+    if (!loadingImage) setLoadingImage(true);
     if (!info.file.url && !info.file.preview) {
       try {
         const res = await uploadPublicFile(
@@ -75,13 +76,12 @@ const NewUserForm: React.FC<CreateFormProps> = ({
           info.file.originFileObj as RcFile,
         );
 
-        info.file.preview = res.data?.previewPath;
+        setImageUrl(res.data?.previewPath);
       } catch (error) {
         console.log('error: ', error);
       }
     }
-    setLoadingImage(false);
-    setImageUrl(info.file.url || (info.file.preview as string));
+    if (loadingImage) setLoadingImage(false);
   };
 
   const onReset = () => {
