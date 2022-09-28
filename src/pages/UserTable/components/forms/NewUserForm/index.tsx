@@ -66,11 +66,14 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   };
 
   const handleChange: UploadProps['onChange'] = async (info: UploadChangeParam<UploadFile>) => {
+    console.log('upload');
     if (info.file.status === 'uploading') {
       setLoadingImage(true);
+      console.log('uploading');
       return;
     }
     if (info.file.status === 'done') {
+      console.log('upload done');
       if (!info.file.url && !info.file.preview) {
         try {
           const res = await uploadPublicFile(
