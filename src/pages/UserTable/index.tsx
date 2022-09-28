@@ -130,7 +130,7 @@ const UserManagementTable: React.FC = () => {
         dataSource={listUser?.items}
         columns={columns}
         options={false}
-        scroll={{ y: 'max-content' }}
+        scroll={{ x: 'max-content' }}
         pagination={{
           total: totalSize,
           onChange(current) {
