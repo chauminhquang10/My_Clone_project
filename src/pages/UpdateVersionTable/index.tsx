@@ -3,7 +3,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import api from '@/services/STM-APIs';
 import { useRef, useState } from 'react';
 // import { FormattedMessage } from 'umi';
-import { useIntl, useRequest } from 'umi';
+import { useIntl, useModel, useRequest } from 'umi';
 // import NewUserForm from './components/forms/NewUserForm';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
@@ -75,11 +75,6 @@ const TableCustom = () => {
       return false;
     }
   };
-  /**
-   * @en-US International configuration
-   * @zh-CN 国际化配置
-   * */
-
   //------------ pagination --------------------
   const columns: ProColumns<API.VersionResponse>[] = Column({
     setCurrentRow,
@@ -95,6 +90,7 @@ const TableCustom = () => {
     page: '',
   };
   const intl = useIntl();
+  const { initialState } = useModel('@@initialState');
   console.log('listUpdateVersion: ', listUpdateVersion);
   return (
     <PageContainer
@@ -113,7 +109,7 @@ const TableCustom = () => {
         toolBarRender={() => [
           <AddNew
             key="primary"
-            enableCreateNew={true}
+            enableCreateNew={initialState?.currentRoles?.create_version !== true}
             onClick={() => {
               handleModalVisible(true);
             }}

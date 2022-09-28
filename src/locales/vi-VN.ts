@@ -19,6 +19,7 @@ import historyListTable from './vi-VN/HistoryList/tables';
 import historyList from './vi-VN/HistoryList';
 import stmError from './vi-VN/stmError';
 import MachineTable from './vi-VN/MachineTable';
+import UpdateVersionTable from './vi-VN/UpdateVersionTable/table';
 
 export default {
   navBar_language: 'VI',
@@ -45,4 +46,5 @@ export default {
   ...historyList,
   ...stmError,
   ...MachineTable,
+  ...UpdateVersionTable,
 };

@@ -1,6 +1,6 @@
 import { EditOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Input, Row } from 'antd';
-import { FormattedMessage } from 'umi';
+import { FormattedMessage, useModel } from 'umi';
 import type { UnitCardProps } from './UnitCard';
 
 export default function DeviceInformationCard({
@@ -18,11 +18,18 @@ export default function DeviceInformationCard({
   denominationRule,
   denominations,
 }: UnitCardProps & API.StmDetailResponse) {
+  const { initialState } = useModel('@@initialState');
+
   return (
     <Card
       title={<FormattedMessage id="machine-drawer.device-information" />}
       extra={
-        <Button type="link" icon={<EditOutlined />} onClick={onExtraClick}>
+        <Button
+          disabled={initialState?.currentRoles?.update_machine !== true}
+          type="link"
+          icon={<EditOutlined />}
+          onClick={onExtraClick}
+        >
           <span>
             <FormattedMessage id="edit" />
           </span>

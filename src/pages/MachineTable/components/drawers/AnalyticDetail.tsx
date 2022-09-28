@@ -19,7 +19,7 @@ import styles from './analyticDetail.less';
 import TransactionTable from '../tables/TransactionTable';
 import type { ColumnsType } from 'antd/lib/table';
 import { openNotification } from '@/utils';
-import { useRequest } from 'umi';
+import { useModel, useRequest } from 'umi';
 import { blue, green } from '@ant-design/colors';
 import api from '@/services/STM-APIs';
 import type { ActionType } from '@ant-design/pro-components';
@@ -177,6 +177,7 @@ export default function AnaylyticDetail({
   useEffect(() => {
     if (!open) setDropdownOpen(open);
   }, [open]);
+  const { initialState } = useModel('@@initialState');
 
   return (
     <>
@@ -241,6 +242,7 @@ export default function AnaylyticDetail({
                     onClick={() => {
                       handleUpdateModalVisible(true);
                     }}
+                    disabled={initialState?.currentRoles?.update_machine !== true}
                   >
                     Chỉnh sửa
                   </Button>

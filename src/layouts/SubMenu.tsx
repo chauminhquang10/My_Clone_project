@@ -21,6 +21,7 @@ interface SubMenuProps extends BaseMenu {
   onClick?: (path: string) => () => void;
   currentRoute: string | undefined;
   setCurrentRoute: Dispatch<SetStateAction<string>>;
+  disabled?: boolean;
 }
 
 export default function SubMenu({
@@ -34,12 +35,15 @@ export default function SubMenu({
   showSubNav,
   currentRoute,
   setCurrentRoute,
+  disabled,
 }: SubMenuProps) {
   const showSubnav = useMemo(() => showSubNav?.includes(path), [showSubNav, path]);
   const handleNavigate = useCallback(() => {
-    history.push(path);
-    setCurrentRoute(path);
-  }, [setCurrentRoute, path]);
+    if (!disabled) {
+      history.push(path);
+      setCurrentRoute(path);
+    }
+  }, [setCurrentRoute, path, disabled]);
 
   const handleClick = useMemo(
     () => (!children ? handleNavigate : onClick?.(path)),
@@ -59,6 +63,7 @@ export default function SubMenu({
           [styles.collapsed]: collapsed,
           [styles.single]: !children && !isChildren,
           [styles.current]: currentRoute === path,
+          [styles.disabled]: disabled,
         })}
         onClick={handleClick}
       >
@@ -95,6 +100,7 @@ export default function SubMenu({
               key={genKey()}
               currentRoute={currentRoute}
               setCurrentRoute={setCurrentRoute}
+              disabled={disabled}
               isChildren
             />
           ))}

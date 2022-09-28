@@ -4,7 +4,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 // import { message } from 'antd';
 import AddNew from '@/components/TableProperties/AddNew';
 import { useRef, useState } from 'react';
-import { FormattedMessage, useIntl, useRequest } from 'umi';
+import { FormattedMessage, useIntl, useModel, useRequest } from 'umi';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
@@ -61,6 +61,7 @@ const TableCustom = () => {
     jump_to: 'Trang',
     page: '',
   };
+  const { initialState } = useModel('@@initialState');
 
   return (
     <PageContainer
@@ -80,7 +81,7 @@ const TableCustom = () => {
         search={false}
         toolBarRender={() => [
           <AddNew
-            enableCreateNew={true}
+            enableCreateNew={initialState?.currentRoles?.create_machine !== true}
             key="primary"
             onClick={() => {
               handleModalVisible(true);

@@ -5,7 +5,7 @@ import { menuData } from './data';
 import cx from 'classnames';
 import styles from './layouts.less';
 import SubMenu from './SubMenu';
-import { useLocation } from 'umi';
+import { useLocation, useModel } from 'umi';
 
 interface StmMenuProps {
   collapsed: boolean;
@@ -26,6 +26,7 @@ export default function StmMenu({ collapsed }: StmMenuProps) {
     },
     [],
   );
+  const { initialState } = useModel('@@initialState');
 
   return (
     <Layout.Sider collapsed={collapsed} width={240} id="sider">
@@ -43,6 +44,7 @@ export default function StmMenu({ collapsed }: StmMenuProps) {
             onClick={handleClick}
             currentRoute={currentRoute}
             setCurrentRoute={setCurrentRoute}
+            disabled={!initialState?.currentUser?.admin && menu.path.includes('users')}
             key={genKey()}
           />
         ))}
