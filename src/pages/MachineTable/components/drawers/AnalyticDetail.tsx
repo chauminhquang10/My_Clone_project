@@ -1,6 +1,6 @@
 import { EditOutlined, FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import {
-  Badge,
+  // Badge,
   Button,
   Card,
   Col,
@@ -20,15 +20,14 @@ import TransactionTable from '../tables/TransactionTable';
 import type { ColumnsType } from 'antd/lib/table';
 import { openNotification } from '@/utils';
 import { useRequest } from 'umi';
-import { blue, green } from '@ant-design/colors';
+// import { blue, green } from '@ant-design/colors';
 import api from '@/services/STM-APIs';
-import type { ActionType } from '@ant-design/pro-components';
 import MachineStatusTag from '@/components/Common/MachineStatusTag';
 
 interface AnaylyticDetailProps {
   open: boolean;
   handleClose: () => void;
-  actionRef: React.MutableRefObject<ActionType | undefined>;
+  runGetAllActivity: () => void;
 }
 
 interface AnaylyticDetailProps {
@@ -59,45 +58,45 @@ const columns: ColumnsType<API.UserResponse> = [
 ];
 
 //------------ information activity -------------------------
-const informationColumns: ColumnsType<API.TransactionResponse> = [
-  {
-    title: (
-      <Typography.Text>
-        Loại hoạt động <Badge count={99} style={{ fontSize: 12, backgroundColor: blue[6] }} />
-      </Typography.Text>
-    ),
-    dataIndex: 'device',
-    width: '33%',
-  },
-  {
-    title: (
-      <Typography.Text>
-        Thành công
-        <span style={{ background: 'rgba(255, 255, 255, 1e-05)' }}>
-          <Badge count={99} style={{ fontSize: 12, backgroundColor: green[6] }} />
-        </span>
-      </Typography.Text>
-    ),
-    className: 'column-money',
-    dataIndex: 'status',
-    width: '33%',
-  },
-  {
-    title: (
-      <Typography.Text>
-        Thất bại <Badge count={99} style={{ fontSize: 12 }} />
-      </Typography.Text>
-    ),
-    dataIndex: 'reserved',
-    width: '33%',
-  },
-];
+// const informationColumns: ColumnsType<API.TransactionResponse> = [
+//   {
+//     title: (
+//       <Typography.Text>
+//         Loại hoạt động <Badge count={99} style={{ fontSize: 12, backgroundColor: blue[6] }} />
+//       </Typography.Text>
+//     ),
+//     dataIndex: 'device',
+//     width: '33%',
+//   },
+//   {
+//     title: (
+//       <Typography.Text>
+//         Thành công
+//         <span style={{ background: 'rgba(255, 255, 255, 1e-05)' }}>
+//           <Badge count={99} style={{ fontSize: 12, backgroundColor: green[6] }} />
+//         </span>
+//       </Typography.Text>
+//     ),
+//     className: 'column-money',
+//     dataIndex: 'status',
+//     width: '33%',
+//   },
+//   {
+//     title: (
+//       <Typography.Text>
+//         Thất bại <Badge count={99} style={{ fontSize: 12 }} />
+//       </Typography.Text>
+//     ),
+//     dataIndex: 'reserved',
+//     width: '33%',
+//   },
+// ];
 
 export default function AnaylyticDetail({
   handleClose,
   open,
   currentEntity,
-  actionRef,
+  runGetAllActivity,
 }: AnaylyticDetailProps) {
   //-------------------- Get transaction details --------------------------------
   //-------------------- Detail Transaction --------------------------------
@@ -188,7 +187,7 @@ export default function AnaylyticDetail({
         visible={updateModalVisible}
         {...detailMachine}
         handleClose={handleClose}
-        actionRef={actionRef}
+        getAllMachine={runGetAllActivity}
       />
       <TransactionTable
         width="1400px"
@@ -312,7 +311,7 @@ export default function AnaylyticDetail({
                   </Col>
                 </Row>
               </Card>
-              <Card
+              {/* <Card
                 title="Thông tin hoạt động"
                 size="small"
                 style={{ borderRadius: 12 }}
@@ -335,7 +334,7 @@ export default function AnaylyticDetail({
                   pagination={false}
                   bordered
                 />
-              </Card>
+              </Card> */}
             </Form>
           </div>
         </Drawer>

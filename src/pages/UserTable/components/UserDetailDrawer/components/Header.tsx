@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { blockUser, unBlockUser } from '@/services/STM-APIs/UserController';
+import { formatStaffName } from '@/utils';
 import {
   CloseOutlined,
   EditOutlined,
@@ -8,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Col, message, Modal, Row, Tooltip } from 'antd';
 import { useState } from 'react';
-import { history } from 'umi';
+import { FormattedMessage, history, useIntl } from 'umi';
 import UpdateUserForm from '../../forms/UpdateUserForm';
 import styles from '../UserDetailDrawer.less';
 
@@ -86,7 +88,9 @@ const Header: React.FC<HeaderProps> = ({
       <Row>
         <Col span={15}>
           <h4 className={styles.drawerHeaderTitle}>
-            {isPersonalProfile ? 'Chi tiết cá nhân' : 'Chi tiết người dùng'}
+            {isPersonalProfile
+              ? useIntl().formatMessage({ id: 'userTable.detail.header.title.personal' })
+              : useIntl().formatMessage({ id: 'userTable.detail.header.title.user' })}
           </h4>
         </Col>
         <Col span={9}>
@@ -98,7 +102,8 @@ const Header: React.FC<HeaderProps> = ({
                   onClick={handleChangePasswordClick}
                   disabled={userInfo.status !== 'ACTIVE'}
                 >
-                  Thay đổi mật khẩu <LockOutlined />
+                  {useIntl().formatMessage({ id: 'userTable.detail.header.button.changePassword' })}{' '}
+                  <LockOutlined />
                 </Button>
               </Col>
             ) : (
@@ -111,13 +116,19 @@ const Header: React.FC<HeaderProps> = ({
                       setOpenUpdateUserForm(true);
                     }}
                   >
-                    <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
+                    <span className={styles.btnGroupTitle}>
+                      <FormattedMessage id="buttonGroup_edit" />
+                    </span>
                   </Button>
                 </Col>
                 <Col>
                   <Tooltip
                     placement="left"
-                    title={userInfo.status === 'INACTIVE' ? 'Unblock user' : 'Block user'}
+                    title={
+                      userInfo.status === 'INACTIVE'
+                        ? useIntl().formatMessage({ id: 'userTable.detail.header.tooltip.unBlock' })
+                        : useIntl().formatMessage({ id: 'userTable.detail.header.tooltip.block' })
+                    }
                   >
                     <Button
                       className={styles.btnItem}
@@ -156,7 +167,9 @@ const Header: React.FC<HeaderProps> = ({
             </Col>
             <Col span={22}>
               <Row align="middle" justify="space-between">
-                <h3 className={styles.lockModalTitle}>Tạm khoá người dùng</h3>
+                <h3 className={styles.lockModalTitle}>
+                  {useIntl().formatMessage({ id: 'userTable.detail.header.lockModal.title' })}
+                </h3>
                 <CloseOutlined
                   style={{
                     fontSize: '16px',
@@ -168,11 +181,11 @@ const Header: React.FC<HeaderProps> = ({
               </Row>
               <Row>
                 <span className={styles.lockModalDesc}>
-                  Bạn có chắc chắn muốn tạm khóa{' '}
-                  <strong>{`${userInfo.staffId} - ${userInfo.name}`}</strong>?
+                  {useIntl().formatMessage({ id: 'userTable.detail.header.lockModal.desc1' })}{' '}
+                  <strong>{formatStaffName(userInfo.staffId, userInfo.name)}</strong>?
                 </span>
                 <span className={styles.lockModalDesc}>
-                  Người dùng này sẽ không thể truy cập vào hệ thống.
+                  {useIntl().formatMessage({ id: 'userTable.detail.header.lockModal.desc2' })}
                 </span>
               </Row>
             </Col>
@@ -183,10 +196,10 @@ const Header: React.FC<HeaderProps> = ({
               size="large"
               onClick={() => setOpenBlockUserConfirm(false)}
             >
-              Huỷ bỏ
+              <FormattedMessage id="form_buttonGroup_cancelButton_title" />
             </Button>
             <Button className={styles.submitLockModalButton} size="large" onClick={handleBlockUser}>
-              Xác nhận
+              <FormattedMessage id="form_buttonGroup_confirmButton_title" />
             </Button>
           </Row>
         </Col>

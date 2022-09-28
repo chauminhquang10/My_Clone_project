@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-no-undef */
 import { Col, Form, Input, Select } from 'antd';
+import { useIntl } from 'umi';
 
 export function getAddressByManagementUnitId(
   id: API.ManagementUnitResponse['id'],
@@ -30,8 +31,18 @@ const ManagementUnitField: React.FC<ManagementUnitFieldProps> = ({ data, handleS
   return (
     <>
       <Col span={12}>
-        <Form.Item name="managementUnitId" label="Mã - Tên đơn vị">
-          <Select placeholder="Chọn đơn vị" onChange={handleSelectChange}>
+        <Form.Item
+          name="managementUnitId"
+          label={useIntl().formatMessage({
+            id: 'detailDrawer_infoCard_unitCodeName',
+          })}
+        >
+          <Select
+            placeholder={useIntl().formatMessage({
+              id: 'userTable.form.placeholder.managementUnit',
+            })}
+            onChange={handleSelectChange}
+          >
             {data?.map((unit) => {
               return (
                 <Option key={unit.id} value={unit.id}>
@@ -43,8 +54,18 @@ const ManagementUnitField: React.FC<ManagementUnitFieldProps> = ({ data, handleS
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item name="unitAddress" label="Địa chỉ đơn vị">
-          <Input disabled placeholder="Chọn địa chỉ" />
+        <Form.Item
+          name="unitAddress"
+          label={useIntl().formatMessage({
+            id: 'detailDrawer_infoCard_unitAddress',
+          })}
+        >
+          <Input
+            disabled
+            placeholder={useIntl().formatMessage({
+              id: 'userTable.form.placeholder.managementUnit',
+            })}
+          />
         </Form.Item>
       </Col>
     </>

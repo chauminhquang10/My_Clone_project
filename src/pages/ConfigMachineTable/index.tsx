@@ -1,4 +1,4 @@
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
 import { useModel, useRequest } from 'umi';
@@ -33,7 +33,6 @@ const TableCustom = () => {
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.StmModelResponse>();
 
   const [paramFilter, setParamFilter] = useState<API.getListModelsParams | undefined>();
@@ -133,7 +132,6 @@ const TableCustom = () => {
     >
       <ProTable
         headerTitle={<TitleTable>Cấu hình dòng máy</TitleTable>}
-        actionRef={actionRef}
         rowKey="key"
         search={false}
         toolBarRender={() => [
@@ -167,6 +165,7 @@ const TableCustom = () => {
             setCurrentRow(rowData);
           },
         })}
+        scroll={{ x: 'max-content' }}
       />
 
       {createModalVisible && (

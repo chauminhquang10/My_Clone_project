@@ -9,7 +9,7 @@ import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { useRequest } from 'umi';
+import { FormattedMessage, useIntl, useRequest } from 'umi';
 import { UserDetailDrawer } from './components';
 import { NewUserForm } from './components/forms';
 import Column from './components/tables/Column';
@@ -115,7 +115,11 @@ const UserManagementTable: React.FC = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Danh sách người dùng</TitleTable>}
+        headerTitle={
+          <TitleTable>
+            <FormattedMessage id="userTable.header.title" />
+          </TitleTable>
+        }
         rowKey="key"
         search={false}
         toolBarRender={() => [
@@ -130,7 +134,7 @@ const UserManagementTable: React.FC = () => {
         dataSource={listUser?.items}
         columns={columns}
         options={false}
-        scroll={{ y: 'max-content' }}
+        scroll={{ x: 'max-content' }}
         pagination={{
           total: totalSize,
           onChange(current) {
@@ -149,7 +153,7 @@ const UserManagementTable: React.FC = () => {
 
       {/* Create New User Form */}
       <NewUserForm
-        title="Tạo người dùng mới"
+        title={useIntl().formatMessage({ id: 'userTable.form.title.newUser' })}
         width="934px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
