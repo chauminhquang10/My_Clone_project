@@ -1,4 +1,4 @@
-import logoKSBank from '@/assets/images/ksbank-logo.svg';
+import logoKSBank from '@/assets/images/utmc-logo.png';
 import { requestResetPassword } from '@/services/STM-APIs/AuthController';
 import { openNotification, validateEmail } from '@/utils';
 import { MailOutlined } from '@ant-design/icons';
@@ -53,7 +53,7 @@ const ForgotPassword: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.logo}>
-          <img src={logoKSBank} alt="logo-ksbank" />
+          <img src={logoKSBank} width="70%" alt="logo-ksbank" style={{ objectFit: 'cover' }} />
         </div>
         {isForgotPassword ? (
           <div className={styles['form-wrapper']}>

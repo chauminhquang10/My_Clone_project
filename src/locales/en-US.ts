@@ -18,6 +18,7 @@ import configMachineDetail from './en-US/ConfigMachineTable/forms/detailDrawer';
 import historyListTable from './en-US/HistoryList/tables';
 import historyList from './en-US/HistoryList';
 import stmError from './en-US/stmError';
+import MachineTable from './en-US/MachineTable';
 
 export default {
   navBar_language: 'EN',
@@ -43,4 +44,5 @@ export default {
   ...historyListTable,
   ...historyList,
   ...stmError,
+  ...MachineTable,
 };

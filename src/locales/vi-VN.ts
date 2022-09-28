@@ -18,6 +18,7 @@ import configMachineDetail from './vi-VN/ConfigMachineTable/forms/detailDrawer';
 import historyListTable from './vi-VN/HistoryList/tables';
 import historyList from './vi-VN/HistoryList';
 import stmError from './vi-VN/stmError';
+import MachineTable from './vi-VN/MachineTable';
 
 export default {
   navBar_language: 'VI',
@@ -43,4 +44,5 @@ export default {
   ...historyListTable,
   ...historyList,
   ...stmError,
+  ...MachineTable,
 };

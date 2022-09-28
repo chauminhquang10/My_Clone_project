@@ -1,6 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import React from 'react';
+import { FormattedMessage } from 'umi';
 import style from './style.less';
 
 type AddNewProps = {
@@ -21,7 +22,7 @@ function AddNew({ onClick, enableCreateNew, text, icon }: AddNewProps) {
         onClick={onClick}
         disabled={!enableCreateNew}
       >
-        <span className={style['text-add']}>{text ? text : 'Tạo mới'}</span>
+        <span className={style['text-add']}>{text ? text : <FormattedMessage id="create" />}</span>
         {icon ? icon : <PlusOutlined className={style.icon} />}
       </Button>
     </Tooltip>

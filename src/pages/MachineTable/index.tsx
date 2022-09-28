@@ -1,53 +1,53 @@
 // import { addRule } from '@/services/ant-design-pro/api';
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 // import { message } from 'antd';
-import { useRef, useState } from 'react';
-import { useIntl, useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
+import { useRef, useState } from 'react';
+import { FormattedMessage, useIntl, useRequest } from 'umi';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import style from '@/components/TableProperties/style.less';
-import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
+import api from '@/services/STM-APIs';
+import { Typography } from 'antd';
 import AddNewMachine from './components/forms/AddNewMachine';
 import MachineDrawer from './MachineDrawer';
-import api from '@/services/STM-APIs';
 
 const TableCustom = () => {
   const intl = useIntl();
   //------------ pagination --------------------
-  const pageSizeRef = useRef<number>(20);
+  const pageSizeRef = useRef<number>(2);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
 
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.StmInfoResponse>();
 
   const [paramFilter, setParamFilter] = useState<API.getListMachinesParams | undefined>();
 
-  const { data: listMachine } = useRequest<API.ResponseBasePageResponseStmInfoResponse>(
-    () => {
-      const params: API.getListMachinesParams = {
-        pageNumber: page - 1,
-        pageSize: pageSizeRef.current,
-        location: paramFilter?.location,
-        provinceId: paramFilter?.provinceId,
-        machineType: paramFilter?.machineType,
-        status: paramFilter?.status,
-      };
-      return api.STMController.getListMachines(params);
-    },
-    {
-      onSuccess: (res) => {
-        setTotalSize(res?.totalSize as number);
+  const { data: listMachine, run: getAllMachine } =
+    useRequest<API.ResponseBasePageResponseStmInfoResponse>(
+      () => {
+        const params: API.getListMachinesParams = {
+          pageNumber: page - 1,
+          pageSize: pageSizeRef.current,
+          location: paramFilter?.location,
+          provinceId: paramFilter?.provinceId,
+          machineType: paramFilter?.machineType,
+          status: paramFilter?.status,
+        };
+        return api.STMController.getListMachines(params);
       },
-      refreshDeps: [paramFilter],
-    },
-  );
+      {
+        onSuccess: (res) => {
+          setTotalSize(res?.totalSize as number);
+        },
+        refreshDeps: [paramFilter, page],
+      },
+    );
 
   const columns: ProColumns<API.StmInfoResponse>[] = Column({
     setCurrentRow,
@@ -72,8 +72,11 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Danh sách máy</TitleTable>}
-        actionRef={actionRef}
+        headerTitle={
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            <FormattedMessage id="machine-table.title" />
+          </Typography.Title>
+        }
         rowKey="key"
         search={false}
         toolBarRender={() => [
@@ -112,9 +115,15 @@ const TableCustom = () => {
         open={showDetail}
         handleClose={() => setShowDetail(false)}
         currentEntity={currentRow}
-        actionRef={actionRef}
+        getAllMachine={() => {
+          getAllMachine();
+        }}
       />
-      <AddNewMachine handleModalVisible={handleModalVisible} visible={createModalVisible} />
+      <AddNewMachine
+        handleModalVisible={handleModalVisible}
+        visible={createModalVisible}
+        getAllMachine={() => getAllMachine()}
+      />
     </PageContainer>
   );
 };

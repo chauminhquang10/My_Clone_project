@@ -1,6 +1,5 @@
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
-import type { ActionType } from '@ant-design/pro-components';
 import { ModalForm } from '@ant-design/pro-components';
 import { Form } from 'antd';
 import { useCallback, useMemo } from 'react';
@@ -12,7 +11,7 @@ interface DeclareUnitFormProps extends API.StmDetailResponse {
   visible: boolean;
   onVisibleChange: (value: boolean) => void;
   onCancel: () => void;
-  actionRef: React.MutableRefObject<ActionType | undefined>;
+  getAllMachine: () => void;
   handleClose: () => void;
 }
 
@@ -20,8 +19,8 @@ export default function DeclareUnitForm({
   visible,
   onVisibleChange,
   onCancel,
-  actionRef,
   handleClose,
+  getAllMachine,
   ...machineDetail
 }: DeclareUnitFormProps) {
   const [form] = Form.useForm();
@@ -77,7 +76,7 @@ export default function DeclareUnitForm({
         }
 
         openNotification('success', 'Cập nhật thông tin thiết bị thành công');
-        actionRef.current?.reloadAndRest?.();
+        getAllMachine();
 
         onVisibleChange(false);
         handleClose();
@@ -88,7 +87,7 @@ export default function DeclareUnitForm({
 
       return false;
     },
-    [machineDetail, handleClose, actionRef, onVisibleChange, intl],
+    [machineDetail, handleClose, onVisibleChange, intl],
   );
 
   const handleReset = useCallback(() => {

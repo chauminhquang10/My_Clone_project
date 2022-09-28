@@ -16,29 +16,33 @@ import ExportFile from '@/components/TableProperties/ExportFile';
 
 const TableCustom = () => {
   //------------ pagination --------------------
-  const pageSizeRef = useRef<number>(10);
+  const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
 
-  const { run: getAllTransaction } = useRequest(
-    (params: API.getTransactionConfigurationParams) =>
-      api.TransactionController.getTransactionConfiguration(params),
+  const [paramFilter, setParamFilter] = useState<API.getListMachinesParams | undefined>();
+  const { data: listActivity } = useRequest(
+    () => {
+      const params: API.getTransactionConfigurationParams = {
+        ...paramFilter,
+        pageNumber: page - 1,
+        pageSize: pageSizeRef.current,
+      };
+      return api.TransactionController.getTransactionConfiguration(params);
+    },
     {
-      manual: true,
       onSuccess: (res) => {
         if (!res) {
           openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
         }
-        // setListTransaction(res?.items);
+        setTotalSize(res?.totalSize as number);
       },
       onError: (error) => {
         console.log(error);
       },
+      refreshDeps: [page, paramFilter],
     },
   );
-
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  console.log(createModalVisible);
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
@@ -48,9 +52,9 @@ const TableCustom = () => {
   const columns: ProColumns<API.TransactionConfigurationResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
+    paramFilter,
+    setParamFilter,
   });
-
-  // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
@@ -72,30 +76,10 @@ const TableCustom = () => {
         actionRef={actionRef}
         rowKey="key"
         search={false}
-        toolBarRender={() => [
-          <ExportFile
-            key="primary"
-            onClick={() => {
-              handleModalVisible(true);
-            }}
-          />,
-        ]}
-        request={async () => {
-          const pageRequestParams = {
-            pageNumber: page - 1,
-            pageSize: pageSizeRef.current,
-            sortBy: '',
-          };
-          const res = await getAllTransaction({
-            ...pageRequestParams,
-          });
-          setTotalSize(res?.totalSize as number);
-          return {
-            data: res?.items || [],
-          };
-        }}
+        toolBarRender={() => [<ExportFile key="primary" onClick={() => {}} />]}
         columns={columns}
         options={false}
+        dataSource={listActivity?.items}
         pagination={{
           onChange(current) {
             setPage(current);
