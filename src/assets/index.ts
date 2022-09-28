@@ -21,7 +21,7 @@ import Logo from './logo/Logo.svg';
 import CloseIcon from './images/svg/icon/close-icon.svg';
 import MapIcon from './images/svg/icon/Map.svg';
 import ExportIcon from './images/svg/icon/Export.svg';
-
+import DashboardIcon from './icons/dashboard-icon.svg';
 export {
   Logo,
   CameraLogIcon,
@@ -46,4 +46,5 @@ export {
   CloseIcon,
   MapIcon,
   ExportIcon,
+  DashboardIcon,
 };

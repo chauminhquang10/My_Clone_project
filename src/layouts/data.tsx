@@ -16,11 +16,13 @@ import {
   DisplayManagementIcon,
   ScreenDisplayIcon,
   DisplayManagementStorageIcon,
+  DashboardIcon,
 } from '@/assets';
 import type { Key, ReactNode } from 'react';
 import StmIcon from './StmIcons';
 
 export const icons = {
+  dashboard: DashboardIcon,
   'machine-management': MachineManagementIcon,
   'machine-list': MachineListIcon,
   'machine-stats': MachineAnalyticsIcon,
@@ -49,7 +51,7 @@ export interface MenuData {
 
 export const menuData = [
   {
-    icon: <StmIcon src="machine-management" />,
+    icon: <StmIcon src="dashboard" />,
     id: 'dashboard',
     path: '/dashboard',
   },
