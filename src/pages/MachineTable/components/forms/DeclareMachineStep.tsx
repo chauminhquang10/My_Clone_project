@@ -180,7 +180,7 @@ export default function DeclareMachineStep({
             rules={[{ enum: ['UNKNOWN', 'STM', 'CDM', 'ATM'], max: 6, type: 'string' }]}
           >
             <Select
-              defaultValue={machineDetail.machineType ?? MachineType.STM}
+              defaultValue={mType}
               onSelect={handleSelectMachineType}
               placeholder={'Loại máy'}
             >
