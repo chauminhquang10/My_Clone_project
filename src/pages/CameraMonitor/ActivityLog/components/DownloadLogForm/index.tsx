@@ -3,6 +3,7 @@ import { getLogs } from '@/services/STM-APIs/LogController';
 import { openNotification } from '@/utils';
 import { ModalForm } from '@ant-design/pro-components';
 import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
+import { useIntl } from 'umi';
 import styles from './DownloadLogForm.less';
 
 type CreateFormProps = {
@@ -87,17 +88,17 @@ const DownloadLogForm: React.FC<CreateFormProps> = ({
       </Row>
       <Row gutter={[24, 24]} style={{ marginTop: '24px' }}>
         <Col span={12}>
-          <Form.Item name="name" label="Tên máy">
+          <Form.Item name="name" label={useIntl().formatMessage({ id: 'machineName' })}>
             <Input placeholder={'Nhập tên máy'} disabled />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="terminalId" label="ID máy">
+          <Form.Item name="terminalId" label={useIntl().formatMessage({ id: 'terminalId' })}>
             <Input placeholder={'Nhập ID máy'} disabled />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="ipAddress" label="IP máy">
+          <Form.Item name="ipAddress" label={useIntl().formatMessage({ id: 'ipAddress' })}>
             <Input placeholder={'Nhập địa chỉ IP'} disabled />
           </Form.Item>
         </Col>
@@ -118,7 +119,7 @@ const DownloadLogForm: React.FC<CreateFormProps> = ({
       </Row>
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
         <Button className={styles.submitButton} size="large" htmlType="submit">
-          Tải xuống
+          Download
         </Button>
       </Row>
     </ModalForm>
