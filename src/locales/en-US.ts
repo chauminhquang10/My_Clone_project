@@ -15,6 +15,7 @@ import roleGroupDetail from './en-US/GroupAuthorizeTable/forms/detailDrawer';
 import configMachineTable from './en-US/ConfigMachineTable/table';
 import configMachineForm from './en-US/ConfigMachineTable/forms/form';
 import configMachineDetail from './en-US/ConfigMachineTable/forms/detailDrawer';
+import stmError from './en-US/stmError';
 
 export default {
   navBar_language: 'EN',
@@ -37,4 +38,5 @@ export default {
   ...configMachineTable,
   ...configMachineForm,
   ...configMachineDetail,
+  ...stmError,
 };

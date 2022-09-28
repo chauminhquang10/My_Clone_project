@@ -22,6 +22,7 @@
 }
 
 .child {
+  margin-top: 8px;
   padding: 8px !important;
   padding-left: 40px !important;
 
@@ -33,6 +34,15 @@
 
 .child,
 .single {
+  &.current {
+    background-color: #6875ca;
+    border-radius: 0 99px 99px 0;
+
+    &:hover {
+      background-color: #6875ca;
+    }
+  }
+
   &:hover {
     background-color: #303b88;
     border-radius: 0 99px 99px 0;
@@ -56,10 +66,10 @@
   background-color: transparent;
   transition: all 0.2s;
 
-  .current {
-    background-color: #6875ca;
-    border-radius: 0 99px 99px 0;
-  }
+  // .current {
+  //   background-color: #6875ca;
+  //   border-radius: 0 99px 99px 0;
+  // }
 
   &.collapsed {
     width: 80px;
@@ -143,6 +153,7 @@
   :global {
     .ant-layout-content {
       margin: 0;
+      overflow: hidden;
     }
 
     .ant-tree-treenode:hover {
@@ -189,7 +200,12 @@
     .ant-layout-sider-children {
       background: #1d2452;
     }
+  }
+}
 
-    // .ant-tree-list-holder;
+:global {
+  .ant-tooltip-inner {
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 4px;
   }
 }

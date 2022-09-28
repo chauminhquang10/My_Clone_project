@@ -10,4 +10,7 @@ export default {
 
   tableColumn_indexTitle: 'Index',
   tableColumn_createdDate: 'Created Date',
+  south: 'South',
+  middle: 'Middle',
+  north: 'North',
 };

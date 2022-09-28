@@ -53,7 +53,11 @@ export default function DeclareMachineStep({
   denominationRule,
   denominations: denominationsDetail,
 }: DeclareMachineStepProps) {
-  const { data: models } = useRequest(getModels(MachineType.STM));
+  const [mType, setMType] = useState<MachineType>((machineType as MachineType) ?? MachineType.STM);
+  const { data: models } = useRequest(getModels(mType), {
+    cacheKey: `models-${mType}`,
+    refreshDeps: [mType],
+  });
   const { data: denominationsData } = useRequest(getDenominations, {
     cacheKey: 'denominations',
     ready: !denominationsDetail,
@@ -66,7 +70,6 @@ export default function DeclareMachineStep({
   const [ipVal, setIpVal] = useState<string>('');
   const [macVal, setMacVal] = useState<string>('');
   const [serialVal, setSerialVal] = useState<string>('');
-  const [disabledModel, setDisabledModel] = useState(true);
   const { run: validateTerminalId, data: terminalErr } = useRequest(
     validateMachine({ key: 'terminal', value: terminalIdValue || '' }),
     {
@@ -119,7 +122,13 @@ export default function DeclareMachineStep({
     [],
   );
 
-  const handleSelectMachineType = useCallback(() => setDisabledModel(false), []);
+  const handleSelectMachineType = useCallback(
+    (type: string) => {
+      form.setFieldValue('modelId', undefined);
+      setMType(type as MachineType);
+    },
+    [form],
+  );
 
   const OkButton = useCallback(() => {
     const fields = form.getFieldsValue();
@@ -148,7 +157,6 @@ export default function DeclareMachineStep({
       );
     }
   }, [denominations, form]);
-  console.log(disabledModel);
 
   return (
     <>
@@ -172,7 +180,7 @@ export default function DeclareMachineStep({
             rules={[{ enum: ['UNKNOWN', 'STM', 'CDM', 'ATM'], max: 6, type: 'string' }]}
           >
             <Select
-              defaultValue={machineDetail.machineType}
+              defaultValue={machineDetail.machineType ?? MachineType.STM}
               onSelect={handleSelectMachineType}
               placeholder={'Loại máy'}
             >
@@ -186,11 +194,7 @@ export default function DeclareMachineStep({
         </Col>
         <Col span={12}>
           <Form.Item name="modelId" label="Dòng máy" rules={[{ type: 'number' }]}>
-            <Select
-              defaultValue={machineDetail.model?.id}
-              placeholder={'Dòng máy'}
-              disabled={disabledModel}
-            >
+            <Select defaultValue={machineDetail.model?.id} placeholder={'Dòng máy'}>
               {models?.map((modelItem) => (
                 <Select.Option value={modelItem.id} key={modelItem.id}>
                   {modelItem.name}

@@ -10,4 +10,7 @@ export default {
 
   tableColumn_indexTitle: 'STT',
   tableColumn_createdDate: 'Ngày tạo',
+  south: 'Miền Nam',
+  middle: 'Miền Trung',
+  north: 'Miền Bắc',
 };
