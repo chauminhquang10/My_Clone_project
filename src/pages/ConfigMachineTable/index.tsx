@@ -1,6 +1,5 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-
 import { useRef, useState } from 'react';
 import { useModel, useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
@@ -8,7 +7,6 @@ import Column from './components/tables/Column';
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-// import { message } from 'antd';
 import { createModel, getListModels } from '@/services/STM-APIs/STMModelController';
 import ConfigModelDetailDrawer from './components/forms/ConfigModelDetailDrawer';
 import NewConfigModelForm from './components/forms/NewConfigModel';

@@ -16,8 +16,6 @@ import {
 import { message } from 'antd';
 
 const TableCustom = () => {
-  // const [resultResponse, setResultResponse] = useState<API.PageResponseManagementUnitResponse>();
-
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
@@ -48,14 +46,7 @@ const TableCustom = () => {
     useRequest<API.ResponseBasePageResponseManagementUnitResponse>(
       (params: API.getAllManagementUnitsParams) => getAllManagementUnits(params),
       {
-        onSuccess(data) {
-          console.log(data);
-          // setResultResponse(data);
-          // const dataNew = data as API.BaseResponseListLanguageSupport;
-          // if (dataNew?.success && dataNew.data) {
-          //   setListSupportLanguages(dataNew.data);
-          // }
-        },
+        onSuccess() {},
         onError(error) {
           console.log('error', error);
           // notification.error({

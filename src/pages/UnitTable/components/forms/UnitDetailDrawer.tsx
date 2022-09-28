@@ -29,6 +29,11 @@ import { useRequest } from 'umi';
 import styles from './UnitDetailDrawer.less';
 import UpdateUnitForm from './UpdateUnitForm';
 
+const INITIAL_VALIDATE_DELETE = {
+  enableDeleteBtn: true,
+  tooltipMsg: 'Xóa',
+};
+
 type ButtonType = {
   title: string;
   action: () => void;
@@ -156,8 +161,8 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
 
-  // kiểm tra có thể xóa hay không
-  const [canRemoveUnit, setCanRemoveUnit] = useState<boolean>(true);
+  // xử lí trạng thái nút xóa (disable, enable) kèm message khi hiện Tooltip
+  const [validateDeleteObj, setValidateDeleteObj] = useState(INITIAL_VALIDATE_DELETE);
 
   const { data: unitDetail } = useRequest<API.ResponseBaseManagementUnitDetailResponse>(
     () => {
@@ -166,7 +171,10 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
     {
       onSuccess(data) {
         if (data?.machines.length > 0 || data?.users.length > 0) {
-          setCanRemoveUnit(false);
+          setValidateDeleteObj({
+            enableDeleteBtn: false,
+            tooltipMsg: 'Chưa thể xoá. Người dùng hoặc máy chưa có đơn vị quản lý',
+          });
         }
       },
       refreshDeps: [currentUnit],
@@ -273,21 +281,19 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
                       <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
                     </Button>
                   </Col>
+
                   <Col>
-                    <Tooltip
-                      placement="left"
-                      title={
-                        canRemoveUnit
-                          ? 'Xóa'
-                          : 'Chưa thể xoá. Người dùng hoặc máy chưa có đơn vị quản lý'
-                      }
-                    >
+                    <Tooltip placement="left" title={validateDeleteObj.tooltipMsg}>
                       <Button
-                        className={styles.btnItem}
+                        disabled={!validateDeleteObj.enableDeleteBtn}
+                        className={`${styles.btnItem}  ${
+                          validateDeleteObj.enableDeleteBtn ? styles.btnDeleteItem : ''
+                        }`}
                         onClick={() => setOpenConfirmModal(true)}
-                        disabled={canRemoveUnit ? false : true}
                       >
-                        <DeleteOutlined />
+                        <DeleteOutlined
+                          style={validateDeleteObj.enableDeleteBtn ? { color: '#FF4D4F' } : {}}
+                        />
                       </Button>
                     </Tooltip>
                   </Col>
