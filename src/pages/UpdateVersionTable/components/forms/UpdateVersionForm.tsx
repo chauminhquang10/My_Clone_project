@@ -72,16 +72,19 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
         setDisableButton(false);
       }
     });
+    listField.forEach((item) => {
+      if (!form.getFieldsValue()[item]) {
+        console.log(item);
+        setDisableButton(true);
+      }
+    });
   };
 
   const handleUploadChange: UploadProps['onChange'] = (info) => {
     const newFileList = [...info.fileList];
     //  Read from response and show file link
     if (newFileList.length) {
-      if (
-        newFileList[0].type === 'application/x-zip-compressed' &&
-        Number(newFileList[0].size) < 1024 * 1024 * 5
-      ) {
+      if (newFileList[0].type?.includes('zip') && Number(newFileList[0].size) < 1024 * 1024 * 5) {
         checkSubmit();
         setFileList(newFileList);
       } else {

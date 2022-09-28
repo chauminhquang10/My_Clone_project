@@ -103,6 +103,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
     setDisableButton(false);
     listField.forEach((item) => {
       if (!form.getFieldsValue()[item]) {
+        console.log(item);
         setDisableButton(true);
       }
     });
@@ -110,16 +111,11 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
 
   const handleUploadChange: UploadProps['onChange'] = (info) => {
     const newFileList = [...info.fileList];
-
-    console.log(newFileList);
     //  Read from response and show file link
     if (newFileList.length) {
-      if (
-        newFileList[0].type === 'application/x-zip-compressed' &&
-        Number(newFileList[0].size) < 1024 * 1024 * 5
-      ) {
-        checkSubmit();
+      if (newFileList[0].type?.includes('zip') && Number(newFileList[0].size) < 1024 * 1024 * 5) {
         setFileList(newFileList);
+        checkSubmit();
       } else {
         form.setFieldValue('files', undefined);
         checkSubmit();
@@ -230,7 +226,10 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
               showCount={{
                 formatter: () => `${textAreaValue.length} / 250`,
               }}
-              onChange={onChangeTextArea}
+              onChange={(e) => {
+                onChangeTextArea(e);
+                checkSubmit();
+              }}
               placeholder="Nội dung (250 ký tự)"
               className={textAreaValue.length > 250 ? styles.myTextArea : ''}
             />
