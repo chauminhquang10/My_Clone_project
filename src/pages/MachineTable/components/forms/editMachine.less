@@ -120,3 +120,79 @@
   flex-direction: row;
   align-items: center;
 }
+
+.treeSelect {
+  width: 100%;
+}
+
+.overlay {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.searchInput {
+  margin-bottom: 8px;
+  padding: 5px 12px;
+  border-radius: 4px;
+}
+
+.searchIcon {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.userTree {
+  :global {
+    .ant-tree-list-holder-inner {
+      gap: 8px;
+    }
+
+    .ant-tree-node-content-wrapper.ant-tree-node-selected {
+      background-color: transparent;
+    }
+
+    .ant-tree-treenode-checkbox-checked.ant-tree-treenode-selected {
+      background-color: #e6f7ff;
+    }
+
+    .ant-tree-treenode {
+      flex-direction: row-reverse;
+      width: 100%;
+      padding: 4px 12px;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: #e6f7ff;
+      }
+    }
+
+    .ant-tree-switcher {
+      display: none;
+    }
+
+    .ant-tree-checkbox {
+      margin-left: auto;
+
+      .ant-tree-checkbox-inner {
+        background-color: transparent;
+        border-color: transparent;
+
+        &::after {
+          border-color: #1890ff;
+        }
+      }
+    }
+
+    .ant-tree-node-content-wrapper {
+      width: 100%;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+}

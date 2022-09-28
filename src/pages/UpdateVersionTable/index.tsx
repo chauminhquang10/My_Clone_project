@@ -15,11 +15,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import NewVersionForm from './components/forms/NewVersionForm';
 import { message } from 'antd';
 import VersionDetailDrawer from './components/forms/VersionDetailDrawer';
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
+
 // const handleAdd = async (fields: API.VersionResponse) => {
 //   const hide = message.loading('正在添加');
 //   try {
