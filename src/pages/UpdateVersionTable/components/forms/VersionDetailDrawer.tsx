@@ -57,7 +57,6 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
       }
       message.success('Chỉnh sửa version thành công');
       setShowDetail(false);
-      // actionRef.current?.reload();
       getAllUpdatedVersion();
       return true;
     } catch (error) {

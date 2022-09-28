@@ -40,6 +40,12 @@ const routes = [
         redirect: '/machine/list',
       },
       {
+        path: '/dashboard',
+        name: 'dashboard',
+        icon: 'dashboard',
+        component: './AdminDashboard/Analysis',
+      },
+      {
         path: '/machine',
         name: 'Quản trị máy',
         icon: 'machine-management',

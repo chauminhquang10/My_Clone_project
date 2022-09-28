@@ -126,6 +126,7 @@ const TableCustom = () => {
             setCurrentRow(rowData);
           },
         })}
+        scroll={{ x: 'max-content' }}
       />
 
       {createModalVisible && (

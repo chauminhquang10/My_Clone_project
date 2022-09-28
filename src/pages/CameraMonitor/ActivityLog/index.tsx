@@ -3,7 +3,7 @@ import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
 import api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
 import { useRequest } from 'umi';
@@ -43,7 +43,6 @@ const TableCustom = () => {
       refreshDeps: [paramFilter, page],
     },
   );
-  const actionRef = useRef<ActionType>();
   const columns: ProColumns<API.StmInfoResponse>[] = Column({
     setOpenLogForm,
     setCurrentRow,
@@ -69,7 +68,6 @@ const TableCustom = () => {
       >
         <ProTable
           headerTitle={<TitleTable>Danh sách máy</TitleTable>}
-          actionRef={actionRef}
           rowKey="key"
           search={false}
           columns={columns}
@@ -89,6 +87,7 @@ const TableCustom = () => {
             showQuickJumper: true,
           }}
           dataSource={listActivity?.items}
+          scroll={{ x: 'max-content' }}
         />
       </PageContainer>
 

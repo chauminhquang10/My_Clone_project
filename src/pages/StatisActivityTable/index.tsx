@@ -1,4 +1,4 @@
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import type { ProColumns } from '@ant-design/pro-components';
 // import { getAllUsers } from "@/services/STM-APIs/UserController";
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 // import { message } from 'antd';
@@ -21,7 +21,7 @@ const TableCustom = () => {
   const [page, setPage] = useState<number>(1);
 
   const [paramFilter, setParamFilter] = useState<API.getListMachinesParams | undefined>();
-  const { data: listActivity } = useRequest(
+  const { data: listActivity, run: runGetAllActivity } = useRequest(
     () => {
       const params: API.getTransactionConfigurationParams = {
         ...paramFilter,
@@ -46,7 +46,6 @@ const TableCustom = () => {
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.StmInfoResponse>();
 
   const columns: ProColumns<API.TransactionConfigurationResponse>[] = Column({
@@ -73,7 +72,6 @@ const TableCustom = () => {
     >
       <ProTable
         headerTitle={<TitleTable>Thống kê hoạt động</TitleTable>}
-        actionRef={actionRef}
         rowKey="key"
         search={false}
         toolBarRender={() => [<ExportFile key="primary" onClick={() => {}} />]}
@@ -95,13 +93,16 @@ const TableCustom = () => {
           hideOnSinglePage: true,
           showQuickJumper: true,
         }}
+        scroll={{ x: 'max-content' }}
       />
 
       <AnaylyticDetail
         handleClose={() => setShowDetail(false)}
         open={showDetail}
         currentEntity={currentRow}
-        actionRef={actionRef}
+        runGetAllActivity={() => {
+          runGetAllActivity();
+        }}
       />
     </PageContainer>
   );
