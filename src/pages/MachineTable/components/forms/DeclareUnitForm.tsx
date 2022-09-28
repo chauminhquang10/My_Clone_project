@@ -4,6 +4,7 @@ import type { ActionType } from '@ant-design/pro-components';
 import { ModalForm } from '@ant-design/pro-components';
 import { Form } from 'antd';
 import { useCallback, useMemo } from 'react';
+import { useIntl } from 'umi';
 import DeclareUnitStep from './DeclareUnitStep';
 import styles from './editMachine.less';
 
@@ -24,6 +25,7 @@ export default function DeclareUnitForm({
   ...machineDetail
 }: DeclareUnitFormProps) {
   const [form] = Form.useForm();
+  const intl = useIntl();
   const modalProps = useMemo(
     () => ({
       centered: true,
@@ -48,6 +50,7 @@ export default function DeclareUnitForm({
     };
     form.setFieldsValue(defaultUpdateValues);
   }
+
   const handleFinish = useCallback(
     async (values) => {
       try {
@@ -56,7 +59,6 @@ export default function DeclareUnitForm({
           {
             ...machineDetail,
             ...values,
-            machineName: machineDetail.name,
             provinceId: machineDetail.province?.id,
             districtId: machineDetail.district?.id,
             wardId: machineDetail.ward?.id,
@@ -65,14 +67,17 @@ export default function DeclareUnitForm({
           },
         );
 
-        if (res.code === 1) {
-          openNotification('error', 'Cập nhật thông tin thiết bị thất bại', res.message);
+        if (res.code !== 0) {
+          openNotification(
+            'error',
+            intl.formatMessage({ defaultMessage: res.message, id: `error.${res.code}` }),
+          );
+
+          return false;
         }
 
-        if (res.code === 0) {
-          openNotification('success', 'Cập nhật thông tin thiết bị thành công');
-          actionRef.current?.reloadAndRest?.();
-        }
+        openNotification('success', 'Cập nhật thông tin thiết bị thành công');
+        actionRef.current?.reloadAndRest?.();
 
         onVisibleChange(false);
         handleClose();

@@ -38,7 +38,6 @@ const NewUserForm: React.FC<CreateFormProps> = ({
 
   const [loadingImage, setLoadingImage] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
-  const [imageFile, setImageFile] = useState<File>();
   const [isAllowedSubmit, setIsAllowedSubmit] = useState<boolean>(false);
 
   // get avatar if in update form
@@ -47,14 +46,6 @@ const NewUserForm: React.FC<CreateFormProps> = ({
       setImageUrl(userInfo.avatar);
     }
   }, [userInfo, userInfo?.avatar]);
-
-  const getBase64 = (file: RcFile): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
 
   // check file type before uploading
   const handleBeforeUpload = (file: RcFile) => {
@@ -75,18 +66,22 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   };
 
   const handleChange: UploadProps['onChange'] = async (info: UploadChangeParam<UploadFile>) => {
-    if (info.file.status === 'uploading') {
-      setLoadingImage(true);
-      return;
-    }
-    if (info.file.status === 'done') {
-      if (!info.file.url && !info.file.preview) {
-        info.file.preview = await getBase64(info.file.originFileObj as RcFile);
+    // call api 3 times ???
+    if (!loadingImage) setLoadingImage(true);
+    if (!info.file.url && !info.file.preview) {
+      try {
+        const res = await uploadPublicFile(
+          { bucketName: 'user', type: 'avatar' },
+          {},
+          info.file.originFileObj as RcFile,
+        );
+
+        setImageUrl(res.data?.previewPath);
+      } catch (error) {
+        console.log('error: ', error);
       }
-      setLoadingImage(false);
-      setImageUrl(info.file.url || (info.file.preview as string));
-      setImageFile(info.file.originFileObj);
     }
+    if (loadingImage) setLoadingImage(false);
   };
 
   const onReset = () => {
@@ -117,15 +112,8 @@ const NewUserForm: React.FC<CreateFormProps> = ({
 
   const handleSubmit = async (values: API.CreateUserRequest) => {
     try {
-      let res;
-
-      if (imageFile)
-        res = await uploadPublicFile({ bucketName: 'user', type: 'avatar' }, {}, imageFile);
-
-      if (res?.code === 0) {
-        const success = await onFinish({ ...values, avatar: res.data?.previewPath });
-        return success;
-      }
+      const success = await onFinish({ ...values, avatar: imageUrl });
+      return success;
     } catch (error) {
       console.log('error: ', error);
     }
