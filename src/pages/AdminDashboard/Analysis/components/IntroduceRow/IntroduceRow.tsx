@@ -1,135 +1,92 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { TinyArea, TinyColumn, Progress } from '@ant-design/charts';
-import { Col, Row, Tooltip } from 'antd';
+import { Button, Card, Col, Row } from 'antd';
 
-import numeral from 'numeral';
-import { ChartCard, Field } from '../Charts';
-import type { DataItem } from '../../data';
-import Trend from '../Trend';
-import Yuan from '../../utils/Yuan';
-import styles from '../../style.less';
+import introduceRowStyles from './IntroduceRow.less';
 
-const topColResponsiveProps = {
-  xs: 24,
-  sm: 12,
-  md: 12,
-  lg: 12,
-  xl: 6,
-  style: { marginBottom: 24 },
-};
+import BulletProgress from './BulletProgress';
 
-const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: DataItem[] }) => (
-  <Row gutter={24}>
-    <Col {...topColResponsiveProps}>
-      <ChartCard
-        bordered={false}
-        title="总销售额"
-        action={
-          <Tooltip title="指标说明">
-            <InfoCircleOutlined />
-          </Tooltip>
-        }
-        loading={loading}
-        total={() => <Yuan>126560</Yuan>}
-        footer={<Field label="日销售额" value={`￥${numeral(12423).format('0,0')}`} />}
-        contentHeight={46}
-      >
-        <Trend flag="up" style={{ marginRight: 16 }}>
-          周同比
-          <span className={styles.trendText}>12%</span>
-        </Trend>
-        <Trend flag="down">
-          日同比
-          <span className={styles.trendText}>11%</span>
-        </Trend>
-      </ChartCard>
-    </Col>
+const IntroduceRow = () => (
+  <>
+    <Row gutter={24} align="top">
+      <Col span={16}>
+        <Row
+          className={introduceRowStyles.introduceRow_leftContainer}
+          align="middle"
+          style={{ gap: '24px' }}
+          wrap={false}
+        >
+          <Col span={4}>
+            <Card className={introduceRowStyles.firstCard} bordered={false}>
+              <h1 className={introduceRowStyles.firstCard_title}>Total number of machines</h1>
+              <span className={introduceRowStyles.firstCard_quantity}>8,846</span>
+            </Card>
+          </Col>
+          <Col span={20} style={{ flex: '1' }}>
+            <Row gutter={20}>
+              <Col span={8}>
+                <Card className={introduceRowStyles.othersCard}>
+                  <h1 className={introduceRowStyles.othersCard_title}>Total of STM</h1>
+                  <div className={introduceRowStyles.othersCard_quantityContainer}>
+                    <span className={introduceRowStyles.othersCard_quantity}>8,846</span>
+                    <Button className={introduceRowStyles.othersCard_versionInfo}>
+                      <span>Version: 1.0.0</span>
+                    </Button>
+                  </div>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card className={introduceRowStyles.othersCard}>
+                  <h1 className={introduceRowStyles.othersCard_title}>Total of ATM</h1>
+                  <div className={introduceRowStyles.othersCard_quantityContainer}>
+                    <span className={introduceRowStyles.othersCard_quantity}>8,846</span>
+                    <Button className={introduceRowStyles.othersCard_versionInfo}>
+                      <span>Version: 1.0.0</span>
+                    </Button>
+                  </div>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card className={introduceRowStyles.othersCard}>
+                  <h1 className={introduceRowStyles.othersCard_title}>Total of CDM</h1>
+                  <div className={introduceRowStyles.othersCard_quantityContainer}>
+                    <span className={introduceRowStyles.othersCard_quantity}>8,846</span>
+                    <Button className={introduceRowStyles.othersCard_versionInfo}>
+                      <span>Version: 1.0.0</span>
+                    </Button>
+                  </div>
+                </Card>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Col>
 
-    <Col {...topColResponsiveProps}>
-      <ChartCard
-        bordered={false}
-        loading={loading}
-        title="访问量"
-        action={
-          <Tooltip title="指标说明">
-            <InfoCircleOutlined />
-          </Tooltip>
-        }
-        total={numeral(8846).format('0,0')}
-        footer={<Field label="日访问量" value={numeral(1234).format('0,0')} />}
-        contentHeight={46}
-      >
-        <TinyArea
-          color="#975FE4"
-          xField="x"
-          height={46}
-          forceFit
-          yField="y"
-          smooth
-          data={visitData}
-        />
-      </ChartCard>
-    </Col>
-    <Col {...topColResponsiveProps}>
-      <ChartCard
-        bordered={false}
-        loading={loading}
-        title="支付笔数"
-        action={
-          <Tooltip title="指标说明">
-            <InfoCircleOutlined />
-          </Tooltip>
-        }
-        total={numeral(6560).format('0,0')}
-        footer={<Field label="转化率" value="60%" />}
-        contentHeight={46}
-      >
-        <TinyColumn xField="x" height={46} forceFit yField="y" data={visitData} />
-      </ChartCard>
-    </Col>
-    <Col {...topColResponsiveProps}>
-      <ChartCard
-        loading={loading}
-        bordered={false}
-        title="运营活动效果"
-        action={
-          <Tooltip title="指标说明">
-            <InfoCircleOutlined />
-          </Tooltip>
-        }
-        total="78%"
-        footer={
-          <div style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
-            <Trend flag="up" style={{ marginRight: 16 }}>
-              周同比
-              <span className={styles.trendText}>12%</span>
-            </Trend>
-            <Trend flag="down">
-              日同比
-              <span className={styles.trendText}>11%</span>
-            </Trend>
-          </div>
-        }
-        contentHeight={46}
-      >
-        <Progress
-          height={46}
-          percent={0.78}
-          color="#13C2C2"
-          forceFit
-          size={8}
-          marker={[
-            {
-              value: 0.8,
-              style: {
-                stroke: '#13C2C2',
-              },
-            },
-          ]}
-        />
-      </ChartCard>
-    </Col>
-  </Row>
+      <Col span={8} style={{ height: '168px', maxHeight: '168px' }}>
+        <Card className={introduceRowStyles.introduceRow_rightContainer}>
+          <h1 className={introduceRowStyles.rightContent_title}>Activity status</h1>
+          <span className={introduceRowStyles.rightContent_quantity}>500 Users</span>
+          <BulletProgress />
+          <Row style={{ gap: '20px' }}>
+            <Col>
+              <div className={introduceRowStyles.legendContainer}>
+                <span
+                  className={`${introduceRowStyles.legendCircleShape} ${introduceRowStyles.legendCircleShape_active}`}
+                />
+                <span className={introduceRowStyles.legendCircleShape_title}>Active</span>
+              </div>
+            </Col>
+            <Col>
+              <div className={introduceRowStyles.legendContainer}>
+                <span
+                  className={`${introduceRowStyles.legendCircleShape} ${introduceRowStyles.legendCircleShape_inActive}`}
+                />
+                <span className={introduceRowStyles.legendCircleShape_title}>Inactive</span>
+              </div>
+            </Col>
+          </Row>
+        </Card>
+      </Col>
+    </Row>
+  </>
 );
 
 export default IntroduceRow;

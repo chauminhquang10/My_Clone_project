@@ -1,6 +1,7 @@
 import type { ProColumns } from '@ant-design/pro-components';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties//TableCell';
+import { formatDate } from '@/utils';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmModelResponse) => void;
@@ -45,14 +46,17 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       title: <HeadCell>Người tạo</HeadCell>,
       dataIndex: 'createdBy',
       render: (_, entity) => {
-        return <TextCell>{`${entity.createdBy?.staffId} - ${entity.createdBy?.name}`}</TextCell>;
+        const value = entity.createdBy?.staffId
+          ? `${entity.createdBy?.staffId} - ${entity.createdBy?.name}`
+          : entity.createdBy?.name;
+        return <TextCell>{value}</TextCell>;
       },
     },
     {
       title: <HeadCell>Ngày tạo</HeadCell>,
       dataIndex: 'createdAt',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return <TextCell>{formatDate(dom as string)}</TextCell>;
       },
     },
   ];

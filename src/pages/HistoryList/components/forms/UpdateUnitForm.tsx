@@ -128,7 +128,6 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
         });
         break;
       case 'province':
-        console.log('a1 a2', typeof selectValue);
         form.resetFields(['districtId', 'wardId']);
         form.setFieldValue('provinceId', selectValue);
         setHandleEnableDropdownList({

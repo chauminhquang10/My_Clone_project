@@ -59,15 +59,15 @@ const InputPassword: React.FC<InputPasswordProps> = (props) => {
         unmaskedPassword.slice(0, index) + unmaskedPassword.slice(index - addedTextLength);
     }
 
-    setUnmaskedPassword(newUnmaskedPassword);
+    setUnmaskedPassword(newUnmaskedPassword.trim());
     // update form field password
-    onChangeUnmaskedPassword(newUnmaskedPassword);
+    onChangeUnmaskedPassword(newUnmaskedPassword.trim());
 
     // render mask effect
     if (inputText.length !== 0) {
       newPassword = pointGen('*', inputText.length - 1) + inputText.charAt(inputText.length - 1);
     }
-    setPassword(newPassword);
+    setPassword(newPassword.trim());
   };
 
   const handleToggleVisible = () => {

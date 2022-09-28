@@ -1,8 +1,7 @@
-import type { ProColumns } from '@ant-design/pro-components';
-import HeadCell from '@/components/TableProperties/HeadCell';
+import MachineStatusTag from '@/components/Common/MachineStatusTag';
 import { TextCell } from '@/components/TableProperties//TableCell';
-import StatusTag from '@/components/TableProperties/StatusTag';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import HeadCell from '@/components/TableProperties/HeadCell';
+import type { ProColumns } from '@ant-design/pro-components';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmInfoResponse) => void;
@@ -33,19 +32,6 @@ const filterLocationList: filterType = [
 
 const filterLocation = (value: string | number | boolean, record: API.StmInfoResponse) => {
   return record.location?.includes(value as string) ? true : false;
-};
-
-//------------ Filter Province --------------------------------
-
-const filterProvinceList: filterType = [
-  {
-    text: '',
-    value: '',
-  },
-];
-
-const filterProvince = (value: string | number | boolean, record: API.StmInfoResponse) => {
-  return record.province?.name?.includes(value as string) ? true : false;
 };
 
 //------------ Filter Province --------------------------------
@@ -98,26 +84,37 @@ const filterStatus = (value: string | number | boolean, record: API.StmInfoRespo
   return record.status?.includes(value as string) as boolean;
 };
 
-function Column({}: ColumnProps) {
+function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
   const columns: ProColumns<API.StmInfoResponse>[] = [
     {
       title: <HeadCell>STT</HeadCell>,
       dataIndex: 'id',
-      render: (_, __, index) => {
+      render: (_, data, index) => {
         const stt = index + 1;
+
         return <TextCell>{stt}</TextCell>;
       },
+      width: '80px',
     },
     {
       title: <HeadCell>Tên máy</HeadCell>,
       dataIndex: 'name',
-      render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+      render: (dom, data) => {
+        const handleClick = () => {
+          setShowDetail(true);
+          setCurrentRow(data);
+        };
+        return (
+          <TextCell width="216px" onClick={handleClick}>
+            {dom}
+          </TextCell>
+        );
       },
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else return 1;
       },
+      width: '216px',
     },
     {
       title: <HeadCell>Khu vực</HeadCell>,
@@ -127,6 +124,7 @@ function Column({}: ColumnProps) {
       },
       filters: filterLocationList,
       onFilter: filterLocation,
+      width: '140px',
     },
     {
       title: <HeadCell>Tỉnh/ Thành phố</HeadCell>,
@@ -134,8 +132,7 @@ function Column({}: ColumnProps) {
       render: (_, entity) => {
         return <TextCell>{entity.province?.name}</TextCell>;
       },
-      filters: filterProvinceList,
-      onFilter: filterProvince,
+      width: '216px',
     },
     {
       title: <HeadCell>Loại máy</HeadCell>,
@@ -145,6 +142,7 @@ function Column({}: ColumnProps) {
       },
       filters: filterTypeMachineList,
       onFilter: filterTypeMachine,
+      width: '140px',
     },
     {
       title: <HeadCell>Tình trạng</HeadCell>,
@@ -152,44 +150,21 @@ function Column({}: ColumnProps) {
       render: (dom) => {
         return dom;
       },
+      width: '180px',
       filters: filterStatusList,
       onFilter: filterStatus,
       valueEnum: {
         IN_SERVICE: {
-          text: <StatusTag title={'IN SERVICE'} type="ACTIVE" />,
+          text: <MachineStatusTag type="IN_SERVICE" />,
         },
         OUT_OF_SERVICE: {
-          text: <StatusTag title={'OUT OF SERVICE'} type="INACTIVE" />,
+          text: <MachineStatusTag type="OUT_OF_SERVICE" />,
         },
         UNKNOWN: {
-          text: (
-            <StatusTag
-              title={'UNKNOWN'}
-              type="DISABLE"
-              icon={
-                <ExclamationCircleFilled
-                  style={{
-                    color: '#A8071A',
-                  }}
-                />
-              }
-            />
-          ),
+          text: <MachineStatusTag type="UNKNOWN" />,
         },
         OFFLINE: {
-          text: (
-            <StatusTag
-              title={'OFFLINE'}
-              type="DISABLE"
-              icon={
-                <ExclamationCircleFilled
-                  style={{
-                    color: '#A8071A',
-                  }}
-                />
-              }
-            />
-          ),
+          text: <MachineStatusTag type="OFFLINE" />,
         },
       },
     },
@@ -199,6 +174,7 @@ function Column({}: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '216px',
     },
     {
       title: <HeadCell>Terminal ID</HeadCell>,
@@ -206,6 +182,7 @@ function Column({}: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '200px',
     },
     {
       title: <HeadCell>Địa chỉ IP</HeadCell>,
@@ -213,6 +190,7 @@ function Column({}: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '200px',
     },
   ];
   return columns;

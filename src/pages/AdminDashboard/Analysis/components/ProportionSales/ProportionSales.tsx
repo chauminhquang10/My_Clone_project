@@ -26,7 +26,7 @@ const ProportionSales = ({
     loading={loading}
     className={styles.salesCard}
     bordered={false}
-    title="销售额类别占比"
+    title="Machine type:"
     style={{
       height: '100%',
     }}
@@ -35,16 +35,17 @@ const ProportionSales = ({
         {dropdownGroup}
         <div className={styles.salesTypeRadio}>
           <Radio.Group value={salesType} onChange={handleChangeSalesType}>
-            <Radio.Button value="all">全部渠道</Radio.Button>
-            <Radio.Button value="online">线上</Radio.Button>
-            <Radio.Button value="stores">门店</Radio.Button>
+            <Radio.Button value="all">All</Radio.Button>
+            <Radio.Button value="stm">STM</Radio.Button>
+            <Radio.Button value="atm">ATM</Radio.Button>
+            <Radio.Button value="cmd">CDM</Radio.Button>
           </Radio.Group>
         </div>
       </div>
     }
   >
     <div>
-      <Text>销售额</Text>
+      <Text>Machine status</Text>
       <Donut
         forceFit
         height={340}
@@ -59,7 +60,6 @@ const ProportionSales = ({
           visible: true,
           type: 'spider',
           formatter: (text, item) => {
-            // eslint-disable-next-line no-underscore-dangle
             return `${item._origin.x}: ${numeral(item._origin.y).format('0,0')}`;
           },
         }}

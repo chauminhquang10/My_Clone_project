@@ -8,7 +8,7 @@ import { getDistricts, getProvinces, getWards } from '@/services/STM-APIs/Locati
 
 const { Option } = Select;
 
-type CreateFormProps = {
+export type CreateFormProps = {
   title: string;
   width: string;
   visible: boolean;
@@ -16,53 +16,53 @@ type CreateFormProps = {
   onFinish: (values: Partial<API.CreateManagementUnitRequest>) => Promise<void>;
 };
 
-type ProvinceItem = {
+export type ProvinceItem = {
   id: number;
   name: string;
   location: string;
 };
 
-type ListProvincesResponse = {
+export type ListProvincesResponse = {
   provinces?: ProvinceItem[];
 };
 
-type ResponseGetProvinceListByLocation = {
+export type ResponseGetProvinceListByLocation = {
   code?: number | undefined;
   message?: string | undefined;
   data?: ListProvincesResponse | undefined;
 };
 
-type DistrictItem = {
+export type DistrictItem = {
   id: number;
   name: string;
 };
 
-type ListDistrictsResponse = {
+export type ListDistrictsResponse = {
   districts?: DistrictItem[];
 };
 
-type ResponseGetDistrictListByProvince = {
+export type ResponseGetDistrictListByProvince = {
   code?: number | undefined;
   message?: string | undefined;
   data?: ListDistrictsResponse | undefined;
 };
 
-type WardItem = {
+export type WardItem = {
   id: number;
   name: string;
 };
 
-type ListWardsResponse = {
+export type ListWardsResponse = {
   wards?: WardItem[];
 };
 
-type ResponseGetWardListByDistrict = {
+export type ResponseGetWardListByDistrict = {
   code?: number | undefined;
   message?: string | undefined;
   data?: ListWardsResponse | undefined;
 };
 
-const INITIAL_ENABLE_STATE = {
+export const INITIAL_ENABLE_STATE = {
   provinceDisabled: true,
   districtDisabled: true,
   wardDisabled: true,
