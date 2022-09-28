@@ -15,6 +15,8 @@ import roleGroupDetail from './vi-VN/GroupAuthorizeTable/forms/detailDrawer';
 import configMachineTable from './vi-VN/ConfigMachineTable/table';
 import configMachineForm from './vi-VN/ConfigMachineTable/forms/form';
 import configMachineDetail from './vi-VN/ConfigMachineTable/forms/detailDrawer';
+import historyListTable from './vi-VN/HistoryList/tables';
+import historyList from './vi-VN/HistoryList';
 import stmError from './vi-VN/stmError';
 
 export default {
@@ -38,5 +40,7 @@ export default {
   ...configMachineTable,
   ...configMachineForm,
   ...configMachineDetail,
+  ...historyListTable,
+  ...historyList,
   ...stmError,
 };

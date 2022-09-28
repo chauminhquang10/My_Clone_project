@@ -1,111 +1,90 @@
 import type { ProColumns } from '@ant-design/pro-components';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties/TableCell';
+import { Tooltip } from 'antd';
+import { FormattedMessage } from 'umi';
+import { formatDate, formatStaffName } from '@/utils';
 
-type ColumnProps = {
-  setCurrentRow: (s: API.ManagementUnitResponse) => void;
-  setShowDetail: (s: boolean) => void;
-};
-
-function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
-  const columns: ProColumns<API.ManagementUnitResponse>[] = [
+function Column() {
+  const columns: ProColumns<API.SystemOperationResponse>[] = [
     {
-      title: <HeadCell>STT</HeadCell>,
-      sorter: (a, b) => {
-        return (a.id as number) - (b.id as number);
-      },
+      title: 'Id',
+      key: 'id',
       dataIndex: 'id',
-      render: (dom) => {
-        const stt = dom as number;
-        return <TextCell>{stt}</TextCell>;
-      },
+      hideInTable: true,
     },
     {
-      title: <HeadCell>Mã đơn vị</HeadCell>,
-      dataIndex: 'code',
-      valueType: 'textarea',
-      render: (dom, entity) => {
+      title: (
+        <HeadCell>
+          <FormattedMessage id="historyList.tables.headCell.title.action" />
+        </HeadCell>
+      ),
+      key: 'action',
+      width: '20%',
+      dataIndex: 'action',
+      render: (dom) => {
         return (
-          <TextCell
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </TextCell>
+          <TextCell>{dom && <FormattedMessage id={`historyList.tables.action.${dom}`} />}</TextCell>
         );
       },
     },
     {
-      title: <HeadCell>Tên đơn vị</HeadCell>,
-      dataIndex: 'name',
-      sorter: true,
-      hideInForm: true,
-      render: (dom, entity) => {
+      title: (
+        <HeadCell>
+          <FormattedMessage id="historyList.tables.headCell.title.createdBy" />
+        </HeadCell>
+      ),
+      dataIndex: 'createdBy',
+      key: 'createdBy',
+      width: '20%',
+      render: (_, entity) => {
         return (
-          <TextCell
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </TextCell>
+          <TextCell>{formatStaffName(entity.createdBy?.staffId, entity.createdBy?.name)}</TextCell>
         );
       },
     },
     {
-      title: <HeadCell>Khu vực</HeadCell>,
-      dataIndex: 'location',
+      title: (
+        <HeadCell>
+          <FormattedMessage id="historyList.tables.headCell.title.module" />
+        </HeadCell>
+      ),
+      key: 'module',
+      dataIndex: 'module',
       render: (dom) => {
-        return <TextCell position="left">{dom}</TextCell>;
+        return (
+          <TextCell>{dom && <FormattedMessage id={`historyList.tables.module.${dom}`} />}</TextCell>
+        );
       },
     },
     {
-      title: <HeadCell>Tỉnh/Thành</HeadCell>,
-      dataIndex: 'province',
-      render: (_, entity) => {
-        return <TextCell position="left">{entity.province?.name}</TextCell>;
-      },
-    },
-    {
-      title: <HeadCell>Quận/Huyện</HeadCell>,
-      dataIndex: 'district',
-      valueType: 'textarea',
-      render: (_, entity) => {
-        return <TextCell>{entity.district?.name}</TextCell>;
-      },
-    },
-    {
-      title: <HeadCell>Phường/Xã</HeadCell>,
-      dataIndex: 'ward',
-      valueType: 'textarea',
-      render: (_, entity) => {
-        // console.log(typeof dom);
-        return <TextCell>{entity.ward?.name}</TextCell>;
-      },
-    },
-    {
-      title: <HeadCell>Tên đường/Số nhà</HeadCell>,
-      dataIndex: 'address',
-      hideInForm: true,
-      filters: true,
-      onFilter: true,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="historyList.tables.headCell.title.time" />
+        </HeadCell>
+      ),
+      dataIndex: 'time',
+      key: 'time',
       render: (dom) => {
-        // console.log(typeof dom);
-        return <TextCell>{dom}</TextCell>;
+        return <TextCell>{formatDate(dom as string)}</TextCell>;
       },
     },
     {
-      title: <HeadCell>Ngày tạo</HeadCell>,
-      dataIndex: 'createdAt',
-      hideInForm: true,
-      filters: true,
-      onFilter: true,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="historyList.tables.headCell.title.content" />
+        </HeadCell>
+      ),
+      dataIndex: 'content',
+      key: 'content',
       render: (dom) => {
-        // console.log(typeof dom);
-        return <TextCell>{dom}</TextCell>;
+        return (
+          <Tooltip placement="bottom" title={dom}>
+            <div>
+              <TextCell>{dom}</TextCell>
+            </div>
+          </Tooltip>
+        );
       },
     },
   ];

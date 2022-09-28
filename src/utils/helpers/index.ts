@@ -86,3 +86,11 @@ export const distanceBetweenLocations = (
 
 export const checkFormFieldsEmpty = (fields: Record<string, string | undefined>) =>
   objectKeys(fields).some((key) => !fields[key]);
+
+export function formatStaffName(id?: string, name?: string) {
+  if (!id && !name) return '';
+
+  if (!id) return name;
+
+  return `${id} - ${name}`;
+}
