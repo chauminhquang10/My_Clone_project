@@ -46,11 +46,10 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 
       switch (key) {
         case 'personal-profile':
-          console.log('personal profile');
           setOpenPersonalProfile(true);
           break;
         case 'logout':
-          setInitialState((s) => ({ ...s, currentUser: undefined }));
+          setInitialState((s) => ({ ...s, currentUser: undefined, currentRoles: undefined }));
           loginOut();
           break;
         default:

@@ -1,5 +1,5 @@
 import logoKSBank from '@/assets/images/ksbank-logo.svg';
-import { BLOCK_TIME, MAX_LOGIN_TIMES, USER_MESSAGE_ERROR } from '@/constants';
+import { BLOCK_TIME, INITIAL_ROLES, MAX_LOGIN_TIMES, USER_MESSAGE_ERROR } from '@/constants';
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
@@ -8,27 +8,6 @@ import React, { useState } from 'react';
 import { history, useModel } from 'umi';
 import { InputPassword } from '../components';
 import styles from './index.less';
-
-// xử lí check role
-const initialRoles = {
-  create_machine: false,
-  update_machine: false,
-  assign_access: false,
-  change_machine_status: false,
-  download_machine_log: false,
-  view_transaction: false,
-  view_camera: false,
-  create_version: false,
-  update_version: false,
-  update_machine_version: false,
-  delete_version: false,
-  create_model: false,
-  update_model: false,
-  delete_model: false,
-  create_management_unit: false,
-  update_management_unit: false,
-  delete_management_unit: false,
-};
 
 type DataResponseType = {
   loginTimes: number;
@@ -42,18 +21,25 @@ const Login: React.FC = () => {
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
+    const roles = { ...INITIAL_ROLES };
 
     if (userInfo) {
-      userInfo?.roleGroup?.actions?.forEach((eachAction) => {
-        if ((eachAction?.action as string) in initialRoles) {
-          initialRoles[eachAction?.action as string] = true;
-        }
-      });
+      if (userInfo?.admin) {
+        Object.keys(roles).forEach(function (key) {
+          roles[key] = true;
+        });
+      } else {
+        userInfo?.roleGroup?.actions?.forEach((eachAction) => {
+          if ((eachAction?.action as string) in roles) {
+            roles[eachAction?.action as string] = true;
+          }
+        });
+      }
 
       await setInitialState((s) => ({
         ...s,
         currentUser: userInfo,
-        currentRoles: initialRoles,
+        currentRoles: roles,
       }));
     }
   };

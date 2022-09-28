@@ -118,3 +118,23 @@ export const MAP_ACTION_LIST = {
   update_management_unit: 'Update management unit',
   delete_management_unit: 'Delete management unit',
 };
+
+export const INITIAL_ROLES = {
+  create_machine: false,
+  update_machine: false,
+  assign_access: false,
+  change_machine_status: false,
+  download_machine_log: false,
+  view_transaction: false,
+  view_camera: false,
+  create_version: false,
+  update_version: false,
+  update_machine_version: false,
+  delete_version: false,
+  create_model: false,
+  update_model: false,
+  delete_model: false,
+  create_management_unit: false,
+  update_management_unit: false,
+  delete_management_unit: false,
+};
