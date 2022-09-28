@@ -66,30 +66,22 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   };
 
   const handleChange: UploadProps['onChange'] = async (info: UploadChangeParam<UploadFile>) => {
-    console.log('upload');
-    if (info.file.status === 'uploading') {
-      setLoadingImage(true);
-      console.log('uploading');
-      return;
-    }
-    if (info.file.status === 'done') {
-      console.log('upload done');
-      if (!info.file.url && !info.file.preview) {
-        try {
-          const res = await uploadPublicFile(
-            { bucketName: 'user', type: 'avatar' },
-            {},
-            info.file.originFileObj as RcFile,
-          );
+    setLoadingImage(true);
+    if (!info.file.url && !info.file.preview) {
+      try {
+        const res = await uploadPublicFile(
+          { bucketName: 'user', type: 'avatar' },
+          {},
+          info.file.originFileObj as RcFile,
+        );
 
-          info.file.preview = res.data?.previewPath;
-        } catch (error) {
-          console.log('error: ', error);
-        }
+        info.file.preview = res.data?.previewPath;
+      } catch (error) {
+        console.log('error: ', error);
       }
-      setLoadingImage(false);
-      setImageUrl(info.file.url || (info.file.preview as string));
     }
+    setLoadingImage(false);
+    setImageUrl(info.file.url || (info.file.preview as string));
   };
 
   const onReset = () => {
