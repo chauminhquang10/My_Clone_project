@@ -1,6 +1,7 @@
 import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
 import { EMAIL_REGEX, PHONE_REGEX } from '@/constants';
 import { getAllManagementUnits } from '@/services/STM-APIs/ManagementUnitController';
+import { uploadPublicFile } from '@/services/STM-APIs/MediaController';
 import { getAllRoleGroup } from '@/services/STM-APIs/RoleController';
 import { DeleteOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
 import { ModalForm } from '@ant-design/pro-components';
@@ -19,7 +20,7 @@ type CreateFormProps = {
   width: string;
   visible: boolean;
   onVisibleChange: (value: boolean) => void;
-  onFinish: (body: API.CreateUserRequest, avatar?: File) => Promise<boolean>;
+  onFinish: (body: API.CreateUserRequest) => Promise<boolean>;
   userInfo?: API.UserDetailResponse;
 };
 
@@ -116,8 +117,15 @@ const NewUserForm: React.FC<CreateFormProps> = ({
 
   const handleSubmit = async (values: API.CreateUserRequest) => {
     try {
-      const success = await onFinish({ ...values }, imageFile);
-      return success;
+      let res;
+
+      if (imageFile)
+        res = await uploadPublicFile({ bucketName: 'user', type: 'avatar' }, {}, imageFile);
+
+      if (res?.code === 0) {
+        const success = await onFinish({ ...values, avatar: res.data?.previewPath });
+        return success;
+      }
     } catch (error) {
       console.log('error: ', error);
     }

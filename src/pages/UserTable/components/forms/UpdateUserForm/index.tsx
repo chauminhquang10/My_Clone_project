@@ -1,21 +1,15 @@
-import Api from '@/services/STM-APIs';
+import { updateUser } from '@/services/STM-APIs/UserController';
 import { openNotification } from '@/utils';
 import type { ActionType } from '@ant-design/pro-components';
 import { message } from 'antd';
 import React from 'react';
 import NewUserForm from '../NewUserForm';
 
-const handleUpdate = async (
-  params: API.updateUserParams,
-  body: API.UpdateUserRequest,
-  avatar?: File,
-) => {
+const handleUpdate = async (params: API.updateUserParams, body: API.UpdateUserRequest) => {
   const hide = message.loading('Loading...');
   hide();
   try {
-    const res = await Api.UserController.updateUser(params, body, avatar);
-
-    console.log('res update: ', res);
+    const res = await updateUser(params, body);
 
     if (!res) return false;
 
@@ -72,12 +66,8 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
       width="934px"
       visible={isVisibleUpdateUser}
       onVisibleChange={setIsVisibleUpdateUser}
-      onFinish={async (values, avatar) => {
-        const success = await handleUpdate(
-          { userId: userInfo.id as string },
-          { ...values },
-          avatar,
-        );
+      onFinish={async (values) => {
+        const success = await handleUpdate({ userId: userInfo.id as string }, { ...values });
 
         if (!!success) {
           if (!!actionRef) actionRef.current?.reload();
