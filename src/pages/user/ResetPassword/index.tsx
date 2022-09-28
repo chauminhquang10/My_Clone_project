@@ -1,4 +1,4 @@
-import logoKSBank from '@/assets/images/ksbank-logo.svg';
+import logoKSBank from '@/assets/images/utmc-logo.png';
 import React from 'react';
 import { history } from 'umi';
 import { SetupPasswordForm } from '../components';
@@ -12,7 +12,7 @@ const ResetPassword: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.logo}>
-          <img src={logoKSBank} alt="logo-ksbank" />
+          <img src={logoKSBank} width="70%" alt="logo-ksbank" style={{ objectFit: 'cover' }} />
         </div>
         <SetupPasswordForm token={token} />
       </div>
