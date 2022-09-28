@@ -266,12 +266,20 @@
   justify-content: center;
   width: 95px;
   height: 32px;
-  padding: 5px 9px;
+  overflow: hidden;
   white-space: nowrap;
   background: #f26122;
-  border: 1px solid #f26122;
+  border: none;
   border-radius: 4px;
   isolation: isolate;
+  &:hover {
+    background: #f26122;
+    border: none;
+  }
+  &:focus {
+    background: #f26122;
+    border: 1px solid #f26122;
+  }
   .text-add {
     color: #f6f8f8;
     font-weight: 500;

@@ -1,14 +1,15 @@
 import type { ProColumns } from '@ant-design/pro-components';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties//TableCell';
-import { DatePicker, Space } from 'antd';
 import { formatDate } from '@/utils';
-
-const { RangePicker } = DatePicker;
+import DateFilter from '@/components/TableProperties/DateFilter';
+import type { Dispatch, SetStateAction } from 'react';
 
 type ColumnProps = {
   setCurrentRow: (s: API.VersionResponse) => void;
   setShowDetail: (s: boolean) => void;
+  setParamFilter: Dispatch<SetStateAction<API.getAllVersionParams | undefined>>;
+  paramFilter: API.getAllVersionParams | undefined;
 };
 //------------ Filter type --------------------------------
 
@@ -43,6 +44,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
               setCurrentRow(entity);
               setShowDetail(true);
             }}
+            width="240px"
           >
             {stt}
           </TextCell>
@@ -52,17 +54,19 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else return 1;
       },
+      width: '240px',
     },
     {
       title: <HeadCell>Loại máy</HeadCell>,
       dataIndex: 'machineType',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return <TextCell width="140px">{dom}</TextCell>;
       },
       sorter: (a, b) => {
         if (a.machineType && b.machineType) return a.machineType.localeCompare(b.machineType);
         else return 1;
       },
+      width: '140px',
     },
     {
       title: <HeadCell>Dòng máy</HeadCell>,
@@ -77,7 +81,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       title: <HeadCell>Nội dung</HeadCell>,
       dataIndex: 'content',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return <TextCell width="570px">{dom}</TextCell>;
       },
     },
     {
@@ -93,19 +97,9 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       render: (dom) => {
         return <TextCell>{formatDate(dom as string)}</TextCell>;
       },
-      filterDropdown: (
-        <Space>
-          <RangePicker
-            allowClear={true}
-            onCalendarChange={(_, dateStrings) => {
-              console.log(
-                new Date(dateStrings[0]).toDateString(),
-                new Date(dateStrings[1]).toDateString(),
-              );
-            }}
-          />
-        </Space>
-      ),
+      filterDropdown: () => {
+        return <DateFilter />;
+      },
     },
   ];
   return columns;

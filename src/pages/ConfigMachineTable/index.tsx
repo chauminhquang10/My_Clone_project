@@ -61,32 +61,33 @@ const TableCustom = () => {
     page: '',
   };
 
-  const { data: listConFigMachine } = useRequest<API.ResponseBasePageResponseStmModelResponse>(
-    () => {
-      const params: API.getListModelsParams = {
-        ...paramFilter,
-        pageSize: pageSizeRef.current,
-        pageNumber: page - 1,
-      };
-      return getListModels(params);
-    },
-    {
-      onSuccess(data) {
-        setTotalSize(data?.totalSize as number);
-        if (!initialState?.currentRoles?.create_model) {
-          setEnableCreateNew(false);
-        }
+  const { data: listConFigMachine, run: getAllConfigMachine } =
+    useRequest<API.ResponseBasePageResponseStmModelResponse>(
+      () => {
+        const params: API.getListModelsParams = {
+          ...paramFilter,
+          pageSize: pageSizeRef.current,
+          pageNumber: page - 1,
+        };
+        return getListModels(params);
       },
-      onError(error) {
-        console.log('error', error);
-        // notification.error({
-        //   message: messageErrorData,
-        //   description: e?.data?.code,
-        // });
+      {
+        onSuccess(data) {
+          setTotalSize(data?.totalSize as number);
+          if (!initialState?.currentRoles?.create_model) {
+            setEnableCreateNew(false);
+          }
+        },
+        onError(error) {
+          console.log('error', error);
+          // notification.error({
+          //   message: messageErrorData,
+          //   description: e?.data?.code,
+          // });
+        },
+        refreshDeps: [paramFilter, page],
       },
-      refreshDeps: [paramFilter, page],
-    },
-  );
+    );
 
   const handleAddNewModel = async (value: { machineType: string; name: string }) => {
     const hide = message.loading('Loading...');
@@ -103,17 +104,24 @@ const TableCustom = () => {
         minCapacity: item?.myMinCap,
       }));
 
-      await createModel({
+      const success = await createModel({
         ...value,
         storages: formattedForSendingData,
       } as API.CreateStmModelRequest);
       hide();
-      message.success('Thêm đơn vị mới thành công');
-      handleCreateModalVisible(false);
-      actionRef.current?.reload();
+      if (success.code === 312) {
+        message.error('Đã tồn tại tên dòng máy');
+        return false;
+      } else {
+        message.success('Thêm đơn vị mới thành công');
+        handleCreateModalVisible(false);
+        getAllConfigMachine();
+        return true;
+      }
     } catch (error) {
       hide();
       message.error('Adding failed, please try again!');
+      return false;
     }
   };
 
@@ -174,7 +182,7 @@ const TableCustom = () => {
           visible={createModalVisible}
           onVisibleChange={handleCreateModalVisible}
           onFinish={async (value: { machineType: string; name: string }) => {
-            await handleAddNewModel(value);
+            return await handleAddNewModel(value);
           }}
         />
       )}

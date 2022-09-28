@@ -7,12 +7,11 @@ import {
 
 import { Col, Drawer, Form, Input, Row, Card, Table, Tooltip, Badge, message } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 
 import styles from './VersionDetailDrawer.less';
 import UpdateVersionForm from './UpdateVersionForm';
 import ModalCustom from '@/components/FormCustom/ModalCustom';
-import type { ActionType } from '@ant-design/pro-components';
 import api from '@/services/STM-APIs';
 
 interface UpdatedMachineListTableTitleProps {
@@ -32,7 +31,7 @@ type VersionDetailDrawerProps = {
   currentRow: API.VersionResponse | undefined;
   setCurrentRow: (value: API.VersionResponse | undefined) => void;
   children?: React.ReactNode;
-  actionRef: React.MutableRefObject<ActionType | undefined>;
+  getAllUpdatedVersion: () => Promise<API.PageResponseVersionResponse | undefined>;
 };
 
 const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
@@ -40,9 +39,8 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
   setShowDetail,
   currentRow,
   setCurrentRow,
-  actionRef,
+  getAllUpdatedVersion,
 }) => {
-  const updateModelRef = useRef();
   //------------ handle create new  --------------------
   const handleUpdateVersion = async (
     params: API.updateVersionParams,
@@ -53,16 +51,19 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
     try {
       const res = await api.STMVersionController.updateVersion(params, { ...record }, file);
       hide();
-      if (res.code === 700) {
-        message.error(`Lỗi`);
+      if (res.code === 504) {
+        message.error(`Đã tồn tại tên phiên bản`);
         return;
       }
       message.success('Chỉnh sửa version thành công');
       setShowDetail(false);
-      actionRef.current?.reload();
+      // actionRef.current?.reload();
+      getAllUpdatedVersion();
+      return true;
     } catch (error) {
       hide();
       message.error('Adding failed, please try again!');
+      return false;
     }
   };
   const updatedMachineListColumns: ColumnsType<API.StmInfoResponse> = [
@@ -335,7 +336,6 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
         onVisibleChange={handleUpdateModalVisible}
         onFinish={handleUpdateVersion}
         {...currentRow}
-        actionRef={updateModelRef}
       />
 
       <ModalCustom

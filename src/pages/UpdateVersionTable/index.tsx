@@ -1,4 +1,4 @@
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import api from '@/services/STM-APIs';
 import { useRef, useState } from 'react';
@@ -15,56 +15,41 @@ import { UploadOutlined } from '@ant-design/icons';
 import NewVersionForm from './components/forms/NewVersionForm';
 import { message } from 'antd';
 import VersionDetailDrawer from './components/forms/VersionDetailDrawer';
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-// const handleAdd = async (fields: API.VersionResponse) => {
-//   const hide = message.loading('正在添加');
-//   try {
-//     // await addRule({ ...fields });
-//     console.log(fields);
-//     hide();
-//     message.success('Added successfully');
-//     return true;
-//   } catch (error) {
-//     hide();
-//     message.error('Adding failed, please try again!');
-//     return false;
-//   }
-// };
 
 const TableCustom = () => {
+  const [paramFilter, setParamFilter] = useState<API.getAllVersionParams | undefined>();
+  //------------ pagination --------------------
+  const pageSizeRef = useRef<number>(20);
+  const [totalSize, setTotalSize] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
   //---------------  handle getAllUser -------------------------------
 
-  const { run: runGetAllUpdateVersion } = useRequest(
-    (params: API.getAllVersionParams) => api.STMVersionController.getAllVersion(params),
+  const { data: listUpdateVersion, run: getAllUpdatedVersion } = useRequest(
+    () => {
+      const params: API.getAllVersionParams = {
+        ...paramFilter,
+        pageNumber: page - 1,
+        pageSize: pageSizeRef.current,
+      };
+      return api.STMVersionController.getAllVersion(params);
+    },
     {
-      manual: true,
       onSuccess: (res) => {
         if (!res) openNotification('error', 'Có lỗi xảy ra');
-        return res?.items;
+        setTotalSize(res?.totalSize as number);
+        return res;
       },
       onError: (error) => {
         console.log(error);
       },
+      refreshDeps: [paramFilter],
     },
   );
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
+
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  /**
-   * @en-US The pop-up window of the distribution update window
-   * @zh-CN 分布更新窗口的弹窗
-   * */
-  // const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
-  const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.VersionResponse>();
 
   console.log(showDetail, currentRow);
@@ -76,16 +61,18 @@ const TableCustom = () => {
     try {
       const res = await api.STMVersionController.uploadNewVersion({ ...record }, file);
       hide();
-      if (res.code === 700) {
+      if (res.code === 504) {
         message.error(`${record.name} ${record.modelId}  đã được sử dụng`);
-        return;
+        return false;
       }
       message.success('Thêm version mới thành công');
       handleModalVisible(false);
-      actionRef.current?.reload();
+      getAllUpdatedVersion();
+      return true;
     } catch (error) {
       hide();
       message.error('Adding failed, please try again!');
+      return false;
     }
   };
   /**
@@ -94,16 +81,12 @@ const TableCustom = () => {
    * */
 
   //------------ pagination --------------------
-  // const [totalSize, setTotalSize] = useState<number>(0);
-  // const [page, setPage] = useState<number>(1);
-  const pageSize = useRef<number>(20);
   const columns: ProColumns<API.VersionResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
+    setParamFilter,
+    paramFilter,
   });
-
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
@@ -111,7 +94,7 @@ const TableCustom = () => {
     jump_to: 'Trang',
     page: '',
   };
-
+  console.log('listUpdateVersion: ', listUpdateVersion);
   return (
     <PageContainer
       className={style['table-container']}
@@ -122,7 +105,6 @@ const TableCustom = () => {
     >
       <ProTable
         headerTitle={<TitleTable>Danh sách phiên bản hệ thống</TitleTable>}
-        actionRef={actionRef}
         rowKey="key"
         search={false}
         toolBarRender={() => [
@@ -136,38 +118,24 @@ const TableCustom = () => {
             icon={<UploadOutlined style={{ color: 'white' }} />}
           />,
         ]}
-        request={async (params = {}) => {
-          console.log(params);
-
-          const pageRequestParams: API.getAllVersionParams = {
-            // pageNumber: params.current,
-            // pageSize: params.pageSize,
-            // sortDirection: '',
-            // sortBy: '',
-          };
-          const res = await runGetAllUpdateVersion({
-            ...pageRequestParams,
-          });
-
-          return {
-            data: res?.items || [],
-          };
-        }}
+        dataSource={listUpdateVersion?.items}
         columns={columns}
         options={false}
         pagination={{
           onChange(current) {
-            setCurrentPage(current);
+            setPage(current);
           },
-          current: currentPage,
+          total: totalSize,
+          current: page,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
-          pageSize: pageSize.current,
+          pageSize: pageSizeRef.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
           hideOnSinglePage: true,
           showQuickJumper: true,
         }}
+        scroll={{ x: 'max-content' }}
       />
       <NewVersionForm
         title="Upload phiên bản mới"
@@ -175,7 +143,7 @@ const TableCustom = () => {
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
         onFinish={async (value, avatar) => {
-          await handleAddNewVersion(value as API.CreateVersionRequest, avatar);
+          return await handleAddNewVersion(value as API.CreateVersionRequest, avatar);
         }}
       />
       <VersionDetailDrawer
@@ -183,7 +151,7 @@ const TableCustom = () => {
         setCurrentRow={setCurrentRow}
         showDetail={showDetail}
         setShowDetail={setShowDetail}
-        actionRef={actionRef}
+        getAllUpdatedVersion={getAllUpdatedVersion}
       />
     </PageContainer>
   );
