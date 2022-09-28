@@ -38,13 +38,20 @@ const TableCustom = () => {
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.StmModelResponse>();
 
+  const [paramFilter, setParamFilter] = useState<API.getListModelsParams | undefined>();
+
+  //------------ pagination --------------------
+  const pageSizeRef = useRef<number>(20);
+  const [totalSize, setTotalSize] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+
   const columns: ProColumns<API.StmModelResponse>[] = Column({
     setCurrentRow,
     setShowDetail,
+    setParamFilter,
+    paramFilter,
   });
 
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const pageSize = useRef<number>(10);
   // const [totalPage, setTotalPage] = useState<number>(1);
 
   //-------------- Pagination props --------------------------------
@@ -54,30 +61,33 @@ const TableCustom = () => {
     page: '',
   };
 
-  const { run: runGetAllConfigModels } = useRequest<API.ResponseBasePageResponseStmModelResponse>(
-    (params: API.getListModelsParams) => getListModels(params),
-    {
-      manual: true,
-      onSuccess(data) {
-        console.log(data);
-        if (!initialState?.currentRoles?.create_model) {
-          setEnableCreateNew(false);
-        }
-        // setResultResponse(data);
-        // const dataNew = data as API.BaseResponseListLanguageSupport;
-        // if (dataNew?.success && dataNew.data) {
-        //   setListSupportLanguages(dataNew.data);
-        // }
+  const { data: listConFigMachine, run: getAllConfigMachine } =
+    useRequest<API.ResponseBasePageResponseStmModelResponse>(
+      () => {
+        const params: API.getListModelsParams = {
+          ...paramFilter,
+          pageSize: pageSizeRef.current,
+          pageNumber: page - 1,
+        };
+        return getListModels(params);
       },
-      onError(error) {
-        console.log('error', error);
-        // notification.error({
-        //   message: messageErrorData,
-        //   description: e?.data?.code,
-        // });
+      {
+        onSuccess(data) {
+          setTotalSize(data?.totalSize as number);
+          if (!initialState?.currentRoles?.create_model) {
+            setEnableCreateNew(false);
+          }
+        },
+        onError(error) {
+          console.log('error', error);
+          // notification.error({
+          //   message: messageErrorData,
+          //   description: e?.data?.code,
+          // });
+        },
+        refreshDeps: [paramFilter, page],
       },
-    },
-  );
+    );
 
   const handleAddNewModel = async (value: { machineType: string; name: string }) => {
     const hide = message.loading('Loading...');
@@ -94,17 +104,24 @@ const TableCustom = () => {
         minCapacity: item?.myMinCap,
       }));
 
-      await createModel({
+      const success = await createModel({
         ...value,
         storages: formattedForSendingData,
       } as API.CreateStmModelRequest);
       hide();
-      message.success('Thêm đơn vị mới thành công');
-      handleCreateModalVisible(false);
-      actionRef.current?.reload();
+      if (success.code === 312) {
+        message.error('Đã tồn tại tên dòng máy');
+        return false;
+      } else {
+        message.success('Thêm đơn vị mới thành công');
+        handleCreateModalVisible(false);
+        getAllConfigMachine();
+        return true;
+      }
     } catch (error) {
       hide();
       message.error('Adding failed, please try again!');
+      return false;
     }
   };
 
@@ -130,25 +147,19 @@ const TableCustom = () => {
             }}
           />,
         ]}
-        request={async () => {
-          const res = await runGetAllConfigModels({ machineType: 'STM' });
-          return {
-            data: res?.items,
-            total: res?.items ? res.items.length : 0,
-            success: true,
-          };
-        }}
+        dataSource={listConFigMachine?.items}
         columns={columns}
         options={false}
         pagination={{
           onChange(current) {
-            setCurrentPage(current);
+            setPage(current);
           },
-          current: currentPage,
+          total: totalSize,
+          current: page,
           className: style['pagination-custom'],
           locale: { ...paginationLocale },
           showSizeChanger: false,
-          pageSize: pageSize.current,
+          pageSize: pageSizeRef.current,
           showTotal: (total, range) => <TotalPagination total={total} range={range} />,
           hideOnSinglePage: true,
           showQuickJumper: true,
@@ -171,7 +182,7 @@ const TableCustom = () => {
           visible={createModalVisible}
           onVisibleChange={handleCreateModalVisible}
           onFinish={async (value: { machineType: string; name: string }) => {
-            await handleAddNewModel(value);
+            return await handleAddNewModel(value);
           }}
         />
       )}

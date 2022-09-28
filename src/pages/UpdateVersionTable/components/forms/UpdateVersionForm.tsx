@@ -1,5 +1,4 @@
 import { ModalForm } from '@ant-design/pro-components';
-import type { ActionType } from '@ant-design/pro-components';
 import React, { useState } from 'react';
 import { Button, Col, Form, Input, message, Row, Select, Tooltip, Upload } from 'antd';
 import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
@@ -9,7 +8,6 @@ import type { UploadProps } from 'antd';
 import styles from './UpdateVersionForm.less';
 import { useRequest } from 'umi';
 import api from '@/services/STM-APIs';
-import type { UploadChangeParam } from 'antd/lib/upload';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -23,8 +21,7 @@ interface UpdateVersionFormProps extends API.VersionResponse {
     params: API.updateVersionParams,
     record: API.UpdateVersionRequest,
     file?: File,
-  ) => Promise<void>;
-  actionRef: React.MutableRefObject<ActionType | undefined>;
+  ) => Promise<boolean | undefined>;
 }
 
 const RemoveFileIcon = () => {
@@ -57,19 +54,45 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
 
   const [form] = Form.useForm();
 
-  const handleUploadChange: UploadProps['onChange'] = (info) => {
-    let newFileList = [...info.fileList];
+  const [disableButton, setDisableButton] = useState<boolean>(true);
 
-    //  Read from response and show file link
-    newFileList = newFileList.map((file) => {
-      if (file.response) {
-        // Component will show file.url as link
-        file.url = file.response.url;
+  const checkSubmit = () => {
+    const listField = ['machineCategory', 'modelId', 'conditionId', 'name', 'files', 'content'];
+    const formCheck = {
+      machineCategory: machineType,
+      modelId: model?.id,
+      conditionId: conditionId,
+      name: name,
+      content: content,
+      files: filePath,
+    };
+    setDisableButton(true);
+    listField.forEach((item) => {
+      if (form.getFieldsValue()[item] !== formCheck[item]) {
+        setDisableButton(false);
       }
-      return file;
     });
+  };
 
-    setFileList(newFileList);
+  const handleUploadChange: UploadProps['onChange'] = (info) => {
+    const newFileList = [...info.fileList];
+    //  Read from response and show file link
+    if (newFileList.length) {
+      if (
+        newFileList[0].type === 'application/x-zip-compressed' &&
+        Number(newFileList[0].size) < 1024 * 1024 * 5
+      ) {
+        checkSubmit();
+        setFileList(newFileList);
+      } else {
+        form.setFieldValue('files', undefined);
+        checkSubmit();
+        message.error(`File không đúng yêu cầu`);
+        setFileList([]);
+      }
+    } else {
+      setFileList([]);
+    }
   };
 
   const props = {
@@ -84,6 +107,7 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
     form.resetFields();
     onVisibleChange(false);
     setTextAreaValue('');
+    setFileList([]);
   };
 
   const onChangeTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -130,19 +154,6 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
       manual: true,
     },
   );
-  const [file, setFile] = useState<File>();
-  const uploadfile = (e: UploadChangeParam<UploadFile<any>>) => {
-    if (e.file.type === 'application/x-zip-compressed' && Number(e.file.size) < 1024 * 1024 * 5) {
-      // checkSubmit();
-      setFile(e.file.originFileObj);
-      return e.file;
-    } else {
-      form.setFieldValue('files', filePath);
-      // checkSubmit();
-      message.error(`File không đúng yêu cầu`);
-      return undefined;
-    }
-  };
 
   return (
     <ModalForm
@@ -155,10 +166,9 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
           const success = await onFinish(
             { versionId: `${id}` },
             form.getFieldsValue() as API.UpdateVersionRequest,
-            file,
+            fileList.length ? fileList[0].originFileObj : undefined,
           );
-          onVisibleChange(false);
-          return success;
+          if (success) onReset();
         } catch (error) {}
       }}
       modalProps={{
@@ -200,6 +210,7 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
               placeholder="Chọn loại máy"
               onChange={() => {
                 getModelList();
+                checkSubmit();
               }}
             >
               <Option value="STM">STM</Option>
@@ -215,6 +226,7 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
               loading={modelsLoading}
               onChange={() => {
                 getConditionList();
+                checkSubmit();
               }}
             >
               {listModels?.items?.map((item) => {
@@ -229,11 +241,7 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
         </Col>
         <Col span={12}>
           <Form.Item name="conditionId" label="Điều kiện">
-            <Select
-              placeholder="Chọn điều kiện"
-              loading={conditionsLoading}
-              // onChange={checkSubmit}
-            >
+            <Select placeholder="Chọn điều kiện" loading={conditionsLoading} onChange={checkSubmit}>
               {listCondition?.items?.map((item) => {
                 return (
                   <Option key={item.id} value={item.id}>
@@ -246,7 +254,7 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
         </Col>
         <Col span={12}>
           <Form.Item name="name" label="Tên phiên bản">
-            <Input placeholder={'Tên đề xuất'} />
+            <Input placeholder={'Tên đề xuất'} onChange={checkSubmit} />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -256,7 +264,10 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
               showCount={{
                 formatter: () => `${textAreaValue.length} / 250`,
               }}
-              onChange={onChangeTextArea}
+              onChange={(e) => {
+                onChangeTextArea(e);
+                checkSubmit();
+              }}
               placeholder="Nội dung (250 ký tự)"
               className={textAreaValue.length > 250 ? styles.myTextArea : ''}
             />
@@ -266,10 +277,20 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
           <Form.Item name="files" label="File tải">
             <Upload
               {...props}
-              fileList={fileList}
+              fileList={
+                fileList.length
+                  ? fileList
+                  : [
+                      {
+                        uid: '',
+                        name: filePath as string,
+                      },
+                    ]
+              }
               className={styles.myUploadFile}
               onChange={(e) => {
-                uploadfile(e);
+                handleUploadChange(e);
+                checkSubmit();
               }}
             >
               <Button icon={<UploadOutlined />} className={styles.myUploadBtn}>
@@ -284,7 +305,12 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
           Huỷ bỏ
         </Button>
-        <Button className={styles.submitButton} size="large" htmlType="submit">
+        <Button
+          className={styles.submitButton}
+          size="large"
+          htmlType="submit"
+          disabled={disableButton}
+        >
           Lưu
         </Button>
       </Row>

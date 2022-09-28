@@ -18,13 +18,17 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
           setCurrentRow(entity.machine as API.StmInfoResponse);
         };
 
-        return <TextCell onClick={handleClick}>{entity.machine?.name}</TextCell>;
+        return (
+          <TextCell width="328.33px" onClick={handleClick}>
+            {entity.machine?.name}
+          </TextCell>
+        );
       },
       sorter: (a, b) => {
         if (a.machine?.name && b.machine?.name) return a.machine.name.localeCompare(b.machine.name);
         else return 1;
       },
-      width: '200px',
+      width: '328.33px',
     },
     {
       title: <HeadCell>Terminal ID</HeadCell>,

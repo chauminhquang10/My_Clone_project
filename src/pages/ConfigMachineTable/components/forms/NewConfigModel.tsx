@@ -29,7 +29,7 @@ type NewConfigModelFormProps = {
   selectedRowKeys: React.Key[];
   setSelectedRowKeys: (value: React.Key[]) => void;
   onVisibleChange: (value: boolean) => void;
-  onFinish: (value: { machineType: string; name: string }) => Promise<void>;
+  onFinish: (value: { machineType: string; name: string }) => Promise<boolean | undefined>;
 };
 
 interface EditableRowProps {
@@ -300,7 +300,10 @@ const NewConfigModelForm: React.FC<NewConfigModelFormProps> = ({
       width={width}
       visible={visible}
       onVisibleChange={onVisibleChange}
-      onFinish={onFinish}
+      onFinish={async (e) => {
+        const success = await onFinish(e);
+        if (success) onReset();
+      }}
       modalProps={{
         centered: true,
         closable: false,

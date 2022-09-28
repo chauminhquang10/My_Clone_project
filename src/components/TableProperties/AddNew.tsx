@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import React from 'react';
 import style from './style.less';
 
@@ -16,10 +16,14 @@ function AddNew({ onClick, enableCreateNew, text, icon }: AddNewProps) {
       placement="left"
       title={enableCreateNew ? '' : 'Tài khoản chưa được cho phép truy cập chức năng này'}
     >
-      <button className={style['btn-add']} onClick={onClick} disabled={!enableCreateNew}>
+      <Button
+        className={enableCreateNew && style['btn-add']}
+        onClick={onClick}
+        disabled={!enableCreateNew}
+      >
         <span className={style['text-add']}>{text ? text : 'Tạo mới'}</span>
         {icon ? icon : <PlusOutlined className={style.icon} />}
-      </button>
+      </Button>
     </Tooltip>
   );
 }

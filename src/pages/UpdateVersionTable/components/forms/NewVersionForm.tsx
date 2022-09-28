@@ -8,7 +8,6 @@ import type { UploadProps } from 'antd';
 import { useRequest } from 'umi';
 import api from '@/services/STM-APIs';
 import styles from './NewVersionForm.less';
-import type { UploadChangeParam } from 'antd/lib/upload';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -18,7 +17,7 @@ type NewVersionFormProps = {
   width: string;
   visible: boolean;
   onVisibleChange: (value: boolean) => void;
-  onFinish: (values: Partial<API.CreateVersionRequest>, avatar: File) => Promise<void>;
+  onFinish: (values: Partial<API.CreateVersionRequest>, avatar: File) => Promise<boolean>;
 };
 
 const RemoveFileIcon = () => {
@@ -41,16 +40,21 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const [textAreaValue, setTextAreaValue] = useState<string>('');
-  const [file, setFile] = useState<File>();
   const [form] = Form.useForm();
+
+  const onReset = () => {
+    form.resetFields();
+    onVisibleChange(false);
+    setTextAreaValue('');
+    setFileList([]);
+  };
   const handleSubmit = async (values: API.CreateVersionRequest) => {
     try {
-      const success = await onFinish({ ...values }, file as File);
-      return success;
+      const success = await onFinish({ ...values }, fileList[0].originFileObj as File);
+      if (success) onReset();
     } catch (error) {
       console.log('error: ', error);
     }
-    return false;
   };
   const {
     run: getAllModel,
@@ -92,19 +96,39 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
     },
   );
 
-  const handleUploadChange: UploadProps['onChange'] = (info) => {
-    let newFileList = [...info.fileList];
+  const [disableButton, setDisableButton] = useState<boolean>(true);
 
-    //  Read from response and show file link
-    newFileList = newFileList.map((files) => {
-      if (files.response) {
-        // Component will show file.url as link
-        files.url = files.response.url;
+  const checkSubmit = () => {
+    const listField = ['machineCategory', 'modelId', 'conditionId', 'name', 'files', 'content'];
+    setDisableButton(false);
+    listField.forEach((item) => {
+      if (!form.getFieldsValue()[item]) {
+        setDisableButton(true);
       }
-      return files;
     });
+  };
 
-    setFileList(newFileList);
+  const handleUploadChange: UploadProps['onChange'] = (info) => {
+    const newFileList = [...info.fileList];
+
+    console.log(newFileList);
+    //  Read from response and show file link
+    if (newFileList.length) {
+      if (
+        newFileList[0].type === 'application/x-zip-compressed' &&
+        Number(newFileList[0].size) < 1024 * 1024 * 5
+      ) {
+        checkSubmit();
+        setFileList(newFileList);
+      } else {
+        form.setFieldValue('files', undefined);
+        checkSubmit();
+        message.error(`File không đúng yêu cầu`);
+        setFileList([]);
+      }
+    } else {
+      setFileList([]);
+    }
   };
 
   const props = {
@@ -115,39 +139,8 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
     },
   };
 
-  const onReset = () => {
-    form.resetFields();
-    onVisibleChange(false);
-    setTextAreaValue('');
-  };
-
   const onChangeTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextAreaValue(e.target.value);
-  };
-
-  const [disableButton, setDisableButton] = useState<boolean>(true);
-
-  const checkSubmit = () => {
-    const listField = ['machineCategory', 'modelId', 'conditionId', 'name', 'files'];
-    setDisableButton(false);
-    listField.forEach((item) => {
-      if (!form.getFieldsValue()[item]) {
-        setDisableButton(true);
-      }
-    });
-  };
-
-  const uploadfile = (e: UploadChangeParam<UploadFile<any>>) => {
-    if (e.file.type === 'application/x-zip-compressed' && Number(e.file.size) < 1024 * 1024 * 5) {
-      checkSubmit();
-      setFile(e.file.originFileObj);
-      return e.file;
-    } else {
-      form.setFieldValue('files', undefined);
-      checkSubmit();
-      message.error(`File không đúng yêu cầu`);
-      return undefined;
-    }
   };
 
   return (
@@ -249,9 +242,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
               {...props}
               fileList={fileList}
               className={styles.myUploadFile}
-              onChange={(e) => {
-                uploadfile(e);
-              }}
+              onChange={handleUploadChange}
             >
               <Button icon={<UploadOutlined />} className={styles.myUploadBtn}>
                 Upload File
