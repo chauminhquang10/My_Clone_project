@@ -66,14 +66,11 @@ const NewUserForm: React.FC<CreateFormProps> = ({
   };
 
   const handleChange: UploadProps['onChange'] = async (info: UploadChangeParam<UploadFile>) => {
-    console.log('file info: ', info);
     if (info.file.status === 'uploading') {
-      console.log('uploading');
       setLoadingImage(true);
       return;
     }
     if (info.file.status === 'done' || info.file.status === 'error') {
-      console.log('done');
       try {
         const res = await uploadPublicFile(
           { bucketName: 'user', type: 'avatar' },
@@ -95,8 +92,6 @@ const NewUserForm: React.FC<CreateFormProps> = ({
     }
     setLoadingImage(false);
   };
-
-  console.log('image url: ', imageUrl);
 
   const onReset = () => {
     form.resetFields();
