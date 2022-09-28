@@ -33,7 +33,7 @@ import {
 import type { ColumnsType } from 'antd/lib/table';
 import type { MutableRefObject } from 'react';
 import React, { useState } from 'react';
-import { useRequest } from 'umi';
+import { useIntl, useRequest } from 'umi';
 import styles from './RoleListDetailDrawer.less';
 import UpdateRoleListForm from './UpdateRoleListForm';
 
@@ -274,7 +274,11 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
               </Col>
 
               <Col span={24}>
-                <Card title="Quyền tương ứng" size="small" className={styles.myCard}>
+                <Card
+                  title={useIntl().formatMessage({ id: 'detailDrawer_correspondingRole_cardTile' })}
+                  size="small"
+                  className={styles.myCard}
+                >
                   <Row gutter={[12, 12]}>
                     {roleGroupDetail?.actions?.map((eachAction: API.RoleAction) => (
                       <Col key={eachAction?.id}>

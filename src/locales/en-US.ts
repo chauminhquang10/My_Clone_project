@@ -16,7 +16,12 @@ import configMachineTable from './en-US/ConfigMachineTable/table';
 import configMachineForm from './en-US/ConfigMachineTable/forms/form';
 import configMachineDetail from './en-US/ConfigMachineTable/forms/detailDrawer';
 import historyListTable from './en-US/HistoryList/tables';
-import historyList from './en-US/HistoryList';
+import historyList from './en-US/HistoryList/index';
+import userTable from './en-US/UserTable/index';
+import userTableColumn from './en-US/UserTable/tables';
+import userTableDetailHeader from './en-US/UserTable/Detail/Header';
+import userTableDetailUserInfo from './en-US/UserTable/Detail/UserInfoRow';
+import userTableForm from './en-US/UserTable/forms/index';
 import stmError from './en-US/stmError';
 import MachineTable from './en-US/MachineTable';
 
@@ -43,6 +48,11 @@ export default {
   ...configMachineDetail,
   ...historyListTable,
   ...historyList,
+  ...userTable,
+  ...userTableColumn,
+  ...userTableDetailHeader,
+  ...userTableDetailUserInfo,
+  ...userTableForm,
   ...stmError,
   ...MachineTable,
 };

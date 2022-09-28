@@ -2,12 +2,17 @@ import icon from '@/assets/icons/role-list-item-icon.svg';
 import { MAP_ACTION_LIST } from '@/constants';
 import { Card, Col, Row } from 'antd';
 import React from 'react';
+import { useIntl } from 'umi';
 import styles from '../UserDetailDrawer.less';
 
 const RoleGroupRow: React.FC<API.RoleGroupResponse> = ({ name, actions }) => {
   return (
     <Col span={24}>
-      <Card title="Nhóm quyền sở hữu" size="small" className={styles.myCard}>
+      <Card
+        title={useIntl().formatMessage({ id: 'userTable.detail.roleGroup.title' })}
+        size="small"
+        className={styles.myCard}
+      >
         <Row gutter={[24, 24]}>
           <Col span={8}>
             <div className={styles.roleListTitle}>{name}</div>

@@ -1,6 +1,7 @@
 import { MAP_ACTION_LIST } from '@/constants';
 import { Col, Form, Select, Tag } from 'antd';
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
+import { useIntl } from 'umi';
 import styles from '../NewUserForm.less';
 
 const { Option } = Select;
@@ -41,8 +42,16 @@ const RoleGroupField: React.FC<RoleGroupFieldProps> = ({ data, handleSelect }) =
   return (
     <>
       <Col span={24}>
-        <Form.Item name="roleGroupId" label="Nhóm quyền">
-          <Select placeholder="Chọn nhóm quyền" onChange={handleSelectChange}>
+        <Form.Item
+          name="roleGroupId"
+          label={useIntl().formatMessage({
+            id: 'menu.user-management.group-authorize',
+          })}
+        >
+          <Select
+            placeholder={useIntl().formatMessage({ id: 'userTable.form.placeholder.roleGroup' })}
+            onChange={handleSelectChange}
+          >
             {data?.map((role) => {
               return (
                 <Option key={role.id} value={role.id}>
@@ -54,14 +63,17 @@ const RoleGroupField: React.FC<RoleGroupFieldProps> = ({ data, handleSelect }) =
         </Form.Item>
       </Col>
       <Col span={24} className={styles.roleGroupField}>
-        <Form.Item name="actions" label="Quyền tương ứng">
+        <Form.Item
+          name="actions"
+          label={useIntl().formatMessage({ id: 'userTable.form.roleTitle' })}
+        >
           <Select
             mode="multiple"
             tagRender={tagRender}
             style={{ width: '100%' }}
             disabled
             className={styles.selectActions}
-            placeholder="Chọn nhóm quyền"
+            placeholder={useIntl().formatMessage({ id: 'userTable.form.placeholder.roleGroup' })}
           />
         </Form.Item>
       </Col>

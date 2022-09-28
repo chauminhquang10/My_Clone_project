@@ -2,6 +2,7 @@ import { TextCell, UserCellStatus, UserStatusCell } from '@/components/TableProp
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { formatPhoneNumber } from '@/utils';
 import type { ProColumns } from '@ant-design/pro-components';
+import { FormattedMessage } from 'umi';
 
 type ColumnProps = {
   setCurrentRow: (s: API.UserResponse) => void;
@@ -11,14 +12,22 @@ type ColumnProps = {
 function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
   const columns: ProColumns<API.UserResponse>[] = [
     {
-      title: <HeadCell>STT</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="userList.tables.headCell.index" />
+        </HeadCell>
+      ),
       render: (_, __, index) => {
         return <TextCell>{index + 1}</TextCell>;
       },
       width: '5%',
     },
     {
-      title: <HeadCell>Mã nhân viên</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="userList.tables.headCell.staffId" />
+        </HeadCell>
+      ),
       dataIndex: 'staffId',
       render: (dom, entity) => {
         return (
@@ -35,7 +44,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       width: '9%',
     },
     {
-      title: <HeadCell>Tên nhân viên</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="userList.tables.headCell.name" />
+        </HeadCell>
+      ),
       dataIndex: 'name',
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
@@ -58,7 +71,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       width: '21%',
     },
     {
-      title: <HeadCell>Mã - Tên đơn vị</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="userList.tables.headCell.managementUnit" />
+        </HeadCell>
+      ),
       dataIndex: 'managementUnit',
       render: (dom, entity) => {
         return (
@@ -68,7 +85,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       width: '21%',
     },
     {
-      title: <HeadCell>Email</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="userList.tables.headCell.email" />
+        </HeadCell>
+      ),
       dataIndex: 'email',
       valueType: 'textarea',
       render: (dom) => {
@@ -81,7 +102,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       width: '21%',
     },
     {
-      title: <HeadCell>Số điện thoại</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="userList.tables.headCell.phoneNumber" />
+        </HeadCell>
+      ),
       dataIndex: 'phoneNumber',
       valueType: 'textarea',
       render: (dom) => {
@@ -90,7 +115,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       width: '12%',
     },
     {
-      title: <HeadCell>Trạng thái hoạt động</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="userList.tables.headCell.status" />
+        </HeadCell>
+      ),
       dataIndex: 'status',
       hideInForm: true,
       filters: true,

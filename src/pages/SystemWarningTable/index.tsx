@@ -3,7 +3,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProFormText, ProFormTextArea, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { FormattedMessage } from 'umi';
+import { FormattedMessage, useIntl } from 'umi';
 // import { useRequest } from 'umi';
 import NewUserForm from './components/forms/NewUserForm';
 import AddNew from '@/components/TableProperties/AddNew';
@@ -151,7 +151,7 @@ const TableCustom = () => {
       />
 
       <NewUserForm
-        title="Tạo người dùng mới"
+        title={useIntl().formatMessage({ id: 'userTable.form.title.newUser' })}
         width="934px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}

@@ -3,6 +3,7 @@ export default {
   buttonGroup_edit: 'Edit',
 
   form_buttonGroup_submitButton_title: 'Completed',
+  form_buttonGroup_confirmButton_title: 'Confirm',
   form_buttonGroup_cancelButton_title: 'Cancel',
   form_buttonGroup_saveButton_title: 'Save',
 
@@ -38,4 +39,10 @@ export default {
   continue: 'Continue',
   mac: 'MAC',
   noAccess: 'Tài khoản chưa được cho phép truy cập chức năng này',
+  'userDetailStatus.active': 'ACTIVE',
+  'userDetailStatus.inActive': 'INACTIVE',
+  'userDetailStatus.unknown': 'UNKNOWN',
+  'userCellStatus.ACTIVE': 'ACTIVE',
+  'userCellStatus.INACTIVE': 'INACTIVE',
+  'userCellStatus.UNKNOWN': 'UNKNOWN',
 };
