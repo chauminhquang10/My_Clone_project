@@ -1,6 +1,7 @@
 import { MapIcon } from '@/assets';
 import { EditOutlined, SyncOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Drawer, Form, Input, Row, Space, Table, Typography } from 'antd';
+import { FormattedMessage } from 'umi';
 import { data, informationColumns } from '../../data';
 import styles from './machineDrawer.less';
 
@@ -214,7 +215,7 @@ export default function MachineDrawer({
               </Row>
             </Card>
             <Card
-              title="Thông tin phần cứng"
+              title={<FormattedMessage id="hardware-information.title" />}
               size="small"
               style={{ borderRadius: 12 }}
               bodyStyle={{ padding: 0 }}

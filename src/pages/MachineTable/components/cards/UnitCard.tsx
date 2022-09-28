@@ -3,6 +3,7 @@ import { Button, Card } from 'antd';
 import type { MouseEventHandler } from 'react';
 import CardInputBody from './CardInputBody';
 import type { CardCol } from './CardInputBody';
+import { FormattedMessage } from 'umi';
 
 export interface UnitCardProps extends API.StmDetailResponse {
   onExtraClick?: MouseEventHandler;
@@ -19,7 +20,9 @@ export default function UnitCard({
   managementUsers?.forEach((item, index) => {
     listInfor.push({
       props: { span: 8 },
-      formItemProps: { label: index === 0 ? 'Mã - Tên nhân viên quản lý' : '' },
+      formItemProps: {
+        label: index === 0 ? <FormattedMessage id="machine-drawer.code-staffName" /> : '',
+      },
       inputProps: {
         disabled: true,
         placeholder: managementUsers ? item.name : '',
@@ -27,7 +30,7 @@ export default function UnitCard({
     });
     listInfor.push({
       props: { span: 8 },
-      formItemProps: { label: index === 0 ? 'Số điện thoại' : '' },
+      formItemProps: { label: index === 0 ? <FormattedMessage id="phoneNumber" /> : '' },
       inputProps: {
         disabled: true,
         placeholder: managementUsers ? item.phoneNumber : '',
@@ -46,7 +49,10 @@ export default function UnitCard({
   const cols: CardCol[] = [
     {
       props: { span: 8 },
-      formItemProps: { label: 'Mã - Tên đơn vị', name: 'Mã - Tên đơn vị' },
+      formItemProps: {
+        label: <FormattedMessage id="machine-drawer.code-unitName" />,
+        name: 'Mã - Tên đơn vị',
+      },
       inputProps: {
         disabled: true,
         placeholder: `${managementUnit?.code} - ${managementUnit?.name}`,
@@ -54,7 +60,7 @@ export default function UnitCard({
     },
     {
       props: { span: 16 },
-      formItemProps: { label: 'Địa chỉ đơn vị', name: 'Địa chỉ đơn vị' },
+      formItemProps: { label: <FormattedMessage id="address" />, name: 'Địa chỉ đơn vị' },
       inputProps: { disabled: true, placeholder: managementUnit?.address },
     },
     ...listInfor,
@@ -62,10 +68,12 @@ export default function UnitCard({
 
   return (
     <Card
-      title="Đơn vị quản lý"
+      title={<FormattedMessage id="menu.user-management.management-unit" />}
       extra={
         <Button type="link" onClick={onExtraClick} icon={<EditOutlined />}>
-          Chỉnh sửa
+          <span>
+            <FormattedMessage id="edit" />
+          </span>
         </Button>
       }
       size="small"
