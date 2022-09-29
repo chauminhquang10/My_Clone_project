@@ -48,4 +48,5 @@ export default {
   'declare-unit.tableTitle': 'Staff List',
   'declare-unit.streetName': 'Street name',
   'declare-unit.selectLocation': 'Select location',
+  totalAnalytics: 'Total transactions',
 };

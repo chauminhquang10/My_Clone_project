@@ -9,7 +9,8 @@ import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { FormattedMessage, useIntl, useRequest } from 'umi';
+import { Access, useModel, useRequest } from 'umi';
+import NoFoundPage from '../404';
 import { UserDetailDrawer } from './components';
 import { NewUserForm } from './components/forms';
 import Column from './components/tables/Column';
@@ -105,79 +106,78 @@ const UserManagementTable: React.FC = () => {
     jump_to: 'Trang',
     page: '',
   };
+  const { initialState } = useModel('@@initialState');
 
   return (
-    <PageContainer
-      className={style['table-container']}
-      header={{
-        title: '',
-      }}
-      footer={undefined}
-    >
-      <ProTable
-        headerTitle={
-          <TitleTable>
-            <FormattedMessage id="userTable.header.title" />
-          </TitleTable>
-        }
-        rowKey="key"
-        search={false}
-        toolBarRender={() => [
-          <AddNew
-            key="primary"
-            enableCreateNew={true}
-            onClick={() => {
-              handleModalVisible(true);
-            }}
-          />,
-        ]}
-        dataSource={listUser?.items}
-        columns={columns}
-        options={false}
-        scroll={{ x: 'max-content' }}
-        pagination={{
-          total: totalSize,
-          onChange(current) {
-            setPage(current);
-          },
-          current: page,
-          className: style['pagination-custom'],
-          locale: { ...paginationLocale },
-          showSizeChanger: false,
-          pageSize: pageSizeRef.current,
-          showTotal: (total, range) => <TotalPagination total={total} range={range} />,
-          hideOnSinglePage: false,
-          showQuickJumper: true,
+    <Access accessible={initialState?.currentUser?.admin || false} fallback={<NoFoundPage />}>
+      <PageContainer
+        className={style['table-container']}
+        header={{
+          title: '',
         }}
-      />
+        footer={undefined}
+      >
+        <ProTable
+          headerTitle={<TitleTable>Danh sách người dùng</TitleTable>}
+          rowKey="key"
+          search={false}
+          toolBarRender={() => [
+            <AddNew
+              key="primary"
+              enableCreateNew={true}
+              onClick={() => {
+                handleModalVisible(true);
+              }}
+            />,
+          ]}
+          dataSource={listUser?.items}
+          columns={columns}
+          options={false}
+          scroll={{ y: 'max-content' }}
+          pagination={{
+            total: totalSize,
+            onChange(current) {
+              setPage(current);
+            },
+            current: page,
+            className: style['pagination-custom'],
+            locale: { ...paginationLocale },
+            showSizeChanger: false,
+            pageSize: pageSizeRef.current,
+            showTotal: (total, range) => <TotalPagination total={total} range={range} />,
+            hideOnSinglePage: false,
+            showQuickJumper: true,
+          }}
+        />
 
-      {/* Create New User Form */}
-      <NewUserForm
-        title={useIntl().formatMessage({ id: 'userTable.form.title.newUser' })}
-        width="934px"
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={async (values) => {
-          const success = await handleAdd(values as API.CreateUserRequest);
-          if (success) {
-            handleModalVisible(false);
+        {/* Create New User Form */}
+        <NewUserForm
+          title="Tạo người dùng mới"
+          width="934px"
+          visible={createModalVisible}
+          onVisibleChange={handleModalVisible}
+          onFinish={async (values) => {
+            const success = await handleAdd(values as API.CreateUserRequest);
+            if (success) {
+              handleModalVisible(false);
+              runGetAllUser();
+              return true;
+            }
+            return false;
+          }}
+        />
+        {/* User Detail */}
+        <UserDetailDrawer
+          currentRow={currentRow}
+          setCurrentRow={setCurrentRow}
+          showDetail={showDetail}
+          setShowDetail={setShowDetail}
+          runGetAllUser={() => {
             runGetAllUser();
-            return true;
-          }
-          return false;
-        }}
-      />
-      {/* User Detail */}
-      <UserDetailDrawer
-        currentRow={currentRow}
-        setCurrentRow={setCurrentRow}
-        showDetail={showDetail}
-        setShowDetail={setShowDetail}
-        runGetAllUser={() => {
-          runGetAllUser();
-        }}
-      />
-    </PageContainer>
+          }}
+        />
+      </PageContainer>
+    </Access>
   );
 };
 

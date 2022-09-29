@@ -1,7 +1,7 @@
 import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
-import { useModel, useRequest } from 'umi';
+import { useIntl, useModel, useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
 import style from '@/components/TableProperties/style.less';
@@ -121,6 +121,7 @@ const TableCustom = () => {
       return false;
     }
   };
+  const intl = useIntl();
 
   return (
     <PageContainer
@@ -131,7 +132,9 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Cấu hình dòng máy</TitleTable>}
+        headerTitle={
+          <TitleTable>{intl.formatMessage({ id: 'menu.machine-management.config' })}</TitleTable>
+        }
         rowKey="key"
         search={false}
         toolBarRender={() => [

@@ -4,6 +4,7 @@ import { TextCell } from '@/components/TableProperties//TableCell';
 import { formatDate } from '@/utils';
 import FilterComponent from '@/components/TableProperties/FilterComponent';
 import type { Dispatch, SetStateAction } from 'react';
+import { FormattedMessage } from 'umi';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmModelResponse) => void;
@@ -39,7 +40,11 @@ const filterTypeMachineList: filterType = [
 function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: ColumnProps) {
   const columns: ProColumns<API.StmModelResponse>[] = [
     {
-      title: <HeadCell>Loại máy</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="machineType" />
+        </HeadCell>
+      ),
       dataIndex: 'machineType',
       render: (dom, entity) => {
         return (
@@ -69,7 +74,11 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
       },
     },
     {
-      title: <HeadCell>Dòng máy</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="model" />
+        </HeadCell>
+      ),
       dataIndex: 'name',
       render: (dom, entity) => {
         return (
@@ -85,7 +94,11 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
       },
     },
     {
-      title: <HeadCell>Người tạo</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="configMachine_tableColumn_machineCreatedBy" />
+        </HeadCell>
+      ),
       dataIndex: 'createdBy',
       render: (_, entity) => {
         const value = entity.createdBy?.staffId
@@ -95,7 +108,11 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
       },
     },
     {
-      title: <HeadCell>Ngày tạo</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="tableColumn_createdDate" />
+        </HeadCell>
+      ),
       dataIndex: 'createdAt',
       render: (dom) => {
         return <TextCell>{formatDate(dom as string)}</TextCell>;

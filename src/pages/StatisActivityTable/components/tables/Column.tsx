@@ -2,6 +2,7 @@ import type { ProColumns } from '@ant-design/pro-components';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties//TableCell';
 import type { Dispatch, SetStateAction } from 'react';
+import { FormattedMessage } from 'umi';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmInfoResponse) => void;
@@ -13,7 +14,11 @@ type ColumnProps = {
 function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
   const columns: ProColumns<API.TransactionConfigurationResponse>[] = [
     {
-      title: <HeadCell>Tên máy</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="machineName" />
+        </HeadCell>
+      ),
       dataIndex: 'machine',
       render: (_, entity) => {
         const handleClick = () => {
@@ -34,21 +39,33 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       width: '328.33px',
     },
     {
-      title: <HeadCell>Terminal ID</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="terminalId" />
+        </HeadCell>
+      ),
       dataIndex: 'machine',
       render: (_, entity) => {
         return <TextCell>{entity.machine?.terminalId}</TextCell>;
       },
     },
     {
-      title: <HeadCell>IP Address</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="ipAddress" />
+        </HeadCell>
+      ),
       dataIndex: 'machine',
       render: (_, entity) => {
         return <TextCell>{entity.machine?.ipAddress}</TextCell>;
       },
     },
     {
-      title: <HeadCell>Tổng giao dịch</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="totalAnalytics" />
+        </HeadCell>
+      ),
       dataIndex: 'total',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
@@ -59,7 +76,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Thành công</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="success" />
+        </HeadCell>
+      ),
       dataIndex: 'success',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
@@ -70,7 +91,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Thất bại</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="fail" />
+        </HeadCell>
+      ),
       dataIndex: 'failure',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;

@@ -4,6 +4,7 @@ import { TextCell } from '@/components/TableProperties//TableCell';
 import { formatDate } from '@/utils';
 import DateFilter from '@/components/TableProperties/DateFilter';
 import type { Dispatch, SetStateAction } from 'react';
+import { FormattedMessage } from 'umi';
 
 type ColumnProps = {
   setCurrentRow: (s: API.VersionResponse) => void;
@@ -34,7 +35,11 @@ const filterModel = (value: string | number | boolean, record: API.VersionRespon
 function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
   const columns: ProColumns<API.VersionResponse>[] = [
     {
-      title: <HeadCell>Tên phiên bản</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="updateVersionTable.versionName" />
+        </HeadCell>
+      ),
       dataIndex: 'name',
       render: (dom, entity) => {
         const stt = dom as number;
@@ -57,7 +62,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       width: '240px',
     },
     {
-      title: <HeadCell>Loại máy</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="machineType" />
+        </HeadCell>
+      ),
       dataIndex: 'machineType',
       render: (dom) => {
         return <TextCell width="140px">{dom}</TextCell>;
@@ -69,7 +78,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       width: '140px',
     },
     {
-      title: <HeadCell>Dòng máy</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="model" />
+        </HeadCell>
+      ),
       dataIndex: 'model',
       render: (_, entity) => {
         return <TextCell>{entity.model?.name}</TextCell>;
@@ -78,21 +91,33 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       onFilter: filterModel,
     },
     {
-      title: <HeadCell>Nội dung</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="updateVersionTable.description" />
+        </HeadCell>
+      ),
       dataIndex: 'content',
       render: (dom) => {
         return <TextCell width="570px">{dom}</TextCell>;
       },
     },
     {
-      title: <HeadCell>Điều kiện nâng cấp</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="updateVersionTable.updateCondition" />
+        </HeadCell>
+      ),
       dataIndex: 'condition',
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
     },
     {
-      title: <HeadCell>Thời gian tải lên</HeadCell>,
+      title: (
+        <HeadCell>
+          <FormattedMessage id="updateVersionTable.date" />
+        </HeadCell>
+      ),
       dataIndex: 'createdAt',
       render: (dom) => {
         return <TextCell>{formatDate(dom as string)}</TextCell>;

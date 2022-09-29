@@ -11,7 +11,11 @@ export default {
 
   tableColumn_indexTitle: 'STT',
   fullName: 'Họ và tên',
+  success: 'Thành công',
+  fail: 'Thất bại',
   tableColumn_createdDate: 'Ngày tạo',
+  return: 'Quay lại',
+  export: 'Xuất file',
   south: 'Miền Nam',
   middle: 'Miền Trung',
   north: 'Miền Bắc',

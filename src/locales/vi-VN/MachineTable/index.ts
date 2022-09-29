@@ -49,4 +49,5 @@ export default {
   'declare-unit.tableTitle': 'Danh sách nhân viên quản lý',
   'declare-unit.streetName': 'Tên đường, số nhà',
   'declare-unit.selectLocation': 'Chọn khu vực',
+  totalAnalytics: 'Tổng giao dịch',
 };
