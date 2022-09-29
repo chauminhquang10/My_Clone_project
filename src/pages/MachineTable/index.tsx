@@ -81,7 +81,7 @@ const TableCustom = () => {
         search={false}
         toolBarRender={() => [
           <AddNew
-            enableCreateNew={initialState?.currentRoles?.create_machine !== true}
+            enableCreateNew={initialState?.currentRoles?.create_machine || false}
             key="primary"
             onClick={() => {
               handleModalVisible(true);
