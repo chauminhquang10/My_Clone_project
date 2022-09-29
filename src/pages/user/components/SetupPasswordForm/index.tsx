@@ -19,27 +19,27 @@ import { history } from 'umi';
 const validationList = [
   {
     id: 0,
-    message: 'Mật khẩu tối thiểu 08 ký tự',
+    message: 'Password minimum 8 characters',
     checkFunction: (str: string) => isMinimumCharacter(str, 8),
   },
   {
     id: 1,
-    message: 'Chữ thường',
+    message: 'Lowercase letters',
     checkFunction: isContainLowerCase,
   },
   {
     id: 2,
-    message: 'Chữ cái HOA',
+    message: 'Uppercase letters',
     checkFunction: isContainUpperCase,
   },
   {
     id: 3,
-    message: 'Chữ số',
+    message: 'Number',
     checkFunction: isContainNumber,
   },
   {
     id: 4,
-    message: ' Ký tự đặc biệt',
+    message: 'Special characters',
     checkFunction: isContainSpecialLetter,
   },
 ];
@@ -128,7 +128,7 @@ const SetupPasswordForm: React.FC<{ token?: string }> = ({ token }) => {
 
   return (
     <div className={styles['setup-password-form-wrapper']}>
-      <h1 className={styles.title}>Thiết lập mật khẩu</h1>
+      <h1 className={styles.title}>Set up password</h1>
       <Form
         form={form}
         name="set-password-form"
@@ -138,12 +138,12 @@ const SetupPasswordForm: React.FC<{ token?: string }> = ({ token }) => {
       >
         <Form.Item
           name="password"
-          label="Mật khẩu mới"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu mới' }]}
+          label="New password"
+          rules={[{ required: true, message: 'Please enter new password' }]}
         >
           <InputPassword
             onChange={handleNewPasswordChange}
-            placeholder="Nhập mật khẩu"
+            placeholder="Enter new password"
             prefix={<LockOutlined />}
           />
         </Form.Item>
@@ -160,8 +160,8 @@ const SetupPasswordForm: React.FC<{ token?: string }> = ({ token }) => {
         </div>
         <Form.Item
           name="retypePassword"
-          label="Xác nhận mật khẩu"
-          rules={[{ required: true, message: 'Vui lòng xác nhận mật khẩu!' }]}
+          label="Retype password"
+          rules={[{ required: true, message: 'Please confirm your password' }]}
         >
           <InputPassword
             onChange={handleRetypePasswordChange}
@@ -178,7 +178,7 @@ const SetupPasswordForm: React.FC<{ token?: string }> = ({ token }) => {
           disabled={!validationList.every((item) => item.checkFunction(newPassword))}
           loading={isSubmitting}
         >
-          Hoàn tất
+          Submit
         </Button>
       </div>
     </div>
