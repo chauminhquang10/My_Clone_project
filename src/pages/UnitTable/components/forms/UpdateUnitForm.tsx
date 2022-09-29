@@ -365,7 +365,7 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
 
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          <FormattedMessage id="cancel" />,
+          <FormattedMessage id="cancel" />
         </Button>
         <Form.Item shouldUpdate>
           {() => (
@@ -375,7 +375,7 @@ const UpdateUnitForm: React.FC<UpdateUnitFormProps> = ({
               htmlType="submit"
               disabled={!!form.getFieldsError().filter(({ errors }) => errors.length).length}
             >
-              <FormattedMessage id="form_buttonGroup_saveButton_title" />,
+              <FormattedMessage id="form_buttonGroup_saveButton_title" />
             </Button>
           )}
         </Form.Item>

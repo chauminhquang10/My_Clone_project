@@ -34,7 +34,7 @@ const TableCustom = () => {
   };
 
   //------------ pagination --------------------
-  const pageSizeRef = useRef<number>(2);
+  const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [paramFilter, setParamFilter] = useState<API.getAllManagementUnitsParams | undefined>();
@@ -143,6 +143,7 @@ const TableCustom = () => {
               setCurrentRow(rowData);
             },
           })}
+          scroll={{ x: 'max-content' }}
         />
 
         {createModalVisible && (

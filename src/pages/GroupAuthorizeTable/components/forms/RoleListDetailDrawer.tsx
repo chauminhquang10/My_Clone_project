@@ -373,7 +373,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
               </Col>
               <Col span={22}>
                 <Row align="middle" justify="space-between">
-                  <h3 className={styles.lockModalTitle}>Cảnh báo</h3>
+                  <h3 className={styles.lockModalTitle}>Warning</h3>
                   <CloseOutlined
                     style={{
                       fontSize: '16px',
@@ -385,7 +385,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
                 </Row>
                 <Row>
                   <span className={styles.lockModalDesc}>
-                    Bạn có chắc chắn muốn xóa nhóm quyền {roleGroupDetail?.name}?
+                    Are you sure that you want to delete {roleGroupDetail?.name}?
                   </span>
                 </Row>
               </Col>
@@ -396,7 +396,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
                 size="large"
                 onClick={() => setOpenConfirmModal(false)}
               >
-                <FormattedMessage id="cancel" />,
+                <FormattedMessage id="cancel" />
               </Button>
               <Button
                 className={styles.submitLockModalButton}
@@ -406,7 +406,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
                   setOpenConfirmModal(false);
                 }}
               >
-                <FormattedMessage id="form_buttonGroup_confirmButton_title" />,
+                <FormattedMessage id="form_buttonGroup_confirmButton_title" />
               </Button>
             </Row>
           </Col>

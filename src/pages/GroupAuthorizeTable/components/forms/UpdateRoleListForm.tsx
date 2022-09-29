@@ -216,7 +216,7 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
 
       <Row align="middle" justify="end" style={{ marginTop: '28px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          <FormattedMessage id="cancel" />,
+          <FormattedMessage id="cancel" />
         </Button>
         <Form.Item shouldUpdate>
           {() => (
@@ -229,7 +229,7 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
                 !!form.getFieldsError().filter(({ errors }) => errors.length).length
               }
             >
-              <FormattedMessage id="form_buttonGroup_saveButton_title" />,
+              <FormattedMessage id="form_buttonGroup_saveButton_title" />
             </Button>
           )}
         </Form.Item>

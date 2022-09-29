@@ -216,7 +216,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
         closable={true}
         headerStyle={{ border: 'none' }}
       >
-        {currentRow?.name && (
+        {currentRow?.id && (
           <Form layout="vertical" hideRequiredMark>
             <Row style={{ marginBottom: '12px' }}>
               <h4 className={styles.drawerHeaderTitle}>Chi tiết file nâng cấp</h4>

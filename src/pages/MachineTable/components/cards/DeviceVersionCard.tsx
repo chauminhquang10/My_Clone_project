@@ -1,6 +1,6 @@
 import { SyncOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Input, Row } from 'antd';
-import { FormattedMessage } from 'umi';
+import { FormattedMessage, history } from 'umi';
 
 export interface DeviceVersionCardProps extends API.StmDetailResponse {
   className?: string;
@@ -43,7 +43,13 @@ export default function DeviceVersionCard({
         </Col>
         <Col span={8}>
           <Form.Item name="phoneNumber" label="">
-            <Button className={btnClassName} block>
+            <Button
+              className={btnClassName}
+              block
+              onClick={() => {
+                history.push('/machine/update-firmware');
+              }}
+            >
               <FormattedMessage id="machine-drawer.version-list-detail" />
             </Button>
           </Form.Item>
