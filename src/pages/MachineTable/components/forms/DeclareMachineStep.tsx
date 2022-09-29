@@ -6,7 +6,7 @@ import { useRequest } from 'ahooks';
 import type { FormInstance } from 'antd';
 import { InputNumber } from 'antd';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
-import type { ChangeEventHandler } from 'react';
+import type { ChangeEventHandler, ReactNode } from 'react';
 import { useMemo } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
@@ -16,8 +16,8 @@ interface DeclareMachineStepProps extends API.StmDetailResponse {
   onCancel: () => void;
   onSubmit?: () => void;
   form: FormInstance;
-  submitButtonLabel?: string;
-  cancelButtonLabel?: string;
+  submitButtonLabel?: ReactNode;
+  cancelButtonLabel?: ReactNode;
 }
 
 const validateMachine = (params: API.checkMachineExistedParams) => () =>
@@ -36,8 +36,8 @@ export default function DeclareMachineStep({
   onCancel: handleCancel,
   onSubmit,
   form,
-  submitButtonLabel = 'Lưu',
-  cancelButtonLabel = 'Huỷ bỏ',
+  submitButtonLabel = <FormattedMessage id="form_buttonGroup_saveButton_title" />,
+  cancelButtonLabel = <FormattedMessage id="form_buttonGroup_cancelButton_title" />,
   machineType,
   model,
   serialNumber,

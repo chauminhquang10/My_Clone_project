@@ -2,7 +2,7 @@ import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
-import { useRequest } from 'umi';
+import { Access, useModel, useRequest } from 'umi';
 import NewRoleListForm from './components/forms/NewRoleListForm';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
@@ -11,8 +11,12 @@ import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
 import RoleListDetailDrawer from './components/forms/RoleListDetailDrawer';
 import { createRoleGroup, getAllRoleGroup } from '@/services/STM-APIs/RoleController';
+import NoFoundPage from '../404';
+
+import { useIntl } from 'umi';
 
 const TableCustom = () => {
+  const intl = useIntl();
   // xử lí dữ liệu check all để send api
   const [checkAllKeys, setCheckAllKeys] = useState<(number | string)[]>([]);
 
@@ -64,7 +68,11 @@ const TableCustom = () => {
     try {
       await createRoleGroup({ name: value.roleGroupName, actionIds: finalAllKeysData as number[] });
       hide();
-      message.success('Thêm nhóm quyền mới thành công');
+      message.success(
+        intl.formatMessage({
+          id: 'createRoleGroup_successStatus_message',
+        }),
+      );
       handleModalVisible(false);
       runGetAllRolesGroup();
     } catch (error) {
@@ -72,84 +80,94 @@ const TableCustom = () => {
       message.error('Adding failed, please try again!');
     }
   };
+  const { initialState } = useModel('@@initialState');
 
   return (
-    <PageContainer
-      className={style['table-container']}
-      header={{
-        title: '',
-      }}
-      footer={undefined}
-    >
-      <ProTable
-        headerTitle={<TitleTable>Danh sách nhóm quyền</TitleTable>}
-        rowKey="key"
-        search={false}
-        toolBarRender={() => [
-          <AddNew
-            key="primary"
-            enableCreateNew={true}
-            onClick={() => {
-              handleModalVisible(true);
+    <Access accessible={initialState?.currentUser?.admin || false} fallback={<NoFoundPage />}>
+      <PageContainer
+        className={style['table-container']}
+        header={{
+          title: '',
+        }}
+        footer={undefined}
+      >
+        <ProTable
+          headerTitle={
+            <TitleTable>
+              {intl.formatMessage({
+                id: 'roleGroup_tableTitle',
+              })}
+            </TitleTable>
+          }
+          rowKey="key"
+          search={false}
+          toolBarRender={() => [
+            <AddNew
+              key="primary"
+              enableCreateNew={true}
+              onClick={() => {
+                handleModalVisible(true);
+              }}
+            />,
+          ]}
+          request={async () => {
+            const res = await runGetAllRolesGroup();
+            return {
+              data: res?.roleGroups,
+              total: res?.roleGroups ? res.roleGroups.length : 0,
+              success: true,
+            };
+          }}
+          columns={columns}
+          options={false}
+          pagination={{
+            onChange(current) {
+              setCurrentPage(current);
+            },
+            current: currentPage,
+            className: style['pagination-custom'],
+            locale: { ...paginationLocale },
+            showSizeChanger: false,
+            pageSize: pageSize.current,
+            showTotal: (total, range) => <TotalPagination total={total} range={range} />,
+            hideOnSinglePage: true,
+            showQuickJumper: true,
+          }}
+          onRow={(rowData) => ({
+            onClick: () => {
+              setCurrentRow(rowData);
+            },
+          })}
+        />
+        {createModalVisible && (
+          <NewRoleListForm
+            title={intl.formatMessage({
+              id: 'createForm_title',
+            })}
+            width="934px"
+            checkAllKeys={checkAllKeys}
+            setCheckAllKeys={setCheckAllKeys}
+            visible={createModalVisible}
+            onVisibleChange={handleModalVisible}
+            onFinish={async (value: { roleGroupName: string }) => {
+              await handleAddNewRoleGroup(value);
             }}
-          />,
-        ]}
-        request={async () => {
-          const res = await runGetAllRolesGroup();
-          return {
-            data: res?.roleGroups,
-            total: res?.roleGroups ? res.roleGroups.length : 0,
-            success: true,
-          };
-        }}
-        columns={columns}
-        options={false}
-        pagination={{
-          onChange(current) {
-            setCurrentPage(current);
-          },
-          current: currentPage,
-          className: style['pagination-custom'],
-          locale: { ...paginationLocale },
-          showSizeChanger: false,
-          pageSize: pageSize.current,
-          showTotal: (total, range) => <TotalPagination total={total} range={range} />,
-          hideOnSinglePage: true,
-          showQuickJumper: true,
-        }}
-        onRow={(rowData) => ({
-          onClick: () => {
-            setCurrentRow(rowData);
-          },
-        })}
-        scroll={{ x: 'max-content' }}
-      />
-      {createModalVisible && (
-        <NewRoleListForm
-          title="Tạo nhóm quyền"
-          width="934px"
-          checkAllKeys={checkAllKeys}
-          setCheckAllKeys={setCheckAllKeys}
-          visible={createModalVisible}
-          onVisibleChange={handleModalVisible}
-          onFinish={async (value: { roleGroupName: string }) => {
-            await handleAddNewRoleGroup(value);
-          }}
-        />
-      )}
+          />
+        )}
 
-      {showDetail && (
-        <RoleListDetailDrawer
-          currentRoleGroup={currentRow}
-          setCurrentRoleGroup={setCurrentRow}
-          showDetail={showDetail}
-          setShowDetail={setShowDetail}
-          runGetAllRolesGroup={() => {
-            runGetAllRolesGroup();
-          }}
-        />
-      )}
-    </PageContainer>
+        {showDetail && (
+          <RoleListDetailDrawer
+            currentRoleGroup={currentRow}
+            setCurrentRoleGroup={setCurrentRow}
+            showDetail={showDetail}
+            setShowDetail={setShowDetail}
+            runGetAllRolesGroup={() => {
+              runGetAllRolesGroup();
+            }}
+          />
+        )}
+      </PageContainer>
+    </Access>
   );
 };
 

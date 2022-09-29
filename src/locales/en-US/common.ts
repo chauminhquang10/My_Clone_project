@@ -9,9 +9,8 @@ export default {
 
   searchBar_placeholder: 'Search',
 
-  tableColumn_indexTitle: 'Index',
-  fullName: 'Full name',
-  tableColumn_createdDate: 'Created Date',
+  tableColumn_indexTitle: 'No.',
+  tableColumn_createdDate: 'Date',
   south: 'South',
   middle: 'Middle',
   north: 'North',

@@ -27,6 +27,8 @@ import { useModel, useRequest } from 'umi';
 import { getModelDetail, updateModel } from '@/services/STM-APIs/STMModelController';
 import UpdateConfigModelForm from './UpdateConfigModel';
 
+import { useIntl, FormattedMessage } from 'umi';
+
 type CustomPhysicalDevice = API.PhysicalDevice & {
   key: React.Key;
   myMinCap: number;
@@ -54,9 +56,11 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
   setCurrentModel,
   getAllConfigMachine,
 }) => {
+  const intl = useIntl();
+
   const configModelColumns: ColumnsType<API.StorageItem> = [
     {
-      title: 'Loại thiết bị',
+      title: <FormattedMessage id="detailDrawer_configCard_columnGroup_deviceType" />,
       dataIndex: ['deviceType', 'name'],
       width: '33%',
       sorter: (a, b) => {
@@ -68,7 +72,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
       render: (text) => <span>{text}</span>,
     },
     {
-      title: 'Đơn vị tính',
+      title: <FormattedMessage id="detailDrawer_configCard_columnGroup_unit" />,
       dataIndex: ['deviceType', 'unit'],
       width: '33%',
       sorter: (a, b) => {
@@ -81,7 +85,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
     },
 
     {
-      title: 'Sức chứa tối thiểu',
+      title: <FormattedMessage id="detailDrawer_configCard_columnGroup_miniCapacity" />,
       dataIndex: 'minCapacity',
       key: 'minCapacity',
       width: '33%',
@@ -161,7 +165,11 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
         storages: formattedForSendingData,
       } as API.CreateStmModelRequest);
       hide();
-      message.success('Chỉnh sửa nhóm quyền thành công');
+      message.success(
+        intl.formatMessage({
+          id: 'updateConfigMachine_successStatus_message',
+        }),
+      );
       handleUpdateModalVisible(false);
       setShowDetail(false);
       getAllConfigMachine();
@@ -206,7 +214,11 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
           <Space size={12} direction={'vertical'}>
             <Row>
               <Col span={15}>
-                <h4 className={styles.drawerHeaderTitle}>Chi tiết cấu hình dòng máy</h4>
+                <h4 className={styles.drawerHeaderTitle}>
+                  {intl.formatMessage({
+                    id: 'detailDrawer_title',
+                  })}
+                </h4>
               </Col>
               <Col span={9}>
                 <Row
@@ -228,7 +240,11 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                         onClick={() => handleUpdateModalVisible(true)}
                         disabled={!enableUpdate}
                       >
-                        <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
+                        <span className={styles.btnGroupTitle}>
+                          {intl.formatMessage({
+                            id: 'edit',
+                          })}
+                        </span>
                       </Button>
                     </Tooltip>
                   </Col>
@@ -236,7 +252,11 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                     <Tooltip
                       placement="left"
                       title={
-                        enableDelete ? 'Xóa' : 'Tài khoản chưa được cho phép truy cập chức năng này'
+                        enableDelete
+                          ? intl.formatMessage({
+                              id: 'delete',
+                            })
+                          : 'Tài khoản chưa được cho phép truy cập chức năng này'
                       }
                     >
                       <Button
@@ -254,15 +274,31 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
 
             <Row gutter={[0, 20]}>
               <Col span={24}>
-                <Card title="Thông tin dòng máy" size="small" className={styles.myCard}>
+                <Card
+                  title={intl.formatMessage({
+                    id: 'detailDrawer_infoCard_title',
+                  })}
+                  size="small"
+                  className={styles.myCard}
+                >
                   <Row gutter={24}>
                     <Col span={8}>
-                      <Form.Item name="machineType" label="Loại máy">
+                      <Form.Item
+                        name="machineType"
+                        label={intl.formatMessage({
+                          id: 'detailDrawer_inputGroup_machineType_tile',
+                        })}
+                      >
                         <Input disabled placeholder={currentModel?.machineType} />
                       </Form.Item>
                     </Col>
                     <Col span={16}>
-                      <Form.Item name="name" label="Dòng máy">
+                      <Form.Item
+                        name="name"
+                        label={intl.formatMessage({
+                          id: 'detailDrawer_inputGroup_machineSeries_tile',
+                        })}
+                      >
                         <Input disabled placeholder={currentModel?.name} />
                       </Form.Item>
                     </Col>
@@ -277,7 +313,9 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                   bordered
                   title={() => (
                     <UserRoleGroupListTableTitle
-                      title="Cấu hình"
+                      title={intl.formatMessage({
+                        id: 'detailDrawer_configCard_title',
+                      })}
                       quantity={modelDetail?.storages?.length}
                     />
                   )}
@@ -293,7 +331,9 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
 
       {updateModalVisible && (
         <UpdateConfigModelForm
-          title="Chỉnh sửa nhóm quyền"
+          title={intl.formatMessage({
+            id: 'updateForm_title',
+          })}
           width="934px"
           modelDetail={modelDetail as API.StmModelDetailResponse}
           dataSource={dataSource}
@@ -346,7 +386,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                 size="large"
                 onClick={() => setOpenConfirmModal(false)}
               >
-                Huỷ bỏ
+                <FormattedMessage id="cancel" />
               </Button>
               <Button
                 className={styles.submitLockModalButton}
@@ -356,7 +396,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                   setOpenConfirmModal(false);
                 }}
               >
-                Xác nhận
+                <FormattedMessage id="form_buttonGroup_confirmButton_title" />
               </Button>
             </Row>
           </Col>

@@ -2,11 +2,11 @@ export default {
   createForm_title: 'Tạo mới dòng máy',
   updateForm_title: 'Chỉnh sửa cấu hình dòng máy',
 
-  form_inputGroup_machineType_title: 'Loại máy ',
-  form_inputGroup_machineType_placeholder: 'Chọn loại máy    ',
+  form_inputGroup_machineType_title: 'Loại máy',
+  form_inputGroup_machineType_placeholder: 'Chọn loại máy',
 
   form_inputGroup_machineSeries_title: 'Tên dòng máy',
-  form_inputGroup_machineSeries_placeholder: 'Nhập tên dòng máy ',
+  form_inputGroup_machineSeries_placeholder: 'Nhập tên dòng máy',
 
   form_editableTable_columnGroup_headerTitle: 'Header',
   form_editableTable_columnGroup_unitTitle: 'Đơn vị tính',

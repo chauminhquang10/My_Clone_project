@@ -1,7 +1,7 @@
 import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
-import { useModel, useRequest } from 'umi';
+import { useIntl, useModel, useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
 import style from '@/components/TableProperties/style.less';
@@ -18,6 +18,8 @@ type CustomPhysicalDevice = API.PhysicalDevice & {
 };
 
 const TableCustom = () => {
+  const intl = useIntl();
+
   // get current user info
   const { initialState } = useModel('@@initialState');
 
@@ -110,7 +112,11 @@ const TableCustom = () => {
         message.error('Đã tồn tại tên dòng máy');
         return false;
       } else {
-        message.success('Thêm đơn vị mới thành công');
+        message.success(
+          intl.formatMessage({
+            id: 'createConfigMachine_successStatus_message',
+          }),
+        );
         handleCreateModalVisible(false);
         getAllConfigMachine();
         return true;
@@ -131,7 +137,13 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Cấu hình dòng máy</TitleTable>}
+        headerTitle={
+          <TitleTable>
+            {intl.formatMessage({
+              id: 'configMachine_tableTitle',
+            })}
+          </TitleTable>
+        }
         rowKey="key"
         search={false}
         toolBarRender={() => [
@@ -170,7 +182,9 @@ const TableCustom = () => {
 
       {createModalVisible && (
         <NewConfigModelForm
-          title="Tạo mới dòng máy"
+          title={intl.formatMessage({
+            id: 'createForm_title',
+          })}
           width="934px"
           dataSource={dataSource}
           setDataSource={setDataSource}

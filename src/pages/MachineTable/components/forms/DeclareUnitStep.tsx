@@ -6,7 +6,7 @@ import { useDebounce, useRequest } from 'ahooks';
 import type { FormInstance } from 'antd';
 import { AutoComplete, Button, Card, Col, Form, Input, Row, Select, Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 import Map from '../map/Map';
 import DropdownOverlay from './DropdownOverlay';
@@ -16,9 +16,9 @@ interface DeclareUnitStepProps<T> extends API.StmDetailResponse {
   onCancel: () => void;
   onPrevious?: () => void;
   form: FormInstance<T>;
-  submitButtonLabel?: string;
+  submitButtonLabel?: ReactNode;
   onSubmit?: () => void;
-  cancelButtonLabel?: string;
+  cancelButtonLabel?: ReactNode;
 }
 
 interface UserData extends API.UserResponse {
@@ -89,8 +89,8 @@ export default function DeclareUnitStep<T>({
   onSubmit,
   onPrevious,
   form,
-  submitButtonLabel = 'Lưu',
-  cancelButtonLabel = 'Huỷ bỏ',
+  submitButtonLabel = <FormattedMessage id="form_buttonGroup_saveButton_title" />,
+  cancelButtonLabel = <FormattedMessage id="form_buttonGroup_cancelButton_title" />,
   ...machineDetail
 }: DeclareUnitStepProps<T>) {
   const intl = useIntl();

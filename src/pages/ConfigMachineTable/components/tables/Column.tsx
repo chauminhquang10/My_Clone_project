@@ -5,6 +5,8 @@ import { formatDate } from '@/utils';
 import FilterComponent from '@/components/TableProperties/FilterComponent';
 import type { Dispatch, SetStateAction } from 'react';
 
+import { useIntl } from 'umi';
+
 type ColumnProps = {
   setCurrentRow: (s: API.StmModelResponse) => void;
   setShowDetail: (s: boolean) => void;
@@ -37,9 +39,16 @@ const filterTypeMachineList: filterType = [
 ];
 
 function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: ColumnProps) {
+  const intl = useIntl();
   const columns: ProColumns<API.StmModelResponse>[] = [
     {
-      title: <HeadCell>Loại máy</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'configMachine_tableColumn_machineType',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'machineType',
       render: (dom, entity) => {
         return (
@@ -69,7 +78,13 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
       },
     },
     {
-      title: <HeadCell>Dòng máy</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'configMachine_tableColumn_machineSeries',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'name',
       render: (dom, entity) => {
         return (
@@ -85,7 +100,13 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
       },
     },
     {
-      title: <HeadCell>Người tạo</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'configMachine_tableColumn_machineCreatedBy',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'createdBy',
       render: (_, entity) => {
         const value = entity.createdBy?.staffId
@@ -95,7 +116,13 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
       },
     },
     {
-      title: <HeadCell>Ngày tạo</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'tableColumn_createdDate',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'createdAt',
       render: (dom) => {
         return <TextCell>{formatDate(dom as string)}</TextCell>;

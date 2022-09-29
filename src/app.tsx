@@ -18,7 +18,7 @@ export const initialStateConfig = {
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.UserDetailResponse;
-  currentRoles?: Record<string, boolean>;
+  currentRoles?: typeof INITIAL_ROLES;
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.UserDetailResponse | undefined>;
 }> {

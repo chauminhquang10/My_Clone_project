@@ -1,5 +1,5 @@
 export default {
-  managementUnit_tableTitle: 'Đơn vị quản lý',
+  managementUnit_tableTitle: 'Danh sách đơn vị quản lý',
   managementUnit_tableColumn_unitCode: 'Mã đơn vị',
   managementUnit_tableColumn_unitName: 'Tên đơn vị',
   managementUnit_tableColumn_location: 'Khu vực',

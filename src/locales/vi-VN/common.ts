@@ -3,15 +3,18 @@ export default {
   buttonGroup_edit: 'Chỉnh sửa',
 
   form_buttonGroup_submitButton_title: 'Hoàn tất',
-  form_buttonGroup_confirmButton_title: 'Xác nhận',
-  form_buttonGroup_cancelButton_title: 'Huỷ bỏ ',
+  form_buttonGroup_cancelButton_title: 'Huỷ bỏ',
   form_buttonGroup_saveButton_title: 'Lưu',
 
   searchBar_placeholder: 'Tìm kiếm',
 
   tableColumn_indexTitle: 'STT',
   fullName: 'Họ và tên',
+  success: 'Thành công',
+  fail: 'Thất bại',
   tableColumn_createdDate: 'Ngày tạo',
+  return: 'Quay lại',
+  export: 'Xuất file',
   south: 'Miền Nam',
   middle: 'Miền Trung',
   north: 'Miền Bắc',

@@ -35,6 +35,8 @@ import { useIntl, useRequest } from 'umi';
 import styles from './RoleListDetailDrawer.less';
 import UpdateRoleListForm from './UpdateRoleListForm';
 
+import { FormattedMessage } from 'umi';
+
 type RoleListDetailDrawerProps = {
   showDetail: boolean;
   setShowDetail: (value: boolean) => void;
@@ -82,9 +84,11 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
   setCurrentRoleGroup,
   runGetAllRolesGroup,
 }) => {
+  const intl = useIntl();
+
   const userRoleGroupColumns: ColumnsType<Required<API.UserResponse>> = [
     {
-      title: 'Mã NV',
+      title: <FormattedMessage id="detailDrawer_roleGroup_ownerCard_columnGroup_staffCode" />,
       dataIndex: 'staffId',
       key: 'staffId',
       width: '15%',
@@ -92,7 +96,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
       render: (text) => <span>{text}</span>,
     },
     {
-      title: 'Họ và tên',
+      title: <FormattedMessage id="detailDrawer_roleGroup_ownerCard_columnGroup_staffName" />,
       dataIndex: 'name',
       key: 'name',
       width: '25%',
@@ -102,7 +106,9 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
     },
 
     {
-      title: 'Số điện thoại',
+      title: (
+        <FormattedMessage id="detailDrawer_roleGroup_ownerCard_columnGroup_staffPhoneNumber" />
+      ),
       dataIndex: 'phoneNumber',
       key: 'phoneNumber',
       width: '15%',
@@ -110,7 +116,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
       render: (text) => <span>{text}</span>,
     },
     {
-      title: 'Email',
+      title: <FormattedMessage id="detailDrawer_roleGroup_ownerCard_columnGroup_staffEmail" />,
       dataIndex: 'email',
       key: 'email',
       width: '25%',
@@ -118,7 +124,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
       render: (text) => <span style={{ color: '#1890FF' }}>{text}</span>,
     },
     {
-      title: 'Trạng thái',
+      title: <FormattedMessage id="detailDrawer_roleGroup_ownerCard_columnGroup_staffStatus" />,
       key: 'status',
       dataIndex: 'status',
       width: '20%',
@@ -182,7 +188,11 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
         { name: value.roleGroupName, actionIds: finalAllKeysData as number[] },
       );
       hide();
-      message.success('Chỉnh sửa nhóm quyền thành công');
+      message.success(
+        intl.formatMessage({
+          id: 'updateRoleGroup_successStatus_message',
+        }),
+      );
       handleUpdateModalVisible(false);
       setShowDetail(false);
       runGetAllRolesGroup();
@@ -201,7 +211,11 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
       setShowDetail(false);
       runGetAllRolesGroup();
       hide();
-      message.success('Xoá đơn vị thành công');
+      message.success(
+        intl.formatMessage({
+          id: 'deleteRoleGroup_successStatus_message',
+        }),
+      );
       return true;
     } catch (error) {
       hide();
@@ -227,7 +241,11 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
           <Space size={12} direction={'vertical'}>
             <Row>
               <Col span={15}>
-                <h4 className={styles.drawerHeaderTitle}>Chi tiết nhóm quyền</h4>
+                <h4 className={styles.drawerHeaderTitle}>
+                  {intl.formatMessage({
+                    id: 'detailDrawer_title',
+                  })}
+                </h4>
               </Col>
               <Col span={9}>
                 <Row
@@ -242,7 +260,11 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
                       className={styles.btnItem}
                       onClick={() => handleUpdateModalVisible(true)}
                     >
-                      <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
+                      <span className={styles.btnGroupTitle}>
+                        {intl.formatMessage({
+                          id: 'buttonGroup_edit',
+                        })}
+                      </span>
                     </Button>
                   </Col>
                   <Col>
@@ -266,14 +288,21 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
 
             <Row gutter={[0, 20]}>
               <Col span={12} className={styles.roleGroupContainer}>
-                <Form.Item name="name" label="Tên nhóm quyền">
+                <Form.Item
+                  name="name"
+                  label={intl.formatMessage({
+                    id: 'detailDrawer_inputGroup_tile',
+                  })}
+                >
                   <Input disabled placeholder={roleGroupDetail?.name} />
                 </Form.Item>
               </Col>
 
               <Col span={24}>
                 <Card
-                  title={useIntl().formatMessage({ id: 'detailDrawer_correspondingRole_cardTile' })}
+                  title={intl.formatMessage({
+                    id: 'detailDrawer_correspondingRole_cardTile',
+                  })}
                   size="small"
                   className={styles.myCard}
                 >
@@ -296,7 +325,9 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
                   bordered
                   title={() => (
                     <UserRoleGroupListTableTitle
-                      title="Nhân viên sở hữu nhóm quyền"
+                      title={intl.formatMessage({
+                        id: 'detailDrawer_roleGroup_ownerCard_title',
+                      })}
                       quantity={roleGroupDetail?.users?.length}
                     />
                   )}
@@ -312,7 +343,9 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
 
       {updateModalVisible && (
         <UpdateRoleListForm
-          title="Chỉnh sửa nhóm quyền"
+          title={intl.formatMessage({
+            id: 'updateForm_title',
+          })}
           width="934px"
           roleGroupDetail={roleGroupDetail as API.RoleGroupResponse}
           visible={updateModalVisible}
@@ -363,7 +396,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
                 size="large"
                 onClick={() => setOpenConfirmModal(false)}
               >
-                Huỷ bỏ
+                <FormattedMessage id="cancel" />,
               </Button>
               <Button
                 className={styles.submitLockModalButton}
@@ -373,7 +406,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
                   setOpenConfirmModal(false);
                 }}
               >
-                Xác nhận
+                <FormattedMessage id="form_buttonGroup_confirmButton_title" />,
               </Button>
             </Row>
           </Col>
