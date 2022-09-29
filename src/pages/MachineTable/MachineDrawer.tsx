@@ -61,6 +61,7 @@ export default function MachineDrawer({
   }, []);
 
   useEffect(() => {
+    console.log('test:', currentEntity);
     if (currentEntity?.id) {
       const params: API.getMachineDetailParams = {
         id: currentEntity?.id,
