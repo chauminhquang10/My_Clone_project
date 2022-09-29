@@ -214,7 +214,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
 
       <Row align="middle" justify="end" style={{ marginTop: '28px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          <FormattedMessage id="cancel" />,
+          <FormattedMessage id="cancel" />
         </Button>
         <Form.Item shouldUpdate>
           {() => (
@@ -228,7 +228,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
                 !!form.getFieldsError().filter(({ errors }) => errors.length).length
               }
             >
-              <FormattedMessage id="form_buttonGroup_submitButton_title" />,
+              <FormattedMessage id="form_buttonGroup_submitButton_title" />
             </Button>
           )}
         </Form.Item>

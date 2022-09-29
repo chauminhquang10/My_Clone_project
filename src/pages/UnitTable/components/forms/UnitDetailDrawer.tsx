@@ -285,7 +285,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
             <Row>
               <Col span={15}>
                 <h4 className={styles.drawerHeaderTitle}>
-                  <FormattedMessage id="detailDrawer_title" />,
+                  <FormattedMessage id="detailDrawer_title" />
                 </h4>
               </Col>
               <Col span={9}>
@@ -302,7 +302,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
                       onClick={() => handleUpdateModalVisible(true)}
                     >
                       <span className={styles.btnGroupTitle}>
-                        <FormattedMessage id="buttonGroup_edit" />,
+                        <FormattedMessage id="buttonGroup_edit" />
                       </span>
                     </Button>
                   </Col>

@@ -105,6 +105,7 @@ const TableCustom = () => {
             hideOnSinglePage: true,
             showQuickJumper: true,
           }}
+          scroll={{ x: 'max-content' }}
         />
 
         <AnaylyticDetail

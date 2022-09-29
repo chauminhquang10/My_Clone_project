@@ -1,4 +1,4 @@
-import type { ProColumns } from '@ant-design/pro-components';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
@@ -33,6 +33,7 @@ const TableCustom = () => {
     setShowDetail,
   });
 
+  const actionRef = useRef<ActionType>();
   const [currentPage, setCurrentPage] = useState<number>(0);
   const pageSize = useRef<number>(20);
   // const [totalPage, setTotalPage] = useState<number>(1);
@@ -56,6 +57,7 @@ const TableCustom = () => {
         //   description: e?.data?.code,
         // });
       },
+      manual: true,
     },
   );
 
@@ -74,7 +76,7 @@ const TableCustom = () => {
         }),
       );
       handleModalVisible(false);
-      runGetAllRolesGroup();
+      actionRef.current?.reload();
     } catch (error) {
       hide();
       message.error('Adding failed, please try again!');
@@ -99,6 +101,7 @@ const TableCustom = () => {
               })}
             </TitleTable>
           }
+          actionRef={actionRef}
           rowKey="key"
           search={false}
           toolBarRender={() => [
@@ -162,7 +165,7 @@ const TableCustom = () => {
             showDetail={showDetail}
             setShowDetail={setShowDetail}
             runGetAllRolesGroup={() => {
-              runGetAllRolesGroup();
+              actionRef.current?.reloadAndRest?.();
             }}
           />
         )}
