@@ -2,6 +2,7 @@ import type { ProColumns } from '@ant-design/pro-components';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties/TableCell';
 import { formatDate } from '@/utils';
+import { useIntl } from 'umi';
 
 type ColumnProps = {
   setCurrentRow: (s: API.ManagementUnitResponse) => void;
@@ -9,15 +10,28 @@ type ColumnProps = {
 };
 
 function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
+  const intl = useIntl();
   const columns: ProColumns<API.ManagementUnitResponse>[] = [
     {
-      title: <HeadCell>STT</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'tableColumn_indexTitle',
+          })}
+        </HeadCell>
+      ),
       render: (_, __, index) => {
         return <TextCell>{index + 1}</TextCell>;
       },
     },
     {
-      title: <HeadCell>Mã đơn vị</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'managementUnit_tableColumn_unitCode',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'code',
       valueType: 'textarea',
       render: (dom, entity) => {
@@ -34,7 +48,13 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Tên đơn vị</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'managementUnit_tableColumn_unitName',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'name',
       sorter: true,
       hideInForm: true,
@@ -52,21 +72,39 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Khu vực</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'managementUnit_tableColumn_location',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'location',
       render: (dom) => {
         return <TextCell position="left">{dom}</TextCell>;
       },
     },
     {
-      title: <HeadCell>Tỉnh/Thành</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'managementUnit_tableColumn_province',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'province',
       render: (_, entity) => {
         return <TextCell position="left">{entity.province?.name}</TextCell>;
       },
     },
     {
-      title: <HeadCell>Quận/Huyện</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'managementUnit_tableColumn_district',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'district',
       valueType: 'textarea',
       render: (_, entity) => {
@@ -74,7 +112,13 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Phường/Xã</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'managementUnit_tableColumn_ward',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'ward',
       valueType: 'textarea',
       render: (_, entity) => {
@@ -83,7 +127,13 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Tên đường/Số nhà</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'managementUnit_tableColumn_address',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'address',
       hideInForm: true,
       filters: true,
@@ -94,7 +144,13 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Ngày tạo</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'tableColumn_createdDate',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'createdAt',
       hideInForm: true,
       filters: true,

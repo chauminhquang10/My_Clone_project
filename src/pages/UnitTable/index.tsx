@@ -14,8 +14,11 @@ import {
   getAllManagementUnits,
 } from '@/services/STM-APIs/ManagementUnitController';
 import { message } from 'antd';
+import { useIntl } from 'umi';
 
 const TableCustom = () => {
+  const intl = useIntl();
+
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
@@ -67,7 +70,12 @@ const TableCustom = () => {
         message.error(`${record.name} ${record.code} ${record.address} đã được sử dụng`);
         return;
       }
-      message.success('Thêm đơn vị mới thành công');
+
+      message.success(
+        intl.formatMessage({
+          id: 'createUnit_successStatus_message',
+        }),
+      );
       handleCreateModalVisible(false);
       actionRef.current?.reload();
     } catch (error) {
@@ -85,7 +93,13 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Đơn vị quản lý</TitleTable>}
+        headerTitle={
+          <TitleTable>
+            {intl.formatMessage({
+              id: 'managementUnit_tableTitle',
+            })}
+          </TitleTable>
+        }
         actionRef={actionRef}
         rowKey="key"
         search={false}
@@ -137,7 +151,9 @@ const TableCustom = () => {
 
       {createModalVisible && (
         <NewUnitForm
-          title="Tạo đơn vị quản lý mới"
+          title={intl.formatMessage({
+            id: 'createForm_title',
+          })}
           width="934px"
           visible={createModalVisible}
           onVisibleChange={handleCreateModalVisible}

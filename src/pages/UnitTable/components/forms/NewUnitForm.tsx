@@ -6,6 +6,8 @@ import styles from './NewUnitForm.less';
 import { useRequest } from 'umi';
 import { getDistricts, getProvinces, getWards } from '@/services/STM-APIs/LocationController';
 
+import { useIntl, FormattedMessage } from 'umi';
+
 const { Option } = Select;
 
 export type CreateFormProps = {
@@ -75,6 +77,8 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
   onVisibleChange,
   onFinish,
 }) => {
+  const intl = useIntl();
+
   const [handleEnableDropdownList, setHandleEnableDropdownList] =
     useState<Record<string, boolean>>(INITIAL_ENABLE_STATE);
 
@@ -200,37 +204,63 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         <Col span={12}>
           <Form.Item
             name="code"
-            label="Mã đơn vị"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_unitCode_title',
+            })}
             rules={[
-              { required: true, message: 'Vui lòng nhập mã đơn vị!' },
+              {
+                required: true,
+                message: intl.formatMessage({
+                  id: 'form_inputGroup_unitCode_placeholder',
+                }),
+              },
               { max: 20, message: 'Tối đa 20 kí tự!' },
             ]}
             normalize={(value) => value.trim()}
           >
-            <Input placeholder={'Nhập mã đơn vị'} />
+            <Input
+              placeholder={intl.formatMessage({
+                id: 'form_inputGroup_unitCode_placeholder',
+              })}
+            />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item
             name="name"
-            label="Tên đơn vị"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_unitName_title',
+            })}
             rules={[
-              { required: true, message: 'Vui lòng nhập tên đơn vị!' },
+              {
+                required: true,
+                message: intl.formatMessage({
+                  id: 'form_inputGroup_unitName_placeholder',
+                }),
+              },
               { max: 50, message: 'Tối đa 50 kí tự!' },
             ]}
             normalize={(value) => value.trim()}
           >
-            <Input placeholder={'Nhập tên đơn vị'} />
+            <Input
+              placeholder={intl.formatMessage({
+                id: 'form_inputGroup_unitName_placeholder',
+              })}
+            />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item
             name="location"
-            label="Khu vực"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_unitLocation_title',
+            })}
             rules={[{ required: true, message: 'Khu vực là băt buộc' }]}
           >
             <Select
-              placeholder="Chọn khu vực"
+              placeholder={intl.formatMessage({
+                id: 'form_inputGroup_unitLocation_placeholder',
+              })}
               onChange={(selectValue) => handleSelectChange('location', selectValue)}
             >
               <Option value="north">Miền Bắc</Option>
@@ -242,11 +272,15 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         <Col span={12}>
           <Form.Item
             name="provinceId"
-            label="Tỉnh/Thành phố"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_unitProvince_title',
+            })}
             rules={[{ required: true, message: 'Tỉnh/Thành phố là băt buộc' }]}
           >
             <Select
-              placeholder="Chọn Tỉnh/Thành phố"
+              placeholder={intl.formatMessage({
+                id: 'form_inputGroup_unitProvince_placeholder',
+              })}
               onChange={(selectValue) => handleSelectChange('province', selectValue)}
               disabled={handleEnableDropdownList.provinceDisabled ? true : false}
               loading={provincesLoading}
@@ -262,11 +296,15 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         <Col span={12}>
           <Form.Item
             name="districtId"
-            label="Quận/Huyện"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_unitDistrict_title',
+            })}
             rules={[{ required: true, message: 'Quận/Huyện là băt buộc' }]}
           >
             <Select
-              placeholder="Chọn Quận/Huyện"
+              placeholder={intl.formatMessage({
+                id: 'form_inputGroup_unitDistrict_placeholder',
+              })}
               onChange={(selectValue) => handleSelectChange('district', selectValue)}
               disabled={handleEnableDropdownList.districtDisabled ? true : false}
               loading={districtsLoading}
@@ -282,11 +320,15 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         <Col span={12}>
           <Form.Item
             name="wardId"
-            label="Phường/Xã"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_unitWard_title',
+            })}
             rules={[{ required: true, message: 'Phường/Xã là băt buộc' }]}
           >
             <Select
-              placeholder="Chọn Phường/Xã"
+              placeholder={intl.formatMessage({
+                id: 'form_inputGroup_unitWard_placeholder',
+              })}
               onChange={(selectValue) => handleSelectChange('ward', selectValue)}
               disabled={handleEnableDropdownList.wardDisabled ? true : false}
               loading={wardsLoading}
@@ -302,21 +344,27 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         <Col span={24}>
           <Form.Item
             name="address"
-            label="Tên đường, số nhà"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_unitAddress_title',
+            })}
             rules={[
               { required: true, message: 'Tên đường, số nhà là băt buộc' },
               { max: 100, message: 'Tối đa 100 kí tự!' },
             ]}
             normalize={(value) => value.trim()}
           >
-            <Input placeholder={'example'} />
+            <Input
+              placeholder={intl.formatMessage({
+                id: 'form_inputGroup_unitAddress_placeholder',
+              })}
+            />
           </Form.Item>
         </Col>
       </Row>
 
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          Huỷ bỏ
+          <FormattedMessage id="cancel" />,
         </Button>
         <Form.Item shouldUpdate>
           {() => (
@@ -329,7 +377,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
                 !!form.getFieldsError().filter(({ errors }) => errors.length).length
               }
             >
-              Hoàn tất
+              <FormattedMessage id="form_buttonGroup_submitButton_title" />,
             </Button>
           )}
         </Form.Item>

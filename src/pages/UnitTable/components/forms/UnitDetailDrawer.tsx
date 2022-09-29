@@ -29,6 +29,8 @@ import { useRequest } from 'umi';
 import styles from './UnitDetailDrawer.less';
 import UpdateUnitForm from './UpdateUnitForm';
 
+import { useIntl, FormattedMessage } from 'umi';
+
 const INITIAL_VALIDATE_DELETE = {
   enableDeleteBtn: true,
   tooltipMsg: 'Xóa',
@@ -72,9 +74,12 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
   setCurrentUnit,
   detailActionRef,
 }) => {
+  const intl = useIntl();
+
   const unitListColumns: ColumnsType<Required<API.UserResponse>> = [
     {
-      title: 'Tên nhân viên',
+      title: <FormattedMessage id="detailDrawer_userCard_columnGroup_staffNamee" />,
+
       dataIndex: 'name',
       ellipsis: true,
       key: 'name',
@@ -84,7 +89,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       render: (_, { avatar, name }) => <StaffNameComponent avatar={avatar} name={name} />,
     },
     {
-      title: 'Mã nhân viên',
+      title: <FormattedMessage id="detailDrawer_userCard_columnGroup_staffCode" />,
       dataIndex: 'staffId',
       key: 'staffId',
       width: '17%',
@@ -92,7 +97,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       render: (text) => <span>{text}</span>,
     },
     {
-      title: 'Số điện thoại',
+      title: <FormattedMessage id="detailDrawer_userCard_columnGroup_staffPhoneNumber" />,
       dataIndex: 'phoneNumber',
       key: 'phoneNumber',
       width: '17%',
@@ -100,7 +105,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       render: (text) => <span>{text}</span>,
     },
     {
-      title: 'Email',
+      title: <FormattedMessage id="detailDrawer_userCard_columnGroup_staffEmail" />,
       dataIndex: 'email',
       ellipsis: true,
       key: 'email',
@@ -109,7 +114,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       render: (text) => <span style={{ color: '#1890FF' }}>{text}</span>,
     },
     {
-      title: 'Trạng thái',
+      title: <FormattedMessage id="detailDrawer_userCard_columnGroup_staffStatus" />,
       key: 'status',
       dataIndex: 'status',
       width: '22%',
@@ -120,7 +125,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
   const machineListColumns: ColumnsType<Required<API.StmInfoResponse>> = [
     {
-      title: 'Tên máy',
+      title: <FormattedMessage id="detailDrawer_machineCard_columnGroup_machineName" />,
       dataIndex: 'name',
       key: 'name',
       width: '18%',
@@ -132,7 +137,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       ),
     },
     {
-      title: 'Terminal ID',
+      title: <FormattedMessage id="detailDrawer_machineCard_columnGroup_machineCode" />,
       dataIndex: 'terminalId',
       key: 'terminalId',
       width: '30%',
@@ -140,7 +145,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       render: (text) => <span>{text}</span>,
     },
     {
-      title: 'Địa chỉ IP',
+      title: <FormattedMessage id="detailDrawer_machineCard_columnGroup_machineIPAddress" />,
       dataIndex: 'ipAddress',
       key: 'ipAddress',
       width: '30%',
@@ -148,7 +153,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       render: (text) => <span>{text}</span>,
     },
     {
-      title: 'Tình trạng',
+      title: <FormattedMessage id="detailDrawer_machineCard_columnGroup_machineStatus" />,
       key: 'status',
       dataIndex: 'status',
       width: '22%',
@@ -193,7 +198,12 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
         message.error(`${fields.name} ${fields.code} ${fields.address} đã được sử dụng`);
         return;
       }
-      message.success('Chỉnh sửa đơn vị thành công');
+
+      message.success(
+        intl.formatMessage({
+          id: 'updateUnit_successStatus_message',
+        }),
+      );
       handleUpdateModalVisible(false);
       setShowDetail(false);
       detailActionRef.current?.reload();
@@ -212,7 +222,12 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       setShowDetail(false);
       detailActionRef.current?.reloadAndRest?.();
       hide();
-      message.success('Xoá đơn vị thành công');
+      message.success(
+        intl.formatMessage({
+          id: 'deleteUnit_successStatus_message',
+        }),
+      );
+
       return true;
     } catch (error) {
       hide();
@@ -226,14 +241,18 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
   const buttonList: ButtonType[] = [
     {
-      title: 'Huỷ bỏ',
+      title: intl.formatMessage({
+        id: 'cancel',
+      }),
       type: 'out-line',
       action: () => {
         setOpenConfirmModal(false);
       },
     },
     {
-      title: 'Xác nhận',
+      title: intl.formatMessage({
+        id: 'form_buttonGroup_confirmButton_title',
+      }),
       type: 'warning',
       action: () => {
         handleRemoveUnit();
@@ -263,7 +282,9 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
           <Space size={12} direction={'vertical'} style={{ width: '100%' }}>
             <Row>
               <Col span={15}>
-                <h4 className={styles.drawerHeaderTitle}>Chi tiết đơn vị</h4>
+                <h4 className={styles.drawerHeaderTitle}>
+                  <FormattedMessage id="detailDrawer_title" />,
+                </h4>
               </Col>
               <Col span={9}>
                 <Row
@@ -278,7 +299,9 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
                       className={styles.btnItem}
                       onClick={() => handleUpdateModalVisible(true)}
                     >
-                      <span className={styles.btnGroupTitle}>Chỉnh sửa</span>
+                      <span className={styles.btnGroupTitle}>
+                        <FormattedMessage id="buttonGroup_edit" />,
+                      </span>
                     </Button>
                   </Col>
 
@@ -303,15 +326,31 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
             <Row gutter={[0, 24]}>
               <Col span={24}>
-                <Card title="Thông tin đơn vị" size="small" className={styles.myCard}>
+                <Card
+                  title={intl.formatMessage({
+                    id: 'detailDrawer_infoCard_title',
+                  })}
+                  size="small"
+                  className={styles.myCard}
+                >
                   <Row gutter={24}>
                     <Col span={8}>
-                      <Form.Item name="unitName" label="Mã - Tên đơn vị">
+                      <Form.Item
+                        name="unitName"
+                        label={intl.formatMessage({
+                          id: 'detailDrawer_infoCard_unitCodeName',
+                        })}
+                      >
                         <Input disabled placeholder={unitDetail?.code} />
                       </Form.Item>
                     </Col>
                     <Col span={16}>
-                      <Form.Item name="address" label="Địa chỉ đơn vị">
+                      <Form.Item
+                        name="address"
+                        label={intl.formatMessage({
+                          id: 'detailDrawer_infoCard_unitAddress',
+                        })}
+                      >
                         <Input disabled placeholder={unitDetail?.address} />
                       </Form.Item>
                     </Col>
@@ -324,7 +363,11 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
                   columns={unitListColumns as ColumnsType<API.UserResponse>}
                   dataSource={unitDetail?.users}
                   bordered
-                  title={() => 'Danh sách người dùng'}
+                  title={() =>
+                    intl.formatMessage({
+                      id: 'detailDrawer_userCard_title',
+                    })
+                  }
                   className={styles.myTable}
                   pagination={false}
                   scroll={{ y: 200 }}
@@ -336,7 +379,11 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
                   columns={machineListColumns as ColumnsType<API.StmInfoResponse>}
                   dataSource={unitDetail?.machines}
                   bordered
-                  title={() => 'Danh sách máy quản lý'}
+                  title={() =>
+                    intl.formatMessage({
+                      id: 'detailDrawer_machineCard_title',
+                    })
+                  }
                   className={styles.myTable}
                   pagination={false}
                   scroll={{ y: 200 }}
@@ -349,7 +396,9 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
       {updateModalVisible && (
         <UpdateUnitForm
-          title="Chỉnh sửa đơn vị quản lý"
+          title={intl.formatMessage({
+            id: 'updateForm_title',
+          })}
           width="934px"
           visible={updateModalVisible}
           unitDetail={unitDetail as API.ManagementUnitDetailResponse}

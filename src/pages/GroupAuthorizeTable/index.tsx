@@ -12,7 +12,10 @@ import TotalPagination from '@/components/TableProperties/TotalPagination';
 import RoleListDetailDrawer from './components/forms/RoleListDetailDrawer';
 import { createRoleGroup, getAllRoleGroup } from '@/services/STM-APIs/RoleController';
 
+import { useIntl } from 'umi';
+
 const TableCustom = () => {
+  const intl = useIntl();
   // xử lí dữ liệu check all để send api
   const [checkAllKeys, setCheckAllKeys] = useState<(number | string)[]>([]);
 
@@ -65,7 +68,11 @@ const TableCustom = () => {
     try {
       await createRoleGroup({ name: value.roleGroupName, actionIds: finalAllKeysData as number[] });
       hide();
-      message.success('Thêm nhóm quyền mới thành công');
+      message.success(
+        intl.formatMessage({
+          id: 'createRoleGroup_successStatus_message',
+        }),
+      );
       handleModalVisible(false);
       actionRef.current?.reload();
     } catch (error) {
@@ -83,7 +90,13 @@ const TableCustom = () => {
       footer={undefined}
     >
       <ProTable
-        headerTitle={<TitleTable>Danh sách nhóm quyền</TitleTable>}
+        headerTitle={
+          <TitleTable>
+            {intl.formatMessage({
+              id: 'roleGroup_tableTitle',
+            })}
+          </TitleTable>
+        }
         actionRef={actionRef}
         rowKey="key"
         search={false}
@@ -127,7 +140,9 @@ const TableCustom = () => {
       />
       {createModalVisible && (
         <NewRoleListForm
-          title="Tạo nhóm quyền"
+          title={intl.formatMessage({
+            id: 'createForm_title',
+          })}
           width="934px"
           checkAllKeys={checkAllKeys}
           setCheckAllKeys={setCheckAllKeys}

@@ -5,7 +5,6 @@ export default {
   detailDrawer_inputGroup_placeholder: 'Lorem Ipsum',
 
   detailDrawer_correspondingRole_cardTile: 'Quyền tương ứng',
-  // detailDrawer_correspondingRole_cardItem_title: 'Corresponding Role',
 
   detailDrawer_roleGroup_ownerCard_title: 'Nhân viên sở hữu nhóm quyền',
   detailDrawer_roleGroup_ownerCard_columnGroup_staffCode: 'Mã NV',

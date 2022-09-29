@@ -3,15 +3,25 @@ import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell, UserCellGroup } from '@/components/TableProperties//TableCell';
 import { formatDate } from '@/utils';
 
+import { useIntl } from 'umi';
+
 type ColumnProps = {
   setCurrentRow: (s: API.RoleGroupResponse) => void;
   setShowDetail: (s: boolean) => void;
 };
 
 function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
+  const intl = useIntl();
+
   const columns: ProColumns<API.RoleGroupResponse>[] = [
     {
-      title: <HeadCell>STT</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'tableColumn_indexTitle',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'id',
       render: (dom) => {
         const stt = dom as number;
@@ -19,7 +29,13 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Tên nhóm quyền</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'roleGroup_tableColumn_roleGroupName',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'name',
       render: (dom, entity) => {
         return (
@@ -40,7 +56,13 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Nhân viên sở hữu nhóm quyền</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'roleGroup_tableColumn_roleGroupOwner',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'users',
       render: (_, entity) => {
         return <UserCellGroup listUser={entity.users} />;
@@ -48,7 +70,13 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       width: '454.67px',
     },
     {
-      title: <HeadCell>Người tạo</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'roleGroup_tableColumn_roleGroupCreatedBy',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'createdBy',
       render: (_, entity) => {
         const value = entity.createdBy?.staffId
@@ -58,7 +86,13 @@ function Column({ setShowDetail, setCurrentRow }: ColumnProps) {
       },
     },
     {
-      title: <HeadCell>Ngày tạo</HeadCell>,
+      title: (
+        <HeadCell>
+          {intl.formatMessage({
+            id: 'tableColumn_createdDate',
+          })}
+        </HeadCell>
+      ),
       dataIndex: 'createdAt',
       render: (dom) => {
         return <TextCell>{formatDate(dom as string)}</TextCell>;
