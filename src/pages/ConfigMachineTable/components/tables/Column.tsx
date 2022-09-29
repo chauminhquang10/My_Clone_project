@@ -4,7 +4,8 @@ import { TextCell } from '@/components/TableProperties//TableCell';
 import { formatDate } from '@/utils';
 import FilterComponent from '@/components/TableProperties/FilterComponent';
 import type { Dispatch, SetStateAction } from 'react';
-import { FormattedMessage } from 'umi';
+
+import { useIntl } from 'umi';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmModelResponse) => void;
@@ -38,11 +39,14 @@ const filterTypeMachineList: filterType = [
 ];
 
 function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: ColumnProps) {
+  const intl = useIntl();
   const columns: ProColumns<API.StmModelResponse>[] = [
     {
       title: (
         <HeadCell>
-          <FormattedMessage id="machineType" />
+          {intl.formatMessage({
+            id: 'configMachine_tableColumn_machineType',
+          })}
         </HeadCell>
       ),
       dataIndex: 'machineType',
@@ -76,7 +80,9 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
     {
       title: (
         <HeadCell>
-          <FormattedMessage id="model" />
+          {intl.formatMessage({
+            id: 'configMachine_tableColumn_machineSeries',
+          })}
         </HeadCell>
       ),
       dataIndex: 'name',
@@ -96,7 +102,9 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
     {
       title: (
         <HeadCell>
-          <FormattedMessage id="configMachine_tableColumn_machineCreatedBy" />
+          {intl.formatMessage({
+            id: 'configMachine_tableColumn_machineCreatedBy',
+          })}
         </HeadCell>
       ),
       dataIndex: 'createdBy',
@@ -110,7 +118,9 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
     {
       title: (
         <HeadCell>
-          <FormattedMessage id="tableColumn_createdDate" />
+          {intl.formatMessage({
+            id: 'tableColumn_createdDate',
+          })}
         </HeadCell>
       ),
       dataIndex: 'createdAt',

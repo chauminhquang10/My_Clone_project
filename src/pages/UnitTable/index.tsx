@@ -2,7 +2,7 @@ import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import UnitDetailDrawer from './components/forms/UnitDetailDrawer';
 import { useRef, useState } from 'react';
-import { Access, useModel, useRequest } from 'umi';
+import { Access, useIntl, useModel, useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
 import Column from './components/tables/Column';
 import style from '@/components/TableProperties/style.less';
@@ -17,6 +17,8 @@ import { message } from 'antd';
 import NoFoundPage from '../404';
 
 const TableCustom = () => {
+  const intl = useIntl();
+
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
@@ -75,7 +77,12 @@ const TableCustom = () => {
         message.error(`${record.name} ${record.code} ${record.address} đã được sử dụng`);
         return;
       }
-      message.success('Thêm đơn vị mới thành công');
+
+      message.success(
+        intl.formatMessage({
+          id: 'createUnit_successStatus_message',
+        }),
+      );
       handleCreateModalVisible(false);
       runGetAllManagementUnits();
     } catch (error) {
@@ -96,7 +103,13 @@ const TableCustom = () => {
         footer={undefined}
       >
         <ProTable
-          headerTitle={<TitleTable>Đơn vị quản lý</TitleTable>}
+          headerTitle={
+            <TitleTable>
+              {intl.formatMessage({
+                id: 'managementUnit_tableTitle',
+              })}
+            </TitleTable>
+          }
           rowKey="key"
           search={false}
           toolBarRender={() => [
@@ -134,7 +147,9 @@ const TableCustom = () => {
 
         {createModalVisible && (
           <NewUnitForm
-            title="Tạo đơn vị quản lý mới"
+            title={intl.formatMessage({
+              id: 'createForm_title',
+            })}
             width="934px"
             visible={createModalVisible}
             onVisibleChange={handleCreateModalVisible}

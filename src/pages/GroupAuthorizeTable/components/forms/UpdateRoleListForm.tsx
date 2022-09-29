@@ -11,6 +11,8 @@ import { useRequest } from 'umi';
 import { getListRoles } from '@/services/STM-APIs/RoleController';
 import { MAP_ACTION_LIST } from '@/constants';
 
+import { useIntl, FormattedMessage } from 'umi';
+
 type UpdateRoleListFormProps = {
   title: string;
   width: string;
@@ -32,6 +34,8 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
   setCheckAllKeys,
   onFinish,
 }) => {
+  const intl = useIntl();
+
   // lưu dữ liệu được fetch từ api và đc xử lí về dạng tree data của antd
   const [formattedRolesData, setFormattedRolesData] = useState<DataNode[]>([]);
 
@@ -154,7 +158,9 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
         <Col span={24}>
           <Form.Item
             name="roleGroupName"
-            label="Tên nhóm quyền"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_roleGroupName_title',
+            })}
             rules={[{ required: true, message: 'Tên nhóm quyền là băt buộc' }]}
             normalize={(value) => value.trim()}
           >
@@ -171,7 +177,11 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
           }}
         >
           <Row justify="space-between" align="middle">
-            <span>Danh sách quyền</span>
+            <span>
+              {intl.formatMessage({
+                id: 'form_inputGroup_roleGroupList_title',
+              })}
+            </span>
             <Checkbox
               indeterminate={indeterminate}
               checked={checkAll}
@@ -206,7 +216,7 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
 
       <Row align="middle" justify="end" style={{ marginTop: '28px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          Huỷ bỏ
+          <FormattedMessage id="cancel" />,
         </Button>
         <Form.Item shouldUpdate>
           {() => (
@@ -219,7 +229,7 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
                 !!form.getFieldsError().filter(({ errors }) => errors.length).length
               }
             >
-              Lưu
+              <FormattedMessage id="form_buttonGroup_saveButton_title" />,
             </Button>
           )}
         </Form.Item>

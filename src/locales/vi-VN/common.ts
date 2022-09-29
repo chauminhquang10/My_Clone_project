@@ -3,8 +3,7 @@ export default {
   buttonGroup_edit: 'Chỉnh sửa',
 
   form_buttonGroup_submitButton_title: 'Hoàn tất',
-  form_buttonGroup_confirmButton_title: 'Xác nhận',
-  form_buttonGroup_cancelButton_title: 'Huỷ bỏ ',
+  form_buttonGroup_cancelButton_title: 'Huỷ bỏ',
   form_buttonGroup_saveButton_title: 'Lưu',
 
   searchBar_placeholder: 'Tìm kiếm',

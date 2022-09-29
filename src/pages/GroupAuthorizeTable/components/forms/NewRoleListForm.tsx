@@ -11,6 +11,8 @@ import { getListRoles } from '@/services/STM-APIs/RoleController';
 import { useRequest } from 'umi';
 import { MAP_ACTION_LIST, MAP_ROLE_LIST } from '@/constants';
 
+import { useIntl, FormattedMessage } from 'umi';
+
 type CreateFormProps = {
   title: string;
   width: string;
@@ -30,6 +32,8 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
   onVisibleChange,
   onFinish,
 }) => {
+  const intl = useIntl();
+
   // lưu dữ liệu được fetch từ api và đc xử lí về dạng tree data của antd
   const [formattedRolesData, setFormattedRolesData] = useState<DataNode[]>([]);
 
@@ -152,7 +156,9 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
         <Col span={24}>
           <Form.Item
             name="roleGroupName"
-            label="Tên nhóm quyền"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_roleGroupName_title',
+            })}
             rules={[{ required: true, message: 'Tên nhóm quyền là băt buộc' }]}
             normalize={(value) => value.trim()}
           >
@@ -169,7 +175,11 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
           }}
         >
           <Row justify="space-between" align="middle">
-            <span>Danh sách quyền</span>
+            <span>
+              {intl.formatMessage({
+                id: 'form_inputGroup_roleGroupList_title',
+              })}
+            </span>
             <Checkbox
               indeterminate={indeterminate}
               checked={checkAll}
@@ -204,7 +214,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
 
       <Row align="middle" justify="end" style={{ marginTop: '28px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          Huỷ bỏ
+          <FormattedMessage id="cancel" />,
         </Button>
         <Form.Item shouldUpdate>
           {() => (
@@ -218,7 +228,7 @@ const NewUnitForm: React.FC<CreateFormProps> = ({
                 !!form.getFieldsError().filter(({ errors }) => errors.length).length
               }
             >
-              Hoàn tất
+              <FormattedMessage id="form_buttonGroup_submitButton_title" />,
             </Button>
           )}
         </Form.Item>

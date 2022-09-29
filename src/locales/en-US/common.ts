@@ -9,13 +9,8 @@ export default {
 
   searchBar_placeholder: 'Search',
 
-  tableColumn_indexTitle: 'Index',
-  fullName: 'Full name',
-  success: 'Success',
-  fail: 'Fail',
-  tableColumn_createdDate: 'Created Date',
-  export: 'Export',
-  return: 'Return',
+  tableColumn_indexTitle: 'No.',
+  tableColumn_createdDate: 'Date',
   south: 'South',
   middle: 'Middle',
   north: 'North',

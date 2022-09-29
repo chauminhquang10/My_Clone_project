@@ -11,6 +11,8 @@ import { SyncOutlined } from '@ant-design/icons';
 import { getAllDevices } from '@/services/STM-APIs/PhysicalDevicesController';
 import { useRequest } from 'umi';
 
+import { useIntl, FormattedMessage } from 'umi';
+
 const { Option } = Select;
 
 type CustomPhysicalDevice = API.PhysicalDevice & {
@@ -136,6 +138,8 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
   onVisibleChange,
   onFinish,
 }) => {
+  const intl = useIntl();
+
   //  xử lí update action cho table
   const [showUpdateActions, setShowUpdateActions] = useState<boolean>(false);
   // những key để show trong select list
@@ -205,7 +209,11 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
     {
       title: (
         <div style={{ textAlign: 'center', flex: 1 }}>
-          <Typography.Text>Loại thiết bị</Typography.Text>
+          <Typography.Text>
+            {intl.formatMessage({
+              id: 'detailDrawer_configCard_columnGroup_deviceType',
+            })}
+          </Typography.Text>
         </div>
       ),
       dataIndex: 'name',
@@ -214,7 +222,11 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
     {
       title: (
         <div style={{ textAlign: 'center' }}>
-          <Typography.Text>Đơn vị tính</Typography.Text>
+          <Typography.Text>
+            {intl.formatMessage({
+              id: 'detailDrawer_configCard_columnGroup_unit',
+            })}
+          </Typography.Text>
         </div>
       ),
       dataIndex: 'unit',
@@ -223,7 +235,11 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
     {
       title: (
         <div style={{ textAlign: 'center' }}>
-          <Typography.Text>Sức chứa tối thiểu</Typography.Text>
+          <Typography.Text>
+            {intl.formatMessage({
+              id: 'detailDrawer_configCard_columnGroup_miniCapacity',
+            })}
+          </Typography.Text>
         </div>
       ),
       dataIndex: 'myMinCap',
@@ -266,7 +282,7 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
             setShowUpdateActions(false);
           }}
         >
-          Huỷ bỏ
+          <FormattedMessage id="cancel" />
         </span>
         <span
           className={`${styles.updateActionTitle} ${styles.confirmUpdateAction}`}
@@ -275,7 +291,7 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
             setSelectedRowKeys(showSelectedRowKeys);
           }}
         >
-          Cập nhật
+          <FormattedMessage id="update" />
         </span>
       </div>
     );
@@ -297,7 +313,9 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
         ) : (
           <div className={styles.machineListTableTitle} onClick={() => setShowUpdateActions(true)}>
             <SyncOutlined style={{ fontSize: '14px', color: '#1890FF' }} />
-            <span className={styles.updateMachineActionTitle}>Cập nhật</span>
+            <span className={styles.updateMachineActionTitle}>
+              <FormattedMessage id="update" />
+            </span>
           </div>
         )}
       </div>
@@ -345,10 +363,16 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
         <Col span={12}>
           <Form.Item
             name="machineType"
-            label="Loại máy"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_machineType_title',
+            })}
             rules={[{ required: true, message: 'Loại máy là băt buộc' }]}
           >
-            <Select placeholder="Chọn loại máy">
+            <Select
+              placeholder={intl.formatMessage({
+                id: 'form_inputGroup_machineType_placeholder',
+              })}
+            >
               <Option value="STM">STM</Option>
               <Option value="CDM">CDM</Option>
               <Option value="ATM">ATM</Option>
@@ -358,14 +382,20 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
         <Col span={12}>
           <Form.Item
             name="name"
-            label="Tên dòng máy"
+            label={intl.formatMessage({
+              id: 'form_inputGroup_machineSeries_title',
+            })}
             rules={[
               { required: true, message: 'Tên dòng máy là băt buộc' },
               { max: 100, message: 'Tối đa 100 kí tự' },
             ]}
             normalize={(value) => value.trim()}
           >
-            <Input placeholder={'Nhập tên dòng máy'} />
+            <Input
+              placeholder={intl.formatMessage({
+                id: 'form_inputGroup_machineSeries_placeholder',
+              })}
+            />
           </Form.Item>
         </Col>
 
@@ -399,7 +429,7 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
 
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          Huỷ bỏ
+          <FormattedMessage id="cancel" />
         </Button>
         <Form.Item shouldUpdate>
           {() => (
@@ -412,7 +442,7 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
                 !!newForm.getFieldsError().filter(({ errors }) => errors.length).length
               }
             >
-              Hoàn tất
+              <FormattedMessage id="form_buttonGroup_submitButton_title" />,
             </Button>
           )}
         </Form.Item>
