@@ -1,6 +1,6 @@
 export default {
-  createForm_title: 'Tạo đơn vị quản lý mới',
-  updateForm_title: 'Chỉnh sửa đơn vị quản lý',
+  unitForm_createForm_title: 'Tạo đơn vị quản lý mới',
+  unitForm_updateForm_title: 'Chỉnh sửa đơn vị quản lý',
 
   form_inputGroup_unitCode_title: 'Mã đơn vị',
   form_inputGroup_unitCode_placeholder: 'Nhập mã đơn vị',

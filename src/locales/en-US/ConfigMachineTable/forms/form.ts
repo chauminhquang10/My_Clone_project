@@ -1,6 +1,6 @@
 export default {
-  createForm_title: 'Create New Model',
-  updateForm_title: 'Update Model Configuration',
+  configMachine_createForm_title: 'Create New Model',
+  configMachine_updateForm_title: 'Update Model Configuration',
 
   form_inputGroup_machineType_title: 'Machine type',
   form_inputGroup_machineType_placeholder: 'Choose machine type',

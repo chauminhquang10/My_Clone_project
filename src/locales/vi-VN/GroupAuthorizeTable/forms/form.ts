@@ -1,6 +1,6 @@
 export default {
-  createForm_title: 'Tạo nhóm quyền',
-  updateForm_title: 'Chỉnh sửa nhóm quyền',
+  roleGroup_createForm_title: 'Tạo nhóm quyền',
+  roleGroup_updateForm_title: 'Chỉnh sửa nhóm quyền',
 
   form_inputGroup_roleGroupName_title: 'Tên nhóm quyền',
   form_inputGroup_roleGroupName_placeholder: 'Nhập tên nhóm quyền',

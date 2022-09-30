@@ -1,6 +1,6 @@
 export default {
-  createForm_title: 'Create a new management unit',
-  updateForm_title: 'Update management unit',
+  unitForm_createForm_title: 'Create a new management unit',
+  unitForm_updateForm_title: 'Update management unit',
 
   form_inputGroup_unitCode_title: 'Unit code',
   form_inputGroup_unitCode_placeholder: 'Fill in unit code',

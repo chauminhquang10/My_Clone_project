@@ -399,7 +399,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
       {updateModalVisible && (
         <UpdateUnitForm
           title={intl.formatMessage({
-            id: 'updateForm_title',
+            id: 'unitForm_updateForm_title',
           })}
           width="934px"
           visible={updateModalVisible}

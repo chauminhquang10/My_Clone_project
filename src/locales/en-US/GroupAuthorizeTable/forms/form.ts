@@ -1,6 +1,6 @@
 export default {
-  createForm_title: 'Create Permissions',
-  updateForm_title: 'Edit Role Group',
+  roleGroup_createForm_title: 'Create permissions',
+  roleGroup_updateForm_title: 'Edit role group',
 
   form_inputGroup_roleGroupName_title: 'Permissions name',
   form_inputGroup_roleGroupName_placeholder: 'Fill in permissions name',

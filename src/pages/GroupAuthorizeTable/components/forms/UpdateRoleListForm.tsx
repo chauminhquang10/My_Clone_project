@@ -48,7 +48,7 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
   // xử  lí icon mở rộng tree
   const [expandTreeIndexes, setExpandTreeIndexes] = useState<string[]>([]);
 
-  // xử lí check all
+  // xử lí checkbox cho check all
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
 
@@ -94,6 +94,9 @@ const UpdateRoleListForm: React.FC<UpdateRoleListFormProps> = ({
         setAllTreeItemsLength(getAllSize as number);
         setFormattedRolesData(formattedResult as DataNode[]);
         setAllChildKeys(getAllChildKeys as number[]);
+
+        setIndeterminate(!!checkAllKeys?.length && checkAllKeys?.length < getAllChildKeys?.length);
+        setCheckAll(checkAllKeys?.length === getAllChildKeys?.length);
       },
     },
   );

@@ -145,7 +145,7 @@ const TableCustom = () => {
         {createModalVisible && (
           <NewRoleListForm
             title={intl.formatMessage({
-              id: 'createForm_title',
+              id: 'roleGroup_createForm_title',
             })}
             width="934px"
             checkAllKeys={checkAllKeys}

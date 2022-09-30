@@ -146,7 +146,6 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
   };
 
   // xử lí trạng thái nút xóa (disable, enable) kèm message khi hiện Tooltip
-
   const [validateDeleteObj, setValidateDeleteObj] = useState(INITIAL_VALIDATE_DELETE);
 
   // xử  lí trạng thái của form chỉnh sửa
@@ -344,7 +343,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
       {updateModalVisible && (
         <UpdateRoleListForm
           title={intl.formatMessage({
-            id: 'updateForm_title',
+            id: 'roleGroup_updateForm_title',
           })}
           width="934px"
           roleGroupDetail={roleGroupDetail as API.RoleGroupResponse}
