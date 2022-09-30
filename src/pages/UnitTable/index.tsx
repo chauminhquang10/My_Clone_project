@@ -149,7 +149,7 @@ const TableCustom = () => {
         {createModalVisible && (
           <NewUnitForm
             title={intl.formatMessage({
-              id: 'createForm_title',
+              id: 'unitForm_createForm_title',
             })}
             width="934px"
             visible={createModalVisible}

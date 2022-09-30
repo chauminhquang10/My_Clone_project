@@ -183,7 +183,7 @@ const TableCustom = () => {
       {createModalVisible && (
         <NewConfigModelForm
           title={intl.formatMessage({
-            id: 'createForm_title',
+            id: 'configMachine_createForm_title',
           })}
           width="934px"
           dataSource={dataSource}

@@ -332,7 +332,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
       {updateModalVisible && (
         <UpdateConfigModelForm
           title={intl.formatMessage({
-            id: 'updateForm_title',
+            id: 'configMachine_updateForm_title',
           })}
           width="934px"
           modelDetail={modelDetail as API.StmModelDetailResponse}
