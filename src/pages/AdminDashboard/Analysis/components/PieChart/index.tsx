@@ -7,9 +7,10 @@ type PieChartDataItem = {
 
 type PieChartProps = {
   data: PieChartDataItem[];
+  color?: string[];
 };
 
-const PieChart = ({ data }: PieChartProps) => {
+const PieChart = ({ data, color }: PieChartProps) => {
   function renderStatistic(containerWidth, text) {
     const textStyleStr = `width:${containerWidth}px;`;
     return `<div style="${textStyleStr};">${text}</div>`;
@@ -20,6 +21,7 @@ const PieChart = ({ data }: PieChartProps) => {
     data,
     angleField: 'value',
     colorField: 'type',
+    color,
     radius: 1,
     innerRadius: 0.64,
     label: {

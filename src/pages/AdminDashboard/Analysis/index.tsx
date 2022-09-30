@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { Suspense, useState } from 'react';
 import { Card, Col, DatePicker, Radio, Row } from 'antd';
 import { GridContent } from '@ant-design/pro-layout';
@@ -8,33 +7,27 @@ import IntroduceRow from './components/IntroduceRow/IntroduceRow';
 
 import PageLoading from './components/PageLoading';
 
-import type { AnalysisData } from './data.d';
 import styles from './style.less';
 import { PageContainer } from '@ant-design/pro-components';
 import PieChart from './components/PieChart';
 import type { DatePickerProps } from 'antd';
 import BarChart from './components/BarChart';
 
-type AnalysisProps = {
-  dashboardAndanalysis: AnalysisData;
-  loading: boolean;
-};
+type MachinesType = 'all' | 'stm' | 'atm' | 'cmd';
 
-type SalesType = 'all' | 'online' | 'stores';
-
-const Analysis: FC<AnalysisProps> = () => {
-  const [salesType, setSalesType] = useState<SalesType>('all');
+const Analysis = () => {
+  const [machineType, setMachineType] = useState<MachinesType>('all');
 
   const handleChangeRadioButton = (e: RadioChangeEvent) => {
-    setSalesType(e.target.value);
+    setMachineType(e.target.value);
   };
 
   // title cho card cua pie chart
   const PieChartCardTitle = () => {
     return (
       <div className={styles.myAdminCard_titleContainer}>
-        <span>Machine type:</span>
-        <Radio.Group value={salesType} onChange={handleChangeRadioButton}>
+        <span className={styles.myAdminCard_titleContainer_description}>Machine type:</span>
+        <Radio.Group value={machineType} onChange={handleChangeRadioButton}>
           <Radio.Button value="all">All</Radio.Button>
           <Radio.Button value="stm">STM</Radio.Button>
           <Radio.Button value="atm">ATM</Radio.Button>
@@ -81,63 +74,123 @@ const Analysis: FC<AnalysisProps> = () => {
 
   const barChartData = [
     {
-      year: '1991',
+      month: 'Jan',
       value: 3,
       type: 'Lon',
     },
     {
-      year: '1992',
+      month: 'Feb',
       value: 4,
       type: 'Lon',
     },
     {
-      year: '1993',
+      month: 'Mar',
       value: 3.5,
       type: 'Lon',
     },
     {
-      year: '1994',
+      month: 'Apr',
       value: 5,
       type: 'Lon',
     },
     {
-      year: '1995',
+      month: 'May',
       value: 4.9,
       type: 'Lon',
     },
     {
-      year: '1996',
+      month: 'Jun ',
       value: 6,
       type: 'Lon',
     },
     {
-      year: '1997',
+      month: 'Jul',
       value: 7,
       type: 'Lon',
     },
     {
-      year: '1998',
+      month: 'Aug',
       value: 9,
       type: 'Lon',
     },
     {
-      year: '1999',
+      month: 'Sep',
       value: 13,
       type: 'Lon',
     },
     {
-      year: '1991',
+      month: 'Oct',
+      value: 13,
+      type: 'Lon',
+    },
+    {
+      month: 'Nov',
+      value: 13,
+      type: 'Lon',
+    },
+    {
+      month: 'Dec',
+      value: 13,
+      type: 'Lon',
+    },
+    {
+      month: 'Jan',
       value: 3,
       type: 'Bor',
     },
     {
-      year: '1992',
+      month: 'Feb',
       value: 4,
       type: 'Bor',
     },
     {
-      year: '1993',
+      month: 'Mar',
       value: 3.5,
+      type: 'Bor',
+    },
+    {
+      month: 'Apr',
+      value: 5,
+      type: 'Bor',
+    },
+    {
+      month: 'May',
+      value: 4.9,
+      type: 'Bor',
+    },
+    {
+      month: 'Jun ',
+      value: 6,
+      type: 'Bor',
+    },
+    {
+      month: 'Jul',
+      value: 7,
+      type: 'Bor',
+    },
+    {
+      month: 'Aug',
+      value: 9,
+      type: 'Bor',
+    },
+    {
+      month: 'Sep',
+      value: 13,
+      type: 'Bor',
+    },
+    {
+      month: 'Oct',
+      value: 13,
+      type: 'Bor',
+    },
+    {
+      month: 'Nov',
+      value: 13,
+      type: 'Bor',
+    },
+    {
+      month: 'Dec',
+      value: 13,
       type: 'Bor',
     },
   ];
@@ -203,21 +256,21 @@ const Analysis: FC<AnalysisProps> = () => {
                 <Card title={<span className={styles.pieChart_cardTitle}>Warning</span>}>
                   <Row align="middle">
                     <Col span={14}>
-                      <PieChart data={secondPieChartData} />
+                      <PieChart data={secondPieChartData} color={['#FFA940', '#1890FF']} />
                     </Col>
                     <Col span={10}>
                       <div className={styles.pieChart_legendContainer}>
                         <div className={styles.pieChart_legendItem}>
                           <span
                             className={`${styles.pieChart_legendShape}`}
-                            style={{ background: '#6394F9' }}
+                            style={{ background: '#FFA940' }}
                           />
                           <span className={styles.pieChart_legendTitle}>Unsolved</span>
                         </div>
                         <div className={styles.pieChart_legendItem}>
                           <span
                             className={`${styles.pieChart_legendShape}`}
-                            style={{ background: '#62DAAA' }}
+                            style={{ background: '#1890FF' }}
                           />
                           <span>Solved</span>
                         </div>
@@ -244,7 +297,35 @@ const Analysis: FC<AnalysisProps> = () => {
                   }
                 >
                   <Col span={24}>
-                    <BarChart data={barChartData} />
+                    <Row justify="space-between" align="middle" style={{ marginBottom: '20px' }}>
+                      <Col>
+                        <h1 className={styles.barChart_yAxisTitle}>Transactions</h1>
+                      </Col>
+                      <Col>
+                        <Row style={{ gap: '20px' }}>
+                          <Col>
+                            <div className={styles.legendContainer}>
+                              <span
+                                className={`${styles.legendCircleShape} ${styles.legendCircleShape_active}`}
+                              />
+                              <span className={styles.legendCircleShape_title}>Active</span>
+                            </div>
+                          </Col>
+                          <Col>
+                            <div className={styles.legendContainer}>
+                              <span
+                                className={`${styles.legendCircleShape} ${styles.legendCircleShape_inActive}`}
+                              />
+                              <span className={styles.legendCircleShape_title}>Inactive</span>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <BarChart data={barChartData} />
+                    </Row>
                   </Col>
                 </Card>
               </Suspense>

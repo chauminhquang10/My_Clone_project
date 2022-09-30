@@ -14,7 +14,7 @@ type BarChartProps = {
 
 const BarChart = ({ data }: BarChartProps) => {
   const annotations = [];
-  each(groupBy(data, 'year'), (values, k) => {
+  each(groupBy(data, 'month'), (values, k) => {
     const value = values.reduce((a, b) => a + b.value, 0);
     annotations.push({
       type: 'text',
@@ -30,30 +30,45 @@ const BarChart = ({ data }: BarChartProps) => {
   });
   const config = {
     data,
+    color: ['#62DAAB', '#FFA940'],
+    yAxis: {
+      grid: {
+        line: {
+          style: {
+            stroke: '#E2E7E9',
+            lineWidth: 1,
+            lineDash: [4, 5],
+            strokeOpacity: 1,
+          },
+        },
+      },
+    },
     isStack: true,
-    xField: 'year',
+    xField: 'month',
     yField: 'value',
     seriesField: 'type',
     maxColumnWidth: 92,
-    intervalPadding: 28,
     label: {
       position: 'middle',
-      layout: [
-        {
-          type: 'interval-adjust-position',
-        },
-        {
-          type: 'interval-hide-overlap',
-        },
-        {
-          type: 'adjust-color',
-        },
-      ],
+      style: {
+        fill: '#fff',
+        opacity: 1,
+      },
+    },
+    tooltip: {
+      formatter: (datum: Record<string, any>) => ({
+        // chỉnh cái title thành mapping cái thang ở ngoài thành số  và giá trị biến year ở ngoài truyền vào
+        // sửa số 2022 thành giá trị biến year
+        title: `${datum.month}/2022`,
+        name: `${datum.type}`,
+        value: datum.value,
+      }),
     },
     annotations,
+    legend: false,
   };
 
-  return <Column {...config} />;
+  return <Column {...config} style={{ width: '100%' }} />;
 };
 
 export default BarChart;
