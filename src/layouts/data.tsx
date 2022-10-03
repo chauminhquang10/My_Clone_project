@@ -80,9 +80,8 @@ export const menuData = [
         id: 'update-firmware',
         path: '/machine/update-firmware',
       },
-      // {
-      //   icon: <img src={icons['machine-warning']} />,
-      //   id: 'Cảnh báo hệ thống',
+      // { icon: <img src={icons['machine-warning']} />,
+      //   id: 'system-warning',
       //   path: '/machine/system-warning',
       // },
     ],

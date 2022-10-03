@@ -3,6 +3,7 @@ import HeadCell from '@/components/TableProperties/HeadCell';
 import { TextCell } from '@/components/TableProperties//TableCell';
 import type { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'umi';
+import { Typography } from 'antd';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmInfoResponse) => void;
@@ -26,17 +27,13 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
           setCurrentRow(entity.machine as API.StmInfoResponse);
         };
 
-        return (
-          <TextCell width="328.33px" onClick={handleClick}>
-            {entity.machine?.name}
-          </TextCell>
-        );
+        return <TextCell onClick={handleClick}>{entity.machine?.name}</TextCell>;
       },
       sorter: (a, b) => {
         if (a.machine?.name && b.machine?.name) return a.machine.name.localeCompare(b.machine.name);
         else return 1;
       },
-      width: '328.33px',
+      width: 'calc(calc(100% - 600px) / 3)',
     },
     {
       title: (
@@ -48,6 +45,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       render: (_, entity) => {
         return <TextCell>{entity.machine?.terminalId}</TextCell>;
       },
+      width: 'calc(calc(100% - 600px) / 3)',
     },
     {
       title: (
@@ -57,8 +55,15 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       ),
       dataIndex: 'machine',
       render: (_, entity) => {
-        return <TextCell>{entity.machine?.ipAddress}</TextCell>;
+        return (
+          <TextCell width="328px">
+            <Typography.Text ellipsis={{ tooltip: entity.machine?.ipAddress }}>
+              {entity.machine?.ipAddress}
+            </Typography.Text>
+          </TextCell>
+        );
       },
+      width: '328px',
     },
     {
       title: (
@@ -74,6 +79,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
         if (a.total && b.total) return a.total - b.total;
         return 1;
       },
+      width: '200px',
     },
     {
       title: (
@@ -89,6 +95,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
         if (a.success && b.success) return a.success - b.success;
         return 1;
       },
+      width: '200px',
     },
     {
       title: (
@@ -104,6 +111,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
         if (a.failure && b.failure) return a.failure - b.failure;
         return 1;
       },
+      width: '200px',
     },
   ];
   return columns;

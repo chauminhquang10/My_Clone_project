@@ -7,4 +7,12 @@ export default {
   'newVersionForm.modelPlaceholder': 'Select model',
   'newVersionForm.conditionPlaceholder': 'Select condition',
   'newVersionForm.versionNamePlaceholder': 'Proposed name',
+  'newVersionForm.tableList.title': 'Device list',
+  'detailVersionForm.title': 'Update file detail',
+  'detailVersionForm.versionInformation': 'Version information',
+  'detailVersionForm.updatedMachine': 'Updated machine',
+  'detailVersionForm.notUpdatedMachine': 'Not updated machine',
+  'detailVersionForm.versionName': 'Version name',
+  'updateFileForm.title': 'Edit the upgrade file',
+  'updateVersionForm.unsupportFile': 'The file does not meet the requirements',
 };

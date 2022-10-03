@@ -1,6 +1,6 @@
 import { genKey } from '@/utils';
 import { CaretDownFilled, CaretUpFilled } from '@ant-design/icons';
-import { Typography } from 'antd';
+import { Tooltip, Typography } from 'antd';
 import cx from 'classnames';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useCallback, useMemo } from 'react';
@@ -22,6 +22,7 @@ interface SubMenuProps extends BaseMenu {
   currentRoute: string | undefined;
   setCurrentRoute: Dispatch<SetStateAction<string>>;
   disabled?: boolean;
+  tooltip?: ReactNode;
 }
 
 export default function SubMenu({
@@ -36,6 +37,7 @@ export default function SubMenu({
   currentRoute,
   setCurrentRoute,
   disabled,
+  tooltip,
 }: SubMenuProps) {
   const ellipsis = useMemo(
     () => ({
@@ -84,9 +86,11 @@ export default function SubMenu({
           )}
           {icon}
           {!collapsed && (
-            <Typography.Text className={styles.title} ellipsis={ellipsis}>
-              <FormattedMessage id={`menu.${id}`} />
-            </Typography.Text>
+            <Tooltip title={tooltip} placement="right">
+              <Typography.Text className={styles.title} ellipsis={ellipsis}>
+                <FormattedMessage id={`menu.${id}`} />
+              </Typography.Text>
+            </Tooltip>
           )}
         </>
       </div>
@@ -95,6 +99,7 @@ export default function SubMenu({
           {children?.map((child) => (
             <SubMenu
               {...child}
+              tooltip={tooltip}
               id={`${id}.${child.id}`}
               collapsed={collapsed}
               key={genKey()}

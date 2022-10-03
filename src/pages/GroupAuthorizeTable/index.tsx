@@ -1,19 +1,19 @@
+import AddNew from '@/components/TableProperties/AddNew';
+import style from '@/components/TableProperties/style.less';
+import TitleTable from '@/components/TableProperties/TitleTable';
+import TotalPagination from '@/components/TableProperties/TotalPagination';
+import { createRoleGroup, getAllRoleGroup } from '@/services/STM-APIs/RoleController';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
 import { Access, useModel, useRequest } from 'umi';
 import NewRoleListForm from './components/forms/NewRoleListForm';
-import AddNew from '@/components/TableProperties/AddNew';
-import Column from './components/tables/Column';
-import style from '@/components/TableProperties/style.less';
-import TitleTable from '@/components/TableProperties/TitleTable';
-import TotalPagination from '@/components/TableProperties/TotalPagination';
 import RoleListDetailDrawer from './components/forms/RoleListDetailDrawer';
-import { createRoleGroup, getAllRoleGroup } from '@/services/STM-APIs/RoleController';
-import NoFoundPage from '../404';
+import Column from './components/tables/Column';
 
 import { useIntl } from 'umi';
+import Admin from '../Admin';
 
 const TableCustom = () => {
   const intl = useIntl();
@@ -41,7 +41,7 @@ const TableCustom = () => {
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
     items_per_page: '',
-    jump_to: 'Trang',
+    jump_to: intl.formatMessage({ id: 'page' }),
     page: '',
   };
 
@@ -85,7 +85,7 @@ const TableCustom = () => {
   const { initialState } = useModel('@@initialState');
 
   return (
-    <Access accessible={initialState?.currentUser?.admin || false} fallback={<NoFoundPage />}>
+    <Access accessible={initialState?.currentUser?.admin || false} fallback={<Admin />}>
       <PageContainer
         className={style['table-container']}
         header={{

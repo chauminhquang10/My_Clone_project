@@ -1,6 +1,7 @@
 import { TextCell } from '@/components/TableProperties//TableCell';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import type { ProColumns } from '@ant-design/pro-components';
+import { Typography } from 'antd';
 import { FormattedMessage } from 'umi';
 
 type filterType = {
@@ -60,11 +61,15 @@ function Column({ setOpenLogForm, setCurrentRow }: ColumnProps) {
       ),
       dataIndex: 'machineType',
       render: (dom) => {
-        return <TextCell width="100%">{dom}</TextCell>;
+        return (
+          <TextCell width="100%">
+            <Typography.Text ellipsis={{ tooltip: dom }}>{dom}</Typography.Text>
+          </TextCell>
+        );
       },
       filters: filterTypeMachineList,
       onFilter: filterTypeMachine,
-      width: '9%',
+      width: '140px',
     },
     {
       title: (
@@ -77,7 +82,7 @@ function Column({ setOpenLogForm, setCurrentRow }: ColumnProps) {
         return (
           <TextCell
             position="left"
-            width="300px"
+            width="450px"
             onClick={() => {
               setOpenLogForm(true);
               setCurrentRow(entity);
@@ -91,7 +96,6 @@ function Column({ setOpenLogForm, setCurrentRow }: ColumnProps) {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else return 1;
       },
-      width: '29%',
     },
 
     {
@@ -102,9 +106,12 @@ function Column({ setOpenLogForm, setCurrentRow }: ColumnProps) {
       ),
       dataIndex: 'terminalId',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return (
+          <TextCell width="450px">
+            <Typography.Text ellipsis={{ tooltip: dom }}>{dom}</Typography.Text>
+          </TextCell>
+        );
       },
-      width: '29%',
     },
     {
       title: (
@@ -114,9 +121,12 @@ function Column({ setOpenLogForm, setCurrentRow }: ColumnProps) {
       ),
       dataIndex: 'ipAddress',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return (
+          <TextCell width="450px">
+            <Typography.Text ellipsis={{ tooltip: dom }}>{dom}</Typography.Text>
+          </TextCell>
+        );
       },
-      width: '29%',
     },
   ];
   return columns;

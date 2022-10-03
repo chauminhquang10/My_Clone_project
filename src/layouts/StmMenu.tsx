@@ -39,12 +39,12 @@ export default function StmMenu({ collapsed }: StmMenuProps) {
         {menuData.map((menu) => (
           <SubMenu
             {...menu}
+            disabled={!initialState?.currentUser?.admin && menu.path.includes('users')}
             collapsed={collapsed}
             showSubNav={showSubNav}
             onClick={handleClick}
             currentRoute={currentRoute}
             setCurrentRoute={setCurrentRoute}
-            disabled={!initialState?.currentUser?.admin && menu.path.includes('users')}
             key={genKey()}
           />
         ))}

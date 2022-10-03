@@ -4,10 +4,11 @@ import TotalPagination from '@/components/TableProperties/TotalPagination';
 import { getSystemOperation } from '@/services/STM-APIs/STMController';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
-import { FormattedMessage, useRequest } from 'umi';
+import { FormattedMessage, useIntl, useRequest } from 'umi';
 import Column from './components/tables/Column';
 
 const HistoryListTable = () => {
+  const intl = useIntl();
   const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
@@ -17,7 +18,7 @@ const HistoryListTable = () => {
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
     items_per_page: '',
-    jump_to: 'Trang',
+    jump_to: intl.formatMessage({ id: 'page' }),
     page: '',
   };
 
