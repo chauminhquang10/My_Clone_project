@@ -4,7 +4,7 @@ import {
   PaperClipOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-
+import Api from '@/services/STM-APIs';
 import {
   Badge,
   Button,
@@ -24,7 +24,7 @@ import React, { useState } from 'react';
 
 import ModalCustom from '@/components/FormCustom/ModalCustom';
 import api from '@/services/STM-APIs';
-import { FormattedMessage } from 'umi';
+import { FormattedMessage, useRequest } from 'umi';
 import UpdateVersionForm from './UpdateVersionForm';
 import styles from './VersionDetailDrawer.less';
 
@@ -48,6 +48,9 @@ type VersionDetailDrawerProps = {
   getAllUpdatedVersion: () => Promise<API.PageResponseVersionResponse | undefined>;
 };
 
+const getVersionDetail = (versionId: string) => () =>
+  Api.STMVersionController.getVersion({ versionId }).then((res) => res);
+
 const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
   showDetail,
   setShowDetail,
@@ -55,6 +58,11 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
   setCurrentRow,
   getAllUpdatedVersion,
 }) => {
+  const { data } = useRequest(getVersionDetail(`${currentRow?.id}`), {
+    cacheKey: `versionDetail-${currentRow?.id}`,
+    refreshDeps: [currentRow?.id],
+  });
+
   //------------ handle create new  --------------------
   const handleUpdateVersion = async (
     params: API.updateVersionParams,
@@ -298,7 +306,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                 <Table
                   bordered
                   columns={updatedMachineListColumns}
-                  dataSource={currentRow?.updatedMachines}
+                  dataSource={data?.updatedMachines}
                   title={() => (
                     <UpdatedMachineListTableTitle
                       title="Máy đã cập nhật"
@@ -317,7 +325,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                 <Table
                   bordered
                   columns={updatedMachineListColumns}
-                  dataSource={currentRow?.notUpdatedMachines}
+                  dataSource={data?.notUpdatedMachines}
                   title={() => (
                     <NotUpdatedMachineListTableTitle
                       title="Máy chưa cập nhật"
