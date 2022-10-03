@@ -13,6 +13,20 @@ type UserTypeItem = {
   total: number;
 };
 
+type TooltipItem = {
+  readonly data: Record<string, any>;
+
+  readonly mappingData: Record<string, any>;
+
+  readonly name: string;
+
+  readonly value: string | number;
+
+  readonly color: string;
+
+  readonly marker: string;
+};
+
 const BulletChartColors = {
   ACTIVE: 'legendCircleShape_active',
   INACTIVE: 'legendCircleShape_inActive',
@@ -49,6 +63,43 @@ const BulletProgress = () => {
     },
   });
 
+  const handleFormatData = (originalItems: TooltipItem[]) => {
+    const results = originalItems.map((item, index) => {
+      return {
+        ...item,
+        name: allUserList[index]?.status,
+        value: allUserList[index]?.total.toString(),
+      };
+    });
+
+    return results;
+  };
+
+  const CustomTooltipComponent = ({ customData }: { customData: TooltipItem[] }) => {
+    return (
+      <div className={introduceRowStyles.tooltipContainer}>
+        <div className={introduceRowStyles.tooltip_totalContainer}>
+          <span className={introduceRowStyles.tooltip_totalTitle}>Total</span>
+          <span className={introduceRowStyles.tooltip_totalTitle}>{totalUsers}</span>
+        </div>
+
+        {customData?.map((item) => (
+          <div className={introduceRowStyles.tooltip_itemContainer} key={item?.name}>
+            <div className={introduceRowStyles.tooltip_itemLeftContent}>
+              <span
+                className={`${styles.legendCircleShape} ${
+                  introduceRowStyles[BulletChartColors[item?.name]]
+                }`}
+              />
+              <span className={introduceRowStyles.tooltip_totalTitle}>{item?.name}:</span>
+            </div>
+            <span className={introduceRowStyles.tooltip_totalTitle}>{item?.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const data = [
     {
       title: '',
@@ -83,34 +134,15 @@ const BulletProgress = () => {
       showMarkers: false,
       shared: true,
       customItems: (originalItems: TooltipItem[]) => {
-        console.log('first', originalItems);
-        return originalItems;
+        const filterOriginalItems = originalItems.filter(
+          (item) => item?.mappingData?.x?.length > 0 && item?.mappingData?.y?.length > 0,
+        );
+        const newDataItems = handleFormatData(filterOriginalItems);
+        return newDataItems;
       },
-      // customContent: () => {
-      //   return `
-      //   <div style="min-width: 145px; min-height: 102px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; padding: 12px">
-      //       <div style="display: flex; width: 100% ;justify-content: space-between; align-items: center; min-height: 20px;">
-      //            <span style="font-family: 'Roboto'; font-style: normal; font-weight: 400; font-size: 12px; line-height: 20px; color: rgba(0, 0, 0, 0.85);">Total</span>
-      //            <span style="font-family: 'Roboto'; font-style: normal; font-weight: 400; font-size: 12px; line-height: 20px; color: rgba(0, 0, 0, 0.85);">${totalUsers}</span>
-      //       </div>
-
-      //       <div style="display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 16px; min-height: 20px">
-      //            <div style="display: flex; gap: 16px; align-items: center;">
-      //                <span style="height: 16px; width: 16px; background-color: #73D13D; border-radius: 50%; display: inline-block;"></span>
-      //                <span style="font-family: 'Roboto'; font-style: normal; font-weight: 400; font-size: 12px; line-height: 20px; color: rgba(0, 0, 0, 0.85);">${allUserList[0]?.status}: </span>
-      //            </div>
-      //            <span style="font-family: 'Roboto'; font-style: normal; font-weight: 400; font-size: 12px; line-height: 20px; color: rgba(0, 0, 0, 0.85);">${allUserList[0]?.total}</span>
-      //       </div>
-
-      //       <div style="display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 16px; min-height: 20px">
-      //             <div style="display: flex; gap: 16px; align-items: center;">
-      //                 <span style="height: 16px; width: 16px; background-color: #FFA940; border-radius: 50%; display: inline-block;"></span>
-      //                 <span style="font-family: 'Roboto'; font-style: normal; font-weight: 400; font-size: 12px; line-height: 20px; color: rgba(0, 0, 0, 0.85);">${allUserList[1]?.status}: </span>
-      //             </div>
-      //              <span style="font-family: 'Roboto'; font-style: normal; font-weight: 400; font-size: 12px; line-height: 20px; color: rgba(0, 0, 0, 0.85);">${allUserList[1]?.total}</span>
-      //       </div>
-      //   </div>`;
-      // },
+      customContent: (_, customData: TooltipItem[]) => {
+        return <CustomTooltipComponent customData={customData} />;
+      },
     },
     legend: false,
   };
@@ -138,30 +170,3 @@ const BulletProgress = () => {
 };
 
 export default BulletProgress;
-
-// export declare type TooltipItem = {
-//   /**
-//    * @title 原始数据
-//    */
-//   readonly data: Datum;
-//   /**
-//    * @title 映射之后的数据
-//    */
-//   readonly mappingData: Datum;
-//   /**
-//    * @title tooltip item 中名称
-//    */
-//   readonly name: string;
-//   /**
-//    * @title tooltip item 中值
-//    */
-//   readonly value: string | number;
-//   /**
-//    * @title tooltip item 中颜色
-//    */
-//   readonly color: string;
-//   /**
-//    * @title tooltip item 中图标类型
-//    */
-//   readonly marker: string;
-// };

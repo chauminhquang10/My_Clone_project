@@ -42,8 +42,8 @@
 
 .othersCard_quantityContainer {
   display: flex;
-  gap: 32px;
   align-items: flex-end;
+  justify-content: space-between;
 }
 
 .othersCard_title {
@@ -124,4 +124,47 @@
 
 .legendCircleShape_inActive {
   background-color: #ffa940;
+}
+
+.tooltipContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  min-width: 145px;
+  min-height: 102px;
+  padding: 12px;
+}
+
+.tooltip_totalContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 20px;
+}
+
+.tooltip_totalTitle {
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 400;
+  font-size: 12px;
+  font-family: 'Roboto';
+  font-style: normal;
+  line-height: 20px;
+}
+
+.tooltip_itemContainer {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 20px;
+}
+
+.tooltip_itemLeftContent {
+  display: flex;
+  gap: 16px;
+  align-items: center;
 }

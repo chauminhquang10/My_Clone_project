@@ -4,19 +4,81 @@ import { GridContent } from '@ant-design/pro-layout';
 import type { RadioChangeEvent } from 'antd/es/radio';
 import moment from 'moment';
 import IntroduceRow from './components/IntroduceRow/IntroduceRow';
-
 import PageLoading from './components/PageLoading';
-
+import type { RangePickerProps } from 'antd/es/date-picker';
 import styles from './style.less';
 import { PageContainer } from '@ant-design/pro-components';
 import PieChart from './components/PieChart';
 import type { DatePickerProps } from 'antd';
 import BarChart from './components/BarChart';
+import { useRequest } from 'umi';
+import {
+  getMachineActivityStatistic,
+  getTransactionStatistic,
+} from '@/services/STM-APIs/DashboardController';
 
-type MachinesType = 'all' | 'stm' | 'atm' | 'cmd';
+import { MAPPING_MONTHS } from '../../../constants/index';
+
+type MachinesType = '' | 'STM' | 'ATM' | 'CDM';
+
+type ChartObjData = Record<string, Record<string, any>>;
+
+type PieChartDataItem = {
+  type: string;
+  value: number;
+};
+
+type OriginalBarChartDataItem = {
+  month: number;
+  success: number;
+  failed: number;
+};
+
+type FormattedBarChartDataItem = {
+  month: string;
+  value: number;
+  type: string;
+};
+
+const firstPieChartColor = {
+  IN_SERVICE: '#6394F9',
+  OUT_OF_SERVICE: '#62DAAA',
+  UNKNOWN: '#F6C021',
+  OFFLINE: '#657797',
+};
+
+const secondPieChartColor = {
+  Solved: '#1890FF',
+  Unsolved: '#FFA940',
+};
+
+const mappingBarChartDataType = {
+  success: 'Success',
+  failed: 'Failed',
+};
+
+const barChartColor = {
+  success: '#62DAAB',
+  failed: '#FFA940',
+};
 
 const Analysis = () => {
-  const [machineType, setMachineType] = useState<MachinesType>('all');
+  // xử lí chọn loại máy
+  const [machineType, setMachineType] = useState<MachinesType>('');
+
+  // xử lí data cho pie chart đầu tiên
+  const [statusStatisticsData, setStatusStatisticsData] = useState<PieChartDataItem[]>([]);
+
+  // xử lí data cho pie chart đầu tiên
+  const [warningStatisticsData, setWarningStatisticsData] = useState<PieChartDataItem[]>([]);
+
+  // xử lí chọn năm
+  const [filterYear, setFilterYear] = useState<string>('2022');
+
+  const [barChartData, setBarChartData] = useState<FormattedBarChartDataItem[]>([]);
+
+  // xử lí các loại data của bar chart ( để làm legend shape )
+  const [barChartDataTypes, setBarChartDataTypes] = useState<string[]>([]);
 
   const handleChangeRadioButton = (e: RadioChangeEvent) => {
     setMachineType(e.target.value);
@@ -28,172 +90,112 @@ const Analysis = () => {
       <div className={styles.myAdminCard_titleContainer}>
         <span className={styles.myAdminCard_titleContainer_description}>Machine type:</span>
         <Radio.Group value={machineType} onChange={handleChangeRadioButton}>
-          <Radio.Button value="all">All</Radio.Button>
-          <Radio.Button value="stm">STM</Radio.Button>
-          <Radio.Button value="atm">ATM</Radio.Button>
-          <Radio.Button value="cmd">CDM</Radio.Button>
+          <Radio.Button value="">All</Radio.Button>
+          <Radio.Button value="STM">STM</Radio.Button>
+          <Radio.Button value="ATM">ATM</Radio.Button>
+          <Radio.Button value="CDM">CDM</Radio.Button>
         </Radio.Group>
       </div>
     );
   };
 
-  const firstPieChartData = [
-    {
-      type: 'In service',
-      value: 27,
-    },
-    {
-      type: 'Out of service',
-      value: 25,
-    },
-    {
-      type: 'Offline',
-      value: 18,
-    },
-    {
-      type: 'Unknown',
-      value: 15,
-    },
-  ];
-
-  const secondPieChartData = [
-    {
-      type: 'Unsolved',
-      value: 27,
-    },
-    {
-      type: 'Solved',
-      value: 25,
-    },
-  ];
-
-  const yearFormat = 'YYYY';
-  const onChangeYear: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
+  const handleFormatChartData = <Type,>(itemObj: Type): any[] => {
+    const resultArr: any[] = [];
+    Object.keys(itemObj).forEach(function (key) {
+      resultArr.push(itemObj[key]);
+    });
+    return resultArr;
   };
 
-  const barChartData = [
-    {
-      month: 'Jan',
-      value: 3,
-      type: 'Lon',
+  const handleMappingBarChartData = (originalBarChartData: OriginalBarChartDataItem[]) => {
+    const formattedBarChartData = originalBarChartData?.reduce(
+      (prev: any, barDataItem: OriginalBarChartDataItem) => {
+        return [
+          ...prev,
+          {
+            month: MAPPING_MONTHS[barDataItem?.month],
+            value: barDataItem?.success,
+            type:
+              Object.keys(mappingBarChartDataType).findIndex(
+                (element) => element === Object.keys(barDataItem)[1],
+              ) > -1
+                ? mappingBarChartDataType[Object.keys(barDataItem)[1]]
+                : 'default',
+          },
+          {
+            month: MAPPING_MONTHS[barDataItem?.month],
+            value: barDataItem?.failed,
+            type:
+              Object.keys(mappingBarChartDataType).findIndex(
+                (element) => element === Object.keys(barDataItem)[2],
+              ) > -1
+                ? mappingBarChartDataType[Object.keys(barDataItem)[2]]
+                : 'default',
+          },
+        ];
+      },
+      [],
+    );
+    setBarChartData(formattedBarChartData);
+  };
+
+  useRequest<any>(
+    () => {
+      if (machineType) return getMachineActivityStatistic({ machineType });
+      return getMachineActivityStatistic({});
     },
     {
-      month: 'Feb',
-      value: 4,
-      type: 'Lon',
+      onSuccess(data) {
+        const allStatusDataArray = handleFormatChartData<ChartObjData>(data?.statusStatistics);
+        // rename data field to fix the pie chart data field
+        const mappingDataFirstPieChart = allStatusDataArray?.map((item) => ({
+          type: item?.status,
+          value: item?.total,
+        }));
+
+        setStatusStatisticsData(mappingDataFirstPieChart);
+
+        const allWarningDataArray = handleFormatChartData<ChartObjData>(data?.warningStatistics);
+        // rename data field to fix the pie chart data field
+        const mappingDataSecondPieChart = allWarningDataArray?.map((item) => ({
+          type: item?.solved ? 'Solved' : 'Unsolved',
+          value: item?.total,
+        }));
+
+        setWarningStatisticsData(mappingDataSecondPieChart);
+      },
+      refreshDeps: [machineType],
+    },
+  );
+
+  useRequest<any>(
+    () => {
+      return getTransactionStatistic({ year: filterYear });
     },
     {
-      month: 'Mar',
-      value: 3.5,
-      type: 'Lon',
+      onSuccess(data) {
+        const allBarChartDataArray = handleFormatChartData<ChartObjData>(data?.statistics);
+        handleMappingBarChartData(allBarChartDataArray);
+
+        const getChartDataTypesArr = Object.keys(allBarChartDataArray[0]);
+
+        getChartDataTypesArr.splice(0, 1);
+
+        setBarChartDataTypes(getChartDataTypesArr);
+      },
+      refreshDeps: [filterYear],
     },
-    {
-      month: 'Apr',
-      value: 5,
-      type: 'Lon',
-    },
-    {
-      month: 'May',
-      value: 4.9,
-      type: 'Lon',
-    },
-    {
-      month: 'Jun ',
-      value: 6,
-      type: 'Lon',
-    },
-    {
-      month: 'Jul',
-      value: 7,
-      type: 'Lon',
-    },
-    {
-      month: 'Aug',
-      value: 9,
-      type: 'Lon',
-    },
-    {
-      month: 'Sep',
-      value: 13,
-      type: 'Lon',
-    },
-    {
-      month: 'Oct',
-      value: 13,
-      type: 'Lon',
-    },
-    {
-      month: 'Nov',
-      value: 13,
-      type: 'Lon',
-    },
-    {
-      month: 'Dec',
-      value: 13,
-      type: 'Lon',
-    },
-    {
-      month: 'Jan',
-      value: 3,
-      type: 'Bor',
-    },
-    {
-      month: 'Feb',
-      value: 4,
-      type: 'Bor',
-    },
-    {
-      month: 'Mar',
-      value: 3.5,
-      type: 'Bor',
-    },
-    {
-      month: 'Apr',
-      value: 5,
-      type: 'Bor',
-    },
-    {
-      month: 'May',
-      value: 4.9,
-      type: 'Bor',
-    },
-    {
-      month: 'Jun ',
-      value: 6,
-      type: 'Bor',
-    },
-    {
-      month: 'Jul',
-      value: 7,
-      type: 'Bor',
-    },
-    {
-      month: 'Aug',
-      value: 9,
-      type: 'Bor',
-    },
-    {
-      month: 'Sep',
-      value: 13,
-      type: 'Bor',
-    },
-    {
-      month: 'Oct',
-      value: 13,
-      type: 'Bor',
-    },
-    {
-      month: 'Nov',
-      value: 13,
-      type: 'Bor',
-    },
-    {
-      month: 'Dec',
-      value: 13,
-      type: 'Bor',
-    },
-  ];
+  );
+
+  const yearFormat = 'YYYY';
+
+  const onChangeYear: DatePickerProps['onChange'] = (_, dateString) => {
+    setFilterYear(dateString);
+  };
+
+  const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+    return current.year() > 2022 || current.year() < 2020; // disabling everything further than 2022 and in the past before 2020
+  };
 
   return (
     <GridContent>
@@ -213,38 +215,23 @@ const Analysis = () => {
                 <Card title={<span className={styles.pieChart_cardTitle}>Machine status</span>}>
                   <Row align="middle">
                     <Col span={14}>
-                      <PieChart data={firstPieChartData} />
+                      <PieChart
+                        data={statusStatisticsData}
+                        colors={firstPieChartColor}
+                        unit="Machines"
+                      />
                     </Col>
                     <Col span={10}>
                       <div className={styles.pieChart_legendContainer}>
-                        <div className={styles.pieChart_legendItem}>
-                          <span
-                            className={`${styles.pieChart_legendShape}`}
-                            style={{ background: '#6394F9' }}
-                          />
-                          <span className={styles.pieChart_legendTitle}>In service</span>
-                        </div>
-                        <div className={styles.pieChart_legendItem}>
-                          <span
-                            className={`${styles.pieChart_legendShape}`}
-                            style={{ background: '#62DAAA' }}
-                          />
-                          <span>Out of service</span>
-                        </div>
-                        <div className={styles.pieChart_legendItem}>
-                          <span
-                            className={`${styles.pieChart_legendShape}`}
-                            style={{ background: '#657797' }}
-                          />
-                          <span>Offline</span>
-                        </div>
-                        <div className={styles.pieChart_legendItem}>
-                          <span
-                            className={`${styles.pieChart_legendShape}`}
-                            style={{ background: '#F6C021' }}
-                          />
-                          <span>Unknown</span>
-                        </div>
+                        {statusStatisticsData?.map((item) => (
+                          <div className={styles.pieChart_legendItem} key={item?.type}>
+                            <span
+                              className={`${styles.pieChart_legendShape}`}
+                              style={{ background: `${firstPieChartColor[item?.type]}` }}
+                            />
+                            <span className={styles.pieChart_legendTitle}>{item?.type}</span>
+                          </div>
+                        ))}
                       </div>
                     </Col>
                   </Row>
@@ -256,24 +243,23 @@ const Analysis = () => {
                 <Card title={<span className={styles.pieChart_cardTitle}>Warning</span>}>
                   <Row align="middle">
                     <Col span={14}>
-                      <PieChart data={secondPieChartData} color={['#FFA940', '#1890FF']} />
+                      <PieChart
+                        data={warningStatisticsData}
+                        colors={secondPieChartColor}
+                        unit="Warnings"
+                      />
                     </Col>
                     <Col span={10}>
                       <div className={styles.pieChart_legendContainer}>
-                        <div className={styles.pieChart_legendItem}>
-                          <span
-                            className={`${styles.pieChart_legendShape}`}
-                            style={{ background: '#FFA940' }}
-                          />
-                          <span className={styles.pieChart_legendTitle}>Unsolved</span>
-                        </div>
-                        <div className={styles.pieChart_legendItem}>
-                          <span
-                            className={`${styles.pieChart_legendShape}`}
-                            style={{ background: '#1890FF' }}
-                          />
-                          <span>Solved</span>
-                        </div>
+                        {warningStatisticsData?.map((item) => (
+                          <div className={styles.pieChart_legendItem} key={item?.type}>
+                            <span
+                              className={`${styles.pieChart_legendShape}`}
+                              style={{ background: `${secondPieChartColor[item?.type]}` }}
+                            />
+                            <span className={styles.pieChart_legendTitle}>{item?.type}</span>
+                          </div>
+                        ))}
                       </div>
                     </Col>
                   </Row>
@@ -291,8 +277,9 @@ const Analysis = () => {
                     <DatePicker
                       onChange={onChangeYear}
                       picker="year"
-                      defaultValue={moment('2022', yearFormat)}
+                      defaultValue={moment(filterYear, yearFormat)}
                       format={yearFormat}
+                      disabledDate={disabledDate}
                     />
                   }
                 >
@@ -303,22 +290,19 @@ const Analysis = () => {
                       </Col>
                       <Col>
                         <Row style={{ gap: '20px' }}>
-                          <Col>
-                            <div className={styles.legendContainer}>
-                              <span
-                                className={`${styles.legendCircleShape} ${styles.legendCircleShape_active}`}
-                              />
-                              <span className={styles.legendCircleShape_title}>Active</span>
-                            </div>
-                          </Col>
-                          <Col>
-                            <div className={styles.legendContainer}>
-                              <span
-                                className={`${styles.legendCircleShape} ${styles.legendCircleShape_inActive}`}
-                              />
-                              <span className={styles.legendCircleShape_title}>Inactive</span>
-                            </div>
-                          </Col>
+                          {barChartDataTypes?.map((item) => (
+                            <Col key={item}>
+                              <div className={styles.legendContainer}>
+                                <span
+                                  className={`${styles.legendCircleShape}`}
+                                  style={{ background: `${barChartColor[item]}` }}
+                                />
+                                <span className={styles.legendCircleShape_title}>
+                                  {mappingBarChartDataType[item]}
+                                </span>
+                              </div>
+                            </Col>
+                          ))}
                         </Row>
                       </Col>
                     </Row>

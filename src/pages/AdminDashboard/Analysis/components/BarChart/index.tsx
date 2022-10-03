@@ -3,7 +3,7 @@ import { Column } from '@ant-design/plots';
 import { each, groupBy } from '@antv/util';
 
 type BarChartDataItem = {
-  year: string | number;
+  month: string | number;
   type: string;
   value: string | number;
 };
@@ -15,7 +15,8 @@ type BarChartProps = {
 const BarChart = ({ data }: BarChartProps) => {
   const annotations = [];
   each(groupBy(data, 'month'), (values, k) => {
-    const value = values.reduce((a, b) => a + b.value, 0);
+    const value = values.reduce((a: any, b: any) => a + b.value, 0);
+
     annotations.push({
       type: 'text',
       position: [k, value],
@@ -57,8 +58,6 @@ const BarChart = ({ data }: BarChartProps) => {
     },
     tooltip: {
       formatter: (datum: Record<string, any>) => ({
-        // chỉnh cái title thành mapping cái thang ở ngoài thành số  và giá trị biến year ở ngoài truyền vào
-        // sửa số 2022 thành giá trị biến year
         title: `${datum.month}/2022`,
         name: `${datum.type}`,
         value: datum.value,
