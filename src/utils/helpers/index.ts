@@ -94,3 +94,17 @@ export function formatStaffName(id?: string, name?: string) {
 
   return `${id} - ${name}`;
 }
+
+export function formatTime(today: Date) {
+  const yyyy = today.getFullYear();
+  let mm = ''; // Months start at 0!
+  let dd = '';
+
+  if (today.getDate() < 10) dd = '0' + today.getDate();
+  else dd = today.getDate().toString();
+  if (today.getMonth() < 9) mm = '0' + (today.getMonth() + 1);
+  else mm = (today.getMonth() + 1).toString();
+
+  const formattedToday = dd + '-' + mm + '-' + yyyy;
+  return formattedToday;
+}

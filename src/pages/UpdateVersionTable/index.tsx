@@ -42,7 +42,7 @@ const TableCustom = () => {
       onError: (error) => {
         console.log(error);
       },
-      refreshDeps: [paramFilter],
+      refreshDeps: [paramFilter, page],
     },
   );
 

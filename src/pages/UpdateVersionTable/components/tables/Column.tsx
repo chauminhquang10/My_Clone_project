@@ -4,7 +4,10 @@ import { TextCell } from '@/components/TableProperties//TableCell';
 import { formatDate } from '@/utils';
 import DateFilter from '@/components/TableProperties/DateFilter';
 import type { Dispatch, SetStateAction } from 'react';
-import { FormattedMessage } from 'umi';
+import { useMemo } from 'react';
+import { FormattedMessage, useRequest } from 'umi';
+import FilterComponent from '@/components/TableProperties/FilterComponent';
+import api from '@/services/STM-APIs';
 
 type ColumnProps = {
   setCurrentRow: (s: API.VersionResponse) => void;
@@ -15,24 +18,52 @@ type ColumnProps = {
 //------------ Filter type --------------------------------
 
 type filterType = {
+  id: number;
   text: string;
   value: string;
-};
-
-//------------ Filter moodel --------------------------------
-
-const filterModelList: filterType[] = [
+}[];
+const filterTypeMachineList: filterType = [
   {
-    text: '',
-    value: '',
+    id: 1,
+    text: 'ATM',
+    value: 'ATM',
+  },
+  {
+    id: 2,
+    text: 'CDM',
+    value: 'CDM',
+  },
+  {
+    id: 3,
+    text: 'STM',
+    value: 'STM',
   },
 ];
 
-const filterModel = (value: string | number | boolean, record: API.VersionResponse) => {
-  return record.name?.includes(value as string) as boolean;
-};
-
-function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
+function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: ColumnProps) {
+  const { data: listMachine } = useRequest<API.ResponseBasePageResponseStmModelResponse>(
+    () => {
+      const params: API.getListModelsParams = {
+        machineType: paramFilter?.machineType,
+        pageSize: 1000,
+      };
+      return api.STMModelController.getListModels(params);
+    },
+    {
+      refreshDeps: [paramFilter?.machineType],
+    },
+  );
+  const modelFilter: filterType = useMemo(() => {
+    return listMachine?.items
+      ? listMachine?.items?.map((item, index) => {
+          return {
+            id: index,
+            text: item.name as string,
+            value: `${item.id}`,
+          };
+        })
+      : [];
+  }, [listMachine]);
   const columns: ProColumns<API.VersionResponse>[] = [
     {
       title: (
@@ -71,9 +102,19 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       render: (dom) => {
         return <TextCell width="140px">{dom}</TextCell>;
       },
-      sorter: (a, b) => {
-        if (a.machineType && b.machineType) return a.machineType.localeCompare(b.machineType);
-        else return 1;
+      filterDropdown: (e) => {
+        return (
+          <FilterComponent
+            listFilter={filterTypeMachineList}
+            {...e}
+            setParamFilter={(value) => {
+              setParamFilter({
+                ...paramFilter,
+                machineType: value as 'UNKNOWN' | 'ATM' | 'CDM' | 'STM' | undefined,
+              });
+            }}
+          />
+        );
       },
       width: '140px',
     },
@@ -87,8 +128,20 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       render: (_, entity) => {
         return <TextCell>{entity.model?.name}</TextCell>;
       },
-      filters: filterModelList,
-      onFilter: filterModel,
+      filterDropdown: (e) => {
+        return (
+          <FilterComponent
+            listFilter={modelFilter}
+            {...e}
+            setParamFilter={(value) => {
+              setParamFilter({
+                ...paramFilter,
+                modelId: Number(value),
+              });
+            }}
+          />
+        );
+      },
     },
     {
       title: (
@@ -122,8 +175,19 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       render: (dom) => {
         return <TextCell>{formatDate(dom as string)}</TextCell>;
       },
-      filterDropdown: () => {
-        return <DateFilter />;
+      filterDropdown: (e) => {
+        return (
+          <DateFilter
+            setDateFilter={(from: string | undefined, to: string | undefined) => {
+              setParamFilter({
+                ...paramFilter,
+                from: from,
+                to: to,
+              });
+            }}
+            {...e}
+          />
+        );
       },
     },
   ];

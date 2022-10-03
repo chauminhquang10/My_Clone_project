@@ -1,4 +1,5 @@
 import { TextCell, UserCellStatus, UserStatusCell } from '@/components/TableProperties//TableCell';
+import FilterComponent from '@/components/TableProperties/FilterComponent';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import { formatPhoneNumber } from '@/utils';
 import type { ProColumns } from '@ant-design/pro-components';
@@ -10,8 +11,25 @@ type ColumnProps = {
   setParamFilter: React.Dispatch<React.SetStateAction<API.getAllUsersParams | undefined>>;
   paramFilter: API.getAllUsersParams | undefined;
 };
+const statusFilter = [
+  {
+    id: 0,
+    text: 'ACTIVE',
+    value: 'ACTIVE',
+  },
+  {
+    id: 1,
+    text: 'INACTIVE',
+    value: 'INACTIVE',
+  },
+  {
+    id: 2,
+    text: 'UNKNOWN',
+    value: 'UNKNOWN',
+  },
+];
 
-function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
+function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: ColumnProps) {
   const columns: ProColumns<API.UserResponse>[] = [
     {
       title: (
@@ -136,6 +154,27 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
         UNKNOWN: {
           text: <UserStatusCell status={UserCellStatus.UNKNOWN} />,
         },
+      },
+      render: (_, entity) => {
+        return (
+          <UserStatusCell
+            status={UserCellStatus[entity.status as 'ACTIVE' | 'INACTIVE' | 'UNKNOWN']}
+          />
+        );
+      },
+      filterDropdown: (e) => {
+        return (
+          <FilterComponent
+            {...e}
+            listFilter={statusFilter}
+            setParamFilter={(value) => {
+              setParamFilter({
+                ...paramFilter,
+                status: value as 'ACTIVE' | 'INACTIVE' | 'UNKNOWN',
+              });
+            }}
+          />
+        );
       },
       width: '13%',
     },

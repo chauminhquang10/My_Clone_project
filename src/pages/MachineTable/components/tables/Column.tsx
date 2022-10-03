@@ -4,7 +4,9 @@ import FilterComponent from '@/components/TableProperties/FilterComponent';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import type { ProColumns } from '@ant-design/pro-components';
 import type { Dispatch, SetStateAction } from 'react';
-import { FormattedMessage } from 'umi';
+import { useMemo } from 'react';
+import { FormattedMessage, useRequest } from 'umi';
+import api from '@/services/STM-APIs';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmInfoResponse) => void;
@@ -83,7 +85,48 @@ const filterStatusList: filterType = [
   },
 ];
 
+type ProvinceItem = {
+  id: number;
+  name: string;
+  location: string;
+};
+
+type ListProvincesResponse = {
+  provinces?: ProvinceItem[];
+};
+
+type ResponseGetProvinceListByLocation = {
+  code?: number | undefined;
+  message?: string | undefined;
+  data?: ListProvincesResponse | undefined;
+};
+
 function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: ColumnProps) {
+  const { data: provincesData, cancel: cancelProvinces } =
+    useRequest<ResponseGetProvinceListByLocation>(
+      () => {
+        if (paramFilter?.location)
+          return api.LocationController.getProvinces({ location: paramFilter.location });
+        return new Promise(() => {
+          cancelProvinces();
+        });
+      },
+      {
+        ready: paramFilter?.location ? true : false,
+        refreshDeps: [paramFilter?.location],
+      },
+    );
+  const provinceFilter: filterType = useMemo(() => {
+    if (provincesData?.provinces)
+      return provincesData?.provinces?.map((item, index) => {
+        return {
+          id: index,
+          text: item.name,
+          value: `${item.id}`,
+        };
+      });
+    else return [];
+  }, [provincesData]);
   const columns: ProColumns<API.StmInfoResponse>[] = [
     {
       title: (
@@ -159,6 +202,19 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
         return <TextCell>{entity.province?.name}</TextCell>;
       },
       width: '216px',
+      filterMultiple: false,
+      filters: true,
+      filterDropdown: (e) => {
+        return (
+          <FilterComponent
+            listFilter={provinceFilter}
+            {...e}
+            setParamFilter={(value) => {
+              setParamFilter({ ...paramFilter, provinceId: Number(value) });
+            }}
+          />
+        );
+      },
     },
     {
       title: (

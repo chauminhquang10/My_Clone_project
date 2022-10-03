@@ -247,6 +247,10 @@ declare namespace API {
     date: string;
   };
 
+  type getMachineActivityStatisticParams = {
+    machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+  };
+
   type getMachineDetailParams = {
     id: string;
   };
@@ -332,6 +336,10 @@ declare namespace API {
     sortBy?: string;
   };
 
+  type getTransactionStatisticParams = {
+    year: string;
+  };
+
   type getUserNotificationParams = {
     pageNumber?: number;
     pageSize?: number;
@@ -374,10 +382,33 @@ declare namespace API {
     message?: string;
   };
 
+  type MachineActivityStatisticResponse = {
+    statusStatistics?: Record<string, any>;
+    warningStatistics?: Record<string, any>;
+    warningStatistic?: MachineWarningStatistic[];
+  };
+
   type MachineLogResponse = {
     date?: string;
     machine?: StmInfoResponse;
     url?: string;
+  };
+
+  type MachineStatusStatistic = {
+    /** Values: IN_SERVICE | OUT_OF_SERVICE | OFFLINE | DISCONNECTED */
+    status?: 'UNKNOWN' | 'IN_SERVICE' | 'OUT_OF_SERVICE' | 'OFFLINE';
+    total?: number;
+  };
+
+  type MachineTypeStatistic = {
+    machineType?: 'UNKNOWN' | 'STM' | 'CDM' | 'ATM';
+    total?: number;
+    latestVersion?: VersionResponse;
+  };
+
+  type MachineTypeStatisticResponse = {
+    total?: number;
+    statistics?: Record<string, any>;
   };
 
   type MachineWarningResponse = {
@@ -410,6 +441,11 @@ declare namespace API {
     time?: string;
     errorCode?: string;
     solved?: boolean;
+  };
+
+  type MachineWarningStatistic = {
+    solved?: boolean;
+    total?: number;
   };
 
   type ManagementUnitDetailResponse = {
@@ -706,10 +742,22 @@ declare namespace API {
     data?: LogoutResponse;
   };
 
+  type ResponseBaseMachineActivityStatisticResponse = {
+    code?: number;
+    message?: string;
+    data?: MachineActivityStatisticResponse;
+  };
+
   type ResponseBaseMachineLogResponse = {
     code?: number;
     message?: string;
     data?: MachineLogResponse;
+  };
+
+  type ResponseBaseMachineTypeStatisticResponse = {
+    code?: number;
+    message?: string;
+    data?: MachineTypeStatisticResponse;
   };
 
   type ResponseBaseManagementUnitDetailResponse = {
@@ -844,6 +892,12 @@ declare namespace API {
     data?: StmModelResponse;
   };
 
+  type ResponseBaseTransactionStatisticResponse = {
+    code?: number;
+    message?: string;
+    data?: TransactionStatisticResponse;
+  };
+
   type ResponseBaseUpdateMachineResponse = {
     code?: number;
     message?: string;
@@ -866,6 +920,12 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: UserResponse;
+  };
+
+  type ResponseBaseUserStatisticResponse = {
+    code?: number;
+    message?: string;
+    data?: UserStatisticResponse;
   };
 
   type ResponseBaseVersionResponse = {
@@ -1077,6 +1137,16 @@ declare namespace API {
     time?: string;
   };
 
+  type TransactionStatistic = {
+    month?: number;
+    success?: number;
+    failed?: number;
+  };
+
+  type TransactionStatisticResponse = {
+    statistics?: Record<string, any>;
+  };
+
   type unBlockUserParams = {
     userId: string;
   };
@@ -1222,6 +1292,16 @@ declare namespace API {
     status?: 'UNKNOWN' | 'ACTIVE' | 'INACTIVE';
     managementUnit?: ManagementUnitResponse;
     admin?: boolean;
+  };
+
+  type UserStatisticResponse = {
+    total?: number;
+    statistics?: Record<string, any>;
+  };
+
+  type UserStatusStatistic = {
+    status?: 'UNKNOWN' | 'ACTIVE' | 'INACTIVE';
+    total?: number;
   };
 
   type VersionResponse = {
