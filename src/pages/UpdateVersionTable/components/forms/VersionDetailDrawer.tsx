@@ -24,7 +24,7 @@ import React, { useState } from 'react';
 
 import ModalCustom from '@/components/FormCustom/ModalCustom';
 import api from '@/services/STM-APIs';
-import { FormattedMessage, useRequest } from 'umi';
+import { FormattedMessage, useIntl, useRequest } from 'umi';
 import UpdateVersionForm from './UpdateVersionForm';
 import styles from './VersionDetailDrawer.less';
 import { updateMachineVersion } from '@/services/STM-APIs/STMVersionController';
@@ -147,10 +147,10 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
 
   const updatedMachineListColumns: ColumnsType<API.StmInfoResponse> = [
     {
-      title: 'Tên máy',
+      title: <FormattedMessage id="machineName" />,
       dataIndex: 'name',
       key: 'name',
-      align: 'left',
+      align: 'center',
       render: (text) => <span>{text}</span>,
     },
     {
@@ -161,7 +161,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
       render: (text) => <span>{text}</span>,
     },
     {
-      title: 'Địa chỉ IP',
+      title: <FormattedMessage id="ipAddress" />,
       dataIndex: 'ipAddress',
       key: 'ipAddress',
       align: 'center',
@@ -222,7 +222,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
             setShowUpdateActions(false);
           }}
         >
-          Huỷ bỏ
+          <FormattedMessage id="form_buttonGroup_cancelButton_title" />
         </span>
         <span
           className={`${styles.updateActionTitle} ${styles.confirmUpdateAction}`}
@@ -230,7 +230,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
             handleUpdateMachinesForVersionDetail();
           }}
         >
-          Cập nhật
+          <FormattedMessage id="update" />
         </span>
       </div>
     );
@@ -279,6 +279,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
       setShowSelectedRowKeys(newSelectedRowKeys);
     },
   };
+  const intl = useIntl();
 
   return (
     <>
@@ -297,39 +298,57 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
         {currentRow?.id && (
           <Form layout="vertical" hideRequiredMark>
             <Row style={{ marginBottom: '12px' }}>
-              <h4 className={styles.drawerHeaderTitle}>Chi tiết file nâng cấp</h4>
+              <h4 className={styles.drawerHeaderTitle}>
+                <FormattedMessage id="detailVersionForm.title" />
+              </h4>
             </Row>
 
             <Row gutter={[0, 20]}>
               <Col span={24}>
                 <Card
-                  title={<VersionInfoCardTitle title="Thông tin phiên bản" />}
+                  title={
+                    <VersionInfoCardTitle
+                      title={intl.formatMessage({ id: 'detailVersionForm.versionInformation' })}
+                    />
+                  }
                   size="small"
                   className={styles.myCard}
                 >
                   <Row gutter={[24, 12]}>
                     <Col span={8}>
-                      <Form.Item name="machineCategory" label="Loại máy">
+                      <Form.Item
+                        name="machineCategory"
+                        label={<FormattedMessage id="machineType" />}
+                      >
                         <Input disabled placeholder={currentRow?.machineType} />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
-                      <Form.Item name="machineType" label="Dòng máy">
+                      <Form.Item name="machineType" label={<FormattedMessage id="model" />}>
                         <Input disabled placeholder={currentRow?.model?.name} />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
-                      <Form.Item name="versionName" label="Tên phiên bản">
+                      <Form.Item
+                        name="versionName"
+                        label={<FormattedMessage id="detailVersionForm.versionName" />}
+                      >
                         <Input disabled placeholder={currentRow?.name} />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
-                      <Form.Item name="condition" label="Điều kiện">
+                      <Form.Item
+                        name="condition"
+                        label={<FormattedMessage id="newVersionForm.condition" />}
+                      >
                         <Input disabled placeholder={currentRow?.condition} />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
-                      <Form.Item name="content" label="Nội dung">
+                      <Form.Item
+                        name="content"
+                        label={<FormattedMessage id="updateVersionTable.description" />}
+                      >
                         <Tooltip placement="bottom" title={currentRow?.content}>
                           <div>
                             <Input
@@ -343,7 +362,10 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                       </Form.Item>
                     </Col>
                     <Col span={8}>
-                      <Form.Item name="fileUpload" label="File tải">
+                      <Form.Item
+                        name="fileUpload"
+                        label={<FormattedMessage id="newVersionForm.uploadedFile" />}
+                      >
                         <div className={styles.detailFileUpload}>
                           <PaperClipOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />
                           <Typography.Text
@@ -366,7 +388,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                   dataSource={detailFileData?.updatedMachines}
                   title={() => (
                     <UpdatedMachineListTableTitle
-                      title="Máy đã cập nhật"
+                      title={intl.formatMessage({ id: 'detailVersionForm.updatedMachine' })}
                       quantity={
                         currentRow.updatedMachines?.length ? currentRow.updatedMachines?.length : 0
                       }
@@ -385,7 +407,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                   dataSource={formattedNotUpdatedMachinesData}
                   title={() => (
                     <NotUpdatedMachineListTableTitle
-                      title="Máy chưa cập nhật"
+                      title={intl.formatMessage({ id: 'detailVersionForm.notUpdatedMachine' })}
                       quantity={
                         currentRow.notUpdatedMachines?.length
                           ? currentRow.notUpdatedMachines?.length
@@ -412,7 +434,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
       </Drawer>
 
       <UpdateVersionForm
-        title="Chỉnh sửa file nâng cấp"
+        title={intl.formatMessage({ id: 'updateFileForm.title' })}
         width="934px"
         visible={updateModalVisible}
         onVisibleChange={handleUpdateModalVisible}
@@ -425,7 +447,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
         setOpenConfirmModal={setOpenConfirmModal}
         buttonList={buttonList}
         descriptionList={descriptionList}
-        title="Tạm khoá người dùng"
+        title={intl.formatMessage({ id: 'header.lockModal.title' })}
         icon={<ExclamationCircleOutlined style={{ color: '#FFC53D', fontSize: '22px' }} />}
       />
     </>

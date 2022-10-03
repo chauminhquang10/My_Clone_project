@@ -55,7 +55,7 @@ export default {
   'menu.machine-management.analytics': 'Activity statistics',
   'menu.machine-management.config': 'Model configuration',
   'menu.machine-management.update-firmware': 'Version update',
-  'menu.machine-management.system-warning': 'Cảnh báo hệ thống',
+  'menu.machine-management.system-warning': 'System warning',
   'menu.history': 'History',
   'menu.camera-management': 'Camera adminstration',
   'menu.camera-management.log': 'Activity log',

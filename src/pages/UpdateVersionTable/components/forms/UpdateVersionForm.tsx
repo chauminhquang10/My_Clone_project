@@ -6,7 +6,7 @@ import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { UploadProps } from 'antd';
 import styles from './UpdateVersionForm.less';
-import { useRequest } from 'umi';
+import { FormattedMessage, useIntl, useRequest } from 'umi';
 import api from '@/services/STM-APIs';
 
 const { Option } = Select;
@@ -48,6 +48,7 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
   filePath,
   id,
 }) => {
+  const intl = useIntl();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const [textAreaValue, setTextAreaValue] = useState<string>('');
@@ -90,7 +91,7 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
       } else {
         form.setFieldValue('files', undefined);
         checkSubmit();
-        message.error(`File không đúng yêu cầu`);
+        message.error(intl.formatMessage({ id: 'updateVersionForm.unsupportFile' }));
         setFileList([]);
       }
     } else {
@@ -208,9 +209,9 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
 
       <Row gutter={[24, 24]}>
         <Col span={12}>
-          <Form.Item name="machineCategory" label="Loại máy">
+          <Form.Item name="machineCategory" label={<FormattedMessage id="machineType" />}>
             <Select
-              placeholder="Chọn loại máy"
+              placeholder={intl.formatMessage({ id: 'machineTypePlaceholder' })}
               onChange={() => {
                 getModelList();
                 checkSubmit();
@@ -223,9 +224,9 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="modelId" label="Dòng máy">
+          <Form.Item name="modelId" label={<FormattedMessage id="model" />}>
             <Select
-              placeholder="Chọn dòng máy"
+              placeholder={intl.formatMessage({ id: 'modelPlaceholder' })}
               loading={modelsLoading}
               onChange={() => {
                 getConditionList();
@@ -243,8 +244,12 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="conditionId" label="Điều kiện">
-            <Select placeholder="Chọn điều kiện" loading={conditionsLoading} onChange={checkSubmit}>
+          <Form.Item name="conditionId" label={<FormattedMessage id="newVersionForm.condition" />}>
+            <Select
+              placeholder={intl.formatMessage({ id: 'newVersionForm.conditionPlaceholder' })}
+              loading={conditionsLoading}
+              onChange={checkSubmit}
+            >
               {listCondition?.items?.map((item) => {
                 return (
                   <Option key={item.id} value={item.id}>
@@ -256,12 +261,18 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="name" label="Tên phiên bản">
-            <Input placeholder={'Tên đề xuất'} onChange={checkSubmit} />
+          <Form.Item name="name" label={<FormattedMessage id="machine-drawer.version-name" />}>
+            <Input
+              placeholder={intl.formatMessage({ id: 'newVersionForm.versionNamePlaceholder' })}
+              onChange={checkSubmit}
+            />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="content" label="Nội dung">
+          <Form.Item
+            name="content"
+            label={<FormattedMessage id="updateVersionTable.description" />}
+          >
             <TextArea
               rows={2}
               showCount={{
@@ -271,13 +282,13 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
                 onChangeTextArea(e);
                 checkSubmit();
               }}
-              placeholder="Nội dung (250 ký tự)"
+              placeholder={intl.formatMessage({ id: 'newVersionForm.contentPlaceholder' })}
               className={textAreaValue.length > 250 ? styles.myTextArea : ''}
             />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="files" label="File tải">
+          <Form.Item name="files" label={<FormattedMessage id="newVersionForm.uploadedFile" />}>
             <Upload
               {...props}
               fileList={
@@ -306,7 +317,7 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
 
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          Huỷ bỏ
+          <FormattedMessage id="cancel" />
         </Button>
         <Button
           className={styles.submitButton}
@@ -314,7 +325,7 @@ const UpdateVersionForm: React.FC<UpdateVersionFormProps> = ({
           htmlType="submit"
           disabled={disableButton}
         >
-          Lưu
+          <FormattedMessage id="save" />
         </Button>
       </Row>
     </ModalForm>

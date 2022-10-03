@@ -11,4 +11,6 @@ export default {
   detailDrawer_configCard_columnGroup_deviceType: 'Loại thiết bị',
   detailDrawer_configCard_columnGroup_unit: 'Đơn vị tính ',
   detailDrawer_configCard_columnGroup_miniCapacity: 'Sức chứa tối thiểu',
+
+  update_configMachine_cta_delete_question: 'Bạn có chắc chắn muốn xóa nhóm quyền',
 };

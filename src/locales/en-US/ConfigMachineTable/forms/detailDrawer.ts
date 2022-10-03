@@ -11,4 +11,5 @@ export default {
   detailDrawer_configCard_columnGroup_deviceType: 'Device type',
   detailDrawer_configCard_columnGroup_unit: 'Unit',
   detailDrawer_configCard_columnGroup_miniCapacity: 'Min capacity',
+  update_configMachine_cta_delete_question: 'Are you sure you want to delete this permission group',
 };
