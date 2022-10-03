@@ -27,6 +27,7 @@ import api from '@/services/STM-APIs';
 import { FormattedMessage, useIntl, useRequest } from 'umi';
 import UpdateVersionForm from './UpdateVersionForm';
 import styles from './VersionDetailDrawer.less';
+import { updateMachineVersion } from '@/services/STM-APIs/STMVersionController';
 
 interface UpdatedMachineListTableTitleProps {
   title: string;
@@ -48,6 +49,10 @@ type VersionDetailDrawerProps = {
   getAllUpdatedVersion: () => Promise<API.PageResponseVersionResponse | undefined>;
 };
 
+type CustomNotUpdatedMachinesDataType = API.StmInfoResponse & {
+  key: React.Key;
+};
+
 const getVersionDetail = (versionId: string) => () =>
   Api.STMVersionController.getVersion({ versionId }).then((res) => res);
 
@@ -58,7 +63,34 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
   setCurrentRow,
   getAllUpdatedVersion,
 }) => {
-  const { data } = useRequest(getVersionDetail(`${currentRow?.id}`), {
+  // xử lí những máy đc chọn để update
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  // những key để show trong select list
+  const [showSelectedRowKeys, setShowSelectedRowKeys] = useState<React.Key[]>([]);
+
+  // xử lí data cho những máy ch dc update
+  const [formattedNotUpdatedMachinesData, setFormattedNotUpdatedMachinesData] = useState<
+    CustomNotUpdatedMachinesDataType[]
+  >([]);
+
+  // xử  lí trạng thái của form chỉnh sửa
+  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
+
+  //  xử lí update action cho form máy chưa cập nhật
+  const [showUpdateActions, setShowUpdateActions] = useState<boolean>(false);
+
+  const { data: detailFileData } = useRequest(getVersionDetail(`${currentRow?.id}`), {
+    onSuccess(data) {
+      const newData = data?.notUpdatedMachines?.map((item) => ({ ...item, key: item?.id }));
+      setFormattedNotUpdatedMachinesData(newData as CustomNotUpdatedMachinesDataType[]);
+
+      // set nhung key dc chon trong chi tiet
+      const editSelectedRowKeys = data?.notUpdatedMachines?.map((item) => item?.id);
+      setSelectedRowKeys(editSelectedRowKeys as React.Key[]);
+      setShowSelectedRowKeys(editSelectedRowKeys as React.Key[]);
+    },
     cacheKey: `versionDetail-${currentRow?.id}`,
     refreshDeps: [currentRow?.id],
   });
@@ -87,6 +119,32 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
       return false;
     }
   };
+
+  // update máy cho chi tiết phiên bản
+  const handleUpdateMachinesForVersionDetail = async () => {
+    const hide = message.loading('Configuring...');
+    try {
+      const res = await updateMachineVersion({
+        versionId: detailFileData?.id as number,
+        machineIds: showSelectedRowKeys as string[],
+      });
+
+      hide();
+      if (res.code === 316) {
+        message.error(`STM chưa được kết nối`);
+        return;
+      }
+      message.success('Chỉnh sửa thành công');
+      setCurrentRow(undefined);
+      setShowDetail(false);
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Configuration failed, please try again!');
+      return false;
+    }
+  };
+
   const updatedMachineListColumns: ColumnsType<API.StmInfoResponse> = [
     {
       title: <FormattedMessage id="machineName" />,
@@ -117,16 +175,6 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
       render: (_, entity) => <span>{entity?.version?.name}</span>,
     },
   ];
-
-  // xử  lí trạng thái của form chỉnh sửa
-  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
-
-  //  xử lí update action cho form máy chưa cập nhật
-  const [showUpdateActions, setShowUpdateActions] = useState<boolean>(false);
-
-  // xử lí những máy đc chọn để update
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   //------------- Declare Modal --------------------------------
   //------------- Button List --------------------
@@ -169,11 +217,19 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
       <div className={styles.NotUpdateMachineActionsContainer}>
         <span
           className={`${styles.updateActionTitle} ${styles.cancelUpdateAction}`}
-          onClick={() => setShowUpdateActions(false)}
+          onClick={() => {
+            setShowSelectedRowKeys(selectedRowKeys);
+            setShowUpdateActions(false);
+          }}
         >
           <FormattedMessage id="form_buttonGroup_cancelButton_title" />
         </span>
-        <span className={`${styles.updateActionTitle} ${styles.confirmUpdateAction}`}>
+        <span
+          className={`${styles.updateActionTitle} ${styles.confirmUpdateAction}`}
+          onClick={() => {
+            handleUpdateMachinesForVersionDetail();
+          }}
+        >
           <FormattedMessage id="update" />
         </span>
       </div>
@@ -218,9 +274,9 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
   };
 
   const rowSelection = {
-    selectedRowKeys,
+    selectedRowKeys: showSelectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[]) => {
-      setSelectedRowKeys(newSelectedRowKeys);
+      setShowSelectedRowKeys(newSelectedRowKeys);
     },
   };
   const intl = useIntl();
@@ -233,6 +289,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
         onClose={() => {
           setCurrentRow(undefined);
           setShowDetail(false);
+          setShowUpdateActions(false);
         }}
         className={styles.myDrawer}
         closable={true}
@@ -328,7 +385,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                 <Table
                   bordered
                   columns={updatedMachineListColumns}
-                  dataSource={data?.updatedMachines}
+                  dataSource={detailFileData?.updatedMachines}
                   title={() => (
                     <UpdatedMachineListTableTitle
                       title={intl.formatMessage({ id: 'detailVersionForm.updatedMachine' })}
@@ -347,7 +404,7 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                 <Table
                   bordered
                   columns={updatedMachineListColumns}
-                  dataSource={data?.notUpdatedMachines}
+                  dataSource={formattedNotUpdatedMachinesData}
                   title={() => (
                     <NotUpdatedMachineListTableTitle
                       title={intl.formatMessage({ id: 'detailVersionForm.notUpdatedMachine' })}
