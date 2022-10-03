@@ -76,7 +76,7 @@ const UnitDetailDrawer: React.FC<UnitDrawerProps> = ({
 
   const unitListColumns: ColumnsType<Required<API.UserResponse>> = [
     {
-      title: <FormattedMessage id="detailDrawer_userCard_columnGroup_staffNamee" />,
+      title: <FormattedMessage id="detailDrawer_userCard_columnGroup_staffName" />,
 
       dataIndex: 'name',
       ellipsis: true,

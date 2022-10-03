@@ -6,6 +6,12 @@ export default {
   form_buttonGroup_confirmButton_title: 'Confirm',
   form_buttonGroup_cancelButton_title: 'Cancel',
   form_buttonGroup_saveButton_title: 'Save',
+  filter: 'Filter',
+  activityDate: 'Activity date',
+  warning: 'Warning',
+  notificationError: 'Error, please try again',
+  page: 'Page',
+  'pagination.in': 'in',
 
   searchBar_placeholder: 'Search',
 

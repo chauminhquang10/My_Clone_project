@@ -3,6 +3,7 @@ import { TextCell } from '@/components/TableProperties//TableCell';
 import FilterComponent from '@/components/TableProperties/FilterComponent';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import type { ProColumns } from '@ant-design/pro-components';
+import { Typography } from 'antd';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { FormattedMessage } from 'umi';
 
@@ -111,17 +112,12 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
           setShowDetail(true);
           setCurrentRow(data);
         };
-        return (
-          <TextCell width="216px" onClick={handleClick}>
-            {dom}
-          </TextCell>
-        );
+        return <TextCell onClick={handleClick}>{dom}</TextCell>;
       },
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else return 1;
       },
-      width: '216px',
     },
     {
       title: (
@@ -158,7 +154,6 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       render: (_, entity) => {
         return <TextCell>{entity.province?.name}</TextCell>;
       },
-      width: '216px',
     },
     {
       title: (
@@ -235,7 +230,6 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
-      width: '216px',
     },
     {
       title: (
@@ -257,7 +251,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       ),
       dataIndex: 'ipAddress',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return (
+          <TextCell width="200px">
+            <Typography.Text ellipsis={{ tooltip: dom }}>{dom}</Typography.Text>
+          </TextCell>
+        );
       },
       width: '200px',
     },

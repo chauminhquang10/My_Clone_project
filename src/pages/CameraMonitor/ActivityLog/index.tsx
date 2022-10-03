@@ -6,11 +6,12 @@ import { openNotification } from '@/utils';
 import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
-import { useRequest } from 'umi';
+import { useIntl, useRequest } from 'umi';
 import DownloadLogForm from './components/DownloadLogForm';
 import Column from './components/tables/Column';
 
 const TableCustom = () => {
+  const intl = useIntl();
   //------------ pagination --------------------
   const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
@@ -32,7 +33,7 @@ const TableCustom = () => {
       cacheKey: 'listMachine',
       onSuccess: (res) => {
         if (!res) {
-          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+          openNotification('error', intl.formatMessage({ id: 'notificationError' }));
         }
         setTotalSize(res?.totalSize as number);
         return res;
@@ -53,7 +54,7 @@ const TableCustom = () => {
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
     items_per_page: '',
-    jump_to: 'Trang',
+    jump_to: intl.formatMessage({ id: 'page' }),
     page: '',
   };
 

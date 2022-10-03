@@ -3,7 +3,7 @@ import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 // import { message } from 'antd';
 import { useMemo, useRef, useState } from 'react';
-import { Access, FormattedMessage, useModel, useRequest } from 'umi';
+import { Access, FormattedMessage, useIntl, useModel, useRequest } from 'umi';
 import Column from './components/tables/Column';
 // import SelectPage from "./components/tables/SelectPage";
 import ExportFile from '@/components/TableProperties/ExportFile';
@@ -12,11 +12,12 @@ import TotalPagination from '@/components/TableProperties/TotalPagination';
 import api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
 import { Typography } from 'antd';
-import AnaylyticDetail from '../MachineTable/components/drawers/AnalyticDetail';
-import NoFoundPage from '../404';
+import Admin from '../Admin';
+import AnalyticDetail from '../MachineTable/components/drawers/AnalyticDetail';
 
 const TableCustom = () => {
   //------------ pagination --------------------
+  const intl = useIntl();
   const { initialState } = useModel('@@initialState');
   const accessiable = useMemo(
     () => initialState?.currentRoles?.view_transaction,
@@ -39,7 +40,7 @@ const TableCustom = () => {
     {
       onSuccess: (res) => {
         if (!res) {
-          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+          openNotification('error', intl.formatMessage({ id: 'notificationError' }));
         }
         setTotalSize(res?.totalSize as number);
       },
@@ -65,12 +66,12 @@ const TableCustom = () => {
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
     items_per_page: '',
-    jump_to: 'Trang',
+    jump_to: intl.formatMessage({ id: 'page' }),
     page: '',
   };
 
   return (
-    <Access accessible={accessiable || false} fallback={<NoFoundPage />}>
+    <Access accessible={accessiable || false} fallback={<Admin />}>
       <PageContainer
         className={style['table-container']}
         header={{
@@ -108,7 +109,7 @@ const TableCustom = () => {
           scroll={{ x: 'max-content' }}
         />
 
-        <AnaylyticDetail
+        <AnalyticDetail
           handleClose={() => setShowDetail(false)}
           open={showDetail}
           currentEntity={currentRow}

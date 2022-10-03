@@ -5,6 +5,7 @@ import { formatDate } from '@/utils';
 import DateFilter from '@/components/TableProperties/DateFilter';
 import type { Dispatch, SetStateAction } from 'react';
 import { FormattedMessage } from 'umi';
+import { Typography } from 'antd';
 
 type ColumnProps = {
   setCurrentRow: (s: API.VersionResponse) => void;
@@ -89,6 +90,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       },
       filters: filterModelList,
       onFilter: filterModel,
+      width: '240px',
     },
     {
       title: (
@@ -98,7 +100,11 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       ),
       dataIndex: 'content',
       render: (dom) => {
-        return <TextCell width="570px">{dom}</TextCell>;
+        return (
+          <TextCell width="580px">
+            <Typography.Text ellipsis={{ tooltip: dom }}>{dom}</Typography.Text>
+          </TextCell>
+        );
       },
     },
     {
@@ -111,6 +117,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '180px',
     },
     {
       title: (
@@ -125,6 +132,7 @@ function Column({ setCurrentRow, setShowDetail }: ColumnProps) {
       filterDropdown: () => {
         return <DateFilter />;
       },
+      width: '180px',
     },
   ];
   return columns;

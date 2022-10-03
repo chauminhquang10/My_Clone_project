@@ -3,7 +3,7 @@ import { getLogs } from '@/services/STM-APIs/LogController';
 import { openNotification } from '@/utils';
 import { ModalForm } from '@ant-design/pro-components';
 import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
-import { useIntl } from 'umi';
+import { FormattedMessage, useIntl } from 'umi';
 import styles from './DownloadLogForm.less';
 
 type CreateFormProps = {
@@ -105,11 +105,11 @@ const DownloadLogForm: React.FC<CreateFormProps> = ({
         <Col span={12}>
           <Form.Item
             name="date"
-            label="Ngày hoạt động"
+            label={<FormattedMessage id="activityDate" />}
             rules={[
               {
                 required: true,
-                message: 'Vui lòng chọn ngày hoạt động',
+                message: 'Please input activity date',
               },
             ]}
           >

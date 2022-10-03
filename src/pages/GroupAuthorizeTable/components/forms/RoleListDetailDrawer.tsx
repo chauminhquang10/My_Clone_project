@@ -372,7 +372,9 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
               </Col>
               <Col span={22}>
                 <Row align="middle" justify="space-between">
-                  <h3 className={styles.lockModalTitle}>Warning</h3>
+                  <h3 className={styles.lockModalTitle}>
+                    <FormattedMessage id="warning" />
+                  </h3>
                   <CloseOutlined
                     style={{
                       fontSize: '16px',
@@ -384,7 +386,8 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
                 </Row>
                 <Row>
                   <span className={styles.lockModalDesc}>
-                    Are you sure that you want to delete {roleGroupDetail?.name}?
+                    <FormattedMessage id="update_configMachine_cta_delete_question" />{' '}
+                    {roleGroupDetail?.name}?
                   </span>
                 </Row>
               </Col>

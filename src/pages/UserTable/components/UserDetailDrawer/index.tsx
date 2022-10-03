@@ -90,7 +90,7 @@ const UserDetailDrawer: React.FC<UserDrawerProps> = ({
               onCloseDrawer={() => setShowDetail(false)}
               isPersonalProfile={isPersonalProfile}
             />
-            {/* Trang thai nguoi dung */}
+            {/* page thai nguoi dung */}
             <UserStatusRow avatar={userInfo.avatar} status={userInfo.status} />
             <Row gutter={[0, 24]}>
               {/* Thong tin nguoi dung */}
