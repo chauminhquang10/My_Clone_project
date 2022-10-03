@@ -1,7 +1,7 @@
 export default {
   buttonGroup_createNew: 'Tạo mới',
   buttonGroup_edit: 'Chỉnh sửa',
-
+  loadMore: 'Tải thêm',
   form_buttonGroup_submitButton_title: 'Hoàn tất',
   form_buttonGroup_confirmButton_title: 'Xác nhận',
   form_buttonGroup_cancelButton_title: 'Huỷ bỏ',
@@ -32,7 +32,7 @@ export default {
   terminalId: 'Terminal ID',
   ipAddress: 'IP Address',
   machineName: 'Tên máy',
-  update: 'Update',
+  update: 'Cập nhật',
   updated: 'Đã cập nhật',
   cancel: 'Hủy bỏ',
   create: 'Tạo mới',

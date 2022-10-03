@@ -1,30 +1,25 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { useDebounce } from 'ahooks';
-import { Input } from 'antd';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Input } from 'antd';
 import type { ChangeEventHandler, ReactNode } from 'react';
-import { memo, useCallback, useState } from 'react';
+import { memo } from 'react';
+import { FormattedMessage } from 'umi';
 import styles from './editMachine.less';
 
 interface DropdownOverlayProps {
-  users: API.UserResponse[] | undefined;
+  query: string | undefined;
   menu: ReactNode;
+  disabledLoadMore?: boolean;
+  onLoadMore?: () => void;
+  onChange: ChangeEventHandler<HTMLInputElement>;
 }
 
-function DropdownOverlay({ users, menu }: DropdownOverlayProps) {
-  const [search, setSearch] = useState<string>();
-  const searchDebounce = useDebounce(search, { wait: 500 });
-
-  if (searchDebounce) {
-    // eslint-disable-next-line no-param-reassign
-    users?.filter((user) =>
-      user.name?.toLocaleLowerCase()?.includes(searchDebounce.toLocaleLowerCase()),
-    );
-  }
-
-  const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
-    setSearch(e.target.value);
-  }, []);
-
+function DropdownOverlay({
+  query,
+  menu,
+  disabledLoadMore,
+  onLoadMore,
+  onChange,
+}: DropdownOverlayProps) {
   return (
     <div className={styles.overlay}>
       <Input
@@ -32,10 +27,13 @@ function DropdownOverlay({ users, menu }: DropdownOverlayProps) {
         className={styles.searchInput}
         placeholder="Search"
         prefix={<SearchOutlined className={styles.searchIcon} />}
-        onChange={handleChange}
-        value={search}
+        onChange={onChange}
+        value={query}
       />
       {menu}
+      <Button disabled={disabledLoadMore} type="text" icon={<PlusOutlined />} onClick={onLoadMore}>
+        <FormattedMessage id="loadMore" />
+      </Button>
     </div>
   );
 }

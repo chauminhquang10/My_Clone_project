@@ -137,7 +137,7 @@ const TableCustom = () => {
         scroll={{ x: 'max-content' }}
       />
       <NewVersionForm
-        title="Upload phiên bản mới"
+        title={intl.formatMessage({ id: 'newVersionForm.title' })}
         width="934px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}

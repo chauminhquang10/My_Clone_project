@@ -25,6 +25,7 @@ import userTableForm from './en-US/UserTable/forms/index';
 import stmError from './en-US/stmError';
 import MachineTable from './en-US/MachineTable';
 import UpdateVersionTable from './en-US/UpdateVersionTable/table';
+import UpdateVersionForm from './en-US/UpdateVersionTable/form';
 
 export default {
   navBar_language: 'EN',
@@ -57,4 +58,5 @@ export default {
   ...stmError,
   ...MachineTable,
   ...UpdateVersionTable,
+  ...UpdateVersionForm,
 };

@@ -1,15 +1,17 @@
 import { Button, Radio, Row, Space } from 'antd';
 import type { FilterDropdownProps } from 'antd/lib/table/interface';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import style from './style.less';
-type filterType = {
+
+type FilterType = {
   id: number;
-  text: string;
+  text: ReactNode;
   value: string;
 }[];
 
 interface FilterComponentProps extends FilterDropdownProps {
-  listFilter: filterType;
+  listFilter: FilterType;
   setParamFilter: (value: string | number | undefined) => void;
 }
 

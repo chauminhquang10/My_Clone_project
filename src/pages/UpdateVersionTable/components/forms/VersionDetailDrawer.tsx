@@ -5,14 +5,28 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 
-import { Col, Drawer, Form, Input, Row, Card, Table, Tooltip, Badge, message } from 'antd';
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Drawer,
+  Form,
+  Input,
+  message,
+  Row,
+  Table,
+  Tooltip,
+  Typography,
+} from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import React, { useState } from 'react';
 
-import styles from './VersionDetailDrawer.less';
-import UpdateVersionForm from './UpdateVersionForm';
 import ModalCustom from '@/components/FormCustom/ModalCustom';
 import api from '@/services/STM-APIs';
+import { FormattedMessage } from 'umi';
+import UpdateVersionForm from './UpdateVersionForm';
+import styles from './VersionDetailDrawer.less';
 
 interface UpdatedMachineListTableTitleProps {
   title: string;
@@ -172,10 +186,11 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
         {showUpdateActions ? (
           <NotUpdateMachineActions />
         ) : (
-          <div className={styles.machineListTableTitle} onClick={() => setShowUpdateActions(true)}>
-            <SyncOutlined style={{ fontSize: '14px', color: '#1890FF' }} />
-            <span className={styles.updateMachineActionTitle}>Cập nhật</span>
-          </div>
+          <Button type="link" icon={<EditOutlined />} onClick={() => setShowUpdateActions(true)}>
+            <span>
+              <FormattedMessage id="update" />
+            </span>
+          </Button>
         )}
       </div>
     );
@@ -185,13 +200,11 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
     return (
       <div className={styles.versionInfoCardTitleContainer}>
         <span>{title}</span>
-        <div
-          className={styles.updateVersionInfoContainer}
-          onClick={() => handleUpdateModalVisible(true)}
-        >
-          <EditOutlined style={{ fontSize: '14px', color: '#1890FF' }} />
-          <span className={styles.updateVersionInfoActionTitle}>Chỉnh sửa</span>
-        </div>
+        <Button type="link" icon={<SyncOutlined />} onClick={() => handleUpdateModalVisible(true)}>
+          <span>
+            <FormattedMessage id="edit" />
+          </span>
+        </Button>
       </div>
     );
   };
@@ -268,7 +281,12 @@ const VersionDetailDrawer: React.FC<VersionDetailDrawerProps> = ({
                       <Form.Item name="fileUpload" label="File tải">
                         <div className={styles.detailFileUpload}>
                           <PaperClipOutlined style={{ color: 'rgba(0, 0, 0, 0.45)' }} />
-                          <span className={styles.fileNameDetail}>{currentRow?.filePath}</span>
+                          <Typography.Text
+                            ellipsis={{ tooltip: currentRow.filePath }}
+                            className={styles.fileNameDetail}
+                          >
+                            {currentRow?.filePath}
+                          </Typography.Text>
                         </div>
                       </Form.Item>
                     </Col>

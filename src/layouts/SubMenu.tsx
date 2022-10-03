@@ -37,6 +37,12 @@ export default function SubMenu({
   setCurrentRoute,
   disabled,
 }: SubMenuProps) {
+  const ellipsis = useMemo(
+    () => ({
+      tooltip: { children: <FormattedMessage id={`menu.${id}`} />, placement: 'right' },
+    }),
+    [id],
+  );
   const showSubnav = useMemo(() => showSubNav?.includes(path), [showSubNav, path]);
   const handleNavigate = useCallback(() => {
     if (!disabled) {
@@ -44,7 +50,6 @@ export default function SubMenu({
       setCurrentRoute(path);
     }
   }, [setCurrentRoute, path, disabled]);
-
   const handleClick = useMemo(
     () => (!children ? handleNavigate : onClick?.(path)),
     [children, handleNavigate, onClick, path],
@@ -62,7 +67,7 @@ export default function SubMenu({
           [styles.child]: isChildren,
           [styles.collapsed]: collapsed,
           [styles.single]: !children && !isChildren,
-          [styles.current]: currentRoute === path,
+          [styles.current]: currentRoute?.includes(path),
           [styles.disabled]: disabled,
         })}
         onClick={handleClick}
@@ -79,12 +84,7 @@ export default function SubMenu({
           )}
           {icon}
           {!collapsed && (
-            <Typography.Text
-              className={styles.title}
-              ellipsis={{
-                tooltip: { children: <FormattedMessage id={`menu.${id}`} />, placement: 'right' },
-              }}
-            >
+            <Typography.Text className={styles.title} ellipsis={ellipsis}>
               <FormattedMessage id={`menu.${id}`} />
             </Typography.Text>
           )}
