@@ -3,7 +3,7 @@ import { TextCell } from '@/components/TableProperties//TableCell';
 import FilterComponent from '@/components/TableProperties/FilterComponent';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import type { ProColumns } from '@ant-design/pro-components';
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { FormattedMessage } from 'umi';
 
 type ColumnProps = {
@@ -13,15 +13,15 @@ type ColumnProps = {
   paramFilter: API.getListMachinesParams | undefined;
 };
 
-type filterType = {
+type FilterType = {
   id: number;
-  text: string;
+  text: ReactNode;
   value: string;
 }[];
 
 //------------ Filter Location --------------------------------
 
-const filterLocationList: filterType = [
+const filterLocationList: FilterType = [
   {
     id: 1,
     text: 'Miền Bắc',
@@ -45,7 +45,7 @@ const filterLocationList: filterType = [
 
 //------------ Filter Province --------------------------------
 
-const filterTypeMachineList: filterType = [
+const filterTypeMachineList: FilterType = [
   {
     id: 1,
     text: 'ATM',
@@ -65,7 +65,7 @@ const filterTypeMachineList: filterType = [
 
 //------------ Filter Status Machine --------------------------------
 
-const filterStatusList: filterType = [
+const filterStatusList: FilterType = [
   {
     id: 1,
     text: 'IN SERVICE',

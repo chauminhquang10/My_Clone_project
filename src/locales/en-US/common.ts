@@ -1,7 +1,7 @@
 export default {
   buttonGroup_createNew: 'Create New',
   buttonGroup_edit: 'Edit',
-
+  loadMore: 'Load more',
   form_buttonGroup_submitButton_title: 'Completed',
   form_buttonGroup_confirmButton_title: 'Confirm',
   form_buttonGroup_cancelButton_title: 'Cancel',
@@ -11,6 +11,9 @@ export default {
 
   tableColumn_indexTitle: 'No.',
   tableColumn_createdDate: 'Date',
+  return: 'Return',
+  export: 'Export',
+  fullName: 'Full name',
   south: 'South',
   middle: 'Middle',
   north: 'North',

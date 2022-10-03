@@ -2,13 +2,14 @@ import { CloseIcon } from '@/assets';
 import LocationFields from '@/pages/UnitTable/components/LocationFields';
 import Api from '@/services/STM-APIs';
 import { checkFormFieldsEmpty, objectKeys } from '@/utils';
-import { useDebounce, useRequest } from 'ahooks';
+import { useDebounce, useInfiniteScroll, useRequest } from 'ahooks';
 import type { FormInstance } from 'antd';
-import { AutoComplete, Button, Card, Col, Form, Input, Row, Select, Table } from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { AutoComplete, Button, Card, Col, Form, Input, Row, Select } from 'antd';
+import type { ChangeEventHandler, ReactNode } from 'react';
+import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 import Map from '../map/Map';
+import StaffList from '../tables/StaffList';
 import DropdownOverlay from './DropdownOverlay';
 import styles from './editMachine.less';
 
@@ -21,45 +22,30 @@ interface DeclareUnitStepProps<T> extends API.StmDetailResponse {
   cancelButtonLabel?: ReactNode;
 }
 
-interface UserData extends API.UserResponse {
-  index: number;
+interface UserResult {
+  list: API.UserResponse[];
+  total: number | undefined;
+  isReachingEnd: boolean | undefined;
 }
-
-const userColumns: ColumnsType<Pick<UserData, 'name' | 'email' | 'phoneNumber'>> = [
-  {
-    title: <FormattedMessage id="tableColumn_indexTitle" />,
-    align: 'center',
-    dataIndex: 'index',
-    width: '80px',
-  },
-  {
-    title: (
-      <div style={{ textAlign: 'center' }}>
-        <FormattedMessage id="fullName" />
-      </div>
-    ),
-    dataIndex: 'name',
-    width: '307px',
-  },
-  {
-    title: <div style={{ textAlign: 'center' }}>Email</div>,
-    dataIndex: 'email',
-    width: '307px',
-  },
-  {
-    title: <FormattedMessage id="phoneNumber" />,
-    dataIndex: 'phoneNumber',
-    width: '140px',
-  },
-];
 
 const getAllUnit = () =>
   Api.ManagementUnitController.getAllManagementUnits({}).then(
     (res: API.ResponseBasePageResponseManagementUnitResponse) => res.data?.items,
   );
 
-const getUnit = (unitId: string) => () =>
-  Api.ManagementUnitController.getManagementUnit({ unitId }).then((res) => res.data);
+const getUsers =
+  (query: string | undefined) =>
+  (pageNumber: number, pageSize: number): Promise<UserResult> => {
+    return Api.UserController.getAllUsers({ pageNumber, pageSize, query, status: 'ACTIVE' }).then(
+      (res) => ({
+        total: res.data?.totalSize,
+        list: res.data?.items || [],
+        isReachingEnd:
+          res.data?.items?.length === 0 ||
+          (res.data?.items?.length !== undefined && res.data.items.length < pageSize),
+      }),
+    );
+  };
 
 const getAddressData = (address?: string, city?: string, district?: string, ward?: string) => () =>
   fetch(
@@ -84,6 +70,8 @@ interface AddressDataResponse {
   candidates: Candidate[];
 }
 
+const PAGE_SIZE = 10;
+
 export default function DeclareUnitStep<T>({
   onCancel,
   onSubmit,
@@ -95,18 +83,20 @@ export default function DeclareUnitStep<T>({
 }: DeclareUnitStepProps<T>) {
   const intl = useIntl();
   const { data: unitList, loading: unitListLoading } = useRequest(getAllUnit);
-  const [uId, setUId] = useState<string>(`${machineDetail.managementUnit?.id}` ?? '');
-  const { data: uDetails } = useRequest(getUnit(uId), {
-    cacheKey: `${uId}`,
-    refreshDeps: [uId],
-    ready: uId !== '',
-  });
+  const [query, setQuery] = useState<string>();
+  const queryDebounced = useDebounce(query, { wait: 400 });
+  const { data: usersData, loadMore } = useInfiniteScroll(
+    (d) => {
+      const page = d ? Math.ceil(d.list.length / PAGE_SIZE) + 1 : 0;
+      return getUsers(query)(page, PAGE_SIZE);
+    },
+    { reloadDeps: [queryDebounced] },
+  );
   const [address, setAddress] = useState<string>();
   const debounceAddress = useDebounce(address, { wait: 500 });
   const [province, setProvince] = useState<string>();
   const [district, setDistrict] = useState<string>();
   const [ward, setWard] = useState<string>();
-  const [users, setUsers] = useState<API.UserResponse[]>();
   const [coordinate, setCoordinate] = useState<[number, number]>(() =>
     machineDetail
       ? [machineDetail.latitude || 14.058324, machineDetail.longitude || 108.277199]
@@ -119,11 +109,11 @@ export default function DeclareUnitStep<T>({
       refreshDeps: [debounceAddress, province, district, ward],
     },
   );
+
   const disabledAddress =
     !form.getFieldValue('provinceId') ||
     !form.getFieldValue('districtId') ||
     !form.getFieldValue('wardId');
-  const disabledUserIds = !form.getFieldValue('managementUnitId');
   const onSearch = useCallback((searchText: string) => {
     setAddress(searchText);
   }, []);
@@ -139,12 +129,17 @@ export default function DeclareUnitStep<T>({
     [addressData],
   );
 
+  const handleStaffSearchChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+    setQuery(e.target.value);
+  }, []);
+
+  const getPopupContainer = useCallback((trigger) => trigger.parentNode, []);
+
   const handleChangeUnitId = useCallback(
     async (id: number) => {
       if (unitList) {
         form.setFieldValue('managementUnitId', id);
         form.setFieldValue('unitAddress', unitList.find((el) => el.id === id)?.address);
-        setUId(`${id}`);
       }
     },
     [unitList, form],
@@ -183,19 +178,6 @@ export default function DeclareUnitStep<T>({
     form.setFieldValue('unitAddress', machineDetail.managementUnit.address);
   }
 
-  const userDataSource = useMemo(
-    () =>
-      uDetails?.users
-        ?.filter((user) => form.getFieldValue('userIds')?.includes(user.id!))
-        .map((user, index) => ({
-          index: index + 1,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          name: user.name,
-        })),
-    [uDetails, form],
-  );
-
   return (
     <>
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
@@ -227,6 +209,7 @@ export default function DeclareUnitStep<T>({
                 onChange={handleChangeUnitId}
                 placeholder={<FormattedMessage id="machine-drawer.code-unitName" />}
                 loading={unitListLoading}
+                getPopupContainer={getPopupContainer}
               >
                 {unitList?.map((unit) => (
                   <Select.Option key={unit.id} value={unit.id}>
@@ -249,20 +232,22 @@ export default function DeclareUnitStep<T>({
               <Select
                 loading={unitListLoading}
                 onClear={handleClearUser}
-                disabled={disabledUserIds}
                 mode="multiple"
                 maxTagCount={4}
                 maxTagTextLength={20}
-                dropdownRender={(menu) => <DropdownOverlay menu={menu} users={uDetails?.users} />}
+                getPopupContainer={getPopupContainer}
+                dropdownRender={(menu) => (
+                  <DropdownOverlay
+                    query={query}
+                    disabledLoadMore={usersData?.isReachingEnd}
+                    menu={menu}
+                    onLoadMore={loadMore}
+                    onChange={handleStaffSearchChange}
+                  />
+                )}
                 allowClear
-                onSelect={(value: string) => {
-                  setUsers((prevUsers) => [
-                    ...(prevUsers || []),
-                    ...(uDetails?.users?.filter((user) => user.id === value) || []),
-                  ]);
-                }}
               >
-                {uDetails?.users?.map((user) => (
+                {usersData?.list?.map((user) => (
                   <Select.Option value={user.id} key={user.id}>
                     {`${user.staffId} - ${user.name}`}
                   </Select.Option>
@@ -272,29 +257,9 @@ export default function DeclareUnitStep<T>({
           </Col>
           <Col span={24}>
             <Form.Item label={<FormattedMessage id="declare-unit.tableTitle" />} shouldUpdate>
-              {() => (
-                <Table
-                  columns={userColumns}
-                  dataSource={userDataSource
-                    ?.concat(
-                      users?.map((user, i) => ({
-                        index: i + 1,
-                        email: user.email,
-                        name: user.name,
-                        phoneNumber: user.phoneNumber,
-                      })) || [],
-                    )
-                    .map((user, i) => ({
-                      index: i + 1,
-                      email: user.email,
-                      phoneNumber: user.phoneNumber,
-                      name: user.name,
-                    }))}
-                  // dataSource={userDataSource}
-                  pagination={false}
-                  bordered
-                />
-              )}
+              {() => {
+                return <StaffList form={form} />;
+              }}
             </Form.Item>
           </Col>
         </Row>
@@ -342,7 +307,8 @@ export default function DeclareUnitStep<T>({
                   type: 'string',
                   min: 0,
                   max: 50,
-                  pattern: /^[a-zA-Z0-9\s]*$/g,
+                  pattern:
+                    /^[a-z0-9A-Z\s_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]*$/gu,
                   message: <FormattedMessage id="declare-machine.invalid-machineName" />,
                 },
               ]}

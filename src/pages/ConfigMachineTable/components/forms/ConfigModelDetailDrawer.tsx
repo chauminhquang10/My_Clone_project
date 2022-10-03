@@ -396,7 +396,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                   setOpenConfirmModal(false);
                 }}
               >
-                <FormattedMessage id="form_buttonGroup_confirmButton_title" />
+                <FormattedMessage id="update" />
               </Button>
             </Row>
           </Col>

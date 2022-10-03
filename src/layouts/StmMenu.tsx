@@ -12,9 +12,10 @@ interface StmMenuProps {
 }
 
 export default function StmMenu({ collapsed }: StmMenuProps) {
+  const { initialState } = useModel('@@initialState');
   const location = useLocation();
   const [showSubNav, setShowSubNav] = useState<string[]>([`/${location.pathname.split('/')[1]}`]);
-
+  console.log({ showSubNav, path: location.pathname });
   const [currentRoute, setCurrentRoute] = useState<string>(location.pathname);
   const handleClick = useCallback(
     (path: string) => () => {
@@ -26,7 +27,6 @@ export default function StmMenu({ collapsed }: StmMenuProps) {
     },
     [],
   );
-  const { initialState } = useModel('@@initialState');
 
   return (
     <Layout.Sider collapsed={collapsed} width={240} id="sider">

@@ -4,6 +4,7 @@ import { PageLoading } from '@ant-design/pro-components';
 import { history } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { INITIAL_ROLES } from './constants';
+import { objectKeys } from './utils';
 
 const loginPath = '/user/login';
 const setupPasswordPath = '/user/setup-password';
@@ -39,7 +40,7 @@ export async function getInitialState(): Promise<{
     const initialRoles = { ...INITIAL_ROLES };
 
     if (currentUser?.admin) {
-      Object.keys(initialRoles).forEach(function (key) {
+      objectKeys(initialRoles).forEach(function (key) {
         initialRoles[key] = true;
       });
     } else {

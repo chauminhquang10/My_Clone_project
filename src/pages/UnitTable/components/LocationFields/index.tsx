@@ -1,6 +1,7 @@
 import { useLocationFields } from '@/hooks/useLocationFields';
 import type { FormInstance } from 'antd';
 import { Col, Form, Select } from 'antd';
+import { useCallback } from 'react';
 import { FormattedMessage } from 'umi';
 import type { DistrictItem, ProvinceItem, WardItem } from '../forms/NewUnitForm';
 
@@ -39,6 +40,7 @@ export default function LocationFields<T>({
     wardsData,
     wardsLoading,
   } = useLocationFields(form);
+  const getPopupContainer = useCallback((trigger) => trigger.parentNode, []);
   return (
     <>
       <Col span={12}>
@@ -48,6 +50,7 @@ export default function LocationFields<T>({
               detailMachine.location ?? <FormattedMessage id="declare-unit.selectLocation" />
             }
             onChange={(selectValue: string) => handleSelectChange('location', selectValue)}
+            getPopupContainer={getPopupContainer}
           >
             <Select.Option value="north">
               <FormattedMessage id="north" />
@@ -73,6 +76,7 @@ export default function LocationFields<T>({
             disabled={handleEnableDropdownList?.provinceDisabled ? true : false}
             loading={provincesLoading}
             onSelect={onSelectProvince}
+            getPopupContainer={getPopupContainer}
           >
             {provincesData?.provinces?.map((province: ProvinceItem) => (
               <Select.Option key={province.id} value={province.id}>
@@ -92,6 +96,7 @@ export default function LocationFields<T>({
             disabled={handleEnableDropdownList.districtDisabled ? true : false}
             loading={districtsLoading}
             onSelect={onSelectDistrict}
+            getPopupContainer={getPopupContainer}
           >
             {districtsData?.districts?.map((district: DistrictItem) => (
               <Select.Option key={district.id} value={district.id}>
@@ -111,6 +116,7 @@ export default function LocationFields<T>({
             disabled={handleEnableDropdownList.wardDisabled ? true : false}
             loading={wardsLoading}
             onSelect={onSelectWard}
+            getPopupContainer={getPopupContainer}
           >
             {wardsData?.wards?.map((ward: WardItem) => (
               <Select.Option key={ward.id} value={ward.id}>

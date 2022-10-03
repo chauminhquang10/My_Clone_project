@@ -25,6 +25,7 @@ import userTableDetailHeader from './vi-VN/UserTable/Detail/Header';
 import userTableDetailUserInfo from './vi-VN/UserTable/Detail/UserInfoRow';
 import userTableForm from './vi-VN/UserTable/forms/index';
 import UpdateVersionTable from './vi-VN/UpdateVersionTable/table';
+import UpdateVersionForm from './vi-VN/UpdateVersionTable/form';
 
 export default {
   navBar_language: 'VI',
@@ -57,4 +58,5 @@ export default {
   ...stmError,
   ...MachineTable,
   ...UpdateVersionTable,
+  ...UpdateVersionForm,
 };

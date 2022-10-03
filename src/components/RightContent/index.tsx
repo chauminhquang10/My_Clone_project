@@ -6,6 +6,7 @@ import { Badge, Space } from 'antd';
 import { FormattedMessage, getLocale, SelectLang, useModel } from 'umi';
 import AvatarDropdown from './AvatarDropdown';
 import styles from './index.less';
+import cx from 'classnames';
 
 export type SiderTheme = 'light' | 'dark';
 
@@ -14,7 +15,7 @@ const LANGUAGE_ICON = {
   'vi-VN': <VIIcon />,
 };
 
-const SelectedLanguage: React.FC = () => {
+export const SelectedLanguage: React.FC = () => {
   return (
     <div className={styles.selectLanguage}>
       <span>
@@ -23,6 +24,14 @@ const SelectedLanguage: React.FC = () => {
       {LANGUAGE_ICON[getLocale()]}
     </div>
   );
+};
+
+interface LanguageSwitchProps {
+  className?: string;
+}
+
+export const LanguageSwitch = ({ className }: LanguageSwitchProps) => {
+  return <SelectLang className={cx(styles.language, className)} icon={<SelectedLanguage />} />;
 };
 
 const GlobalHeaderRight: React.FC = () => {
@@ -45,7 +54,7 @@ const GlobalHeaderRight: React.FC = () => {
         <BellOutlined style={{ fontSize: 32, color: '#eee' }} />
       </Badge>
       <AvatarDropdown />
-      <SelectLang className={styles.language} icon={<SelectedLanguage />} />
+      <LanguageSwitch />
     </Space>
   );
 };
