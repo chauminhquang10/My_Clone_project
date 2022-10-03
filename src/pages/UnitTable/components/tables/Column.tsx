@@ -226,7 +226,7 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
             listFilter={provinceFilter}
             {...e}
             setParamFilter={(value) => {
-              setParamFilter({ ...paramFilter, provinceId: Number(value) });
+              setParamFilter({ ...paramFilter, provinceId: value ? Number(value) : undefined });
             }}
           />
         );
@@ -251,7 +251,7 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
             listFilter={districtFilter}
             {...e}
             setParamFilter={(value) => {
-              setParamFilter({ ...paramFilter, districtId: Number(value) });
+              setParamFilter({ ...paramFilter, districtId: value ? Number(value) : undefined });
             }}
           />
         );

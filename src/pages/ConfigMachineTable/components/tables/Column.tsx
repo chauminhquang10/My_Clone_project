@@ -77,15 +77,13 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
           />
         );
       },
+      width: '140px',
     },
     {
-      title: (
-        <HeadCell>
-          {intl.formatMessage({
-            id: 'configMachine_tableColumn_machineSeries',
-          })}
-        </HeadCell>
-      ),
+      align: 'left',
+      title: intl.formatMessage({
+        id: 'configMachine_tableColumn_machineSeries',
+      }),
       dataIndex: 'name',
       render: (dom, entity) => {
         return (
@@ -94,6 +92,7 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
               setCurrentRow(entity);
               setShowDetail(true);
             }}
+            position="left"
           >
             {dom}
           </TextCell>
@@ -115,6 +114,7 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
           : entity.createdBy?.name;
         return <TextCell>{value}</TextCell>;
       },
+      width: '240px',
     },
     {
       title: (

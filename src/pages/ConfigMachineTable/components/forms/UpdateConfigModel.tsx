@@ -1,5 +1,5 @@
 import { ModalForm } from '@ant-design/pro-components';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import type { InputRef } from 'antd';
 import { Badge } from 'antd';
 import { Typography } from 'antd';
@@ -122,7 +122,7 @@ type EditableTableProps = Parameters<typeof Table>[0];
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 interface UpdatedMachineListTableTitleProps {
-  tableTitle: string;
+  tableTitle: ReactNode;
   quantity: number;
 }
 
@@ -408,7 +408,7 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
             bordered
             title={() => (
               <NotUpdatedMachineListTableTitle
-                tableTitle="Danh sách thiết bị"
+                tableTitle={<FormattedMessage id="newVersionForm.tableList.title" />}
                 quantity={selectedRowKeys.length ? selectedRowKeys.length : 0}
               />
             )}
@@ -442,7 +442,7 @@ const UpdateConfigModelForm: React.FC<UpdateConfigModelFormProps> = ({
                 !!newForm.getFieldsError().filter(({ errors }) => errors.length).length
               }
             >
-              <FormattedMessage id="form_buttonGroup_submitButton_title" />,
+              <FormattedMessage id="form_buttonGroup_submitButton_title" />
             </Button>
           )}
         </Form.Item>

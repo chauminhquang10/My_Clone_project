@@ -13,6 +13,7 @@ import DeclareMachineForm from './components/forms/DeclareMachineForm';
 import DeclareUnitForm from './components/forms/DeclareUnitForm';
 import styles from './machineDrawer.less';
 import api from '@/services/STM-APIs';
+import { useIntl } from '@ant-design/pro-components';
 
 interface MachineDrawerProps {
   open: boolean;
@@ -27,6 +28,7 @@ export default function MachineDrawer({
   currentEntity,
   getAllMachine,
 }: MachineDrawerProps) {
+  const intl = useIntl();
   const [showEditMachineForm, setShowEditMachineForm] = useState(false);
   const [showEditUnitForm, setShowUnitForm] = useState(false);
   const [detailMachine, setDetailMachine] = useState<API.StmDetailResponse | undefined>();
@@ -37,7 +39,7 @@ export default function MachineDrawer({
       manual: true,
       onSuccess: (res) => {
         if (!res) {
-          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+          openNotification('error', intl.formatMessage({ id: 'notificationError' }));
         }
         setDetailMachine(res);
       },

@@ -58,7 +58,7 @@ const TableCustom = () => {
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
     items_per_page: '',
-    jump_to: 'Trang',
+    jump_to: intl.formatMessage({ id: 'page' }),
     page: '',
   };
   const { initialState } = useModel('@@initialState');

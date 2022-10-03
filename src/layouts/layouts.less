@@ -18,7 +18,7 @@
     max-width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) 0s;
 
   &.collapsed {
-    --width: 48px;
+    --width: 80px;
   }
 }
 
@@ -67,16 +67,12 @@
   background-color: transparent;
   transition: all 0.2s;
 
-  // .current {
-  //   background-color: #6875ca;
-  //   border-radius: 0 99px 99px 0;
-  // }
-
   &.collapsed {
     width: 80px;
 
     .current {
       border-radius: 50%;
+      transition: border-radius 1s;
     }
   }
 
@@ -85,6 +81,7 @@
     padding: 8px;
     padding-right: 0;
     border-bottom: 1px solid rgba(246, 248, 248, 0.15);
+    transition: all 0.2s;
 
     &.collapsed {
       margin-right: unset;
@@ -102,6 +99,7 @@
     padding: 4px;
     padding-right: 0;
     cursor: pointer;
+    transition: all 0.2s;
 
     &.disabled {
       opacity: 0.5;
@@ -119,6 +117,7 @@
   .title,
   .arrow {
     color: #d2d6ef;
+    user-select: none;
   }
 
   :global {
@@ -212,5 +211,25 @@
   .ant-tooltip-inner {
     background: rgba(0, 0, 0, 0.75);
     border-radius: 4px;
+  }
+}
+
+.loginLayout {
+  :global {
+    header.ant-layout-header {
+      position: absolute;
+      background-color: transparent;
+    }
+  }
+}
+
+.loginHeader {
+  justify-content: space-between;
+  background-color: transparent;
+
+  .intl {
+    span {
+      color: #434343;
+    }
   }
 }

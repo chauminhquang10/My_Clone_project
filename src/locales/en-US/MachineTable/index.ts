@@ -45,6 +45,7 @@ export default {
   'hardware-information.deviceType': 'Device type',
   'hardware-information.physicalCondition': 'Physical condition',
   'hardware-information.stored': 'Stored',
+  'declare-unit.title': 'Declare management unit',
   'declare-unit.tableTitle': 'Staff List',
   'declare-unit.streetName': 'Street name',
   'declare-unit.selectLocation': 'Select location',

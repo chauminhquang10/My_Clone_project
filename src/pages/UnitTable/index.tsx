@@ -1,20 +1,20 @@
-import type { ProColumns } from '@ant-design/pro-components';
-import { PageContainer, ProTable } from '@ant-design/pro-components';
-import UnitDetailDrawer from './components/forms/UnitDetailDrawer';
-import { useRef, useState } from 'react';
-import { Access, useIntl, useModel, useRequest } from 'umi';
 import AddNew from '@/components/TableProperties/AddNew';
-import Column from './components/tables/Column';
 import style from '@/components/TableProperties/style.less';
 import TitleTable from '@/components/TableProperties/TitleTable';
 import TotalPagination from '@/components/TableProperties/TotalPagination';
-import NewUnitForm from './components/forms/NewUnitForm';
 import {
   createManagementUnit,
   getAllManagementUnits,
 } from '@/services/STM-APIs/ManagementUnitController';
+import type { ProColumns } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
-import NoFoundPage from '../404';
+import { useRef, useState } from 'react';
+import { Access, useIntl, useModel, useRequest } from 'umi';
+import Admin from '../Admin';
+import NewUnitForm from './components/forms/NewUnitForm';
+import UnitDetailDrawer from './components/forms/UnitDetailDrawer';
+import Column from './components/tables/Column';
 
 const TableCustom = () => {
   const intl = useIntl();
@@ -29,7 +29,7 @@ const TableCustom = () => {
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
     items_per_page: '',
-    jump_to: 'Trang',
+    jump_to: intl.formatMessage({ id: 'page' }),
     page: '',
   };
 
@@ -94,7 +94,7 @@ const TableCustom = () => {
   const { initialState } = useModel('@@initialState');
 
   return (
-    <Access accessible={initialState?.currentUser?.admin || false} fallback={<NoFoundPage />}>
+    <Access accessible={initialState?.currentUser?.admin || false} fallback={<Admin />}>
       <PageContainer
         className={style['table-container']}
         header={{

@@ -1,6 +1,6 @@
 import { genKey } from '@/utils';
 import { CaretDownFilled, CaretUpFilled } from '@ant-design/icons';
-import { Typography } from 'antd';
+import { Tooltip, Typography } from 'antd';
 import cx from 'classnames';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useCallback, useMemo } from 'react';
@@ -22,6 +22,7 @@ interface SubMenuProps extends BaseMenu {
   currentRoute: string | undefined;
   setCurrentRoute: Dispatch<SetStateAction<string>>;
   disabled?: boolean;
+  tooltip?: ReactNode;
 }
 
 export default function SubMenu({
@@ -36,7 +37,14 @@ export default function SubMenu({
   currentRoute,
   setCurrentRoute,
   disabled,
+  tooltip,
 }: SubMenuProps) {
+  const ellipsis = useMemo(
+    () => ({
+      tooltip: { children: <FormattedMessage id={`menu.${id}`} />, placement: 'right' },
+    }),
+    [id],
+  );
   const showSubnav = useMemo(() => showSubNav?.includes(path), [showSubNav, path]);
   const handleNavigate = useCallback(() => {
     if (!disabled) {
@@ -44,7 +52,6 @@ export default function SubMenu({
       setCurrentRoute(path);
     }
   }, [setCurrentRoute, path, disabled]);
-
   const handleClick = useMemo(
     () => (!children ? handleNavigate : onClick?.(path)),
     [children, handleNavigate, onClick, path],
@@ -62,7 +69,7 @@ export default function SubMenu({
           [styles.child]: isChildren,
           [styles.collapsed]: collapsed,
           [styles.single]: !children && !isChildren,
-          [styles.current]: currentRoute === path,
+          [styles.current]: currentRoute?.includes(path),
           [styles.disabled]: disabled,
         })}
         onClick={handleClick}
@@ -79,14 +86,11 @@ export default function SubMenu({
           )}
           {icon}
           {!collapsed && (
-            <Typography.Text
-              className={styles.title}
-              ellipsis={{
-                tooltip: { children: <FormattedMessage id={`menu.${id}`} />, placement: 'right' },
-              }}
-            >
-              <FormattedMessage id={`menu.${id}`} />
-            </Typography.Text>
+            <Tooltip title={tooltip} placement="right">
+              <Typography.Text className={styles.title} ellipsis={ellipsis}>
+                <FormattedMessage id={`menu.${id}`} />
+              </Typography.Text>
+            </Tooltip>
           )}
         </>
       </div>
@@ -95,6 +99,7 @@ export default function SubMenu({
           {children?.map((child) => (
             <SubMenu
               {...child}
+              tooltip={tooltip}
               id={`${id}.${child.id}`}
               collapsed={collapsed}
               key={genKey()}

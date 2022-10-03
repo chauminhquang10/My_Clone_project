@@ -1,16 +1,25 @@
 export default {
   buttonGroup_createNew: 'Create New',
   buttonGroup_edit: 'Edit',
-
+  loadMore: 'Load more',
   form_buttonGroup_submitButton_title: 'Completed',
   form_buttonGroup_confirmButton_title: 'Confirm',
   form_buttonGroup_cancelButton_title: 'Cancel',
   form_buttonGroup_saveButton_title: 'Save',
+  filter: 'Filter',
+  activityDate: 'Activity date',
+  warning: 'Warning',
+  notificationError: 'Error, please try again',
+  page: 'Page',
+  'pagination.in': 'in',
 
   searchBar_placeholder: 'Search',
 
   tableColumn_indexTitle: 'No.',
   tableColumn_createdDate: 'Date',
+  return: 'Return',
+  export: 'Export',
+  fullName: 'Full name',
   south: 'South',
   middle: 'Middle',
   north: 'North',

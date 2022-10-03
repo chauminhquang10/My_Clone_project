@@ -22,6 +22,7 @@ const TableCustom = () => {
   const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
+  const intl = useIntl();
   //---------------  handle getAllUser -------------------------------
 
   const { data: listUpdateVersion, run: getAllUpdatedVersion } = useRequest(
@@ -86,10 +87,9 @@ const TableCustom = () => {
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
     items_per_page: '',
-    jump_to: 'Trang',
+    jump_to: intl.formatMessage({ id: 'page' }),
     page: '',
   };
-  const intl = useIntl();
   const { initialState } = useModel('@@initialState');
   console.log('listUpdateVersion: ', listUpdateVersion);
   return (
@@ -137,7 +137,7 @@ const TableCustom = () => {
         scroll={{ x: 'max-content' }}
       />
       <NewVersionForm
-        title="Upload phiên bản mới"
+        title={intl.formatMessage({ id: 'newVersionForm.title' })}
         width="934px"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}

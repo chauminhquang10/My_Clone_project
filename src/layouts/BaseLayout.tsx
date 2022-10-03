@@ -1,11 +1,11 @@
 import { CollapseIcon, UnCollapseIcon } from '@/assets';
-import { useControllState } from '@/hooks';
 import type {
   BasicLayoutProps as ProLayoutProps,
   MenuDataItem,
   Settings,
 } from '@ant-design/pro-layout';
 import ProLayout from '@ant-design/pro-layout';
+import { useLocalStorageState } from 'ahooks';
 import { useCallback } from 'react';
 import { history, Link, useIntl, useModel } from 'umi';
 import logo from '../assets/images/utmc-logo.png';
@@ -39,9 +39,11 @@ const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
 
 const BasicLayout = ({ children, routes, ...props }: BasicLayoutProps) => {
   const { formatMessage } = useIntl();
-  const [collapsed, setCollapsed] = useControllState(false);
+  const [collapsed, setCollapsed] = useLocalStorageState<boolean>('stmc-collapsed', {
+    defaultValue: false,
+  });
   const handleCollapsed = useCallback(() => {
-    setCollapsed((prev: boolean) => !prev);
+    setCollapsed((prev) => !prev);
   }, [setCollapsed]);
 
   const { initialState } = useModel('@@initialState');

@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 import { FormattedMessage, useRequest } from 'umi';
 import FilterComponent from '@/components/TableProperties/FilterComponent';
 import api from '@/services/STM-APIs';
+import { Typography } from 'antd';
 
 type ColumnProps = {
   setCurrentRow: (s: API.VersionResponse) => void;
@@ -136,7 +137,7 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
             setParamFilter={(value) => {
               setParamFilter({
                 ...paramFilter,
-                modelId: Number(value),
+                modelId: value ? Number(value) : undefined,
               });
             }}
           />
@@ -151,7 +152,11 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
       ),
       dataIndex: 'content',
       render: (dom) => {
-        return <TextCell width="570px">{dom}</TextCell>;
+        return (
+          <TextCell width="580px">
+            <Typography.Text ellipsis={{ tooltip: dom }}>{dom}</Typography.Text>
+          </TextCell>
+        );
       },
     },
     {
@@ -164,6 +169,7 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
+      width: '180px',
     },
     {
       title: (
@@ -189,6 +195,7 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
           />
         );
       },
+      width: '180px',
     },
   ];
   return columns;

@@ -363,7 +363,9 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
               </Col>
               <Col span={22}>
                 <Row align="middle" justify="space-between">
-                  <h3 className={styles.lockModalTitle}>Cảnh báo</h3>
+                  <h3 className={styles.lockModalTitle}>
+                    <FormattedMessage id={'warning'} />
+                  </h3>
                   <CloseOutlined
                     style={{
                       fontSize: '16px',
@@ -375,7 +377,8 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                 </Row>
                 <Row>
                   <span className={styles.lockModalDesc}>
-                    Bạn có chắc chắn muốn xóa nhóm quyền {modelDetail?.name}?
+                    <FormattedMessage id="update_configMachine_cta_delete_question" />{' '}
+                    {modelDetail?.name}?
                   </span>
                 </Row>
               </Col>
@@ -396,7 +399,7 @@ const ConfigModelDetailDrawer: React.FC<ConfigModelDetailDrawerProps> = ({
                   setOpenConfirmModal(false);
                 }}
               >
-                <FormattedMessage id="form_buttonGroup_confirmButton_title" />
+                <FormattedMessage id="update" />
               </Button>
             </Row>
           </Col>
