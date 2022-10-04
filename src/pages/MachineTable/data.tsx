@@ -116,18 +116,22 @@ export const transactionColumns: ColumnsType<DataType> = [
 export const informationColumns: ColumnsType<DataType> = [
   {
     title: (
-      <Typography.Text>
-        Tình trạng vật lý <Badge count={99} style={{ fontSize: 12, backgroundColor: blue[5] }} />
-      </Typography.Text>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Typography.Text style={{ display: 'flex', alignItems: 'center' }}>
+          Transaction type <Badge count={0} style={{ fontSize: 12, backgroundColor: blue[5] }} />
+        </Typography.Text>
+      </div>
     ),
     dataIndex: 'device',
     width: '33%',
   },
   {
     title: (
-      <Typography.Text>
-        Tình trạng vật lý <Badge count={99} style={{ fontSize: 12, backgroundColor: green[5] }} />
-      </Typography.Text>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Typography.Text style={{ display: 'flex', alignItems: 'center' }}>
+          Success <Badge count={0} style={{ fontSize: 12, backgroundColor: green[5] }} />
+        </Typography.Text>
+      </div>
     ),
     className: 'column-money',
     dataIndex: 'status',
@@ -135,8 +139,8 @@ export const informationColumns: ColumnsType<DataType> = [
   },
   {
     title: (
-      <Typography.Text>
-        Tình trạng vật lý <Badge count={99} style={{ fontSize: 12 }} />
+      <Typography.Text style={{ alignItems: 'center', display: 'flex' }}>
+        Failed <Badge count={1} style={{ fontSize: 12 }} />
       </Typography.Text>
     ),
     dataIndex: 'reserved',
@@ -155,7 +159,7 @@ export const machineSeriesColumns: ColumnsType<DataType> = [
       <Typography.Text>
         Tình trạng vật lý
         <span style={{ background: 'rgba(255, 255, 255, 1e-05)' }}>
-          <Badge count={99} style={{ fontSize: 12, backgroundColor: green[6] }} />
+          <Badge count={9} style={{ fontSize: 12, backgroundColor: green[6] }} />
         </span>
       </Typography.Text>
     ),

@@ -22,6 +22,7 @@ import { openNotification } from '@/utils';
 import { FormattedMessage, useIntl, useModel, useRequest } from 'umi';
 import api from '@/services/STM-APIs';
 import MachineStatusTag from '@/components/Common/MachineStatusTag';
+import { informationColumns } from '../../data';
 
 interface AnaylyticDetailProps {
   open: boolean;
@@ -328,8 +329,8 @@ export default function AnalyticDetail({
                   </Col>
                 </Row>
               </Card>
-              {/* <Card
-                title="Thông tin hoạt động"
+              <Card
+                title="Trasaction configuration"
                 size="small"
                 style={{ borderRadius: 12 }}
                 bodyStyle={{ padding: 0 }}
@@ -341,7 +342,7 @@ export default function AnalyticDetail({
                       setTransactionTableOpen(true);
                     }}
                   >
-                    Xem chi tiết
+                    Detail
                   </Button>
                 }
               >
@@ -351,7 +352,7 @@ export default function AnalyticDetail({
                   pagination={false}
                   bordered
                 />
-              </Card> */}
+              </Card>
             </Form>
           </div>
         </Drawer>
