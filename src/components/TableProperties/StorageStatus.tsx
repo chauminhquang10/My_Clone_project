@@ -26,21 +26,21 @@ function StorageStatus({ type }: StorageStatusProps) {
       return (
         <div className={style['statustag-box']}>
           <img src={okIcon} alt="" />
-          <span>BÌNH THƯỜNG</span>
+          <span>NORMAL</span>
         </div>
       );
     case 'HIGHT' || 'FULL':
       return (
         <div className={style['statustag-box']}>
           <img src={fullIcon} alt="" />
-          <span>ĐẦY</span>
+          <span>HIGH</span>
         </div>
       );
     default:
       return (
         <div className={style['statustag-box']}>
           <img src={lowIcon} alt="" />
-          <span>THẤP</span>
+          <span>LOW</span>
         </div>
       );
   }
