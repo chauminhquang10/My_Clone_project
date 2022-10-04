@@ -10,33 +10,33 @@ import TransactionStatusCell from '@/components/TableProperties/TransactionStatu
 
 const transactionColumns: ColumnsType<API.TransactionResponse> = [
   {
-    title: <HeadCell>Mã giao dịch</HeadCell>,
+    title: <HeadCell>Transaction ID</HeadCell>,
     dataIndex: 'id',
     width: '140px',
   },
   {
-    title: <HeadCell>Loại giao dịch</HeadCell>,
+    title: <HeadCell>Trasaction type</HeadCell>,
     className: 'column-money',
     dataIndex: 'type',
     width: '292px',
   },
   {
-    title: <HeadCell>Thời gian giao dịch</HeadCell>,
+    title: <HeadCell>Transaction time</HeadCell>,
     dataIndex: 'time',
     width: '180px',
   },
   {
-    title: <HeadCell>Mã khách hàng</HeadCell>,
+    title: <HeadCell>Customer ID</HeadCell>,
     dataIndex: 'accountNumber',
     width: '140px',
   },
   {
-    title: <HeadCell>Tên khách hàng</HeadCell>,
+    title: <HeadCell>Customer name</HeadCell>,
     dataIndex: 'customerName',
     width: '292px',
   },
   {
-    title: <HeadCell>Trạng thái</HeadCell>,
+    title: <HeadCell>Status</HeadCell>,
     dataIndex: 'status',
     width: '180px',
     render: (value, entity) => {
@@ -44,7 +44,7 @@ const transactionColumns: ColumnsType<API.TransactionResponse> = [
     },
   },
   {
-    title: <HeadCell>Mã lỗi</HeadCell>,
+    title: <HeadCell>Error code</HeadCell>,
     dataIndex: 'error',
     width: '140px',
   },
@@ -89,7 +89,7 @@ export default function TransactionTable({
     >
       <Row align="top" justify="space-between" className={styles.modalFormHeader}>
         <Col>
-          <p className={styles.modalTitle}>Chi tiết giao dịch</p>
+          <p className={styles.modalTitle}>Transaction detail</p>
         </Col>
         <Col>
           <span onClick={onReset} className={styles.closeIcon}>
