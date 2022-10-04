@@ -140,7 +140,7 @@ export const informationColumns: ColumnsType<DataType> = [
   {
     title: (
       <Typography.Text style={{ alignItems: 'center', display: 'flex' }}>
-        Failed <Badge count={1} style={{ fontSize: 12 }} />
+        Failed <Badge count={0} style={{ fontSize: 12 }} />
       </Typography.Text>
     ),
     dataIndex: 'reserved',
