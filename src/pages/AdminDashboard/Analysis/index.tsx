@@ -309,7 +309,7 @@ const Analysis = () => {
                     </Row>
 
                     <Row>
-                      <BarChart data={barChartData} colors={barChartColor} />
+                      <BarChart data={barChartData} colors={barChartColor} year={filterYear} />
                     </Row>
                   </Col>
                 </Card>
