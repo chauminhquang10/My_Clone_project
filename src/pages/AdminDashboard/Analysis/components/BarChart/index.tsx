@@ -1,59 +1,70 @@
 import { Column } from '@ant-design/plots';
 
 import { each, groupBy } from '@antv/util';
+import { MAPPING_BAR_TOOLTIP_MONTHS } from '../../../../../constants/index';
 
 type BarChartDataItem = {
-  year: string | number;
+  month: string | number;
   type: string;
   value: string | number;
 };
 
 type BarChartProps = {
   data: BarChartDataItem[];
+  colors: Record<string, string>;
+  year: string;
 };
 
-const BarChart = ({ data }: BarChartProps) => {
-  const annotations = [];
-  each(groupBy(data, 'year'), (values, k) => {
-    const value = values.reduce((a, b) => a + b.value, 0);
-    annotations.push({
-      type: 'text',
-      position: [k, value],
-      content: `${value}`,
-      style: {
-        textAlign: 'center',
-        fontSize: 14,
-        fill: 'rgba(0,0,0,0.85)',
-      },
-      offsetY: -10,
-    });
-  });
+const BarChart = ({ data, colors }: BarChartProps) => {
   const config = {
     data,
+    colorField: 'type',
+    color: ({ type }: { type: string }) => {
+      if (colors) {
+        return colors[type];
+      } else return 'red';
+    },
+    yAxis: {
+      grid: {
+        line: {
+          style: {
+            stroke: '#E2E7E9',
+            lineWidth: 1,
+            lineDash: [4, 5],
+            strokeOpacity: 1,
+          },
+        },
+      },
+    },
     isStack: true,
-    xField: 'year',
+    xField: 'month',
     yField: 'value',
     seriesField: 'type',
     maxColumnWidth: 92,
-    intervalPadding: 28,
-    label: {
-      position: 'middle',
-      layout: [
-        {
-          type: 'interval-adjust-position',
-        },
-        {
-          type: 'interval-hide-overlap',
-        },
-        {
-          type: 'adjust-color',
-        },
-      ],
+    tooltip: {
+      formatter: (datum: Record<string, any>) => {
+        let eachTotal = 0;
+        each(groupBy(data, 'month'), (values) => {
+          if (values[0].month === datum.month) {
+            eachTotal = values.reduce((a, b) => {
+              return a + b.value;
+            }, 0);
+          }
+        });
+
+        return {
+          title: `${MAPPING_BAR_TOOLTIP_MONTHS[datum.month]}/2022 ${'\xa0'.repeat(
+            40,
+          )} ${eachTotal}`,
+          name: `${datum.type}`,
+          value: datum.value,
+        };
+      },
     },
-    annotations,
+    legend: false,
   };
 
-  return <Column {...config} />;
+  return <Column {...config} style={{ width: '100%' }} />;
 };
 
 export default BarChart;

@@ -7,9 +7,11 @@ type PieChartDataItem = {
 
 type PieChartProps = {
   data: PieChartDataItem[];
+  colors: Record<string, string>;
+  unit: string;
 };
 
-const PieChart = ({ data }: PieChartProps) => {
+const PieChart = ({ data, colors, unit }: PieChartProps) => {
   function renderStatistic(containerWidth, text) {
     const textStyleStr = `width:${containerWidth}px;`;
     return `<div style="${textStyleStr};">${text}</div>`;
@@ -20,6 +22,12 @@ const PieChart = ({ data }: PieChartProps) => {
     data,
     angleField: 'value',
     colorField: 'type',
+    color: ({ type }: { type: string }) => {
+      if (colors) {
+        return colors[type];
+      } else return 'red';
+    },
+
     radius: 1,
     innerRadius: 0.64,
     label: {
@@ -72,7 +80,7 @@ const PieChart = ({ data }: PieChartProps) => {
                 <span style="font-size:${scale}em;line-height:${scale < 1 ? 1 : 'inherit'};">${text}
                 </span>
                 <span style="font-family: 'Roboto'; font-style: normal; font-weight: 400; font-size: 14px; line-height: 22px; color: #595959;">
-                Machines
+                  ${unit}
                 </span>
             </div>`;
 
@@ -80,6 +88,14 @@ const PieChart = ({ data }: PieChartProps) => {
         },
       },
     },
+    interactions: [
+      {
+        type: 'element-active',
+      },
+      {
+        type: 'pie-statistic-active',
+      },
+    ],
     legend: false,
   };
   return <Pie {...config} />;
