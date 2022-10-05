@@ -326,7 +326,7 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
               )}
               className={styles.myTable}
               pagination={false}
-              scroll={{ x: 1000, y: 560 }}
+              scroll={{ x: 'max-content', y: 560 }}
             />
           </Col>
         </Row>
