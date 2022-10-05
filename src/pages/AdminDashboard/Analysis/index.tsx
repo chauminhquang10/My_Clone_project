@@ -12,10 +12,7 @@ import PieChart from './components/PieChart';
 import type { DatePickerProps } from 'antd';
 import BarChart from './components/BarChart';
 import { useRequest } from 'umi';
-import {
-  getMachineActivityStatistic,
-  getTransactionStatistic,
-} from '@/services/STM-APIs/DashboardController';
+import { getMachineActivityStatistic } from '@/services/STM-APIs/DashboardController';
 
 import { MAPPING_MONTHS } from '../../../constants/index';
 
@@ -58,8 +55,8 @@ const mappingBarChartDataType = {
 };
 
 const barChartColor = {
-  success: '#62DAAB',
-  failed: '#FFA940',
+  Success: '#62DAAB',
+  Failed: '#FFA940',
 };
 
 const Analysis = () => {
@@ -110,26 +107,30 @@ const Analysis = () => {
   const handleMappingBarChartData = (originalBarChartData: OriginalBarChartDataItem[]) => {
     const formattedBarChartData = originalBarChartData?.reduce(
       (prev: any, barDataItem: OriginalBarChartDataItem) => {
+        const firstTypeFindIndex = Object.keys(mappingBarChartDataType).findIndex(
+          (element) => element === Object.keys(barDataItem)[1],
+        );
+
+        const secondTypeFindIndex = Object.keys(mappingBarChartDataType).findIndex(
+          (element) => element === Object.keys(barDataItem)[2],
+        );
+
         return [
           ...prev,
           {
             month: MAPPING_MONTHS[barDataItem?.month],
             value: barDataItem?.success,
             type:
-              Object.keys(mappingBarChartDataType).findIndex(
-                (element) => element === Object.keys(barDataItem)[1],
-              ) > -1
-                ? mappingBarChartDataType[Object.keys(barDataItem)[1]]
+              firstTypeFindIndex > -1
+                ? mappingBarChartDataType[Object.keys(mappingBarChartDataType)[firstTypeFindIndex]]
                 : 'default',
           },
           {
             month: MAPPING_MONTHS[barDataItem?.month],
             value: barDataItem?.failed,
             type:
-              Object.keys(mappingBarChartDataType).findIndex(
-                (element) => element === Object.keys(barDataItem)[2],
-              ) > -1
-                ? mappingBarChartDataType[Object.keys(barDataItem)[2]]
+              secondTypeFindIndex > -1
+                ? mappingBarChartDataType[Object.keys(mappingBarChartDataType)[secondTypeFindIndex]]
                 : 'default',
           },
         ];
@@ -141,49 +142,51 @@ const Analysis = () => {
 
   useRequest<any>(
     () => {
-      if (machineType) return getMachineActivityStatistic({ machineType });
-      return getMachineActivityStatistic({});
+      if (machineType)
+        return getMachineActivityStatistic({ machineType, transactionYear: filterYear });
+      return getMachineActivityStatistic({ transactionYear: filterYear });
     },
     {
       onSuccess(data) {
+        // xử lí data cho pie chart 1
         const allStatusDataArray = handleFormatChartData<ChartObjData>(data?.statusStatistics);
         // rename data field to fix the pie chart data field
         const mappingDataFirstPieChart = allStatusDataArray?.map((item) => ({
           type: item?.status,
           value: item?.total,
         }));
-
         setStatusStatisticsData(mappingDataFirstPieChart);
 
+        // xử lí data cho pie chart 2
         const allWarningDataArray = handleFormatChartData<ChartObjData>(data?.warningStatistics);
         // rename data field to fix the pie chart data field
         const mappingDataSecondPieChart = allWarningDataArray?.map((item) => ({
           type: item?.solved ? 'Solved' : 'Unsolved',
           value: item?.total,
         }));
-
         setWarningStatisticsData(mappingDataSecondPieChart);
-      },
-      refreshDeps: [machineType],
-    },
-  );
 
-  useRequest<any>(
-    () => {
-      return getTransactionStatistic({ year: filterYear });
-    },
-    {
-      onSuccess(data) {
-        const allBarChartDataArray = handleFormatChartData<ChartObjData>(data?.statistics);
+        // xử lí data cho bar chart
+        const allBarChartDataArray = handleFormatChartData<ChartObjData>(
+          data?.transactionStatistics,
+        );
         handleMappingBarChartData(allBarChartDataArray);
-
+        // lấy loại dữ liệu của bar chart
         const getChartDataTypesArr = Object.keys(allBarChartDataArray[0]);
-
         getChartDataTypesArr.splice(0, 1);
 
-        setBarChartDataTypes(getChartDataTypesArr);
+        const formattedResult = getChartDataTypesArr.map((item) => {
+          const findIndex = Object.keys(mappingBarChartDataType).findIndex(
+            (element) => element === item,
+          );
+          if (findIndex > -1) {
+            return mappingBarChartDataType[Object.keys(mappingBarChartDataType)[findIndex]];
+          }
+          return 'default';
+        });
+        setBarChartDataTypes(formattedResult);
       },
-      refreshDeps: [filterYear],
+      refreshDeps: [machineType, filterYear],
     },
   );
 
@@ -297,9 +300,7 @@ const Analysis = () => {
                                   className={`${styles.legendCircleShape}`}
                                   style={{ background: `${barChartColor[item]}` }}
                                 />
-                                <span className={styles.legendCircleShape_title}>
-                                  {mappingBarChartDataType[item]}
-                                </span>
+                                <span className={styles.legendCircleShape_title}>{item}</span>
                               </div>
                             </Col>
                           ))}
@@ -308,7 +309,7 @@ const Analysis = () => {
                     </Row>
 
                     <Row>
-                      <BarChart data={barChartData} />
+                      <BarChart data={barChartData} colors={barChartColor} />
                     </Row>
                   </Col>
                 </Card>

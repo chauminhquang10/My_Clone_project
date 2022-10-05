@@ -10,28 +10,18 @@ type BarChartDataItem = {
 
 type BarChartProps = {
   data: BarChartDataItem[];
+  colors: Record<string, string>;
 };
 
-const BarChart = ({ data }: BarChartProps) => {
-  const annotations = [];
-  each(groupBy(data, 'month'), (values, k) => {
-    const value = values.reduce((a: any, b: any) => a + b.value, 0);
-
-    annotations.push({
-      type: 'text',
-      position: [k, value],
-      content: `${value}`,
-      style: {
-        textAlign: 'center',
-        fontSize: 14,
-        fill: 'rgba(0,0,0,0.85)',
-      },
-      offsetY: -10,
-    });
-  });
+const BarChart = ({ data, colors }: BarChartProps) => {
   const config = {
     data,
-    color: ['#62DAAB', '#FFA940'],
+    colorField: 'type',
+    color: ({ type }: { type: string }) => {
+      if (colors) {
+        return colors[type];
+      } else return 'red';
+    },
     yAxis: {
       grid: {
         line: {
@@ -49,21 +39,25 @@ const BarChart = ({ data }: BarChartProps) => {
     yField: 'value',
     seriesField: 'type',
     maxColumnWidth: 92,
-    label: {
-      position: 'middle',
-      style: {
-        fill: '#fff',
-        opacity: 1,
+    tooltip: {
+      formatter: (datum: Record<string, any>) => {
+        let eachTotal = 0;
+        each(groupBy(data, 'month'), (values) => {
+          if (values[0].month === datum.month) {
+            eachTotal = values.reduce((a, b) => {
+              return a + b.value;
+            }, 0);
+          }
+        });
+
+        return {
+          // title: `${MAPPING_BAR_TOOLTIP_MONTHS[datum.month]}/2022`,
+          title: `Total: ${'\xa0'.repeat(40)} ${eachTotal}`,
+          name: `${datum.type}`,
+          value: datum.value,
+        };
       },
     },
-    tooltip: {
-      formatter: (datum: Record<string, any>) => ({
-        title: `${datum.month}/2022`,
-        name: `${datum.type}`,
-        value: datum.value,
-      }),
-    },
-    annotations,
     legend: false,
   };
 
