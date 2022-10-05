@@ -1,7 +1,7 @@
 import logoKSBank from '@/assets/images/utmc-logo.png';
 import { BLOCK_TIME, INITIAL_ROLES, MAX_LOGIN_TIMES, USER_MESSAGE_ERROR } from '@/constants';
 import Api from '@/services/STM-APIs';
-import { openNotification } from '@/utils';
+import { objectKeys, openNotification } from '@/utils';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import React, { useState } from 'react';
@@ -25,7 +25,7 @@ const Login: React.FC = () => {
 
     if (userInfo) {
       if (userInfo?.admin) {
-        Object.keys(roles).forEach(function (key) {
+        objectKeys(roles).forEach(function (key) {
           roles[key] = true;
         });
       } else {

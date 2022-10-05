@@ -10,7 +10,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useRef, useState } from 'react';
 import { Access, FormattedMessage, useIntl, useModel, useRequest } from 'umi';
-import NoFoundPage from '../404';
+import Admin from '../Admin';
 import { UserDetailDrawer } from './components';
 import { NewUserForm } from './components/forms';
 import Column from './components/tables/Column';
@@ -56,6 +56,7 @@ const handleAdd = async (fields: API.CreateUserRequest) => {
 
 const UserManagementTable: React.FC = () => {
   //------------ pagination --------------------
+  const intl = useIntl();
   const pageSizeRef = useRef<number>(20);
   const [totalSize, setTotalSize] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
@@ -103,13 +104,13 @@ const UserManagementTable: React.FC = () => {
   //-------------- Pagination props --------------------------------
   const paginationLocale = {
     items_per_page: '',
-    jump_to: 'Trang',
+    jump_to: intl.formatMessage({ id: 'page' }),
     page: '',
   };
   const { initialState } = useModel('@@initialState');
 
   return (
-    <Access accessible={initialState?.currentUser?.admin || false} fallback={<NoFoundPage />}>
+    <Access accessible={initialState?.currentUser?.admin || false} fallback={<Admin />}>
       <PageContainer
         className={style['table-container']}
         header={{
@@ -156,7 +157,7 @@ const UserManagementTable: React.FC = () => {
 
         {/* Create New User Form */}
         <NewUserForm
-          title={useIntl().formatMessage({ id: 'userTable.form.title.newUser' })}
+          title={intl.formatMessage({ id: 'userTable.form.title.newUser' })}
           width="934px"
           visible={createModalVisible}
           onVisibleChange={handleModalVisible}

@@ -1,13 +1,18 @@
 export default {
   buttonGroup_createNew: 'Tạo mới',
   buttonGroup_edit: 'Chỉnh sửa',
-
+  loadMore: 'Tải thêm',
   form_buttonGroup_submitButton_title: 'Hoàn tất',
   form_buttonGroup_confirmButton_title: 'Xác nhận',
   form_buttonGroup_cancelButton_title: 'Huỷ bỏ',
   form_buttonGroup_saveButton_title: 'Lưu',
-
+  filter: 'Bộ lọc',
   searchBar_placeholder: 'Tìm kiếm',
+  activityDate: 'Ngày hoạt động',
+  warning: 'Cảnh báo',
+  notificationError: 'Có lỗi xảy ra, vui lòng thử lại sau',
+  page: 'Trang',
+  'pagination.in': 'trong số',
 
   tableColumn_indexTitle: 'STT',
   fullName: 'Họ và tên',
@@ -32,7 +37,7 @@ export default {
   terminalId: 'Terminal ID',
   ipAddress: 'IP Address',
   machineName: 'Tên máy',
-  update: 'Update',
+  update: 'Cập nhật',
   updated: 'Đã cập nhật',
   cancel: 'Hủy bỏ',
   create: 'Tạo mới',

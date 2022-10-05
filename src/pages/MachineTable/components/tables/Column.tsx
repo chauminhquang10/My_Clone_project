@@ -3,7 +3,8 @@ import { TextCell } from '@/components/TableProperties//TableCell';
 import FilterComponent from '@/components/TableProperties/FilterComponent';
 import HeadCell from '@/components/TableProperties/HeadCell';
 import type { ProColumns } from '@ant-design/pro-components';
-import type { Dispatch, SetStateAction } from 'react';
+import { Typography } from 'antd';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { FormattedMessage } from 'umi';
 
 type ColumnProps = {
@@ -13,15 +14,15 @@ type ColumnProps = {
   paramFilter: API.getListMachinesParams | undefined;
 };
 
-type filterType = {
+type FilterType = {
   id: number;
-  text: string;
+  text: ReactNode;
   value: string;
 }[];
 
 //------------ Filter Location --------------------------------
 
-const filterLocationList: filterType = [
+const filterLocationList: FilterType = [
   {
     id: 1,
     text: 'Miền Bắc',
@@ -45,7 +46,7 @@ const filterLocationList: filterType = [
 
 //------------ Filter Province --------------------------------
 
-const filterTypeMachineList: filterType = [
+const filterTypeMachineList: FilterType = [
   {
     id: 1,
     text: 'ATM',
@@ -65,7 +66,7 @@ const filterTypeMachineList: filterType = [
 
 //------------ Filter Status Machine --------------------------------
 
-const filterStatusList: filterType = [
+const filterStatusList: FilterType = [
   {
     id: 1,
     text: 'IN SERVICE',
@@ -111,17 +112,12 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
           setShowDetail(true);
           setCurrentRow(data);
         };
-        return (
-          <TextCell width="216px" onClick={handleClick}>
-            {dom}
-          </TextCell>
-        );
+        return <TextCell onClick={handleClick}>{dom}</TextCell>;
       },
       sorter: (a, b) => {
         if (a.name && b.name) return a.name.localeCompare(b.name);
         else return 1;
       },
-      width: '216px',
     },
     {
       title: (
@@ -158,7 +154,6 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       render: (_, entity) => {
         return <TextCell>{entity.province?.name}</TextCell>;
       },
-      width: '216px',
     },
     {
       title: (
@@ -235,7 +230,6 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       render: (dom) => {
         return <TextCell>{dom}</TextCell>;
       },
-      width: '216px',
     },
     {
       title: (
@@ -257,7 +251,11 @@ function Column({ setShowDetail, setCurrentRow, setParamFilter, paramFilter }: C
       ),
       dataIndex: 'ipAddress',
       render: (dom) => {
-        return <TextCell>{dom}</TextCell>;
+        return (
+          <TextCell width="200px">
+            <Typography.Text ellipsis={{ tooltip: dom }}>{dom}</Typography.Text>
+          </TextCell>
+        );
       },
       width: '200px',
     },

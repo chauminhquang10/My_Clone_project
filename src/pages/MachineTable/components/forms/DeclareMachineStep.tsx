@@ -265,7 +265,7 @@ export default function DeclareMachineStep({
                 : undefined
             }
             validateStatus={terminalErr ? 'error' : undefined}
-            rules={[{ type: 'string', min: 0, max: 100 }]}
+            rules={[{ type: 'string', len: 8 }]}
           >
             <Input
               value={terminalIdValue}

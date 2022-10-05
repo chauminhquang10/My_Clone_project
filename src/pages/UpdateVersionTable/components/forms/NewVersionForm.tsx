@@ -5,7 +5,7 @@ import closeIcon from '@/assets/images/svg/icon/close-icon.svg';
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { UploadProps } from 'antd';
-import { useRequest } from 'umi';
+import { FormattedMessage, useIntl, useRequest } from 'umi';
 import api from '@/services/STM-APIs';
 import styles from './NewVersionForm.less';
 
@@ -38,7 +38,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
   onFinish,
 }) => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-
+  const intl = useIntl();
   const [textAreaValue, setTextAreaValue] = useState<string>('');
   const [form] = Form.useForm();
 
@@ -167,9 +167,9 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
 
       <Row gutter={[24, 24]}>
         <Col span={12}>
-          <Form.Item name="machineCategory" label="Loại máy">
+          <Form.Item name="machineCategory" label={<FormattedMessage id="machineType" />}>
             <Select
-              placeholder="Chọn loại máy"
+              placeholder={<FormattedMessage id="newVersionForm.machineTypePlaceholder" />}
               onChange={() => {
                 checkSubmit();
                 getAllModel();
@@ -182,9 +182,9 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="modelId" label="Dòng máy">
+          <Form.Item name="modelId" label={<FormattedMessage id="model" />}>
             <Select
-              placeholder="Chọn dòng máy"
+              placeholder={intl.formatMessage({ id: 'newVersionForm.modelPlaceholder' })}
               loading={modelsLoading}
               onChange={() => {
                 checkSubmit();
@@ -202,8 +202,12 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="conditionId" label="Điều kiện">
-            <Select placeholder="Chọn điều kiện" loading={conditionsLoading} onChange={checkSubmit}>
+          <Form.Item name="conditionId" label={<FormattedMessage id="newVersionForm.condition" />}>
+            <Select
+              placeholder={intl.formatMessage({ id: 'newVersionForm.conditionPlaceholder' })}
+              loading={conditionsLoading}
+              onChange={checkSubmit}
+            >
               {listCondition?.items?.map((item) => {
                 return (
                   <Option key={item.id} value={item.id}>
@@ -215,12 +219,18 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="name" label="Tên phiên bản">
-            <Input placeholder={'Tên đề xuất'} onChange={checkSubmit} />
+          <Form.Item name="name" label={<FormattedMessage id="machine-drawer.version-name" />}>
+            <Input
+              placeholder={intl.formatMessage({ id: 'newVersionForm.versionNamePlaceholder' })}
+              onChange={checkSubmit}
+            />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="content" label="Nội dung">
+          <Form.Item
+            name="content"
+            label={<FormattedMessage id="updateVersionTable.description" />}
+          >
             <TextArea
               rows={2}
               showCount={{
@@ -230,13 +240,13 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
                 onChangeTextArea(e);
                 checkSubmit();
               }}
-              placeholder="Nội dung (250 ký tự)"
+              placeholder={intl.formatMessage({ id: 'newVersionForm.contentPlaceholder' })}
               className={textAreaValue.length > 250 ? styles.myTextArea : ''}
             />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="files" label="File tải">
+          <Form.Item name="files" label={<FormattedMessage id="newVersionForm.condition" />}>
             <Upload
               {...props}
               fileList={fileList}
@@ -253,7 +263,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
 
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
         <Button className={styles.cancelButton} size="large" onClick={onReset}>
-          Huỷ bỏ
+          <FormattedMessage id="cancel" />
         </Button>
         <Button
           className={styles.submitButton}
@@ -261,7 +271,7 @@ const NewVersionForm: React.FC<NewVersionFormProps> = ({
           htmlType="submit"
           disabled={disableButton}
         >
-          Hoàn tất
+          <FormattedMessage id="form_buttonGroup_submitButton_title" />
         </Button>
       </Row>
     </ModalForm>

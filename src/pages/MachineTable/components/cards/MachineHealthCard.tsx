@@ -12,10 +12,11 @@ type MachineHealthCardProps = {
 export default function MachineHealthCard({ health }: MachineHealthCardProps) {
   const intl = useIntl();
   const offset = useMemo(() => (intl.locale === 'vi-VN' ? 4 : 2), [intl]);
+  const driveHealth = useMemo(() => (health !== undefined ? health * 100 : 0), [health]);
 
   const statusPosition: CSSProperties = useMemo(
-    () => ({ left: `calc(${health || 50 - offset}% + 1px)` }),
-    [health, offset],
+    () => ({ left: `calc(${driveHealth - offset}% + 1px)` }),
+    [driveHealth, offset],
   );
 
   return (

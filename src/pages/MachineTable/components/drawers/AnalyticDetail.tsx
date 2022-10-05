@@ -19,9 +19,10 @@ import styles from './analyticDetail.less';
 import TransactionTable from '../tables/TransactionTable';
 import type { ColumnsType } from 'antd/lib/table';
 import { openNotification } from '@/utils';
-import { useModel, useRequest } from 'umi';
+import { FormattedMessage, useIntl, useModel, useRequest } from 'umi';
 import api from '@/services/STM-APIs';
 import MachineStatusTag from '@/components/Common/MachineStatusTag';
+import { informationColumns } from '../../data';
 
 interface AnaylyticDetailProps {
   open: boolean;
@@ -35,14 +36,18 @@ interface AnaylyticDetailProps {
 //-------------------- User Management ---------------
 const columns: ColumnsType<API.UserResponse> = [
   {
-    title: 'STT',
+    title: <FormattedMessage id="tableColumn_indexTitle" />,
     align: 'center',
     render: (_, __, index) => {
       return <div style={{ textAlign: 'center' }}>{index + 1}</div>;
     },
   },
   {
-    title: <div style={{ textAlign: 'center' }}>Họ và tên</div>,
+    title: (
+      <div style={{ textAlign: 'center' }}>
+        <FormattedMessage id="fullName" />
+      </div>
+    ),
     dataIndex: 'name',
   },
   {
@@ -50,7 +55,7 @@ const columns: ColumnsType<API.UserResponse> = [
     dataIndex: 'email',
   },
   {
-    title: 'Số điện thoại',
+    title: <FormattedMessage id="phoneNumber" />,
     dataIndex: 'phoneNumber',
     align: 'center',
   },
@@ -91,7 +96,7 @@ const columns: ColumnsType<API.UserResponse> = [
 //   },
 // ];
 
-export default function AnaylyticDetail({
+export default function AnalyticDetail({
   handleClose,
   open,
   currentEntity,
@@ -105,6 +110,7 @@ export default function AnaylyticDetail({
     API.TransactionResponse[] | undefined
   >();
   console.log('toDate: ', toDate, 'fromDate: ', fromDate);
+  const intl = useIntl();
 
   const { run: getDetailTransaction } = useRequest(
     (params: API.getTransactionsParams) => api.TransactionController.getTransactions(params),
@@ -112,7 +118,7 @@ export default function AnaylyticDetail({
       manual: true,
       onSuccess: (res) => {
         if (!res) {
-          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+          openNotification('error', intl.formatMessage({ id: 'notificationError' }));
         } else {
           setDetailTransaction(res.items);
         }
@@ -142,7 +148,7 @@ export default function AnaylyticDetail({
       manual: true,
       onSuccess: (res) => {
         if (!res) {
-          openNotification('error', 'Có lỗi xảy ra, vui lòng thử lại sau');
+          openNotification('error', intl.formatMessage({ id: 'notificationError' }));
         } else {
           setDetailMachine(res);
         }
@@ -209,7 +215,9 @@ export default function AnaylyticDetail({
         >
           <div className={styles.drawerSectionContainer}>
             <div className={styles.drawerHeader}>
-              <Typography.Title level={4}>Chi tiết hoạt động</Typography.Title>
+              <Typography.Title level={4}>
+                <FormattedMessage id="actiStatisDetail.title" />
+              </Typography.Title>
               <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                 <Input prefix={<SearchOutlined />} height={32} style={{ width: '40%' }} />
                 <Dropdown
@@ -225,14 +233,14 @@ export default function AnaylyticDetail({
                   }
                 >
                   <Button style={{ borderRadius: 4 }} icon={<FilterOutlined />}>
-                    Bộ lọc
+                    <FormattedMessage id="filter" />
                   </Button>
                 </Dropdown>
               </div>
             </div>
             <Form layout="vertical" className={styles.drawerBody}>
               <Card
-                title="Thông tin máy"
+                title={<FormattedMessage id="actiStatisDetail.cardTitle" />}
                 extra={
                   <Button
                     type="link"
@@ -242,7 +250,7 @@ export default function AnaylyticDetail({
                     }}
                     disabled={initialState?.currentRoles?.update_machine !== true}
                   >
-                    Chỉnh sửa
+                    {intl.formatMessage({ id: 'edit' })}
                   </Button>
                 }
                 size="small"
@@ -251,7 +259,7 @@ export default function AnaylyticDetail({
               >
                 <Row gutter={24} align="bottom">
                   <Col span={12}>
-                    <Form.Item name="Tên máy" label="Tên máy">
+                    <Form.Item name="Tên máy" label={<FormattedMessage id="machineName" />}>
                       <Input disabled placeholder={currentEntity?.name} />
                     </Form.Item>
                   </Col>
@@ -261,12 +269,15 @@ export default function AnaylyticDetail({
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Địa chỉ IP" label="Địa chỉ IP">
+                    <Form.Item name="Địa chỉ IP" label={<FormattedMessage id="ipAddress" />}>
                       <Input disabled placeholder={currentEntity?.ipAddress} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Tình trạng máy" label="Tình trạng máy">
+                    <Form.Item
+                      name="Tình trạng máy"
+                      label={<FormattedMessage id="actiStatisDetail.machineStatus" />}
+                    >
                       {/* <StatusTag type={currentEntity?.status} /> */}
                       <MachineStatusTag
                         type={
@@ -280,12 +291,18 @@ export default function AnaylyticDetail({
                     </Form.Item>
                   </Col>
                   <Col span={24}>
-                    <Form.Item name="Địa chỉ máy" label="Địa chỉ máy">
+                    <Form.Item
+                      name="Địa chỉ máy"
+                      label={<FormattedMessage id="actiStatisDetail.machineAddress" />}
+                    >
                       <Input disabled placeholder={detailMachine?.address} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Mã - Tên đơn vị" label="Mã - Tên đơn vị">
+                    <Form.Item
+                      name="Mã - Tên đơn vị"
+                      label={<FormattedMessage id="machine-drawer.code-unitName" />}
+                    >
                       <Input
                         disabled
                         placeholder={`${detailMachine?.managementUnit?.code} - ${detailMachine?.managementUnit?.name}`}
@@ -293,14 +310,14 @@ export default function AnaylyticDetail({
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item name="Địa chỉ đơn vị" label="Địa chỉ đơn vị">
+                    <Form.Item name="Địa chỉ đơn vị" label={<FormattedMessage id="address" />}>
                       <Input disabled placeholder={detailMachine?.managementUnit?.address} />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item
                       name="Danh sách nhân viên quản lý"
-                      label="Danh sách nhân viên quản lý"
+                      label={<FormattedMessage id="declare-unit.tableTitle" />}
                     >
                       <Table
                         columns={columns}
@@ -312,8 +329,8 @@ export default function AnaylyticDetail({
                   </Col>
                 </Row>
               </Card>
-              {/* <Card
-                title="Thông tin hoạt động"
+              <Card
+                title="Trasaction configuration"
                 size="small"
                 style={{ borderRadius: 12 }}
                 bodyStyle={{ padding: 0 }}
@@ -325,7 +342,7 @@ export default function AnaylyticDetail({
                       setTransactionTableOpen(true);
                     }}
                   >
-                    Xem chi tiết
+                    Detail
                   </Button>
                 }
               >
@@ -335,7 +352,7 @@ export default function AnaylyticDetail({
                   pagination={false}
                   bordered
                 />
-              </Card> */}
+              </Card>
             </Form>
           </div>
         </Drawer>

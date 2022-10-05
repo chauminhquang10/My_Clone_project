@@ -2,6 +2,7 @@ const routes = [
   {
     path: '/user',
     layout: false,
+    component: '@/layouts/LoginLayout',
     routes: [
       {
         name: 'login',
@@ -37,7 +38,7 @@ const routes = [
     routes: [
       {
         path: '/',
-        redirect: '/machine/list',
+        redirect: '/dashboard',
       },
       {
         path: '/dashboard',
