@@ -3,9 +3,9 @@ import LocationFields from '@/pages/UnitTable/components/LocationFields';
 import Api from '@/services/STM-APIs';
 import { checkFormFieldsEmpty, objectKeys } from '@/utils';
 import { useDebounce, useInfiniteScroll, useRequest } from 'ahooks';
-import type { FormInstance } from 'antd';
+import { Avatar, FormInstance, Space } from 'antd';
 import { AutoComplete, Button, Card, Col, Form, Input, Row, Select } from 'antd';
-import type { ChangeEventHandler, ReactNode } from 'react';
+import { ChangeEventHandler, ReactNode, useMemo } from 'react';
 import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
 import Map from '../map/Map';
@@ -92,6 +92,8 @@ export default function DeclareUnitStep<T>({
     },
     { reloadDeps: [queryDebounced] },
   );
+  // const [machineName, setMachineName] = useState<string>();
+  // const debouncedMachineName = useDebounce(machineName, { wait: 500 });
   const [address, setAddress] = useState<string>();
   const debounceAddress = useDebounce(address, { wait: 500 });
   const [province, setProvince] = useState<string>();
@@ -109,6 +111,14 @@ export default function DeclareUnitStep<T>({
       refreshDeps: [debounceAddress, province, district, ward],
     },
   );
+  // const { data: machineNameError } = useRequest(
+  //   () =>
+  //     Api.STMController.checkMachineExisted({ key: 'name', value: debounceAddress! }).then(
+  //       (res) => res.data?.existed,
+  //     ),
+  //   { cacheKey: `machineName-${machineName}`, ready: !!machineName, debounceWait: 500 },
+  // );
+  // console.log({ machineNameError, machineName, debouncedMachineName });
 
   const disabledAddress =
     !form.getFieldValue('provinceId') ||
@@ -174,9 +184,16 @@ export default function DeclareUnitStep<T>({
     );
   }, [form, submitButtonLabel, onSubmit]);
 
+  // const handleMachineNameChange = useCallback((e) => {
+  //   setMachineName(e.target.value);
+  // }, []);
+
   if (machineDetail.managementUnit && !form.isFieldTouched('managementUnitId')) {
     form.setFieldValue('unitAddress', machineDetail.managementUnit.address);
   }
+
+  const machineNameHelp = useMemo(() => undefined, []);
+  const machineNameValidateStatus = useMemo(() => undefined, []);
 
   return (
     <>
@@ -193,133 +210,146 @@ export default function DeclareUnitStep<T>({
         </Col>
       </Row>
 
-      <Card
-        title={<FormattedMessage id="menu.user-management.management-unit" />}
-        size="small"
-        className={styles.myCard}
-        style={{ borderRadius: 12 }}
-      >
-        <Row gutter={24} align="bottom" style={{ marginBottom: 24 }}>
-          <Col span={12}>
-            <Form.Item
-              name="managementUnitId"
-              label={<FormattedMessage id="machine-drawer.code-unitName" />}
-            >
-              <Select
-                onChange={handleChangeUnitId}
-                placeholder={<FormattedMessage id="machine-drawer.code-unitName" />}
-                loading={unitListLoading}
-                getPopupContainer={getPopupContainer}
+      <div className={styles.formBody} id="test">
+        <Card
+          title={<FormattedMessage id="menu.user-management.management-unit" />}
+          size="small"
+          className={styles.myCard}
+          style={{ borderRadius: 12 }}
+        >
+          <Row gutter={24} align="bottom" style={{ marginBottom: 24 }}>
+            <Col span={12}>
+              <Form.Item
+                name="managementUnitId"
+                label={<FormattedMessage id="machine-drawer.code-unitName" />}
               >
-                {unitList?.map((unit) => (
-                  <Select.Option key={unit.id} value={unit.id}>
-                    {`${unit.id} - ${unit.name}`}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item name="unitAddress" label={<FormattedMessage id="address" />}>
-              <Input disabled placeholder={form.getFieldValue('unitAddress')} />
-            </Form.Item>
-          </Col>
-          <Col span={24} style={{ marginTop: 24, marginBottom: 24 }}>
-            <Form.Item
-              name="userIds"
-              label={<FormattedMessage id="machine-drawer.code-staffName" />}
-            >
-              <Select
-                loading={unitListLoading}
-                onClear={handleClearUser}
-                mode="multiple"
-                maxTagCount={4}
-                maxTagTextLength={20}
-                getPopupContainer={getPopupContainer}
-                dropdownRender={(menu) => (
-                  <DropdownOverlay
-                    query={query}
-                    disabledLoadMore={usersData?.isReachingEnd}
-                    menu={menu}
-                    onLoadMore={loadMore}
-                    onChange={handleStaffSearchChange}
-                  />
-                )}
-                allowClear
+                <Select
+                  onChange={handleChangeUnitId}
+                  placeholder={<FormattedMessage id="machine-drawer.code-unitName" />}
+                  loading={unitListLoading}
+                  getPopupContainer={getPopupContainer}
+                >
+                  {unitList?.map((unit) => (
+                    <Select.Option key={unit.id} value={unit.id}>
+                      {`${unit.id} - ${unit.name}`}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="unitAddress" label={<FormattedMessage id="address" />}>
+                <Input disabled placeholder={form.getFieldValue('unitAddress')} />
+              </Form.Item>
+            </Col>
+            <Col span={24} style={{ marginTop: 24, marginBottom: 24 }}>
+              <Form.Item
+                name="userIds"
+                label={<FormattedMessage id="machine-drawer.code-staffName" />}
               >
-                {usersData?.list?.map((user) => (
-                  <Select.Option value={user.id} key={user.id}>
-                    {`${user.staffId} - ${user.name}`}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Form.Item label={<FormattedMessage id="declare-unit.tableTitle" />} shouldUpdate>
-              {() => {
-                return <StaffList form={form} />;
-              }}
-            </Form.Item>
-          </Col>
-        </Row>
-      </Card>
-      <Card
-        title={<FormattedMessage id="address" />}
-        size="small"
-        style={{ borderRadius: 12, marginTop: 24 }}
-      >
-        <Row gutter={[24, 24]} align="bottom">
-          <LocationFields
-            onSelectProvince={(_, options) => setProvince(options.children)}
-            onSelectWard={(_, options) => setWard(options.children)}
-            onSelectDistrict={(_, options) => setDistrict(options.children)}
-            form={form}
-            {...machineDetail}
-          />
-          <Col span={24}>
-            <Form.Item
-              name="address"
-              label={<FormattedMessage id="Street name" />}
-              rules={[{ type: 'string', min: 0, max: 100 }]}
-              validateTrigger="onBlur"
-            >
-              <AutoComplete
-                placeholder={machineDetail.address ?? <FormattedMessage id="Street name" />}
-                options={addressData?.map((addr) => ({
-                  value: addr.attributes.ShortLabel,
-                }))}
-                onSelect={handleSelectAddress}
-                onSearch={onSearch}
-                disabled={disabledAddress}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Map setPosition={setCoordinate} coordinate={coordinate} />
-          </Col>
-          <Col span={24}>
-            <Form.Item
-              name="machineName"
-              label={<FormattedMessage id="machineName" />}
-              rules={[
-                {
-                  type: 'string',
-                  min: 0,
-                  max: 50,
-                  pattern:
-                    /^[a-z0-9A-Z\s_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]*$/gu,
-                  message: <FormattedMessage id="declare-machine.invalid-machineName" />,
-                },
-              ]}
-            >
-              <Input
-                placeholder={machineDetail.name ?? intl.formatMessage({ id: 'machineName' })}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Card>
+                <Select
+                  loading={unitListLoading}
+                  onClear={handleClearUser}
+                  mode="multiple"
+                  maxTagCount={4}
+                  maxTagTextLength={20}
+                  getPopupContainer={getPopupContainer}
+                  dropdownRender={(menu) => (
+                    <DropdownOverlay
+                      query={query}
+                      disabledLoadMore={usersData?.isReachingEnd}
+                      menu={menu}
+                      onLoadMore={loadMore}
+                      onChange={handleStaffSearchChange}
+                    />
+                  )}
+                  optionLabelProp="label"
+                  allowClear
+                >
+                  {usersData?.list?.map((user) => (
+                    <Select.Option
+                      value={user.id}
+                      label={`${user.staffId} - ${user.name}`}
+                      key={user.id}
+                    >
+                      <Space size={8}>
+                        <Avatar src={user.avatar} />
+                        {`${user.staffId} - ${user.name}`}
+                      </Space>
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item label={<FormattedMessage id="declare-unit.tableTitle" />} shouldUpdate>
+                {() => {
+                  return <StaffList form={form} />;
+                }}
+              </Form.Item>
+            </Col>
+          </Row>
+        </Card>
+        <Card
+          title={<FormattedMessage id="address" />}
+          size="small"
+          style={{ borderRadius: 12, marginTop: 24 }}
+        >
+          <Row gutter={[24, 24]} align="bottom">
+            <LocationFields
+              onSelectProvince={(_, options) => setProvince(options.children)}
+              onSelectWard={(_, options) => setWard(options.children)}
+              onSelectDistrict={(_, options) => setDistrict(options.children)}
+              form={form}
+              {...machineDetail}
+            />
+            <Col span={24}>
+              <Form.Item
+                name="address"
+                label={<FormattedMessage id="Street name" />}
+                rules={[{ type: 'string', min: 0, max: 100 }]}
+                validateTrigger="onBlur"
+              >
+                <AutoComplete
+                  placeholder={machineDetail.address ?? <FormattedMessage id="Street name" />}
+                  options={addressData?.map((addr) => ({
+                    value: addr.attributes.ShortLabel,
+                  }))}
+                  onSelect={handleSelectAddress}
+                  onSearch={onSearch}
+                  disabled={disabledAddress}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Map setPosition={setCoordinate} coordinate={coordinate} />
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name="machineName"
+                label={<FormattedMessage id="machineName" />}
+                rules={[
+                  {
+                    type: 'string',
+                    min: 0,
+                    max: 50,
+                    pattern:
+                      /^[a-z0-9A-Z\s_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]*$/gu,
+                    message: <FormattedMessage id="declare-machine.invalid-machineName" />,
+                  },
+                ]}
+                help={machineNameHelp}
+                validateStatus={machineNameValidateStatus}
+              >
+                <Input
+                  // onChange={handleMachineNameChange}
+                  placeholder={machineDetail.name ?? intl.formatMessage({ id: 'machineName' })}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Card>
+      </div>
       <Row align="middle" justify="end" style={{ marginTop: '24px', gap: '16px' }}>
         <Button
           className={styles.cancelButton}
