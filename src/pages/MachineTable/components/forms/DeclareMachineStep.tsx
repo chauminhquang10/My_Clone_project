@@ -85,12 +85,15 @@ export default function DeclareMachineStep({
   );
   const { run: validateIp, data: ipErr } = useRequest(
     validateMachine({ key: 'ip', value: ipVal || '' }),
+    { ready: ipVal !== '', manual: true },
   );
   const { run: validateMAC, data: macErr } = useRequest(
     validateMachine({ key: 'mac', value: macVal || '' }),
+    { ready: macVal !== '', manual: true },
   );
   const { run: validateSerial, data: serialErr } = useRequest(
     validateMachine({ key: 'serial', value: serialVal || '' }),
+    { ready: serialVal !== '', manual: true },
   );
 
   const machineDetail = {
@@ -225,9 +228,13 @@ export default function DeclareMachineStep({
             name="serialNumber"
             label={<FormattedMessage id="declare-machine.series" />}
             help={
-              serialErr ? intl.formatMessage({ id: 'declare-machine.invalid-series' }) : undefined
+              serialErr && serialVal !== machineDetail.serialNumber
+                ? intl.formatMessage({ id: 'declare-machine.invalid-series' })
+                : undefined
             }
-            validateStatus={serialErr ? 'error' : undefined}
+            validateStatus={
+              serialErr && serialVal !== machineDetail.serialNumber ? 'error' : undefined
+            }
             rules={[{ min: 0, max: 100, type: 'string' }]}
           >
             <Input
@@ -260,11 +267,13 @@ export default function DeclareMachineStep({
             name="terminalId"
             label={<FormattedMessage id="terminalId" />}
             help={
-              terminalErr
+              terminalErr && terminalIdValue !== machineDetail.terminalId
                 ? intl.formatMessage({ id: 'declare-machine.invalid-terminal' })
                 : undefined
             }
-            validateStatus={terminalErr ? 'error' : undefined}
+            validateStatus={
+              terminalErr && terminalIdValue !== machineDetail.terminalId ? 'error' : undefined
+            }
             rules={[{ type: 'string', len: 8 }]}
           >
             <Input
@@ -281,8 +290,12 @@ export default function DeclareMachineStep({
             validateTrigger="onBlur"
             name="ipAddress"
             label={<FormattedMessage id="ipAddress" />}
-            help={ipErr ? intl.formatMessage({ id: 'declare-machine.invalid-ip' }) : undefined}
-            validateStatus={ipErr ? 'error' : undefined}
+            help={
+              ipErr && ipVal !== machineDetail.ipAddress
+                ? intl.formatMessage({ id: 'declare-machine.invalid-ip' })
+                : undefined
+            }
+            validateStatus={ipErr && ipVal !== machineDetail.ipAddress ? 'error' : undefined}
             rules={[{ type: 'string', min: 1, max: 100 }]}
           >
             <Input
@@ -344,9 +357,14 @@ export default function DeclareMachineStep({
             validateTrigger="onBlur"
             name="mac"
             label="MAC"
-            help={macErr ? intl.formatMessage({ id: 'declare-machine.invalid-mac' }) : undefined}
-            validateStatus={macErr ? 'error' : undefined}
+            help={
+              macErr && macVal !== machineDetail.mac
+                ? intl.formatMessage({ id: 'declare-machine.invalid-mac' })
+                : undefined
+            }
+            validateStatus={macErr && macVal !== machineDetail.mac ? 'error' : undefined}
             rules={[{ type: 'string', min: 0, max: 100 }]}
+            shouldUpdate
           >
             <Input
               onChange={handleMACChange}
@@ -412,7 +430,7 @@ export default function DeclareMachineStep({
               {denominations?.map((denomination) => {
                 return (
                   <Col span={24 / denominations.length} key={denomination}>
-                    <Input disabled value={`${denomination}`} />
+                    <Input disabled value={`${denomination}`} className={styles.denomination} />
                   </Col>
                 );
               })}

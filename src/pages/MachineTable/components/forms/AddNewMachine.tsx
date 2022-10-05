@@ -3,7 +3,7 @@ import { ModalForm } from '@ant-design/pro-components';
 import type { Dispatch, SetStateAction } from 'react';
 import { useCallback, useMemo } from 'react';
 import { useStepsForm } from 'sunflower-antd';
-import styles from './declareMachineForm.less';
+import styles from './editMachine.less';
 import DeclareMachineStep from './DeclareMachineStep';
 import DeclareUnitStep from './DeclareUnitStep';
 import Api from '@/services/STM-APIs';

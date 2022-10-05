@@ -1,6 +1,6 @@
 import Api from '@/services/STM-APIs';
 import { openNotification } from '@/utils';
-import { ModalForm } from '@ant-design/pro-components';
+import { ModalForm, ModalFormProps } from '@ant-design/pro-components';
 import { Form } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'umi';
@@ -25,7 +25,7 @@ export default function DeclareUnitForm({
 }: DeclareUnitFormProps) {
   const [form] = Form.useForm();
   const intl = useIntl();
-  const modalProps = useMemo(
+  const modalProps: ModalFormProps['modalProps'] = useMemo(
     () => ({
       centered: true,
       closable: false,
