@@ -24,7 +24,6 @@ import {
   message,
   Modal,
   Row,
-  Space,
   Table,
   Tag,
   Tooltip,
@@ -236,108 +235,101 @@ const RoleListDetailDrawer: React.FC<RoleListDetailDrawerProps> = ({
         closable={true}
         headerStyle={{ border: 'none' }}
       >
-        <Form layout="vertical" hideRequiredMark>
-          <Space size={12} direction={'vertical'}>
-            <Row>
-              <Col span={15}>
-                <h4 className={styles.drawerHeaderTitle}>
-                  {intl.formatMessage({
-                    id: 'detailDrawer_title',
-                  })}
-                </h4>
-              </Col>
-              <Col span={9}>
-                <Row
-                  justify="end"
-                  align="middle"
-                  gutter={8}
-                  className={styles.myDrawerHeaderBtnGroup}
+        <Row style={{ marginBottom: '12px' }}>
+          <Col span={15}>
+            <h4 className={styles.drawerHeaderTitle}>
+              {intl.formatMessage({
+                id: 'detailDrawer_title',
+              })}
+            </h4>
+          </Col>
+          <Col span={9}>
+            <Row justify="end" align="middle" gutter={8} className={styles.myDrawerHeaderBtnGroup}>
+              <Col>
+                <Button
+                  icon={<EditOutlined color="#434343" />}
+                  className={styles.btnItem}
+                  onClick={() => handleUpdateModalVisible(true)}
                 >
-                  <Col>
-                    <Button
-                      icon={<EditOutlined color="#434343" />}
-                      className={styles.btnItem}
-                      onClick={() => handleUpdateModalVisible(true)}
-                    >
-                      <span className={styles.btnGroupTitle}>
-                        {intl.formatMessage({
-                          id: 'buttonGroup_edit',
-                        })}
-                      </span>
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Tooltip placement="left" title={validateDeleteObj.tooltipMsg}>
-                      <Button
-                        disabled={!validateDeleteObj.enableDeleteBtn}
-                        className={`${styles.btnItem}  ${
-                          validateDeleteObj.enableDeleteBtn ? styles.btnDeleteItem : ''
-                        }`}
-                        onClick={() => setOpenConfirmModal(true)}
-                      >
-                        <DeleteOutlined
-                          style={validateDeleteObj.enableDeleteBtn ? { color: '#FF4D4F' } : {}}
-                        />
-                      </Button>
-                    </Tooltip>
-                  </Col>
-                </Row>
+                  <span className={styles.btnGroupTitle}>
+                    {intl.formatMessage({
+                      id: 'buttonGroup_edit',
+                    })}
+                  </span>
+                </Button>
               </Col>
-            </Row>
-
-            <Row gutter={[0, 20]}>
-              <Col span={12} className={styles.roleGroupContainer}>
-                <Form.Item
-                  name="name"
-                  label={intl.formatMessage({
-                    id: 'detailDrawer_inputGroup_tile',
-                  })}
-                >
-                  <Input disabled placeholder={roleGroupDetail?.name} />
-                </Form.Item>
-              </Col>
-
-              <Col span={24}>
-                <Card
-                  title={intl.formatMessage({
-                    id: 'detailDrawer_correspondingRole_cardTile',
-                  })}
-                  size="small"
-                  className={styles.myCard}
-                >
-                  <Row gutter={[12, 12]}>
-                    {roleGroupDetail?.actions?.map((eachAction: API.RoleAction) => (
-                      <Col key={eachAction?.id}>
-                        <Tag key={eachAction?.id}>
-                          {eachAction?.action ? MAP_ACTION_LIST[eachAction?.action] : ''}
-                        </Tag>
-                      </Col>
-                    ))}
-                  </Row>
-                </Card>
-              </Col>
-
-              <Col span={24}>
-                <Table
-                  columns={userRoleGroupColumns as ColumnsType<API.UserResponse>}
-                  dataSource={roleGroupDetail?.users}
-                  bordered
-                  title={() => (
-                    <UserRoleGroupListTableTitle
-                      title={intl.formatMessage({
-                        id: 'detailDrawer_roleGroup_ownerCard_title',
-                      })}
-                      quantity={roleGroupDetail?.users?.length}
+              <Col>
+                <Tooltip placement="left" title={validateDeleteObj.tooltipMsg}>
+                  <Button
+                    disabled={!validateDeleteObj.enableDeleteBtn}
+                    className={`${styles.btnItem}  ${
+                      validateDeleteObj.enableDeleteBtn ? styles.btnDeleteItem : ''
+                    }`}
+                    onClick={() => setOpenConfirmModal(true)}
+                  >
+                    <DeleteOutlined
+                      style={validateDeleteObj.enableDeleteBtn ? { color: '#FF4D4F' } : {}}
                     />
-                  )}
-                  className={styles.myTable}
-                  pagination={false}
-                  scroll={{ y: 560 }}
-                />
+                  </Button>
+                </Tooltip>
               </Col>
             </Row>
-          </Space>
-        </Form>
+          </Col>
+        </Row>
+
+        <Row gutter={[0, 20]}>
+          <Col span={12} className={styles.roleGroupContainer}>
+            <Form layout="vertical" hideRequiredMark>
+              <Form.Item
+                name="name"
+                label={intl.formatMessage({
+                  id: 'detailDrawer_inputGroup_tile',
+                })}
+              >
+                <Input disabled placeholder={roleGroupDetail?.name} />
+              </Form.Item>
+            </Form>
+          </Col>
+
+          <Col span={24}>
+            <Card
+              title={intl.formatMessage({
+                id: 'detailDrawer_correspondingRole_cardTile',
+              })}
+              size="small"
+              className={styles.myCard}
+            >
+              <Row gutter={[12, 12]}>
+                {roleGroupDetail?.actions?.map((eachAction: API.RoleAction) => (
+                  <Col key={eachAction?.id}>
+                    <Tag key={eachAction?.id}>
+                      {eachAction?.action ? MAP_ACTION_LIST[eachAction?.action] : ''}
+                    </Tag>
+                  </Col>
+                ))}
+              </Row>
+            </Card>
+          </Col>
+
+          <Col span={24}>
+            <Table
+              columns={userRoleGroupColumns as ColumnsType<API.UserResponse>}
+              dataSource={roleGroupDetail?.users}
+              bordered
+              title={() => (
+                <UserRoleGroupListTableTitle
+                  title={intl.formatMessage({
+                    id: 'detailDrawer_roleGroup_ownerCard_title',
+                  })}
+                  quantity={roleGroupDetail?.users?.length}
+                />
+              )}
+              className={styles.myTable}
+              pagination={false}
+              scroll={{ x: 1000, y: 560 }}
+            />
+          </Col>
+        </Row>
       </Drawer>
 
       {updateModalVisible && (
