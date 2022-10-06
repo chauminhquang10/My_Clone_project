@@ -14,6 +14,7 @@ import * as AuthController from './AuthController';
 import * as MediaController from './MediaController';
 import * as StmStatusController from './StmStatusController';
 import * as TransactionController from './TransactionController';
+import * as DashboardController from './DashboardController';
 import * as LogController from './LogController';
 import * as LocationController from './LocationController';
 import * as PhysicalDevicesController from './PhysicalDevicesController';
@@ -31,6 +32,7 @@ export default {
   MediaController,
   StmStatusController,
   TransactionController,
+  DashboardController,
   LogController,
   LocationController,
   PhysicalDevicesController,

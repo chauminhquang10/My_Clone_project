@@ -6,12 +6,13 @@ import FilterComponent from '@/components/TableProperties/FilterComponent';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { useIntl } from 'umi';
+import DateFilter from '@/components/TableProperties/DateFilter';
 
 type ColumnProps = {
   setCurrentRow: (s: API.StmModelResponse) => void;
   setShowDetail: (s: boolean) => void;
-  setParamFilter: Dispatch<SetStateAction<API.getListMachinesParams | undefined>>;
-  paramFilter: API.getListMachinesParams | undefined;
+  setParamFilter: Dispatch<SetStateAction<API.getListModelsParams | undefined>>;
+  paramFilter: API.getListModelsParams | undefined;
 };
 
 type filterType = {
@@ -127,7 +128,20 @@ function Column({ setCurrentRow, setShowDetail, setParamFilter, paramFilter }: C
       render: (dom) => {
         return <TextCell>{formatDate(dom as string)}</TextCell>;
       },
-      width: '140px',
+      filterDropdown: (e) => {
+        return (
+          <DateFilter
+            setDateFilter={(from: string | undefined, to: string | undefined) => {
+              setParamFilter({
+                ...paramFilter,
+                from: from,
+                to: to,
+              });
+            }}
+            {...e}
+          />
+        );
+      },
     },
   ];
   return columns;
